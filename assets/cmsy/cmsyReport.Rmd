@@ -1,0 +1,35 @@
+---
+title: "CMSY Report"
+output: pdf_document
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+`r if(!is.null(params$cmsy$dlmTools)){"#Cmsy for DLM Tools report"}`
+
+```{r echo=FALSE, out.width='100%'}
+cat(params$cmsy$dlmTools$textRaw, sep = '\n')
+```
+`r if(!is.null(params$cmsy$dlmTools)){"##Analisys Charts"}`
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics(c(params$cmsy$dlmTools$analisysChart))
+```
+
+`r if(!is.null(params$cmsy$dlmTools)){"##Management Charts"}`
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics(c(params$cmsy$dlmTools$managementChart))
+```
+
+`r if(!is.null(params$cmsy$legacy)){"#Legacy CMSY report"}`
+
+```{r echo=FALSE, out.width='100%'}
+cat(params$cmsy$legacy$textRaw, sep = '\n')
+```
+`r if(!is.null(params$cmsy$legacy)){"##Analisys Charts"}`
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics(c(params$cmsy$legacy$analisysChart))
+```
+
+`r if(!is.null(params$cmsy$legacy)){"##Management Charts"}`
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics(c(params$cmsy$legacy$managementChart))
+```
