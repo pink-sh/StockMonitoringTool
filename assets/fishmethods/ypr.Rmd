@@ -1,0 +1,27 @@
+---
+title: "Yield-per-recruit (YPR) Report"
+output: pdf_document
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+## Yield-per-recruit
+```{r echo=FALSE}
+YPR <- yprExec$results$F_vs_YPR
+plot(YPR[,2]~YPR[,1],ylab="Yield-Per-Recruit",xlab="Fishing Mortality",type="l")
+abline(h = yprExec$results$Reference_Points[2,2], v = yprExec$results$Reference_Points[2,1], col = "black", lty = 2)
+abline(h = yprExec$results$Reference_Points[1,2], v = yprExec$results$Reference_Points[1,1], col = "red", lty = 2)
+legend(1.5, 0.15, legend=c("F-0.1", "F-Max"),col=c("red", "blue"), lty=2:2, cex=0.8)
+```
+
+## Reference Points
+```{r echo=FALSE, results='asis'}
+df <- as.data.frame(yprExec$results$Reference_Points)
+knitr::kable(df)
+```
+
+
+
+```{r echo=FALSE, results='asis'}
+differenceinYPR = round(yprExec$results$Reference_Points[2,2] - yprExec$results$Reference_Points[1,2], 6)
+print(paste0("**Difference in Yeld-Per-Recruit:**", " ", differenceinYPR))
+```

@@ -13,6 +13,7 @@ library(shinysky)
 library(shinythemes)
 library(shinydashboard)
 library(RCurl)
+library(fishmethods)
 library(TropFishR)
 
 buildUrl <- function(session, path) {
@@ -31,6 +32,8 @@ source("assets/tropFishR/run_elefan_sa.R")
 source("assets/tropFishR/run_elefan.R")
 
 source("assets/cmsy/CmsyFunction.R")
+
+source("assets/fishmethods/methods.R")
 
 jscode <- "
 shinyjs.showBox = function(boxid) {
@@ -63,9 +66,7 @@ ui <- tagList(dashboardPage(
       menuItem("Home", tabName="homeTab"),
       menuItem("CMSY",
                menuSubItem("Introduction", tabName = "CmsyIntro"),
-               menuSubItem("CMSY Method", tabName = "cmsyMethod"),
-               #menuSubItem("CMSY for DLMTools", tabName = "cmsyForDlmTools"),
-               #menuSubItem("CMSY Legacy", tabName = "cmsyLegacy"),
+               menuSubItem("CMSY MSE", tabName = "cmsyMethod"),
                menuSubItem("CMSY Sample Dataset", tabName = "CmsySampleDataset")
       ),
       menuItem("Elefan by TropFishR",
@@ -74,6 +75,12 @@ ui <- tagList(dashboardPage(
                menuSubItem("Elefan SA", tabName = "ElefanSaWidget"),
                menuSubItem("Elefan", tabName = "ElefanWidget"),
                menuSubItem("Elefan Sample Dataset", tabName = "ElefanSampleDataset")
+      ),
+      menuItem("Fish Methods",
+               menuSubItem("Introduction", tabName = "FishMethodsIntro"),
+               menuSubItem("SBPR", tabName = "SBPRWidget"),
+               menuSubItem("YPR", tabName = "YPRWidget"),
+               menuSubItem("Fishmethods Sample Dataset", tabName = "FishMethodsSampleDataset")
       )
     )
   ),
@@ -85,10 +92,13 @@ ui <- tagList(dashboardPage(
     ),
     tags$head(tags$script(src="https://cdnjs.cloudflare.com/ajax/libs/eqcss/1.7.0/EQCSS.min.js")),
     tags$head(tags$script(type="text/eqcss", src="styles.eqcss")),
-    busyIndicator(wait = 1000),
+    busyIndicator(wait = 7000),
     tabItems(
       tabItem("homeTab",
               htmlOutput("homeInfo")
+      ),
+      tabItem("CmsyIntro",
+              htmlOutput("cmsyIntroOut")
       ),
       tabItem("CmsySampleDataset",
               htmlOutput("cmsySampleDataset")
@@ -99,8 +109,11 @@ ui <- tagList(dashboardPage(
       tabItem("ElefanSampleDataset",
               htmlOutput("elefanSampleDataset")
       ),
-      tabItem("CmsyIntro",
-              htmlOutput("cmsyIntroOut")
+      tabItem("FishMethodsIntro",
+              htmlOutput("fishMethodsIntroOut")
+      ),
+      tabItem("FishMethodsSampleDataset",
+              htmlOutput("fishMethodsSampleDataset")
       ),
       tabItem("cmsyMethod",
               htmlOutput("cmsyMethodTitle"),
@@ -476,6 +489,116 @@ ui <- tagList(dashboardPage(
                      )
                 )
               )
+      ),
+      tabItem("SBPRWidget",
+              htmlOutput("sbprTitle"),
+              fluidRow(
+                box(title = "Main Parameters",
+                    width = NULL, 
+                    collapsible = T, 
+                    class = "collapsed-box",
+                    box(
+                      fileInput("fileSbpr", "Choose Input CSV File",
+                                accept = c(
+                                  "text/csv",
+                                  "text/comma-separated-values,text/plain",
+                                  ".csv")
+                      )
+                    )
+                ),
+                box(title = "Optional Parameters",
+                    width = NULL,
+                    collapsible = T, 
+                    class = "collapsed-box",
+                    collapsed = T,
+                    box(
+                      numericInput("SBPR_M", "Single natural mortality (M) rate if M is assumed constant over all ages", 0.2, min = 0, max = 10, step=0.1),
+                      numericInput("SBPR_pM", "Proportion of natural mortality that occurs before spawning", 0.1667, min = 0, max = 10, step=0.0001),
+                      numericInput("SBPR_maxF", "Maximum value of F range over which SBPR will be calculated", 2, min = 0, max = 100, step=1)
+                    ),
+                    box(
+                      numericInput("SBPR_pF", "Proportion of fishing mortality that occurs before spawning", 0.2, min = 0, max = 10, step=0.1),
+                      numericInput("SBPR_MSP", "Percentage of maximum spawning potential (percent MSP reference point) for which F and SBPR should be calculated", 30, min = 0, max = 1000, step=1),
+                      numericInput("SBPR_incrF", "F increment for SBPR calculation", 0.001, min = 0, max = 10, step=0.001)
+                    )
+                ),
+                actionButton("go_sbpr", "Run SBPR"),
+                hr(),
+                
+                box( width= 100,  id = "box_sbpr_results",
+                     title = "Results of Fishmethods - SBPR Computation",
+                     fluidRow(
+                       box(
+                         uiOutput("downloadSbprReport")
+                       )
+                     ),
+                     fluidRow(
+                       box(
+                         plotOutput("sbprOutPlot1"),
+                         htmlOutput("sbprMSPTableTitle"),
+                         tableOutput("sbprOutTable")
+                       ), 
+                       box(
+                         plotOutput("sbprOutPlot2")
+                       )
+                     )
+                )
+              )
+      ),
+      tabItem("YPRWidget",
+              htmlOutput("yprTitle"),
+              fluidRow(
+                box(title = "Main Parameters",
+                    width = NULL, 
+                    collapsible = T, 
+                    class = "collapsed-box",
+                    box(
+                      fileInput("fileYpr", "Choose Input CSV File",
+                                accept = c(
+                                  "text/csv",
+                                  "text/comma-separated-values,text/plain",
+                                  ".csv")
+                      )
+                    )
+                ),
+                box(title = "Optional Parameters",
+                    width = NULL,
+                    collapsible = T, 
+                    class = "collapsed-box",
+                    collapsed = T,
+                    box(
+                      numericInput("YPR_M", "Single natural mortality (M) rate if M is assumed constant over all ages", 0.2, min = 0, max = 10, step=0.1),
+                      checkboxInput("YPR_Plus", "Plus -  logical value indicating whether the last age is a plus-group", TRUE),
+                      numericInput("YPR_oldest", "if plus is checked, a numeric value indicating the oldest age in the plus group", 100, min = 0, max = 1000, step=1)
+                    ),
+                    box(
+                      numericInput("YPR_maxF", "Maximum value of F range over which YPR will be calculated. YPR is calculated for F = 0 to maxF", 2, min = 0, max = 100, step=1),
+                      numericInput("YPR_incrF", "F increment for SBPR calculation", 0.01, min = 0, max = 10, step=0.01)
+                    )
+                ),
+                actionButton("go_YPR", "Run YPR"),
+                hr(),
+                
+                box( width= 100,  id = "box_ypr_results",
+                     title = "Results of Fishmethods - YPR Computation",
+                     fluidRow(
+                       box(
+                         uiOutput("downloadYprReport")
+                       )
+                     ),
+                     fluidRow(
+                       box(
+                         plotOutput("yprOutPlot")
+                       ), 
+                       box(
+                         htmlOutput("yprDifference"),
+                         hr(),
+                         htmlOutput("<b>Ans Matrix</b>"),
+                         tableOutput("yprOutTable")
+                       )
+                     )
+                )
+              )
       )
     )
   )
@@ -539,6 +662,7 @@ server <- function(input, output, session) {
       # child of the global environment (this isolates the code in the document
       # from the code in this app).
       rmarkdown::render(tempReport, output_file = file, params = params)
+      
     }
   )
   
@@ -1195,6 +1319,10 @@ server <- function(input, output, session) {
     text <- "<span><h3><b>Elefan</b></h3></span>"
     text
   })
+  output$SBPRTitle <- renderText({
+    text <- "<span><h3><b>Spawning stock biomass-per-recruit(SBPR)</b></h3></span>"
+    text
+  })
   output$cmsyLegacyWarning <- renderText({
     text <- "<span style='margin-left: 20px;'>This computation may take several minutes to complete.</span>"
     text
@@ -1211,10 +1339,7 @@ server <- function(input, output, session) {
     
     text <- paste0(text, "<br/>")
     text <- paste0(text, "<p>")
-    text <- paste0(text, "<b>CMSY for DLMTools</b>&nbsp;is a vectorized version of the original (legacy) CMSY that improves speed. <span style='text-decoration: underline;'>Note that this version is not yet included in the DLM toolkit.</span>")
-    text <- paste0(text, "</p>")
-    text <- paste0(text, "<p>")
-    text <- paste0(text, "<b>CMSY Legacy</b>&nbsp;is the original version of the CMSY algorithm.")
+    text <- paste0(text, "<span><b>CMSY-MSE</b> is a new adaptation of CMSY designed to increase fitting speed to enable implementation in management strategy evaluation. This is achieved by adding adaptive parameter search bounds to restrict the inspected r-K space and automatically increase depletion priors if necessary.</span>")
     text <- paste0(text, "</p>")
     
     
@@ -1279,6 +1404,222 @@ server <- function(input, output, session) {
     
     text
   })
+  
+  #### SBPR Functions
+  
+  sbprExec <- reactiveValues()
+
+  output$sbprTitle <- renderText({
+    text <- "<span><h3><b>Spawning stock biomass-per-recruit (SBPR)</b></h3></span>"
+    text
+  })
+  
+  observeEvent(input$go_sbpr, {
+    infile <- input$fileSbpr
+    
+    if (is.null(infile)) {
+      showModal(modalDialog(
+        title = "Error",
+        "No input file selected",
+        easyClose = TRUE,
+        footer = NULL
+      ))
+      return(NULL)
+    }
+    js$removeBox("box_sbpr_results")
+    inputCsvFile <- infile$datapath
+    dat <- read.csv(inputCsvFile)
+
+    res <- sbpr_shinyApp(age=dat$age,ssbwgt=dat$ssbwgt,partial=dat$partial,pmat=dat$pmat,M=input$SBPR_M,pF=input$SBPR_pF, pM=input$SBPR_pM,MSP=input$SBPR_MSP,plus=FALSE,maxF=input$SBPR_maxF,incrF=input$SBPR_incrF, graph=FALSE)
+    if ('error' %in% names(res)) {
+      showModal(modalDialog(
+        title = "Error",
+        res$error,
+        easyClose = TRUE,
+        footer = NULL
+      ))
+    } else {
+      sbprExec$results <- res
+      js$showBox("box_sbpr_results")
+    }
+  })
+  
+  output$sbprOutPlot1 <- renderPlot({
+    if ('results' %in% names(sbprExec)) {
+      plot(sbprExec$results$F_vs_SPR[,2]~sbprExec$results$F_vs_SPR[,1],ylab="SPR",xlab="F",type="l")
+      abline(h=sbprExec$results$Reference_Point[1,2], col = "red", lty = 2)
+      legend(1.4, 8, legend=c("SSB_per_recruit"),col=c("red"), lty=2, cex=0.8)
+    }
+  })
+  output$sbprOutPlot2 <- renderPlot({
+    if ('results' %in% names(sbprExec)) {
+      plot(sbprExec$results$F_vs_SPR[,3]~sbprExec$results$F_vs_SPR[,1],ylab="% Max SPR",xlab="F",type="l")
+      abline(h=input$SBPR_MSP, v = sbprExec$results$Reference_Point[1,1], col = "red", lty = 2)
+      leg <- paste0("F ", input$SBPR_MSP, "% MSP")
+      legend(1.5, 85, legend=c(leg),col=c("red"), lty=2, cex=0.8)
+    }
+  })
+  
+  output$sbprMSPTableTitle <- renderText({
+    if ('results' %in% names(sbprExec)) {
+      title <- paste0("&nbsp;&nbsp;&nbsp;&nbsp;<b>F ", input$SBPR_MSP, "% MSP</b>")
+      title
+    }
+  })
+  output$sbprOutTable <- renderTable({
+    if ('results' %in% names(sbprExec)) {
+      df <- as.data.frame(sbprExec$results$Reference_Point)
+      df
+    }
+  })
+  
+  output$downloadSbprReport <- renderUI({
+    if ("results" %in% names(sbprExec)) {
+      downloadButton('createSbprReport', 'Download Report')
+    }
+  })
+  output$createSbprReport <- downloadHandler(
+    filename = paste("Sbpr_report_",format(Sys.time(), "%Y%m%d%H%M%s"),".pdf",sep=""),
+    content = function(file) {
+      tempReport <- file.path(tempdir(), "sbpr.Rmd")
+      file.copy("assets/fishmethods/sbpr.Rmd", tempReport, overwrite = TRUE)
+      sbprExec$perc <- input$SBPR_MSP
+      params <- list(sbprExec = sbprExec)
+      rmarkdown::render(tempReport, output_file = file, params = params)
+    }
+  )
+  
+  
+  #### YPR Functions
+  
+  yprExec <- reactiveValues()
+  
+  output$yprTitle <- renderText({
+    text <- "<span><h3><b>Yield-per-recruit (YPR)</b></h3></span>"
+    text
+  })
+  
+  observeEvent(input$go_YPR, {
+    infile <- input$fileYpr
+    
+    if (is.null(infile)) {
+      showModal(modalDialog(
+        title = "Error",
+        "No input file selected",
+        easyClose = TRUE,
+        footer = NULL
+      ))
+      return(NULL)
+    }
+    js$removeBox("box_ypr_results")
+    inputCsvFile <- infile$datapath
+    dat <- read.csv(inputCsvFile)
+    
+    res <- ypr_shinyApp(age=dat$age,wgt=dat$ssbwgt,partial=dat$partial,M=input$YPR_M,plus=input$YPR_Plus,oldest=input$YPR_oldest,maxF=input$YPR_maxF,incrF=input$YPR_incrF, graph = FALSE)
+    if ('error' %in% names(res)) {
+      showModal(modalDialog(
+        title = "Error",
+        res$error,
+        easyClose = TRUE,
+        footer = NULL
+      ))
+    } else {
+      yprExec$results <- res
+      js$showBox("box_ypr_results")
+    }
+    
+  })
+  
+  output$yprOutPlot <- renderPlot({
+    if ('results' %in% names(yprExec)) {
+      YPR <- yprExec$results$F_vs_YPR
+      plot(YPR[,2]~YPR[,1],ylab="Yield-Per-Recruit",xlab="Fishing Mortality",type="l")
+      abline(h = yprExec$results$Reference_Points[2,2], v = yprExec$results$Reference_Points[2,1], col = "black", lty = 2)
+      abline(h = yprExec$results$Reference_Points[1,2], v = yprExec$results$Reference_Points[1,1], col = "red", lty = 2)
+      legend(1.7, 0.09, legend=c("F-0.1", "F-Max"),col=c("red", "blue"), lty=2:2, cex=0.8)
+    }
+  })
+  
+  output$yprOutTable <- renderTable({
+    if ('results' %in% names(yprExec)) {
+      yprExec$results$Reference_Points
+    }
+  })
+  
+  output$yprDifference <- renderText({
+    if ('results' %in% names(yprExec)) {
+      differenceinYPR = round(yprExec$results$Reference_Points[2,2] - yprExec$results$Reference_Points[1,2], 6)
+      text <- paste0("<b>Difference in YPR: </b>",differenceinYPR)
+      text
+    }
+  })
+  
+  output$downloadYprReport <- renderUI({
+    if ("results" %in% names(yprExec)) {
+      colnames(yprExec$results$Reference_Points) <- c("F", "Yield_Per_Recruit")
+      downloadButton('createYprReport', 'Download Report')
+    }
+  })
+  output$createYprReport <- downloadHandler(
+    filename = paste("Ypr_report_",format(Sys.time(), "%Y%m%d%H%M%s"),".pdf",sep=""),
+    content = function(file) {
+      tempReport <- file.path(tempdir(), "ypr.Rmd")
+      file.copy("assets/fishmethods/ypr.Rmd", tempReport, overwrite = TRUE)
+      params <- list(yprExec = yprExec)
+      rmarkdown::render(tempReport, output_file = file, params = params)
+    }
+  )
+  
+  output$fishMethodsIntroOut <- renderText({
+    text <- "<h3><b>FishMethods</b></h3>"
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<b>Fishmethods: </b>Fishery science methods and models from published literature and contributions from colleagues.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<br/>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<h4>Methods used</h4>")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<b>SBPR</b> Spawning stock biomass-per-recruit(SBPR) analysis is conducted following Gabriel et al. (1989). Reference points of F and SBPR for a percentage of maximum spawning potential are calculated.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<b>YPR</b> Yield-per-recruit (YPR) analysis is conducted following the modified Thompson-Bell algorithm. Reference points Fmax and F0.1 are calculated.")
+    text <- paste0(text, "</p>")
+    
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<b>SBPR Options:</b>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li><b>Input file: </b> Input data file</li>")
+    text <- paste0(text, "<li><b>M: </b> Single natural mortality (M) rate if M is assumed constant over all ages</li>")
+    text <- paste0(text, "<li><b>pF: </b> Proportion of fishing mortality that occurs before spawning</li>")
+    text <- paste0(text, "<li><b>pM: </b> Proportion of natural mortality that occurs before spawning</li>")
+    text <- paste0(text, "<li><b>MSP: </b> Percentage of maximum spawning potential (percent MSP reference point) for which F and SBPR should be calculated</li>")
+    text <- paste0(text, "<li><b>maxF: </b> Maximum value of F range over which SBPR will be calculated</li>")
+    text <- paste0(text, "<li><b>incrF: </b> F increment for SBPR calculation</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "</p>")
+    
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<b>YPR Options:</b>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li><b>Input file: </b> Input data file</li>")
+    text <- paste0(text, "<li><b>M: </b> Single natural mortality (M) rate if M is assumed constant over all ages</li>")
+    text <- paste0(text, "<li><b>maxF: </b> Maximum value of F range over which YPR will be calculated. YPR is calculated for F = 0 to maxF</li>")
+    text <- paste0(text, "<li><b>plus: </b> logical value indicating whether the last age is a plus-group</li>")
+    text <- paste0(text, "<li><b>oldest: </b> if plus is checked, a numeric value indicating the oldest age in the plus group</li>")
+    text <- paste0(text, "<li><b>incrF: </b> F increment for YPR calculation</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "</p>")
+    
+    text
+  })
+  
+  output$fishMethodsSampleDataset <- renderText({
+    link <- "<a href='https://goo.gl/24FuzG' target='_blank'>Click Here</a>"
+    text <- paste0("<p><h4>", link,"&nbsp; to download a sample dataset that can be used with <b>FishMethods</b>", "</h4></p>")
+    text
+  })
+  
 }
 
 # Run the application 

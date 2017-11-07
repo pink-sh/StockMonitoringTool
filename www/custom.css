@@ -32,6 +32,18 @@ footer{
   background-color: #222D32;
 }
 
+#go_sbpr {
+  color: #ECF0F5;
+  margin-left: 20px;
+  background-color: #222D32;
+}
+
+#go_YPR {
+  color: #ECF0F5;
+  margin-left: 20px;
+  background-color: #222D32;
+}
+
 #renderCmsyManagementChart {width:100%; height: 600px !important;}
 #renderCmsyAnalysisChart {width:100%; height: 600px !important;}
 
