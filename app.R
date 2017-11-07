@@ -66,7 +66,7 @@ ui <- tagList(dashboardPage(
       menuItem("Home", tabName="homeTab"),
       menuItem("CMSY",
                menuSubItem("Introduction", tabName = "CmsyIntro"),
-               menuSubItem("CMSY MSE", tabName = "cmsyMethod"),
+               menuSubItem("CMSY (MSE)", tabName = "cmsyMethod"),
                menuSubItem("CMSY Sample Dataset", tabName = "CmsySampleDataset")
       ),
       menuItem("Elefan by TropFishR",
@@ -1455,14 +1455,14 @@ server <- function(input, output, session) {
     if ('results' %in% names(sbprExec)) {
       plot(sbprExec$results$F_vs_SPR[,3]~sbprExec$results$F_vs_SPR[,1],ylab="% Max SPR",xlab="Fishing Mortality",type="l")
       abline(h=input$SBPR_MSP, v = sbprExec$results$Reference_Point[1,1], col = "red", lty = 2)
-      leg <- paste0("F ", input$SBPR_MSP, "% MSP")
+      leg <- paste0(input$SBPR_MSP, "% MSP")
       legend(1.5, 85, legend=c(leg),col=c("red"), lty=2, cex=0.8)
     }
   })
   
   output$sbprMSPTableTitle <- renderText({
     if ('results' %in% names(sbprExec)) {
-      title <- paste0("&nbsp;&nbsp;&nbsp;&nbsp;<b>F ", input$SBPR_MSP, "% MSP</b>")
+      title <- paste0("&nbsp;&nbsp;&nbsp;&nbsp;<b>F", input$SBPR_MSP, "% MSP</b>")
       title
     }
   })
@@ -1471,7 +1471,8 @@ server <- function(input, output, session) {
       df <- as.data.frame(sbprExec$results$Reference_Point)
       df
     }
-  })
+  }, 
+  include.rownames=FALSE)
   
   output$downloadSbprReport <- renderUI({
     if ("results" %in% names(sbprExec)) {
@@ -1536,7 +1537,7 @@ server <- function(input, output, session) {
       plot(YPR[,2]~YPR[,1],ylab="Yield-Per-Recruit",xlab="Fishing Mortality",type="l")
       abline(h = yprExec$results$Reference_Points[2,2], v = yprExec$results$Reference_Points[2,1], col = "black", lty = 2)
       abline(h = yprExec$results$Reference_Points[1,2], v = yprExec$results$Reference_Points[1,1], col = "red", lty = 2)
-      legend(1.7, 0.09, legend=c("F-0.1", "F-Max"),col=c("red", "blue"), lty=2:2, cex=0.8)
+      legend(1.7, 0.09, legend=c("F-0.1", "F-Max"),col=c("red", "black"), lty=2:2, cex=0.8)
     }
   })
   
@@ -1544,7 +1545,8 @@ server <- function(input, output, session) {
     if ('results' %in% names(yprExec)) {
       yprExec$results$Reference_Points
     }
-  })
+  }, 
+  include.rownames=TRUE)
   
   output$yprDifference <- renderText({
     if ('results' %in% names(yprExec)) {

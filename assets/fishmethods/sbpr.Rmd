@@ -13,7 +13,7 @@ legend(1.4, 8, legend=c("SSB_per_recruit"),col=c("red"), lty=2, cex=0.8)
 ```{r echo=FALSE}
 plot(sbprExec$results$F_vs_SPR[,3]~sbprExec$results$F_vs_SPR[,1],ylab="% Max SPR",xlab="Fishing Mortality",type="l")
 abline(h=sbprExec$perc, v = sbprExec$results$Reference_Point[1,1], col = "red", lty = 2)
-leg <- paste0("F ", sbprExec$perc, "% MSP")
+leg <- paste0(sbprExec$perc, "% MSP")
 legend(1.5, 85, legend=c(leg),col=c("red"), lty=2, cex=0.8)
 ```
 \pagebreak
