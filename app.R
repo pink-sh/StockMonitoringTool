@@ -1446,14 +1446,14 @@ server <- function(input, output, session) {
   
   output$sbprOutPlot1 <- renderPlot({
     if ('results' %in% names(sbprExec)) {
-      plot(sbprExec$results$F_vs_SPR[,2]~sbprExec$results$F_vs_SPR[,1],ylab="SPR",xlab="F",type="l")
+      plot(sbprExec$results$F_vs_SPR[,2]~sbprExec$results$F_vs_SPR[,1],ylab="SPR",xlab="Fishing Mortality",type="l")
       abline(h=sbprExec$results$Reference_Point[1,2], col = "red", lty = 2)
       legend(1.4, 8, legend=c("SSB_per_recruit"),col=c("red"), lty=2, cex=0.8)
     }
   })
   output$sbprOutPlot2 <- renderPlot({
     if ('results' %in% names(sbprExec)) {
-      plot(sbprExec$results$F_vs_SPR[,3]~sbprExec$results$F_vs_SPR[,1],ylab="% Max SPR",xlab="F",type="l")
+      plot(sbprExec$results$F_vs_SPR[,3]~sbprExec$results$F_vs_SPR[,1],ylab="% Max SPR",xlab="Fishing Mortality",type="l")
       abline(h=input$SBPR_MSP, v = sbprExec$results$Reference_Point[1,1], col = "red", lty = 2)
       leg <- paste0("F ", input$SBPR_MSP, "% MSP")
       legend(1.5, 85, legend=c(leg),col=c("red"), lty=2, cex=0.8)
