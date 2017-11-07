@@ -66,7 +66,7 @@ ui <- tagList(dashboardPage(
       menuItem("Home", tabName="homeTab"),
       menuItem("CMSY",
                menuSubItem("Introduction", tabName = "CmsyIntro"),
-               menuSubItem("CMSY (MSE)", tabName = "cmsyMethod"),
+               menuSubItem("CMSY Vectorized", tabName = "cmsyMethod"),
                menuSubItem("CMSY Sample Dataset", tabName = "CmsySampleDataset")
       ),
       menuItem("Elefan by TropFishR",
@@ -1350,7 +1350,7 @@ server <- function(input, output, session) {
     
     text <- paste0(text, "<br/>")
     text <- paste0(text, "<p>")
-    text <- paste0(text, "<span><b>CMSY-MSE</b> is a new adaptation of CMSY designed to increase fitting speed to enable implementation in management strategy evaluation. This is achieved by adding adaptive parameter search bounds to restrict the inspected r-K space and automatically increase depletion priors if necessary.</span>")
+    text <- paste0(text, "<span><b>CMSY Vectorized</b> is a new adaptation of CMSY designed to increase fitting speed to enable implementation in management strategy evaluation. <br/>This is achieved by adding adaptive parameter search bounds to restrict the inspected r-K space and automatically increase depletion priors if necessary.</span>")
     text <- paste0(text, "</p>")
     
     
