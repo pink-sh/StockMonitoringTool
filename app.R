@@ -1265,7 +1265,7 @@ server <- function(input, output, session) {
     text <- paste0(text, "This is a development version")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<p>")
-    text <- paste0(text, "On the left hand side you can choose between <b>CMSY</b> and <b>ELEFAN</b> methods.")
+    text <- paste0(text, "On the left hand side you can choose between <b>CMSY</b>, <b>ELEFAN</b> and <b>YPR</b>/<b>SBPR</b> methods.")
     text <- paste0(text, "</p>")
     
     text <- paste0(text, "<p>")
@@ -1281,6 +1281,17 @@ server <- function(input, output, session) {
     text <- paste0(text, "<li><b>ELEFAN GA:</b>&nbsp;Electronic LEngth Frequency ANalysis with genetic algorithm used for estimating growth parameters.</li>")
     text <- paste0(text, "<li><b>ELEFAN SA:</b>&nbsp;Electronic LEngth Frequency ANalysis with simulated annealing for estimating growth parameters.</li>")
     text <- paste0(text, "<li><b>ELEFAN:</b>&nbsp;Electronic LEngth Frequency ANalysis for estimating growth parameter.</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "</p>")
+    
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<b>YPR</b> and <b>SBPR</b> are provided by the <a href='https://cran.r-project.org/web/packages/fishmethods/index.html' target='_blank'>fishmethods</a> R library")
+    text <- paste0(text, "</p>")
+    
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li><b>YPR:</b>&nbsp;Yield-per-recruit.</li>")
+    text <- paste0(text, "<li><b>SBPR:</b>&nbsp;Spawning stock biomass-per-recruit.</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "</p>")
     
