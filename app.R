@@ -48,6 +48,12 @@ $('.action-button').attr('disabled', true);
 shinyjs.enableAllButtons = function() {
 $('.action-button').attr('disabled', false);
 }
+shinyjs.showComputing = function() {
+$('.loadingCustom').css('visibility','visible');
+}
+shinyjs.hideComputing = function() {
+$('.loadingCustom').css('visibility','hidden');
+}
 "
 
 pdf(NULL)
@@ -85,6 +91,7 @@ ui <- tagList(dashboardPage(
     )
   ),
   dashboardBody(
+    tags$div(tags$span("Computing results"), tags$img(src = 'loading-circle.gif', height="20px"), class="loadingCustom"),
     useShinyjs(),
     extendShinyjs(text = jscode),
     tags$head(
@@ -92,7 +99,7 @@ ui <- tagList(dashboardPage(
     ),
     tags$head(tags$script(src="https://cdnjs.cloudflare.com/ajax/libs/eqcss/1.7.0/EQCSS.min.js")),
     tags$head(tags$script(type="text/eqcss", src="styles.eqcss")),
-    busyIndicator(wait = 7000),
+    #busyIndicator(wait = 7000),
     tabItems(
       tabItem("homeTab",
               htmlOutput("homeInfo")
@@ -193,6 +200,9 @@ ui <- tagList(dashboardPage(
                 hr(),
                 box( width= 100, id = "box_cmsy_results",
                      title = "Results of CMSY Method",
+                     tags$style(type="text/css",
+                                ".recalculating {opacity: 1.0;}"
+                     ),
                      fluidRow(
                        box(
                          uiOutput("downloadCmsyReportButton")
@@ -283,6 +293,9 @@ ui <- tagList(dashboardPage(
                 
                 box( width= 100, id = "box_elefan_ga_results",
                      title = "Results of Elefan GA Computation",
+                     tags$style(type="text/css",
+                                ".recalculating {opacity: 1.0;}"
+                     ),
                      fluidRow(
                        box(
                          uiOutput("downloadReport_ga")
@@ -384,6 +397,9 @@ ui <- tagList(dashboardPage(
                 
                 box( width= 100, id = "box_elefan_sa_results",
                      title = "Results of Elefan SA Computation",
+                     tags$style(type="text/css",
+                                ".recalculating {opacity: 1.0;}"
+                     ),
                      fluidRow(
                        box(
                          uiOutput("downloadReport_sa")
@@ -459,6 +475,9 @@ ui <- tagList(dashboardPage(
                 
                 box( width= 100,  id = "box_elefan_results",
                      title = "Results of Elefan SA Computation",
+                     tags$style(type="text/css",
+                                ".recalculating {opacity: 1.0;}"
+                     ),
                      fluidRow(
                        box(
                          uiOutput("downloadReport")
@@ -527,6 +546,9 @@ ui <- tagList(dashboardPage(
                 
                 box( width= 100,  id = "box_sbpr_results",
                      title = "Results of Fishmethods - SBPR Computation",
+                     tags$style(type="text/css",
+                                ".recalculating {opacity: 1.0;}"
+                     ),
                      fluidRow(
                        box(
                          uiOutput("downloadSbprReport")
@@ -581,6 +603,9 @@ ui <- tagList(dashboardPage(
                 
                 box( width= 100,  id = "box_ypr_results",
                      title = "Results of Fishmethods - YPR Computation",
+                     tags$style(type="text/css",
+                                ".recalculating {opacity: 1.0;}"
+                     ),
                      fluidRow(
                        box(
                          uiOutput("downloadYprReport")
@@ -749,7 +774,6 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$go_cmsy, {
-    
     query <- parseQueryString(session$clientData$url_search)
     
     if (is.null(query[['serviceToken']])) {
@@ -775,7 +799,7 @@ server <- function(input, output, session) {
       ))
       return(NULL)
     }
-    
+    js$showComputing()
     inputCsvFile <- infile1$datapath
     print(inputCsvFile)
     
@@ -785,6 +809,7 @@ server <- function(input, output, session) {
     js$disableAllButtons()
     ret <- runCmsy(input$region,input$subregion,input$stock,input$group,input$name,input$englishName,input$scientificName,input$source,input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,input$stb.low,input$stb.hi,input$int.yr,input$intb.low,input$intb.hi,input$endb.low,input$endb.hi,input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, inputCsvFile, templateFileDlmTools)
     js$enableAllButtons()
+    js$hideComputing()
     js$showBox("box_cmsy_results")
     for(i in 1:nrow(ret)) {
       row <- ret[i,]
@@ -834,6 +859,7 @@ server <- function(input, output, session) {
       ))
       return(NULL)
     }
+    js$showComputing()
     inputCsvFile <- infile$datapath
     js$removeBox("box_elefan_ga_results")
     js$disableAllButtons()
@@ -847,6 +873,8 @@ server <- function(input, output, session) {
                          up_par = list(Linf = input$ELEFAN_GA_upPar_Linf, K = input$ELEFAN_GA_upPar_K, t_anchor = input$ELEFAN_GA_upPar_t_anchor, C = input$ELEFAN_GA_upPar_C, ts = input$ELEFAN_GA_upPar_ts),
                          popSize = input$ELEFAN_GA_popSize, maxiter = input$ELEFAN_GA_maxiter, run = input$ELEFAN_GA_run, pmutation = input$ELEFAN_GA_pmutation, pcrossover = input$ELEFAN_GA_pcrossover,
                          elitism = input$ELEFAN_GA_elitism, MA = input$ELEFAN_GA_MA, addl.sqrt = input$ELEFAN_GA_addl.sqrt)
+    
+    js$hideComputing()
     js$enableAllButtons()
     if ('error' %in% names(res)) {
       showModal(modalDialog(
@@ -942,6 +970,7 @@ server <- function(input, output, session) {
       ))
       return(NULL)
     }
+    js$showComputing()
     inputCsvFile <- infile$datapath
     js$removeBox("box_elefan_ga_results")
     js$disableAllButtons()
@@ -959,6 +988,7 @@ server <- function(input, output, session) {
                          up_par = list(Linf = as.numeric(input$ELEFAN_SA_upPar_Linf), K = as.numeric(input$ELEFAN_SA_upPar_K), t_anchor = as.numeric(input$ELEFAN_SA_upPar_t_anchor), C = as.numeric(input$ELEFAN_SA_upPar_C), ts = as.numeric(input$ELEFAN_SA_upPar_ts)),
                          SA_time = input$ELEFAN_SA_SA_time, SA_temp = input$ELEFAN_SA_SA_temp, MA = input$ELEFAN_SA_MA, addl.sqrt = input$ELEFAN_SA_addl.sqrt,
                          agemax = input$ELEFAN_SA_agemax)
+    js$hideComputing()
     js$enableAllButtons()
     if ('error' %in% names(res)) {
       showModal(modalDialog(
@@ -1052,6 +1082,7 @@ server <- function(input, output, session) {
       ))
       return(NULL)
     }
+    js$showComputing()
     inputCsvFile <- infile$datapath
     js$removeBox("box_elefan_results")
     js$disableAllButtons()
@@ -1081,6 +1112,7 @@ server <- function(input, output, session) {
     res <- run_elefan(ds, binSize = 4, Linf_fix = input$ELEFAN_Linf_fix, Linf_range = elefan_linf_range, K_range = elefan_k_range,
                       C = input$ELEFAN_C, ts = input$ELEFAN_ts, MA = input$ELEFAN_MA, addl.sqrt = input$ELEFAN_addl.sqrt,
                       agemax = elefan_agemax, contour = input$ELEFAN_contour)
+    js$hideComputing()
     js$enableAllButtons()
     if ('error' %in% names(res)) {
       showModal(modalDialog(
@@ -1442,11 +1474,13 @@ server <- function(input, output, session) {
       ))
       return(NULL)
     }
+    js$showComputing()
     js$removeBox("box_sbpr_results")
     inputCsvFile <- infile$datapath
     dat <- read.csv(inputCsvFile)
 
     res <- sbpr_shinyApp(age=dat$age,ssbwgt=dat$ssbwgt,partial=dat$partial,pmat=dat$pmat,M=input$SBPR_M,pF=input$SBPR_pF, pM=input$SBPR_pM,MSP=input$SBPR_MSP,plus=FALSE,maxF=input$SBPR_maxF,incrF=input$SBPR_incrF, graph=FALSE)
+    js$hideComputing()
     if ('error' %in% names(res)) {
       showModal(modalDialog(
         title = "Error",
@@ -1528,11 +1562,13 @@ server <- function(input, output, session) {
       ))
       return(NULL)
     }
+    js$showComputing()
     js$removeBox("box_ypr_results")
     inputCsvFile <- infile$datapath
     dat <- read.csv(inputCsvFile)
     
     res <- ypr_shinyApp(age=dat$age,wgt=dat$ssbwgt,partial=dat$partial,M=input$YPR_M,plus=input$YPR_Plus,oldest=input$YPR_oldest,maxF=input$YPR_maxF,incrF=input$YPR_incrF, graph = FALSE)
+    js$hideComputing()
     if ('error' %in% names(res)) {
       showModal(modalDialog(
         title = "Error",
