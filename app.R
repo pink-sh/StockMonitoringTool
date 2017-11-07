@@ -1353,6 +1353,11 @@ server <- function(input, output, session) {
     text <- paste0(text, "<span><b>CMSY Vectorized</b> is a new adaptation of CMSY designed to increase fitting speed to enable implementation in management strategy evaluation. <br/>This is achieved by adding adaptive parameter search bounds to restrict the inspected r-K space and automatically increase depletion priors if necessary.</span>")
     text <- paste0(text, "</p>")
     
+    text <- paste0(text, "<br/>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<span>You can download the <b>CMSY Vectorized</b> source code for <b>R</b> by clicking <a href='https://goo.gl/fjfsCL' target='_blank'>here</a></span>")
+    text <- paste0(text, "</p>")
+    
     
     text
   })
