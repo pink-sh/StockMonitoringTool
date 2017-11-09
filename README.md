@@ -35,3 +35,14 @@ The following libraries can be installed from CRAN
 ```
 install.packages(c('shiny', 'rmarkdown', 'shinythemes', 'shinydashboard', 'TropFishR', 'RCurl', 'V8', 'fishmethods'), repos='https://cloud.r-project.org/')
 ```
+
+### Docker
+A Dockerfile is provided and can be used to build up containers with the application.
+
+To build and run the application issue the following commands
+```
+sudo docker build -t stock_monitoring_tools <Path of the Dockerfile>
+sudo docker run -p 3839:3838 stock_monitoring_tools
+```
+
+And then point your browser to http://localhost:3839
