@@ -147,10 +147,12 @@ ui <- tagList(dashboardPage(
                     class = "collapsed-box",
                     collapsed = T,
                     box(
-                      textInput("group", "Group", "Plankton feeders"),
-                      textInput("name", "Name", "Sand smelt in Adriatic Sea"),
-                      textInput("englishName", "English Name", "Big scale sand smelt"),
-                      textInput("scientificName", "Scientific Name", "Atherina boyeri"),
+                      #textInput("group", "Group", "Plankton feeders"),
+                      #textInput("name", "Name", "Sand smelt in Adriatic Sea"),
+                      #textInput("englishName", "English Name", "Big scale sand smelt"),
+                      #textInput("scientificName", "Scientific Name", "Atherina boyeri"),
+                      numericInput("minOfYear", "Min Year of the catch series", 1970, min = 1900, max = 2020, step=1),
+                      numericInput("maxOfYear", "Max Year of the catch series", 2014, min = 1900, max = 2020, step=1),
                       textInput("flim", "Fishing mortality biological limit", "NA"),
                       textInput("fpa", "Fishing mortality precautionary value", "NA"),
                       textInput("blim", "Biomass biological limit", "NA"),
@@ -167,14 +169,11 @@ ui <- tagList(dashboardPage(
                       textInput("intb.low", "intb.low lowest possible relative biomass at the intermediate year of the catch time series (automatically calculated if not set)", "NA"),
                       textInput("intb.hi", "intb.hi highest possible relative biomass at the intermediate year of the catch time series (automatically calculated if not set)", "NA"),
                       
-                      numericInput("endb.low", "endb.low lowest possible relative biomass at the end of the catch time series", 0.01, min = 0, max = 10, step=0.01),
-                      numericInput("endb.hi", "endb.hi highest possible relative biomass at the end of the catch time series", 0.4, min = 0, max = 10, step=0.1)
+                      numericInput("endb.low", "endb.low lowest possible relative biomass at the end of the catch time series", 0.01, min = 0, max = 10, step=0.01)
                     ),
                     box(
-                      textInput("region", "Region", "Mediterranean"),
-                      textInput("subregion", "SubRegion", "Adriatic sea"),
-                      numericInput("minOfYear", "Min Year of the catch series", 1970, min = 1900, max = 2020, step=1),
-                      numericInput("maxOfYear", "Max Year of the catch series", 2014, min = 1900, max = 2020, step=1),
+                      #textInput("region", "Region", "Mediterranean"),
+                      #textInput("subregion", "SubRegion", "Adriatic sea"),
                       numericInput("startYear", "Start Year to process the catch series from", 1970, min = 1900, max = 2020, step=1),
                       numericInput("endYear", "End Year to process the catch series up to", 2014, min = 1900, max = 2020, step=1),
                       textInput("source", "Source", "-"),
@@ -192,7 +191,8 @@ ui <- tagList(dashboardPage(
                       
                       textInput("comments", "Comments on data and computation", "landings"),
                       
-                      checkboxInput("force.cmsy", "Check this if CMSY results are to be preferred over the Bayesian State Model results when biomass or CPUE is available", FALSE)
+                      checkboxInput("force.cmsy", "Check this if CMSY results are to be preferred over the Bayesian State Model results when biomass or CPUE is available", FALSE),
+                      numericInput("endb.hi", "endb.hi highest possible relative biomass at the end of the catch time series", 0.4, min = 0, max = 10, step=0.1)
                     )
                 ),
                 actionButton("go_cmsy", "Run CMSY Method"),
@@ -646,6 +646,39 @@ server <- function(input, output, session) {
     selectInput("stock", "Select a stock", sort(unique(a$Stock)))
   })
   
+  observeEvent(input$stock, {
+    inFile1 <- input$file1
+    
+    if (is.null(inFile1)) {
+      return(NULL)
+    }
+    a <- read.csv(inFile1$datapath)
+    
+    maxYear <- 0
+    minYear <- 0
+    i<-0
+    for (line in rownames(a)) {
+      if (a[line, "Stock"] == input$stock) {
+        if (i == 0) {
+          maxYear <- a[line, "yr"]
+          minYear <- a[line, "yr"]
+        } else {
+          if (maxYear < a[line, "yr"]) {
+            maxYear <- a[line, "yr"]
+          }
+          if (minYear > a[line, "yr"]) {
+            minYear <- a[line, "yr"]
+          }
+        }
+        i <- i + 1
+      }
+    }
+    updateTextInput(session, "minOfYear", value=as.integer(minYear))
+    updateTextInput(session, "maxOfYear", value=as.integer(maxYear))
+    updateTextInput(session, "startYear", value=as.integer(minYear))
+    updateTextInput(session, "endYear", value=as.integer(maxYear)-1)
+  })
+  
   
   output$cmsyMethodTitle <- renderText({
     text <- "<span><h3><b>CMSY (Catch Maximum, Sustainable Yield) Method</b></h3></span>"
@@ -805,9 +838,33 @@ server <- function(input, output, session) {
     
     templateFileDlmTools <- paste0(getwd(), "/assets/cmsy/cmsyFastTemplate.xml")
     
+    a <- read.csv(inputCsvFile)
+    
+    group_ = ""
+    name_ = ""
+    en_name_ = ""
+    scientific_name_ = ""
+    sub_region_ = ""
+    region_ = ""
+    for (line in rownames(a)) {
+      if (a[line, "Stock"] == input$stock) {
+        name_ = a[line, "name"]
+        group_ = a[line, "group"]
+        en_name_ = a[line, "english_name"]
+        scientific_name_ = a[line, "scientific_name"]
+        region_ = a[line, "region"]
+        sub_region_ = a[line, "subregion"]
+        break
+      }
+    }
+    
+    print (paste0("Region: ", region_))
+    
     cmsy$fast <- list()
     js$disableAllButtons()
-    ret <- runCmsy(input$region,input$subregion,input$stock,input$group,input$name,input$englishName,input$scientificName,input$source,input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,input$stb.low,input$stb.hi,input$int.yr,input$intb.low,input$intb.hi,input$endb.low,input$endb.hi,input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, inputCsvFile, templateFileDlmTools)
+    #ret <- runCmsy(input$region,input$subregion,input$stock,input$group,input$name,input$englishName,input$scientificName,input$source,input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,input$stb.low,input$stb.hi,input$int.yr,input$intb.low,input$intb.hi,input$endb.low,input$endb.hi,input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, inputCsvFile, templateFileDlmTools)
+    ret <- runCmsy(region_,toString(sub_region_),input$stock,toString(group_),toString(name_),toString(en_name_),toString(scientific_name_),input$source,input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,input$stb.low,input$stb.hi,input$int.yr,input$intb.low,input$intb.hi,input$endb.low,input$endb.hi,input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, inputCsvFile, templateFileDlmTools)
+    #ret <- runCmsy(region,sub_region,input$stock,group,name,en_name,scientific_name,input$source,input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,input$stb.low,input$stb.hi,input$int.yr,input$intb.low,input$intb.hi,input$endb.low,input$endb.hi,input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, inputCsvFile, templateFileDlmTools)
     js$enableAllButtons()
     js$hideComputing()
     js$showBox("box_cmsy_results")
@@ -1331,7 +1388,7 @@ server <- function(input, output, session) {
   })
   
   output$cmsySampleDataset <- renderText({
-    link <- "<a href='https://goo.gl/YgAfGu' target='_blank'>Click Here</a>"
+    link <- "<a href='https://goo.gl/GPrVRD' target='_blank'>Click Here</a>"
     text <- paste0("<p><h4>", link,"&nbsp; to download a sample dataset that can be used with <b>CMSY</b> methods", "</h4></p>")
     text
   })
@@ -1456,7 +1513,7 @@ server <- function(input, output, session) {
   #### SBPR Functions
   
   sbprExec <- reactiveValues()
-
+  
   output$sbprTitle <- renderText({
     text <- "<span><h3><b>Spawning stock biomass-per-recruit (SBPR)</b></h3></span>"
     text
@@ -1478,7 +1535,7 @@ server <- function(input, output, session) {
     js$removeBox("box_sbpr_results")
     inputCsvFile <- infile$datapath
     dat <- read.csv(inputCsvFile)
-
+    
     res <- sbpr_shinyApp(age=dat$age,ssbwgt=dat$ssbwgt,partial=dat$partial,pmat=dat$pmat,M=input$SBPR_M,pF=input$SBPR_pF, pM=input$SBPR_pM,MSP=input$SBPR_MSP,plus=FALSE,maxF=input$SBPR_maxF,incrF=input$SBPR_incrF, graph=FALSE)
     js$hideComputing()
     if ('error' %in% names(res)) {

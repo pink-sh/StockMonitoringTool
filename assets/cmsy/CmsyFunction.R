@@ -48,6 +48,11 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   require("XML")
   
   data<-read.csv(inputCsvFile, header =T, sep=",")
+  
+  keeps <- c("Stock",	"yr",	"ct",	"bt")
+  #data <- data[ , !(names(data) %in% drops)]
+  data <- data[keeps]
+  
   dimnames(data)[2][[1]]<-gsub("[[:punct:]]", "_", dimnames(data)[2][[1]])
   dimnames(data)[2][[1]]<-tolower(gsub(" ", "_", dimnames(data)[2][[1]]))
   dffile<-paste("/tmp/cmsy_data_",Sys.time(),".csv",sep="")
@@ -113,7 +118,7 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
     filexml<-gsub("#FORCE.CMSY#", "false", filexml)
   }
   filexml<-gsub("#COMMENT#", comments, filexml)
-
+  
   #WRITE THE MODIFIED XML TEMPLATE DOCUMENT LOCALLY#
   filehandle <- file(sentfile,"w+")
   write(filexml, file = sentfile,append = FALSE, sep = "")
@@ -122,13 +127,13 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   
   #SEND THE REQUEST#  
   out <- tryCatch({
-      POST(url = wps_uri, config=c(authenticate(username, token, type = "basic")),body = upload_file(sentfile, type="text/xml"),encode = c("multipart"), handle = NULL, timeout(10))
-    }, error = function(err) {
-      return (NULL)    
-    }
+    POST(url = wps_uri, config=c(authenticate(username, token, type = "basic")),body = upload_file(sentfile, type="text/xml"),encode = c("multipart"), handle = NULL, timeout(10))
+  }, error = function(err) {
+    return (NULL)    
+  }
   )
   print (out)
-
+  
   #CHECK IF THE PROCESS HAS ALREADY FINISHED#
   stop_condition_success<-grepl("Process successful",as.character(out))
   stop_condition_fail<-grepl("Exception",as.character(out))
