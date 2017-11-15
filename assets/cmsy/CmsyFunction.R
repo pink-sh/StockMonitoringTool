@@ -47,6 +47,14 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   library("tcltk")
   require("XML")
   
+  if (is.null(region)) { region = "" }
+  if (is.null(subregion)) { subregion = "" }
+  if (is.null(group)) { group = "" }
+  if (is.null(name)) { name = "" }
+  if (is.null(englishName)) { englishName = "" }
+  if (is.null(scientificName)) { scientificName = "" }
+  
+  
   data<-read.csv(inputCsvFile, header =T, sep=",")
   
   keeps <- c("Stock",	"yr",	"ct",	"bt")
