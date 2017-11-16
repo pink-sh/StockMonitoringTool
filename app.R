@@ -809,17 +809,18 @@ server <- function(input, output, session) {
   observeEvent(input$go_cmsy, {
     query <- parseQueryString(session$clientData$url_search)
     
-    if (is.null(query[['serviceToken']])) {
-      showModal(modalDialog(
-        title = "Error",
-        "serviceToken parameter is missing",
-        easyClose = TRUE,
-        footer = NULL
-      ))
-      return(NULL)
-    }
+    #if (is.null(query[['serviceToken']])) {
+    #  showModal(modalDialog(
+    #    title = "Error",
+    #    "serviceToken parameter is missing",
+    #    easyClose = TRUE,
+    #    footer = NULL
+    #  ))
+    #  return(NULL)
+    #}
     
-    vreToken <- query[['serviceToken']]
+    #vreToken <- query[['serviceToken']]
+    vreToken <- "05f2375d-ffa5-4e67-9832-02c052c6e777-843339462"
     
     infile1 <- input$file1
     
