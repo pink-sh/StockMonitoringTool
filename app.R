@@ -162,8 +162,8 @@ ui <- tagList(dashboardPage(
                       textInput("r.low", "r.low lowest resilience (automatically calculated if not set)", "NA"),
                       textInput("r.hi", "r.hi highest resilience (automatically calculated if not set)", "NA"),
                       
-                      numericInput("stb.low", "stb.low lowest possible relative biomass at the beginning of the catch time series", 0.2, min = 0, max = 10, step=0.1),
-                      numericInput("stb.hi", "stb.hi highest possible relative biomass at the beginning of the catch time series", 0.6, min = 0, max = 10, step=0.1),
+                      numericInput("stb.low", "stb.low lowest possible relative biomass at the beginning of the catch time series", 0, min = 0, max = 10, step=0.1),
+                      numericInput("stb.hi", "stb.hi highest possible relative biomass at the beginning of the catch time series", 0, min = 0, max = 10, step=0.1),
                       
                       textInput("int.yr", "int.yr intermediate year (automatically calculated if not set)", "NA"),
                       textInput("intb.low", "intb.low lowest possible relative biomass at the intermediate year of the catch time series (automatically calculated if not set)", "NA"),
@@ -677,6 +677,14 @@ server <- function(input, output, session) {
     updateTextInput(session, "maxOfYear", value=as.integer(maxYear))
     updateTextInput(session, "startYear", value=as.integer(minYear))
     updateTextInput(session, "endYear", value=as.integer(maxYear)-1)
+    
+    if (minYear < 1960) {
+      updateTextInput(session, "stb.low", value=0.5)
+      updateTextInput(session, "stb.hi", value=0.9)
+    } else {
+      updateTextInput(session, "stb.low", value=0.2)
+      updateTextInput(session, "stb.hi", value=0.6)
+    }
   })
   
   
