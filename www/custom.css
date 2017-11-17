@@ -62,7 +62,7 @@ footer{
   font-weight: bold;
   position: fixed;
   left: 0;
-  top: 15px;
+  top: 5px;
   right: 0;
   bottom: 0px;
   margin: auto;
@@ -85,4 +85,8 @@ footer{
 }
 .loadingCustom span{
   margin-right: 10px;
+}
+
+.pheader_elefan {
+  font-weight: bold;
 }

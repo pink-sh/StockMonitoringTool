@@ -321,7 +321,11 @@ ui <- tagList(dashboardPage(
                          htmlOutput("titlePlot4_elefan_ga"),
                          plotOutput("plot_ga_4"),
                          htmlOutput("rnMax_ga"),
-                         htmlOutput("par_ga")
+                         htmlOutput("par_ga"),
+                         htmlOutput("title_tbl1_ga"),
+                         tableOutput("tbl1_ga"),
+                         htmlOutput("title_tbl2_ga"),
+                         tableOutput("tbl2_ga")
                        )
                      )
                 )
@@ -425,7 +429,11 @@ ui <- tagList(dashboardPage(
                          htmlOutput("titlePlot4_elefan_sa"),
                          plotOutput("plot_sa_4"),
                          htmlOutput("rnMax_sa"),
-                         htmlOutput("par_sa")
+                         htmlOutput("par_sa"),
+                         htmlOutput("title_tbl1_sa"),
+                         tableOutput("tbl1_sa"),
+                         htmlOutput("title_tbl2_sa"),
+                         tableOutput("tbl2_sa")
                        )
                      )
                 )
@@ -503,7 +511,11 @@ ui <- tagList(dashboardPage(
                          htmlOutput("titlePlot4_elefan"),
                          plotOutput("plot_4"),
                          htmlOutput("rnMax"),
-                         htmlOutput("par")
+                         htmlOutput("par"),
+                         htmlOutput("title_tbl1_e"),
+                         tableOutput("tbl1_e"),
+                         htmlOutput("title_tbl2_e"),
+                         tableOutput("tbl2_e")
                        )
                      )
                 )
@@ -955,6 +967,20 @@ server <- function(input, output, session) {
     }
   })
   
+  output$tbl1_ga <- renderTable({
+    if ('results' %in% names(elefan_ga)) {
+      elefan_ga$results$plot3$df_Es
+    }
+  }, 
+  include.rownames=TRUE)
+  
+  output$tbl2_ga <- renderTable({
+    if ('results' %in% names(elefan_ga)) {
+      elefan_ga$results$plot3$currents
+    }
+  }, 
+  include.rownames=TRUE)
+  
   output$plot_ga_1 <- renderPlot({
     if ('results' %in% names(elefan_ga)) {
       plot(elefan_ga$results$plot1, Fname = "catch", date.axis = "modern")
@@ -1068,6 +1094,21 @@ server <- function(input, output, session) {
       elefan_sa$results <- res
     }
   })
+  
+  
+  output$tbl1_sa <- renderTable({
+    if ('results' %in% names(elefan_sa)) {
+      elefan_sa$results$plot3$df_Es
+    }
+  }, 
+  include.rownames=TRUE)
+  
+  output$tbl2_sa <- renderTable({
+    if ('results' %in% names(elefan_sa)) {
+      elefan_sa$results$plot3$currents
+    }
+  }, 
+  include.rownames=TRUE)
   
   output$plot_sa_1 <- renderPlot({
     if ('results' %in% names(elefan_sa)) {
@@ -1193,6 +1234,20 @@ server <- function(input, output, session) {
     }
   })
   
+  output$tbl1_e <- renderTable({
+    if ('results' %in% names(elefan)) {
+      elefan$results$plot3$df_Es
+    }
+  }, 
+  include.rownames=TRUE)
+  
+  output$tbl2_e <- renderTable({
+    if ('results' %in% names(elefan)) {
+      elefan$results$plot3$currents
+    }
+  }, 
+  include.rownames=TRUE)
+  
   output$plot_1 <- renderPlot({
     if ('results' %in% names(elefan)) {
       plot(elefan$results$plot1, Fname = "catch", date.axis = "modern")
@@ -1282,6 +1337,48 @@ server <- function(input, output, session) {
   output$titlePlot4_elefan <- renderText({
     if ('results' %in% names(elefan)) {
       txt <- "<p class=\"pheader_elefan\">Thompson and Bell model with changes in F and Lc</p>"
+      txt
+    }
+  })
+  
+  output$title_tbl1_ga <- renderText({
+    if ('results' %in% names(elefan_ga)) {
+      txt <- "<p class=\"pheader_elefan\">Biological reference levels</p>"
+      txt
+    }
+  })
+  
+  output$title_tbl2_ga <- renderText({
+    if ('results' %in% names(elefan_ga)) {
+      txt <- "<p class=\"pheader_elefan\">Current yield and biomass levels</p>"
+      txt
+    }
+  })
+  
+  output$title_tbl1_sa <- renderText({
+    if ('results' %in% names(elefan_sa)) {
+      txt <- "<p class=\"pheader_elefan\">Biological reference levels</p>"
+      txt
+    }
+  })
+  
+  output$title_tbl2_sa <- renderText({
+    if ('results' %in% names(elefan_sa)) {
+      txt <- "<p class=\"pheader_elefan\">Current yield and biomass levels</p>"
+      txt
+    }
+  })
+  
+  output$title_tbl1_e <- renderText({
+    if ('results' %in% names(elefan)) {
+      txt <- "<p class=\"pheader_elefan\">Biological reference levels</p>"
+      txt
+    }
+  })
+  
+  output$title_tbl2_e <- renderText({
+    if ('results' %in% names(elefan)) {
+      txt <- "<p class=\"pheader_elefan\">Current yield and biomass levels</p>"
       txt
     }
   })
