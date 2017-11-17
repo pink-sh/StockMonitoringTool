@@ -820,7 +820,7 @@ server <- function(input, output, session) {
     #}
     
     #vreToken <- query[['serviceToken']]
-    vreToken <- "05f2375d-ffa5-4e67-9832-02c052c6e777-843339462"
+    vreToken <- "96d4f92a-ef32-42ab-a47a-425ee5618644-843339462"
     
     infile1 <- input$file1
     
