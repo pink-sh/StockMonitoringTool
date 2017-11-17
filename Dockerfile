@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN apt-get update && apt-get upgrade -y
 
- # install dependencies of the LBI app
+ # install dependencies of the Stock monitoring tool app
 RUN R -e "install.packages(c('shiny', 'rmarkdown', 'shinythemes', 'shinydashboard', 'TropFishR', 'RCurl', 'devtools'), repos='https://cloud.r-project.org/')"
 RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
 RUN R -e "devtools::install_github('daattali/shinyjs')"
@@ -41,6 +41,7 @@ RUN git -C /root/ clone https://github.com/pink-sh/StockMonitoringTool.git
 RUN mkdir -p /srv/shiny/
 RUN ln -s /root/StockMonitoringTool /srv/shiny/stockMonitoringTools
  
-EXPOSE 3838
+### EXPOSE 3838
 
-CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools',port=3838,host='0.0.0.0')"]
+### CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools',port=3838,host='0.0.0.0')"]
+CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools')"]
