@@ -48,14 +48,16 @@ run_elefan_ga <- function(
   
   
   # run ELEFAN with genetic algorithm
+    
+  res_GA <- ELEFAN_GA(synLFQ7a, MA = MA, seasonalised = seasonalised, maxiter = maxiter, addl.sqrt = addl.sqrt,low_par=low_par,up_par=up_par,monitor=FALSE)
   
-  res_GA <- ELEFAN_GA(synLFQ7a, MA = 5, seasonalised = TRUE, maxiter = 10, addl.sqrt = TRUE,
-                      
-                      low_par = list(Linf = 119, K = 0.01, t_anchor = 0, C = 0, ts = 0),
-                      
-                      up_par = list(Linf = 129, K = 1, t_anchor = 1, C = 1, ts = 1),
-                      
-                      monitor = FALSE)
+#  res_GA <- ELEFAN_GA(synLFQ7a, MA = 5, seasonalised = TRUE, maxiter = 10, addl.sqrt = TRUE,
+#                      
+#                      low_par = list(Linf = 119, K = 0.01, t_anchor = 0, C = 0, ts = 0),
+#                      
+#                      up_par = list(Linf = 129, K = 1, t_anchor = 1, C = 1, ts = 1),
+#                      
+#                      monitor = FALSE)
   returnResults[['data']] <- res_GA
   
   # show results
