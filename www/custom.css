@@ -49,6 +49,7 @@ footer{
 
 #box_cmsy_results_charts { height: 1400px;}
 
+.italicText {font-style: italic;}
 
 .box-header { height: 46px;}
 
@@ -90,3 +91,11 @@ footer{
 .pheader_elefan {
   font-weight: bold;
 }
+
+#box_shaefer > .row > .col-sm-6:nth-child(1) { width: 38% !important; }
+#box_shaefer > .row > .col-sm-6:nth-child(2) { width: 61% !important; }
+#box_vonbertalannfy > .row > .col-sm-6:nth-child(1) { width: 38% !important; }
+#box_vonbertalannfy > .row > .col-sm-6:nth-child(2) { width: 61% !important; }
+#box_naturalMortality > .row > .col-sm-6:nth-child(1) { width: 38% !important; }
+#box_naturalMortality > .row > .col-sm-6:nth-child(2) { width: 61% !important; }
+

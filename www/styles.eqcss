@@ -32,8 +32,6 @@
   }
 }
 
-
-
 @element '#box_cmsy_results' {
   $parent > .box-header {
     color: #357ca5;

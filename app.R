@@ -15,6 +15,8 @@ library(shinydashboard)
 library(RCurl)
 library(fishmethods)
 library(TropFishR)
+library(ggplot2)
+
 
 buildUrl <- function(session, path) {
   port <- session$clientData$url_port
@@ -34,6 +36,10 @@ source("assets/tropFishR/run_elefan.R")
 source("assets/cmsy/CmsyFunction.R")
 
 source("assets/fishmethods/methods.R")
+
+source("assets/support/shaefer.R")
+source("assets/support/vonBertalannfly.R")
+source("assets/support/naturalMortality.R")
 
 jscode <- "
 shinyjs.showBox = function(boxid) {
@@ -87,6 +93,11 @@ ui <- tagList(dashboardPage(
                menuSubItem("SBPR", tabName = "SBPRWidget"),
                menuSubItem("YPR", tabName = "YPRWidget"),
                menuSubItem("Fishmethods Sample Dataset", tabName = "FishMethodsSampleDataset")
+      ),
+      menuItem("Supporting Tools",
+               menuSubItem("Schaefer logistic growth", tabName = "BasicSchaefer"),
+               menuSubItem("Von Bertalannfy growth curve", tabName = "BasicVonBertalannfy"),
+               menuSubItem("Natural Mortality Estimators", tabName = "NaturalMortality")
       )
     )
   ),
@@ -635,6 +646,146 @@ ui <- tagList(dashboardPage(
                        )
                      )
                 )
+              )
+      ),
+      tabItem("BasicSchaefer",
+              htmlOutput("basicShaeferTitle"),
+              fluidRow(id = "box_shaefer_x",
+                box( width= 50,  id = "box_shaefer",
+                     fluidRow(
+                       box( id="box_shaefer_in",
+                         sliderInput("r", "Intrinsic rate of growth (r):", 
+                                     min=0.01, max=1, value=0.5),    
+                         sliderInput("K", "Carrying capacity (K):", 
+                                     min=500, max=3500, value=1000),
+                         withMathJax(),
+                         uiOutput('shaefer_ex1'),
+                         helpText('Once the parameters have been estimated, fishery performance indicators useful to fisheries management can be calculated.'),
+                         uiOutput('shaefer_ex2'),
+                         uiOutput('shaefer_ex3'),
+                         uiOutput('shaefer_ex4')
+                       ),
+                       box(
+                         plotOutput("Biomassplot"),
+                         plotOutput("Growthplot")
+                       )
+                     )
+                )
+              )
+      ),
+      tabItem("BasicVonBertalannfy",
+              htmlOutput("basicVonBertalannfyTitle"),
+              fluidRow(id = "box_vonbertalannfy_x",
+                       box( width= 50,  id = "box_vonbertalannfy",
+                            fluidRow(
+                              box( id="box_vonbertalannfy_in",
+                                   sliderInput("amax", "Age classes:", 
+                                               min=1, max=100, value=50),    
+                                   sliderInput("Linf", withMathJax("$$L_\\infty:$$"), 
+                                               min=1, max=1000, value=100),
+                                   sliderInput("k", "k:", 
+                                               min = 0.01, max = 1, value = 0.1,step=0.01),
+                                   sliderInput("t0", withMathJax("$$t_0:$$"),
+                                               min = -5, max = 5, value = 0,step=0.1),
+                                   
+                                   sliderInput("b", "Wt-Lt exponent (b):", 
+                                               min = 2, max = 4, value = 3,step=0.01),
+                                   
+                                   sliderInput("d", "Allometric scaling (d):",
+                                               min = 0.01, max = 1, value = 0.67,step=0.01)
+                              ),
+                              box(
+                                plotOutput("VBGFplot"),
+                                h3(withMathJax(helpText('$$L_t = L_\\infty(1-e^{(-kb(1-d)(t-t_0))})^{1/{b(1-d)}}$$')))
+                              )
+                            )
+                       )
+              )
+      ),
+      tabItem("NaturalMortality",
+              htmlOutput("naturalMortalityTitle"),
+              fluidRow(id = "box_naturalMortality_x",
+                       box( width= 50,  id = "box_naturalMortality",
+                            fluidRow(
+                              box( id="box_naturalMortality_in",
+                                   numericInput("Amax", "Maximum age (years):", value=NA,min=1, max=300, step=0.1),    
+                                   numericInput("Linf","Linf (in cm):", value=NA,min=1, max=1000, step=0.01),
+                                   numericInput("k", "VBGF Growth coeff. k:", value=NA,min = 0.001, max = 1,step=0.01),
+                                   numericInput("t0", "VBGF age at size 0 (t_0)", value=NA,min = -15, max = 15,step=0.01),
+                                   numericInput("Amat","Age at maturity (years)", value=NA,min = 0.01, max = 100,step=0.01),
+                                   numericInput("Winf","Asym. weight (Winf, in g):", value=NA,min = 0, max = 100000,step=0.1),
+                                   numericInput("kw","VBGF Growth coeff. wt. (kw, in g): ", value=NA,min = 0.001, max = 5,step=0.01),
+                                   numericInput("Temp","Water temperature (in C):" , value=NA,min = 0.001, max = 60,step=0.01),
+                                   numericInput("Wdry","Total dry weight (in g):" ,value=NA,min = 0.01, max = 1000000,step=0.01),
+                                   numericInput("Wwet","Total wet weight (in g):" ,value=NA,min = 0.01, max = 1000000,step=0.01),
+                                   numericInput("Bl","Body length (cm):",value=NA,min = 0.01, max = 10000,step=0.01),
+                                   numericInput("GSI","Gonadosomatic index:",value=NA,min = 0, max = 1,step=0.001),
+                                   numericInput("User_M","User M input:",value=NA,min = 0, max = 10,step=0.001),
+                                   
+                                   br(),
+                                   br(),
+                                   
+                                   h3("Composite M: method weighting"),
+                                   h5(p(em("Allows for weighting of the contribution of each method in the composite M distribution"))),
+                                   h5("Values range from 0 to 1. A value of 0 removes the contribution; a value of 1 is full weighting."),
+                                   h5("Default values are based on redundancies of methods using similar information."),
+                                   h5("For instance,the four max. age methods are given a weight of 0.25, so all weighted together equal 1"),
+                                   wellPanel(
+                                     fluidRow(
+                                       column(4,numericInput("Then_Amax_1","Then_Amax 1",value=0.25,min = 0, max = 1,step=0.001)),
+                                       column(4,numericInput("Then_Amax_2","Then_Amax 2",value=0.25,min = 0, max = 1,step=0.001)),
+                                       column(4,numericInput("Then_Amax_3","Then_Amax 3",value=0.25,min = 0, max = 1,step=0.001))
+                                     ),
+                                     fluidRow(
+                                       column(4,numericInput("Hamel_Amax","Hamel_Amax",value=0.25,min = 0, max = 1,step=0.001)),
+                                       column(4,numericInput("AnC","AnC",value=0,min = 0, max = 1,step=0.001)),
+                                       column(4,numericInput("Then_VBGF","Then_VBGF",value=0.34,min = 0, max = 1,step=0.001))
+                                     ),
+                                     fluidRow(
+                                       column(4,numericInput("Jensen_VBGF_1","Jensen_VBGF 1",value=0.33,min = 0, max = 1,step=0.001)),
+                                       column(4,numericInput("Jensen_VBGF_2","Jensen_VBGF 2",value=0.33,min = 0, max = 1,step=0.001)),
+                                       column(4,numericInput("Pauly_lt","Pauly_lt",value=0.5,min = 0, max = 1,step=0.001))
+                                     ),
+                                     fluidRow(
+                                       column(4,numericInput("Gislason","Gislason",value=1,min = 0, max = 1,step=0.001)),
+                                       column(4,numericInput("Chen_Wat","Chen-Wat",value=0.5,min = 0, max = 1,step=0.001)),
+                                       column(4,numericInput("Roff","Roff",value=0.5,min = 0, max = 1,step=0.001))
+                                     ),
+                                     fluidRow(
+                                       column(4,numericInput("Jensen_Amat","Jensen_Amat",value=0.5,min = 0, max = 1,step=0.001)),
+                                       column(4,numericInput("Ri_Ef_Amat","Ri_Ef_Amat",value=0.5,min = 0, max = 1,step=0.001)),
+                                       column(4,numericInput("Pauly_wt","Pauly_wt",value=0.5,min = 0, max = 1,step=0.001))
+                                     ),
+                                     fluidRow(
+                                       column(4,numericInput("PnW","PnW",value=0.5,min = 0, max = 1,step=0.001)),
+                                       column(4,numericInput("Lorenzen","Lorenzen",value=1,min = 0, max = 1,step=0.001)),
+                                       column(4,numericInput("Gonosoma","GSI",value=1,min = 0, max = 1,step=0.001))
+                                     ),
+                                     fluidRow(
+                                       column(4,numericInput("UserM","User M",value=1,min = 0, max = 1,step=0.001)))
+                                   )
+                              ),
+                              box(
+                                h4("Natural mortality (M) estimates by method"),
+                                plotOutput("Mplot"),
+                                h4("Natural mortality (M) values"),
+                                fluidRow(
+                                  column(6,tableOutput("Mtable")),
+                                  column(6,tableOutput("Mtable2")),
+                                  downloadButton('downloadMs', 'Download M values'),
+                                  downloadButton('downloadCW_M_a', 'Download Chen-Wat. age-specific M values'),
+                                  br(),
+                                  br(),
+                                  br(),
+                                  h4("Composite natural mortality"),
+                                  h5(p(em("Blue vertical line indicates median value"))),
+                                  plotOutput("Mcomposite"),
+                                  downloadButton('downloadMcompositedensityplot', 'Download composite M density plot'),
+                                  downloadButton('downloadMcompositedist', 'Download composite M for resampling')
+                                )
+                              )
+                            )
+                       )
               )
       )
     )
@@ -1513,6 +1664,7 @@ server <- function(input, output, session) {
     text
   })
   
+  
   output$elefanGaTitle <- renderText({
     text <- "<span><h3><b>Elefan GA (Generic Algorithm)</b></h3></span>"
     text
@@ -1835,6 +1987,230 @@ server <- function(input, output, session) {
     link <- "<a href='https://goo.gl/24FuzG' target='_blank'>Click Here</a>"
     text <- paste0("<p><h4>", link,"&nbsp; to download a sample dataset that can be used with <b>FishMethods</b>", "</h4></p>")
     text
+  })
+  
+  output$basicShaeferTitle <- renderText({
+    text <- "<span><h3><b>Run surplus production model</b></h3></span>"
+    text
+  })
+  output$Biomassplot <- renderPlot({
+      sbio<-c(0:input$K)
+      #B0<-input$D*input$K
+      B.out<-0
+      for (i in 1:length(sbio)){
+        B.out[i]<-Schaefer(input$K, input$r, sbio[i])
+      }
+      
+      # plot stock-growth curve:
+      plot(sbio, B.out,xlab=expression('Stock biomass B'[t]),
+           ylab="Stock growth",xlim=c(0,max(sbio)),type="l",lwd=3)
+      Bmsy=max(B.out)
+      arrows(input$K, Bmsy/3, input$K, 2, lwd = 1, lty=1, col="blue")
+      text(input$K, Bmsy/2.6, "K", col="blue", cex=1)
+      abline(v=(max(sbio)/2), lty=1, col="blue", lwd=1)
+      text((input$K/1.9), (max(B.out)/2), "K/2", cex=1, col="blue")
+      abline(h=max(B.out), lty=1, col="red", lwd=2)
+      text((max(sbio)*0.1), (max(B.out)*0.9), "Maximum production", cex=1, col="red")
+  })
+  
+  output$Growthplot <- renderPlot({
+      hold_stocks<-rep(0, 50)
+      hold_stocks[1] = .05
+      hold_growth<-rep(0, 50)
+      for (i in 1:50){
+        hold_growth[i] =input$r * hold_stocks[i] * (1 - hold_stocks[i]/input$K)
+        hold_stocks[i+1] = hold_stocks[i] + hold_growth[i]
+      }
+      
+      # plot Schaefer growth:
+      plot(1:51, hold_stocks, xlab="Time", ylab=expression('Stock biomass B'[t]),type="l",lwd=2, col="red")
+      abline(h=input$K, col="blue", lwd=1, lty=2)
+      text(10, (input$K-0.1*input$K), "K: Asymptotic carrying capacity", 
+           col = "blue", cex=1)
+      text(40, (input$K-0.1*input$K), "Unharvested curve", col = "red", cex=1)
+  })
+  
+  output$shaefer_ex1 <- renderUI({
+    withMathJax(helpText('Classic Schaefer (logistic) form  $$B_t = rB_t\\left(1 +
+               \\frac{r}{K}\\right)\\!$$'))
+  })
+  output$shaefer_ex2 <- renderUI({
+    withMathJax(helpText('Biomass giving maximum sustainable yield:  $$B_{MSY} = \\frac{K}{2}\\!$$'))
+  })
+  output$shaefer_ex3 <- renderUI({
+    withMathJax(helpText('Maximum sustainable yield:  $$MSY = \\frac{rK}{4}\\!$$'))
+  })
+  output$shaefer_ex4 <- renderUI({
+    withMathJax(helpText('Fishing mortality rate at MSY:  $$F_{MSY} = \\frac{r}{2}\\!$$'))
+  })
+  
+  
+  output$basicVonBertalannfyTitle <- renderText({
+    text <- "<span><h3><b>Generalized Von Bertalanffy Growth Function (VBGF)</b></h3></span>"
+    text
+  })
+  output$VBGFplot <- renderPlot({
+      ages<-c(1:input$amax)
+      lengths.out<-GVBGF(input$Linf,input$k,input$t0,input$b,input$d,ages)
+      # plot VBGF
+      plot(ages, lengths.out, col = rgb(0/255,86/255,149/255),xlab="Age",ylab="Length",xlim=c(0,input$amax),ylim=c(0,input$Linf*1.1),type="l",lwd=1.8)
+  })
+  
+  output$naturalMortalityTitle <- renderText({
+    text <- "<div style='width: 100%;position: relative;height: 100px; margin-bottom:3px;'>"
+    text <- paste0(text, "<div style='float: left; width: 30%;'><span><h3><b>Estimating Natural Mortality (M)</b></h3></span></div>")
+    text <- paste0(text, "<div style='float: left; width: 69%;' class='italicText'>This tool employs various empirical estimators of natural mortality.<br/>As the user enters values for the below input parameters,<br/>estimates will be displayed in the main panel.<br/><br/>References for each method can be found <a href='http://william-static.bnr.la/shiny/Natural-Mortality-Tool/References_M.html' target='blank_'>here</a></div>")
+    text <- paste0(text, "</div>")
+    text
+  })
+  
+  M_vals_all<- reactive({
+    Pauly80lt_M<-Pauly80wt_M<-AnC75_M<-Roff_M<-GnD_GSI_M<-PnW_M<-Lorenzen96_M<-Gislason_M<-NA
+    Then_M_Amax<-Then_M(input$Amax)
+    if(!(anyNA(c(input$k,input$Amax)))){AnC75_M<-M.empirical(Kl=input$k,tmax=input$Amax,method=4)[1]}
+    Then_M_VBGF<-Then_VBGF(input$Linf*10,input$k)
+    Jensen_M_VBGF<-Jensen_M_k(input$k) 
+    if(!(anyNA(c(input$Linf,input$k,input$Bl)))){Gislason_M<-M.empirical(Linf=input$Linf,Kl=input$k,Bl=input$Bl,method=9)[1]}
+    CnW_M_VBGF<-Chen_N_Wat_M(input$Amax,iput$Amat,input$k,input$t0)
+    CnW_M_a_VBGF<-Chen_N_Wat_M(input$Amax,iput$Amat,input$k,input$t0,out.type = 0)
+    maxage<-input$Amax
+    if(!is.na(maxage)){CnW_M_a_VBGF_table<-cbind(c(1:maxage),CnW_M_a_VBGF)
+    colnames(CnW_M_a_VBGF_table)<-c("Age","M")}
+    if(!(anyNA(c(input$k,input$Amat)))){Roff_M<-M.empirical(Kl=input$k,tm=input$Amat,method=5)[1]}
+    Jensen_M_Amat<-Jensen_M_amat(input$Amat)
+    Rikhter_Efanov_Amat<-Rikhter_Efanov_Amat_M(input$Amat)
+    if(!(anyNA(c(input$Wdry)))){PnW_M<-M.empirical(Wdry=input$Wdry,method=7)[1]}
+    if(!(anyNA(c(input$Wwet)))){Lorenzen96_M<-M.empirical(Wwet=input$Wwet,method=8)[1]}
+    if(!(anyNA(c(input$Linf,input$k,input$Temp)))){Pauly80lt_M<-M.empirical(Linf=input$Linf,Kl=input$k,T=input$Temp,method=1)[1]}
+    if(!(anyNA(c(input$Winf,input$kw,input$Temp)))){Pauly80wt_M<-M.empirical(Winf=input$Winf,Kw=input$kw,T=input$Temp,method=2)[1]}
+    if(!(anyNA(c(input$GSI)))){GnD_GSI_M<-M.empirical(GSI=input$GSI,method=6)[1]}
+    User_M<-input$User_M
+    M_vals_all<-c(Then_M_Amax,AnC75_M,Then_M_VBGF,Jensen_M_VBGF,Pauly80lt_M,Gislason_M,CnW_M_VBGF,Roff_M,Jensen_M_Amat,Rikhter_Efanov_Amat,Pauly80wt_M,PnW_M,Lorenzen96_M,GnD_GSI_M,User_M)
+    output$downloadCW_M_a <- downloadHandler(
+      filename = function() {paste0("CW_M_a_values", '.csv') },
+      content = function(file) {write.csv(CnW_M_a_VBGF_table, file=file)}
+    )  
+    M_vals_all
+  })
+  
+  output$Mplot <- renderPlot({
+    M_vals_all<-M_vals_all()
+    M_methods<-c("Then_Amax 1","Then_Amax 2","Then_Amax 3","Hamel_Amax","AnC","Then_VBGF","Jensen_VBGF 1","Jensen_VBGF 2","Pauly_lt","Gislason","Chen-Wat","Roff","Jensen_Amat","Ri_Ef_Amat","Pauly_wt","PnW","Lorenzen","GSI","User input")
+    # plot M
+    if(all(is.na(M_vals_all))){ymax<-0.5}
+    if(!(all(is.na(M_vals_all)))){ymax<-ceiling((max(M_vals_all,na.rm=TRUE)*1.1*10))/10}
+    par(mar=c(8,4,2,6),xpd =TRUE)
+    plot(M_vals_all, col = "black",bg=c("blue","blue","blue","blue","green","green","green","green","yellow","yellow","orange","red","red","red","black","black","black","purple","brown"),xlab=" ",ylab="Natural mortality",ylim=c(0,ymax),pch=22,cex=1.5,axes=F)
+    box()
+    axis(1,at=1:length(M_vals_all),labels=M_methods,las=3)
+    axis(2)
+    legend(x="topright",legend=c("Amax","VBGF","VBGF:Temp","VBGF;Amat","Amat","Weight","GSI","User input"),pch=22,col="black",pt.bg=c("blue","green","yellow","orange","red","black","purple","brown"),bty="n",horiz=FALSE,cex=1,inset=c(-0.125,0))
+    M_table<-data.frame(cbind(M_methods,M_vals_all))
+    colnames(M_table)<-c("Method","M")
+    # if(all(is.na(M_vals()))){return(NULL)}
+    output$downloadMs <- downloadHandler(
+      filename = function() {paste0("M_values", '.csv') },
+      content = function(file) {write.csv(M_table, file=file)}
+    )
+  })
+  
+  output$Mtable <- renderTable({
+    Pauly80lt_M<-Pauly80wt_M<-AnC75_M<-Roff_M<-GnD_GSI_M<-PnW_M<-Lorenzen96_M<-Gislason_M<-NA
+    Then_M_Amax<-Then_M(input$Amax)
+    if(!(anyNA(c(input$k,input$Amax)))){AnC75_M<-M.empirical(Kl=input$k,tmax=input$Amax,method=4)[1]}
+    Then_M_VBGF<-Then_VBGF(input$Linf*10,input$k)
+    Jensen_M_VBGF<-Jensen_M_k(input$k) 
+    if(!(anyNA(c(input$Linf,input$k,input$Bl)))){Gislason_M<-M.empirical(Linf=input$Linf,Kl=input$k,Bl=input$Bl,method=9)[1]}
+    CnW_M_VBGF<-Chen_N_Wat_M(input$Amax,iput$Amat,input$k,input$t0)
+    if(!(anyNA(c(input$k,input$Amat)))){Roff_M<-M.empirical(Kl=input$k,tm=input$Amat,method=5)[1]}
+    Jensen_M_Amat<-Jensen_M_amat(input$Amat)
+    Rikhter_Efanov_Amat<-Rikhter_Efanov_Amat_M(input$Amat)
+    if(!(anyNA(c(input$Wdry)))){PnW_M<-M.empirical(Wdry=input$Wdry,method=7)[1]}
+    if(!(anyNA(c(input$Wwet)))){Lorenzen96_M<-M.empirical(Wwet=input$Wwet,method=8)[1]}
+    if(!(anyNA(c(input$Linf,input$k,input$Temp)))){Pauly80lt_M<-M.empirical(Linf=input$Linf,Kl=input$k,T=input$Temp,method=1)[1]}
+    if(!(anyNA(c(input$Winf,input$kw,input$Temp)))){Pauly80wt_M<-M.empirical(Winf=input$Winf,Kw=input$kw,T=input$Temp,method=2)[1]}
+    if(!(anyNA(c(input$GSI)))){GnD_GSI_M<-M.empirical(GSI=input$GSI,method=6)[1]}
+    
+    M_vals_all<-c(Then_M_Amax,AnC75_M,Then_M_VBGF,Jensen_M_VBGF)
+    M_methods<-c("Then_Amax 1","Then_Amax 2","Then_Amax 3","Hamel_Amax","AnC","Then_VBGF","Jensen_VBGF 1","Jensen_VBGF 2")
+    M_table<-data.frame(cbind(M_methods,signif(M_vals_all,3)))
+    colnames(M_table)<-c("Methods","M")
+    #rownames(M_table)<-M_methods
+    M_table
+  })
+  output$Mtable2 <- renderTable({
+    Pauly80lt_M<-Pauly80wt_M<-AnC75_M<-Roff_M<-GnD_GSI_M<-PnW_M<-Lorenzen96_M<-Gislason_M<-NA
+    Then_M_Amax<-Then_M(input$Amax)
+    if(!(anyNA(c(input$k,input$Amax)))){AnC75_M<-M.empirical(Kl=input$k,tmax=input$Amax,method=4)[1]}
+    Then_M_VBGF<-Then_VBGF(input$Linf*10,input$k)
+    Jensen_M_VBGF<-Jensen_M_k(input$k) 
+    if(!(anyNA(c(input$Linf,input$k,input$Bl)))){Gislason_M<-M.empirical(Linf=input$Linf,Kl=input$k,Bl=input$Bl,method=9)[1]}
+    CnW_M_VBGF<-Chen_N_Wat_M(input$Amax,iput$Amat,input$k,input$t0)
+    if(!(anyNA(c(input$k,input$Amat)))){Roff_M<-M.empirical(Kl=input$k,tm=input$Amat,method=5)[1]}
+    Jensen_M_Amat<-Jensen_M_amat(input$Amat)
+    Rikhter_Efanov_Amat<-Rikhter_Efanov_Amat_M(input$Amat)
+    if(!(anyNA(c(input$Wdry)))){PnW_M<-M.empirical(Wdry=input$Wdry,method=7)[1]}
+    if(!(anyNA(c(input$Wwet)))){Lorenzen96_M<-M.empirical(Wwet=input$Wwet,method=8)[1]}
+    if(!(anyNA(c(input$Linf,input$k,input$Temp)))){Pauly80lt_M<-M.empirical(Linf=input$Linf,Kl=input$k,T=input$Temp,method=1)[1]}
+    if(!(anyNA(c(input$Winf,input$kw,input$Temp)))){Pauly80wt_M<-M.empirical(Winf=input$Winf,Kw=input$kw,T=input$Temp,method=2)[1]}
+    if(!(anyNA(c(input$GSI)))){GnD_GSI_M<-M.empirical(GSI=input$GSI,method=6)[1]}
+    User_M<-input$User_M
+    
+    M_vals_all<-c(Pauly80lt_M,Pauly80wt_M,Gislason_M,CnW_M_VBGF,Roff_M,Jensen_M_Amat,Rikhter_Efanov_Amat,PnW_M,Lorenzen96_M,GnD_GSI_M,User_M)
+    M_methods<-c("Pauly_lt","Pauly_wt","Gislason","Chen-Wat","Roff","Jensen_Amat","Ri_Ef_Amat","PnW","Lorenzen","GSI","User input")
+    M_table<-data.frame(M_vals_all)
+    #rownames(M_table)<-M_methods
+    #colnames(M_table)<-"M"
+    M_table<-data.frame(cbind(M_methods,signif(M_vals_all,3)))
+    colnames(M_table)<-c("Methods","M")
+    M_table
+  })
+  output$Mcomposite<- renderPlot({    
+    if(all(is.na(M_vals_all()))){return(NULL)}
+    else{
+      M.wts<-c(input$Then_Amax_1,input$Then_Amax_2,input$Then_Amax_3,input$Hamel_Amax,input$AnC,input$Then_VBGF,input$Jensen_VBGF_1,input$Jensen_VBGF_2,input$Pauly_lt,input$Gislason,input$Chen_Wat,input$Roff,input$Jensen_Amat,input$Ri_Ef_Amat,input$Pauly_wt,input$PnW,input$Lorenzen,input$Gonosoma,input$UserM)
+      #remove NAs
+      if(any(is.na(M_vals_all()))){
+        NA.ind<-attributes(na.omit(M_vals_all()))$na.action
+        M.sub<-M_vals_all()[-NA.ind]
+        M.wts.sub<-M.wts[-NA.ind]
+      }
+      else{
+        M.sub<-M_vals_all()
+        M.wts.sub<-M.wts
+      }
+      #remove 0 weight
+      M.sub.n0<-M.sub[M.wts.sub>0]
+      M.wts.sub.n0<-M.wts.sub[M.wts.sub>0]
+      M.wts.sub.stand<-M.wts.sub.n0/sum(M.wts.sub.n0)
+      M.densum<-density(M.sub.n0,weights=M.wts.sub.stand,from=0,cut=0)
+      #Approximate the denisty function
+      f<- approxfun(M.densum$x, M.densum$y, yleft=0, yright=0)
+      #Standardize densities
+      pdf_counts<-round(1000000*(M.densum$y/sum(M.densum$y)))
+      #Expand densities to samples
+      pdf.samples<-unlist(mapply(rep,M.densum$x,pdf_counts))
+      #Calculate the cdf
+      cdf.out<-ecdf(pdf.samples)
+      #Plot the density function
+      M.densum.plot<- data.frame(x = M.densum$x, y = M.densum$y)
+      Mcomposite.densityplot<- ggplot(data=M.densum.plot,aes(x,y,fill="blue"))+
+        geom_line(col="black")+
+        labs(x="Natural Mortality",y="Density")+ 
+        geom_area(fill="gray")+ 
+        #scale_x_continuous(limits=c(0,quantile(M.densum$x,0.99)))+
+        geom_vline(xintercept = quantile(cdf.out,0.5),color="darkblue",size=1.2)
+      print(Mcomposite.densityplot)
+      output$downloadMcompositedensityplot <- downloadHandler(
+        filename = function() { paste0('Mcomposite_densityplot',Sys.time(), '.png')},
+        content = function(file) {
+          png(file, type='cairo',width=800,height=720)
+          print(Mcomposite.densityplot)
+          dev.off()},contentType = 'image/png') 
+      output$downloadMcompositedist <- downloadHandler(
+        filename = function() {  paste0("Mcomposite_samples",Sys.time(),".DMP") },
+        content = function(file) {save(pdf.samples,file=file)}) 
+    }
   })
   
 }
