@@ -1,5 +1,5 @@
-GVBGF<-function(Linf,k,t0,b,d,ages)
+GVBGF<-function(Linf,k,t0, ages)
 {
-  Lengths_exp<-Linf*(1-exp(-k*b*(1-d)*(ages-t0)))^(1/(b*(1-d)))
+  Lengths_exp<-Linf*(1-exp(-k*(ages-t0)))
   return(Lengths_exp)
 }

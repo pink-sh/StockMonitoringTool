@@ -96,7 +96,7 @@ ui <- tagList(dashboardPage(
       ),
       menuItem("Supporting Tools",
                menuSubItem("Schaefer logistic growth", tabName = "BasicSchaefer"),
-               menuSubItem("Von Bertalannfy growth curve", tabName = "BasicVonBertalannfy"),
+               menuSubItem("Von Bertalannfy growth function", tabName = "BasicVonBertalannfy"),
                menuSubItem("Natural Mortality Estimators", tabName = "NaturalMortality")
       )
     )
@@ -675,6 +675,7 @@ ui <- tagList(dashboardPage(
       ),
       tabItem("BasicVonBertalannfy",
               htmlOutput("basicVonBertalannfyTitle"),
+              actionButton("vonBertalannfyInfo", "More Information", class="topLevelInformationButton"),
               fluidRow(id = "box_vonbertalannfy_x",
                        box( width= 50,  id = "box_vonbertalannfy",
                             fluidRow(
@@ -686,17 +687,11 @@ ui <- tagList(dashboardPage(
                                    sliderInput("k", "k:", 
                                                min = 0.01, max = 1, value = 0.1,step=0.01),
                                    sliderInput("t0", withMathJax("$$t_0:$$"),
-                                               min = -5, max = 5, value = 0,step=0.1),
-                                   
-                                   sliderInput("b", "Wt-Lt exponent (b):", 
-                                               min = 2, max = 4, value = 3,step=0.01),
-                                   
-                                   sliderInput("d", "Allometric scaling (d):",
-                                               min = 0.01, max = 1, value = 0.67,step=0.01)
+                                               min = -5, max = 5, value = 0,step=0.1) 
                               ),
                               box(
                                 plotOutput("VBGFplot"),
-                                h3(withMathJax(helpText('$$L_t = L_\\infty(1-e^{(-kb(1-d)(t-t_0))})^{1/{b(1-d)}}$$')))
+                                h3(withMathJax(helpText('$$L_t = L_\\infty(1-e^{(-k(t-t_0))})$$')))
                               )
                             )
                        )
@@ -704,28 +699,33 @@ ui <- tagList(dashboardPage(
       ),
       tabItem("NaturalMortality",
               htmlOutput("naturalMortalityTitle"),
+              actionButton("naturalMortalityInfo", "More Information", class="topLevelInformationButton"),
               fluidRow(id = "box_naturalMortality_x",
                        box( width= 50,  id = "box_naturalMortality",
                             fluidRow(
                               box( id="box_naturalMortality_in",
-                                   numericInput("Amax", "Maximum age (years):", value=NA,min=1, max=300, step=0.1),    
+                                   textInput("Species", label="Type genus and species name found in FishBase:", value = "Gadus morhua"),
+                                   submitButton("Submit"),
+                                   numericInput("Amax", "Maximum age (years):", value=NA,min=1, max=300, step=0.1),
                                    numericInput("Linf","Linf (in cm):", value=NA,min=1, max=1000, step=0.01),
                                    numericInput("k", "VBGF Growth coeff. k:", value=NA,min = 0.001, max = 1,step=0.01),
                                    numericInput("t0", "VBGF age at size 0 (t_0)", value=NA,min = -15, max = 15,step=0.01),
                                    numericInput("Amat","Age at maturity (years)", value=NA,min = 0.01, max = 100,step=0.01),
-                                   numericInput("Winf","Asym. weight (Winf, in g):", value=NA,min = 0, max = 100000,step=0.1),
-                                   numericInput("kw","VBGF Growth coeff. wt. (kw, in g): ", value=NA,min = 0.001, max = 5,step=0.01),
                                    numericInput("Temp","Water temperature (in C):" , value=NA,min = 0.001, max = 60,step=0.01),
-                                   numericInput("Wdry","Total dry weight (in g):" ,value=NA,min = 0.01, max = 1000000,step=0.01),
-                                   numericInput("Wwet","Total wet weight (in g):" ,value=NA,min = 0.01, max = 1000000,step=0.01),
                                    numericInput("Bl","Body length (cm):",value=NA,min = 0.01, max = 10000,step=0.01),
-                                   numericInput("GSI","Gonadosomatic index:",value=NA,min = 0, max = 1,step=0.001),
-                                   numericInput("User_M","User M input:",value=NA,min = 0, max = 10,step=0.001),
+                                   numericInput("User_M","User M input (Type value and hit 'Enter'):",value=NA,min = 0, max = 10,step=0.001),
+                                   h4(em(tags$b("FishBase values for species of interest:"))),
+                                   column(1,tableOutput("Ftable")),
                                    
                                    br(),
                                    br(),
-                                   
-                                   h3("Composite M: method weighting"),
+                                   br(),
+                                   br(),
+                                   br(),
+                                   br(),
+                                   br(),
+                                   br(),
+                                   h4("Composite M: method weighting"),
                                    h5(p(em("Allows for weighting of the contribution of each method in the composite M distribution"))),
                                    h5("Values range from 0 to 1. A value of 0 removes the contribution; a value of 1 is full weighting."),
                                    h5("Default values are based on redundancies of methods using similar information."),
@@ -753,17 +753,11 @@ ui <- tagList(dashboardPage(
                                      ),
                                      fluidRow(
                                        column(4,numericInput("Jensen_Amat","Jensen_Amat",value=0.5,min = 0, max = 1,step=0.001)),
-                                       column(4,numericInput("Ri_Ef_Amat","Ri_Ef_Amat",value=0.5,min = 0, max = 1,step=0.001)),
-                                       column(4,numericInput("Pauly_wt","Pauly_wt",value=0.5,min = 0, max = 1,step=0.001))
-                                     ),
-                                     fluidRow(
-                                       column(4,numericInput("PnW","PnW",value=0.5,min = 0, max = 1,step=0.001)),
-                                       column(4,numericInput("Lorenzen","Lorenzen",value=1,min = 0, max = 1,step=0.001)),
-                                       column(4,numericInput("Gonosoma","GSI",value=1,min = 0, max = 1,step=0.001))
+                                       column(4,numericInput("Ri_Ef_Amat","Ri_Ef_Amat",value=0.5,min = 0, max = 1,step=0.001))
                                      ),
                                      fluidRow(
                                        column(4,numericInput("UserM","User M",value=1,min = 0, max = 1,step=0.001)))
-                                   )
+                                     )
                               ),
                               box(
                                 h4("Natural mortality (M) estimates by method"),
@@ -772,16 +766,15 @@ ui <- tagList(dashboardPage(
                                 fluidRow(
                                   column(6,tableOutput("Mtable")),
                                   column(6,tableOutput("Mtable2")),
+                                  div(class="divDividerMain",
                                   downloadButton('downloadMs', 'Download M values'),
                                   downloadButton('downloadCW_M_a', 'Download Chen-Wat. age-specific M values'),
-                                  br(),
-                                  br(),
-                                  br(),
                                   h4("Composite natural mortality"),
-                                  h5(p(em("Blue vertical line indicates median value"))),
+                                  h5(p(em("Blue vertical line indicates median value")))),
+                                  div(class="divDividerMain2",
                                   plotOutput("Mcomposite"),
                                   downloadButton('downloadMcompositedensityplot', 'Download composite M density plot'),
-                                  downloadButton('downloadMcompositedist', 'Download composite M for resampling')
+                                  downloadButton('downloadMcompositedist', 'Download composite M for resampling'))
                                 )
                               )
                             )
@@ -2049,43 +2042,165 @@ server <- function(input, output, session) {
     text <- "<span><h3><b>Generalized Von Bertalanffy Growth Function (VBGF)</b></h3></span>"
     text
   })
+  observeEvent(input$vonBertalannfyInfo, {
+    showModal(modalDialog(
+      title = "Generalized Von Bertalanffy Growth Function (VBGF)",
+      strong("The VBGF expresses the length, L, as a function of the age of the fish, t. K is a parameter that controls the curvature"),
+      h5(withMathJax("\\(L_\\infty\\)"), "is is interpreted as 'the mean length of very old (strictly: infinitely old) fish'. it is also called the 'asymptotic length'."),
+      h5("K is a 'curvature parameter' which determines how fast the fish approaches its", withMathJax("\\(L_\\infty.\\)")),
+      h5("Some species, most of them short-lived, almost reach their", withMathJax("\\(L_\\infty\\)"), "in a year or two and have a high value of K. 
+     Other species have a flat growth curve with a low K-value and need many years to reach anything like their", withMathJax("\\(L_\\infty.\\)")),
+      h5("Increasing K with the slider bar will result in a growth curve that has more 'bend'."),
+      h5("The third parameter, ", withMathJax("\\(t_0,\\)"), "sometimes called 'the initial condition parameter', 
+     determines the point in time when the fish has zero length."),
+      h5("Biologically, this has no meaning, because the growth begins at hatching when the larva already has a 
+     certain length, which may be called L(0) when we put t = 0 at the day of birth."),
+      h5("It is easily identified by inserting t = 0 into the equation."),
+      h5("Growth parameters differ from species to species, but they may also vary from stock to stock within the same species, 
+     i.e. growth parameters of a particular species may take different values in different parts of its range. 
+     Also successive cohorts may grow differently depending on environmental conditions."),
+      h5("Further growth parameters often take different values for the two sexes. 
+     If there are pronounced differences between the sexes in their growth parameters, 
+     the input data should be separated by sex and values of K,", withMathJax("\\(L_\\infty,\\)"), "and", withMathJax("\\(t_0\\)"), "should be estimated for each sex separately."),
+      easyClose = TRUE,
+      footer = NULL
+    ))
+  })
   output$VBGFplot <- renderPlot({
-      ages<-c(1:input$amax)
-      lengths.out<-GVBGF(input$Linf,input$k,input$t0,input$b,input$d,ages)
-      # plot VBGF
-      plot(ages, lengths.out, col = rgb(0/255,86/255,149/255),xlab="Age",ylab="Length",xlim=c(0,input$amax),ylim=c(0,input$Linf*1.1),type="l",lwd=1.8)
+    ages<-c(1:input$amax)
+    lengths.out<-GVBGF(input$Linf,input$k,input$t0, ages)
+    # plot VBGF
+    plot(ages, lengths.out, col = rgb(0/255,86/255,149/255),xlab="Age",ylab="Length",xlim=c(0,input$amax),ylim=c(0,input$Linf*1.1),type="l",lwd=1.8)
   })
   
   output$naturalMortalityTitle <- renderText({
     text <- "<div style='width: 100%;position: relative;height: 100px; margin-bottom:3px;'>"
-    text <- paste0(text, "<div style='float: left; width: 30%;'><span><h3><b>Estimating Natural Mortality (M)</b></h3></span></div>")
-    text <- paste0(text, "<div style='float: left; width: 69%;' class='italicText'>This tool employs various empirical estimators of natural mortality.<br/>As the user enters values for the below input parameters,<br/>estimates will be displayed in the main panel.<br/><br/>References for each method can be found <a href='http://william-static.bnr.la/shiny/Natural-Mortality-Tool/References_M.html' target='blank_'>here</a></div>")
+    text <- paste0(text, "<div style='float: left; width: 70%;'><span><h3><b>Estimating Natural Mortality (M) from FishBase life history parameters</b></h3><br>This application is a modified version of the Barefoot Ecologist tool developed by Jason Cope: <a target='_blank' href='http://barefootecologist.com.au/shiny_m.html'>http://barefootecologist.com.au/shiny_m.html</a></span></div>")
     text <- paste0(text, "</div>")
     text
   })
   
+  observeEvent(input$naturalMortalityInfo, {
+    showModal(modalDialog(
+      title = "Estimating Natural Mortality (M) from FishBase life history parameters",
+      h5(p(em("This tool employs various empirical estimators of natural mortality."))),
+      h5(p(em("When the user enters the scientific name for a fish species, FishBase will be queried for 
+            (1) Maximum age (Amax), (2) Age at maturity (Amat), (3) L-infinity (in cm) (Linf), (4) Von Bertalannfy Growth Function (VBGF) growth coefficient (k),"))),
+      h5(p(em("(5) VBGF age at size 0 (t0), (6) Body length in cm (Bl), and (7) Mean water temperature in Celsius (Temp))."))),
+      h5(p(em("Averaging of Von Bertalannfy (VBFG) parameters is done following the specifications of 
+               Pauly, D. (1991). Growth performance in fishes: rigorous description of patterns as a 
+               basis for understanding causal mechanisms. ICLARM Contribution No. 793."))),
+      h5(p(em("Estimates will be displayed in the main panel."))),
+      br(),
+      h5(p(em("Four methods use Amax, three methods use the VBGF parameters, two methods use the VBGF parameters & Temp, one method uses the VBGF parameters & Amat, and three methods use only Amat."))),
+      h5(p(em("These groupings are indicated by the different colors in the top plot."))),
+      br(),
+      h5(p(em("The user can also choose to input their own parameters if they have inputs from local studies. 
+            These input values will override the FishBase calculations if all the necessary parameters for a 
+            particular method are available (e.g., all the VBGF parameters are available for those methods that require them)."))),
+      br(),
+      h5(p(em("The individual estimates of M are combined with defined weightings below (that the user can modify) and a single average M is provided."))),
+      h5(p(em("This average M can be used as input in the YPR/SBPR and ELEFAN applications."))),
+      br(),
+      h4(p("References for each method can be found",tags$a(href="javascript:window.open('References_M.html', '_blank','width=600,height=400')", "here"))),
+      easyClose = TRUE,
+      footer = NULL
+    ))
+  })
+  
+  SPEC <- reactive({
+    Amax1<-popchar(input$Species, field="tmax")
+    Amax<-mean(Amax1$tmax, na.rm=T) 
+    
+    Amat1<-maturity(input$Species, field=c("tm", "Lm"))
+    Amat<-mean(Amat1$tm, na.rm=T)
+    Bl<-mean(Amat1$Lm, na.rm=T)
+    
+    PopGwth<-popgrowth(input$Species, field=c("Loo", "TLinfinity", "K", "to", "Temperature"))
+    PopGwth$TLinfinity<-ifelse(is.na(PopGwth$TLinfinity), PopGwth$Loo, PopGwth$TLinfinity)
+    PopGwth$phi1<-2*log10(PopGwth$TLinfinity)+log10(PopGwth$K)
+    Linf<-mean(PopGwth$TLinfinity, na.rm=T)
+    logTLinf<-2*log10(Linf)
+    avephi1<-mean(PopGwth$phi1, na.rm=T)
+    k<-10^(avephi1-logTLinf)
+    t0<-mean(PopGwth$to, na.rm=T)
+    
+    Temp<-mean(PopGwth$Temp, na.rm=T)
+    SPEC<-cbind.data.frame(Amax,Amat,Bl,Linf,k,t0,Temp)
+    names(SPEC)<-c("Amax", "Amat", "Bl", "Linf", "k", "t0", "Temp")
+    SPEC
+  })
+  
   M_vals_all<- reactive({
+    SPEC<-SPEC()
+    Amax<-SPEC$Amax
+    Amat<-SPEC$Amat
+    Bl<-SPEC$Bl
+    Linf<-SPEC$Linf
+    k<-SPEC$k
+    t0<-SPEC$t0
+    Temp<-SPEC$Temp
+    
+    # Show the first "n" observations
+    output$Ftable <- renderTable({
+      
+      F_table<-data.frame(cbind(Amax, Amat, Bl, Linf, k, t0, Temp))
+      colnames(F_table)<-c("Max Age","Age Mat.", "Mean Length", "VB Linf", "VB k", "VB t0", "Temp.")
+      F_table
+    })
+    
+    
+    
     Pauly80lt_M<-Pauly80wt_M<-AnC75_M<-Roff_M<-GnD_GSI_M<-PnW_M<-Lorenzen96_M<-Gislason_M<-NA
-    Then_M_Amax<-Then_M(input$Amax)
-    if(!(anyNA(c(input$k,input$Amax)))){AnC75_M<-M.empirical(Kl=input$k,tmax=input$Amax,method=4)[1]}
+    if(!anyNA(c(input$Amax))){Then_M_Amax<-Then_M(input$Amax)}
+    else{
+      Then_M_Amax<-Then_M(Amax)
+    }
+    
+    
+    if(!(anyNA(c(input$k,input$Amax)))){AnC75_M<-M.empirical(Kl=input$k,tmax=input$Amax,method=4)[1]
     Then_M_VBGF<-Then_VBGF(input$Linf*10,input$k)
-    Jensen_M_VBGF<-Jensen_M_k(input$k) 
-    if(!(anyNA(c(input$Linf,input$k,input$Bl)))){Gislason_M<-M.empirical(Linf=input$Linf,Kl=input$k,Bl=input$Bl,method=9)[1]}
-    CnW_M_VBGF<-Chen_N_Wat_M(input$Amax,iput$Amat,input$k,input$t0)
-    CnW_M_a_VBGF<-Chen_N_Wat_M(input$Amax,iput$Amat,input$k,input$t0,out.type = 0)
-    maxage<-input$Amax
+    Jensen_M_VBGF<-Jensen_M_k(input$k)
+    }
+    else{
+      if(!(anyNA(c(k,Amax)))){AnC75_M<-M.empirical(Kl=k,tmax=Amax,method=4)[1]
+      Then_M_VBGF<-Then_VBGF(Linf*10,k)
+      Jensen_M_VBGF<-Jensen_M_k(k)}
+    }
+    
+    if(!(anyNA(c(input$Linf,input$k,input$Bl)))){Gislason_M<-M.empirical(Linf=input$Linf,Kl=input$k,Bl=input$Bl,method=9)[1]
+    CnW_M_VBGF<-Chen_N_Wat_M(input$Amax,input$Amat,input$k,input$t0)
+    CnW_M_a_VBGF<-Chen_N_Wat_M(input$Amax,input$Amat,input$k,input$t0,out.type = 0)
+    maxage<-input$Amax}
+    else{
+      if(!(anyNA(c(Linf,k,Bl)))){Gislason_M<-M.empirical(Linf=Linf,Kl=k,Bl=Bl,method=9)[1]
+      CnW_M_VBGF<-Chen_N_Wat_M(Amax,Amat,k,t0)
+      CnW_M_a_VBGF<-Chen_N_Wat_M(Amax,Amat,k,t0,out.type = 0)
+      maxage<-Amax}
+    }
+    
     if(!is.na(maxage)){CnW_M_a_VBGF_table<-cbind(c(1:maxage),CnW_M_a_VBGF)
     colnames(CnW_M_a_VBGF_table)<-c("Age","M")}
-    if(!(anyNA(c(input$k,input$Amat)))){Roff_M<-M.empirical(Kl=input$k,tm=input$Amat,method=5)[1]}
+    
+    if(!(anyNA(c(input$k,input$Amat)))){Roff_M<-M.empirical(Kl=input$k,tm=input$Amat,method=5)[1]
     Jensen_M_Amat<-Jensen_M_amat(input$Amat)
-    Rikhter_Efanov_Amat<-Rikhter_Efanov_Amat_M(input$Amat)
-    if(!(anyNA(c(input$Wdry)))){PnW_M<-M.empirical(Wdry=input$Wdry,method=7)[1]}
-    if(!(anyNA(c(input$Wwet)))){Lorenzen96_M<-M.empirical(Wwet=input$Wwet,method=8)[1]}
+    Rikhter_Efanov_Amat<-Rikhter_Efanov_Amat_M(input$Amat)}
+    else{
+      if(!(anyNA(c(k,Amat)))){Roff_M<-M.empirical(Kl=k,tm=Amat,method=5)[1]
+      Jensen_M_Amat<-Jensen_M_amat(Amat)
+      Rikhter_Efanov_Amat<-Rikhter_Efanov_Amat_M(Amat)}
+    }
+    
+    #if(!(anyNA(c(input$Wdry)))){PnW_M<-M.empirical(Wdry=input$Wdry,method=7)[1]}
+    #if(!(anyNA(c(input$Wwet)))){Lorenzen96_M<-M.empirical(Wwet=input$Wwet,method=8)[1]}
     if(!(anyNA(c(input$Linf,input$k,input$Temp)))){Pauly80lt_M<-M.empirical(Linf=input$Linf,Kl=input$k,T=input$Temp,method=1)[1]}
-    if(!(anyNA(c(input$Winf,input$kw,input$Temp)))){Pauly80wt_M<-M.empirical(Winf=input$Winf,Kw=input$kw,T=input$Temp,method=2)[1]}
-    if(!(anyNA(c(input$GSI)))){GnD_GSI_M<-M.empirical(GSI=input$GSI,method=6)[1]}
+    else{
+      if(!(anyNA(c(Linf,k,Temp)))){Pauly80lt_M<-M.empirical(Linf=Linf,Kl=k,T=Temp,method=1)[1]}
+    }
+    #if(!(anyNA(c(input$Winf,input$kw,input$Temp)))){Pauly80wt_M<-M.empirical(Winf=input$Winf,Kw=input$kw,T=input$Temp,method=2)[1]}
+    #if(!(anyNA(c(input$GSI)))){GnD_GSI_M<-M.empirical(GSI=input$GSI,method=6)[1]}
     User_M<-input$User_M
-    M_vals_all<-c(Then_M_Amax,AnC75_M,Then_M_VBGF,Jensen_M_VBGF,Pauly80lt_M,Gislason_M,CnW_M_VBGF,Roff_M,Jensen_M_Amat,Rikhter_Efanov_Amat,Pauly80wt_M,PnW_M,Lorenzen96_M,GnD_GSI_M,User_M)
+    M_vals_all<-c(Then_M_Amax,AnC75_M,Then_M_VBGF,Jensen_M_VBGF,Pauly80lt_M,Gislason_M,CnW_M_VBGF,Roff_M,Jensen_M_Amat,Rikhter_Efanov_Amat,User_M) #Pauly80wt_M,PnW_M,Lorenzen96_M,GnD_GSI_M,
     output$downloadCW_M_a <- downloadHandler(
       filename = function() {paste0("CW_M_a_values", '.csv') },
       content = function(file) {write.csv(CnW_M_a_VBGF_table, file=file)}
@@ -2093,18 +2208,23 @@ server <- function(input, output, session) {
     M_vals_all
   })
   
+  #   CW_M_a<- renderText({
+  #     CnW_M_VBGF<-Chen_N_Wat_M(input$Amax,iput$Amat,input$k,input$t0)
+  #     print(CnW_M_VBGF)
+  #   })   
+  
   output$Mplot <- renderPlot({
     M_vals_all<-M_vals_all()
-    M_methods<-c("Then_Amax 1","Then_Amax 2","Then_Amax 3","Hamel_Amax","AnC","Then_VBGF","Jensen_VBGF 1","Jensen_VBGF 2","Pauly_lt","Gislason","Chen-Wat","Roff","Jensen_Amat","Ri_Ef_Amat","Pauly_wt","PnW","Lorenzen","GSI","User input")
+    M_methods<-c("Then_Amax 1","Then_Amax 2","Then_Amax 3","Hamel_Amax","AnC","Then_VBGF","Jensen_VBGF 1","Jensen_VBGF 2","Pauly_lt","Gislason","Chen-Wat","Roff","Jensen_Amat","Ri_Ef_Amat","User input") #"Pauly_wt","PnW","Lorenzen","GSI",
     # plot M
     if(all(is.na(M_vals_all))){ymax<-0.5}
     if(!(all(is.na(M_vals_all)))){ymax<-ceiling((max(M_vals_all,na.rm=TRUE)*1.1*10))/10}
-    par(mar=c(8,4,2,6),xpd =TRUE)
-    plot(M_vals_all, col = "black",bg=c("blue","blue","blue","blue","green","green","green","green","yellow","yellow","orange","red","red","red","black","black","black","purple","brown"),xlab=" ",ylab="Natural mortality",ylim=c(0,ymax),pch=22,cex=1.5,axes=F)
+    par(mar=c(8,4,3,6),xpd =TRUE)
+    plot(M_vals_all, col = "black",bg=c("blue","blue","blue","blue","green","green","green","green","yellow","yellow","orange","red","red","red","brown"),xlab=" ",ylab="Natural mortality",ylim=c(0,ymax),pch=22,cex=1.5,axes=F) #"black","black","black","purple",
     box()
     axis(1,at=1:length(M_vals_all),labels=M_methods,las=3)
     axis(2)
-    legend(x="topright",legend=c("Amax","VBGF","VBGF:Temp","VBGF;Amat","Amat","Weight","GSI","User input"),pch=22,col="black",pt.bg=c("blue","green","yellow","orange","red","black","purple","brown"),bty="n",horiz=FALSE,cex=1,inset=c(-0.125,0))
+    legend(x="topright",legend=c("Amax","VBGF","VBGF:Temp","VBGF;Amat","Amat","User input"),pch=22,col="black",pt.bg=c("blue","green","yellow","orange","red","brown"),bty="n",horiz=FALSE,cex=1,inset=c(-0.08,0)) #"Weight","GSI",  #"black","purple",
     M_table<-data.frame(cbind(M_methods,M_vals_all))
     colnames(M_table)<-c("Method","M")
     # if(all(is.na(M_vals()))){return(NULL)}
@@ -2114,22 +2234,31 @@ server <- function(input, output, session) {
     )
   })
   
+  # Show the first "n" observations
   output$Mtable <- renderTable({
-    Pauly80lt_M<-Pauly80wt_M<-AnC75_M<-Roff_M<-GnD_GSI_M<-PnW_M<-Lorenzen96_M<-Gislason_M<-NA
-    Then_M_Amax<-Then_M(input$Amax)
-    if(!(anyNA(c(input$k,input$Amax)))){AnC75_M<-M.empirical(Kl=input$k,tmax=input$Amax,method=4)[1]}
-    Then_M_VBGF<-Then_VBGF(input$Linf*10,input$k)
-    Jensen_M_VBGF<-Jensen_M_k(input$k) 
-    if(!(anyNA(c(input$Linf,input$k,input$Bl)))){Gislason_M<-M.empirical(Linf=input$Linf,Kl=input$k,Bl=input$Bl,method=9)[1]}
-    CnW_M_VBGF<-Chen_N_Wat_M(input$Amax,iput$Amat,input$k,input$t0)
-    if(!(anyNA(c(input$k,input$Amat)))){Roff_M<-M.empirical(Kl=input$k,tm=input$Amat,method=5)[1]}
-    Jensen_M_Amat<-Jensen_M_amat(input$Amat)
-    Rikhter_Efanov_Amat<-Rikhter_Efanov_Amat_M(input$Amat)
-    if(!(anyNA(c(input$Wdry)))){PnW_M<-M.empirical(Wdry=input$Wdry,method=7)[1]}
-    if(!(anyNA(c(input$Wwet)))){Lorenzen96_M<-M.empirical(Wwet=input$Wwet,method=8)[1]}
-    if(!(anyNA(c(input$Linf,input$k,input$Temp)))){Pauly80lt_M<-M.empirical(Linf=input$Linf,Kl=input$k,T=input$Temp,method=1)[1]}
-    if(!(anyNA(c(input$Winf,input$kw,input$Temp)))){Pauly80wt_M<-M.empirical(Winf=input$Winf,Kw=input$kw,T=input$Temp,method=2)[1]}
-    if(!(anyNA(c(input$GSI)))){GnD_GSI_M<-M.empirical(GSI=input$GSI,method=6)[1]}
+    SPEC<-SPEC()
+    Amax<-SPEC$Amax
+    Amat<-SPEC$Amat
+    Bl<-SPEC$Bl
+    Linf<-SPEC$Linf
+    k<-SPEC$k
+    t0<-SPEC$t0
+    Temp<-SPEC$Temp
+    Pauly80lt_M<-Pauly80wt_M<-AnC75_M<-Roff_M<-Gislason_M<-NA #<-Pauly80wt_M<-PnW_M<-Lorenzen96_M<-GnD_GSI_M
+    Then_M_Amax<-Then_M(Amax)
+    if(!(anyNA(c(k,Amax)))){AnC75_M<-M.empirical(Kl=k,tmax=Amax,method=4)[1]}
+    Then_M_VBGF<-Then_VBGF(Linf*10,k)
+    Jensen_M_VBGF<-Jensen_M_k(k) 
+    if(!(anyNA(c(Linf,k,Bl)))){Gislason_M<-M.empirical(Linf=Linf,Kl=k,Bl=Bl,method=9)[1]}
+    CnW_M_VBGF<-Chen_N_Wat_M(Amax,Amat,k,t0)
+    if(!(anyNA(c(k,Amat)))){Roff_M<-M.empirical(Kl=k,tm=Amat,method=5)[1]}
+    Jensen_M_Amat<-Jensen_M_amat(Amat)
+    Rikhter_Efanov_Amat<-Rikhter_Efanov_Amat_M(Amat)
+    #if(!(anyNA(c(input$Wdry)))){PnW_M<-M.empirical(Wdry=input$Wdry,method=7)[1]}
+    #if(!(anyNA(c(input$Wwet)))){Lorenzen96_M<-M.empirical(Wwet=input$Wwet,method=8)[1]}
+    if(!(anyNA(c(Linf,k,Temp)))){Pauly80lt_M<-M.empirical(Linf=Linf,Kl=k,T=Temp,method=1)[1]}
+    #if(!(anyNA(c(input$Winf,input$kw,input$Temp)))){Pauly80wt_M<-M.empirical(Winf=input$Winf,Kw=input$kw,T=input$Temp,method=2)[1]}
+    #if(!(anyNA(c(input$GSI)))){GnD_GSI_M<-M.empirical(GSI=input$GSI,method=6)[1]}
     
     M_vals_all<-c(Then_M_Amax,AnC75_M,Then_M_VBGF,Jensen_M_VBGF)
     M_methods<-c("Then_Amax 1","Then_Amax 2","Then_Amax 3","Hamel_Amax","AnC","Then_VBGF","Jensen_VBGF 1","Jensen_VBGF 2")
@@ -2138,26 +2267,35 @@ server <- function(input, output, session) {
     #rownames(M_table)<-M_methods
     M_table
   })
+  # Show the first "n" observations
   output$Mtable2 <- renderTable({
-    Pauly80lt_M<-Pauly80wt_M<-AnC75_M<-Roff_M<-GnD_GSI_M<-PnW_M<-Lorenzen96_M<-Gislason_M<-NA
-    Then_M_Amax<-Then_M(input$Amax)
-    if(!(anyNA(c(input$k,input$Amax)))){AnC75_M<-M.empirical(Kl=input$k,tmax=input$Amax,method=4)[1]}
-    Then_M_VBGF<-Then_VBGF(input$Linf*10,input$k)
-    Jensen_M_VBGF<-Jensen_M_k(input$k) 
-    if(!(anyNA(c(input$Linf,input$k,input$Bl)))){Gislason_M<-M.empirical(Linf=input$Linf,Kl=input$k,Bl=input$Bl,method=9)[1]}
-    CnW_M_VBGF<-Chen_N_Wat_M(input$Amax,iput$Amat,input$k,input$t0)
-    if(!(anyNA(c(input$k,input$Amat)))){Roff_M<-M.empirical(Kl=input$k,tm=input$Amat,method=5)[1]}
-    Jensen_M_Amat<-Jensen_M_amat(input$Amat)
-    Rikhter_Efanov_Amat<-Rikhter_Efanov_Amat_M(input$Amat)
-    if(!(anyNA(c(input$Wdry)))){PnW_M<-M.empirical(Wdry=input$Wdry,method=7)[1]}
-    if(!(anyNA(c(input$Wwet)))){Lorenzen96_M<-M.empirical(Wwet=input$Wwet,method=8)[1]}
-    if(!(anyNA(c(input$Linf,input$k,input$Temp)))){Pauly80lt_M<-M.empirical(Linf=input$Linf,Kl=input$k,T=input$Temp,method=1)[1]}
-    if(!(anyNA(c(input$Winf,input$kw,input$Temp)))){Pauly80wt_M<-M.empirical(Winf=input$Winf,Kw=input$kw,T=input$Temp,method=2)[1]}
-    if(!(anyNA(c(input$GSI)))){GnD_GSI_M<-M.empirical(GSI=input$GSI,method=6)[1]}
+    SPEC<-SPEC()
+    Amax<-SPEC$Amax
+    Amat<-SPEC$Amat
+    Bl<-SPEC$Bl
+    Linf<-SPEC$Linf
+    k<-SPEC$k
+    t0<-SPEC$t0
+    Temp<-SPEC$Temp
+    Pauly80lt_M<-AnC75_M<-Roff_M<-Gislason_M<-NA #<-Pauly80wt_M<-PnW_M<-Lorenzen96_M<-GnD_GSI_M
+    Then_M_Amax<-Then_M(Amax)
+    if(!(anyNA(c(k,Amax)))){AnC75_M<-M.empirical(Kl=k,tmax=Amax,method=4)[1]}
+    Then_M_VBGF<-Then_VBGF(Linf*10,k)
+    Jensen_M_VBGF<-Jensen_M_k(k) 
+    if(!(anyNA(c(Linf,k,Bl)))){Gislason_M<-M.empirical(Linf=Linf,Kl=k,Bl=Bl,method=9)[1]}
+    CnW_M_VBGF<-Chen_N_Wat_M(Amax,Amat,k,t0)
+    if(!(anyNA(c(k,Amat)))){Roff_M<-M.empirical(Kl=k,tm=Amat,method=5)[1]}
+    Jensen_M_Amat<-Jensen_M_amat(Amat)
+    Rikhter_Efanov_Amat<-Rikhter_Efanov_Amat_M(Amat)
+    #if(!(anyNA(c(input$Wdry)))){PnW_M<-M.empirical(Wdry=input$Wdry,method=7)[1]}
+    #if(!(anyNA(c(input$Wwet)))){Lorenzen96_M<-M.empirical(Wwet=input$Wwet,method=8)[1]}
+    if(!(anyNA(c(Linf,k,Temp)))){Pauly80lt_M<-M.empirical(Linf=Linf,Kl=k,T=Temp,method=1)[1]}
+    #if(!(anyNA(c(input$Winf,input$kw,input$Temp)))){Pauly80wt_M<-M.empirical(Winf=input$Winf,Kw=input$kw,T=input$Temp,method=2)[1]}
+    #if(!(anyNA(c(input$GSI)))){GnD_GSI_M<-M.empirical(GSI=input$GSI,method=6)[1]}
     User_M<-input$User_M
     
-    M_vals_all<-c(Pauly80lt_M,Pauly80wt_M,Gislason_M,CnW_M_VBGF,Roff_M,Jensen_M_Amat,Rikhter_Efanov_Amat,PnW_M,Lorenzen96_M,GnD_GSI_M,User_M)
-    M_methods<-c("Pauly_lt","Pauly_wt","Gislason","Chen-Wat","Roff","Jensen_Amat","Ri_Ef_Amat","PnW","Lorenzen","GSI","User input")
+    M_vals_all<-c(Pauly80lt_M,Gislason_M,CnW_M_VBGF,Roff_M,Jensen_M_Amat,Rikhter_Efanov_Amat,User_M) #Pauly80wt_M,PnW_M,Lorenzen96_M,GnD_GSI_M,
+    M_methods<-c("Pauly_lt","Gislason","Chen-Wat","Roff","Jensen_Amat","Ri_Ef_Amat","User input") #"Pauly_wt","PnW","Lorenzen","GSI",
     M_table<-data.frame(M_vals_all)
     #rownames(M_table)<-M_methods
     #colnames(M_table)<-"M"
@@ -2165,10 +2303,12 @@ server <- function(input, output, session) {
     colnames(M_table)<-c("Methods","M")
     M_table
   })
+  
+  #Plot Composite M
   output$Mcomposite<- renderPlot({    
     if(all(is.na(M_vals_all()))){return(NULL)}
     else{
-      M.wts<-c(input$Then_Amax_1,input$Then_Amax_2,input$Then_Amax_3,input$Hamel_Amax,input$AnC,input$Then_VBGF,input$Jensen_VBGF_1,input$Jensen_VBGF_2,input$Pauly_lt,input$Gislason,input$Chen_Wat,input$Roff,input$Jensen_Amat,input$Ri_Ef_Amat,input$Pauly_wt,input$PnW,input$Lorenzen,input$Gonosoma,input$UserM)
+      M.wts<-c(input$Then_Amax_1,input$Then_Amax_2,input$Then_Amax_3,input$Hamel_Amax,input$AnC,input$Then_VBGF,input$Jensen_VBGF_1,input$Jensen_VBGF_2,input$Pauly_lt,input$Gislason,input$Chen_Wat,input$Roff,input$Jensen_Amat,input$Ri_Ef_Amat,input$UserM) #input$Pauly_wt,input$PnW,input$Lorenzen,input$Gonosoma,
       #remove NAs
       if(any(is.na(M_vals_all()))){
         NA.ind<-attributes(na.omit(M_vals_all()))$na.action
@@ -2212,6 +2352,7 @@ server <- function(input, output, session) {
         content = function(file) {save(pdf.samples,file=file)}) 
     }
   })
+
   
 }
 
