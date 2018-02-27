@@ -94,11 +94,11 @@ footer{
 
 .topLevelInformationButton {
   background-color:#222D32;
-  color: #DBDBDB;
+  color: #DBDBDB !important;
 }
 .topLevelInformationButton:hover {
   background-color:#222D32;
-  color: #FFFFFF;
+  color: #FFFFFF !important;
 }
 
 .main-sidebar { width : 240px !important;}

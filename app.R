@@ -8,6 +8,7 @@
 #
 
 library(shiny)
+library(shinyBS)
 library(shinyjs)
 library(shinysky)
 library(shinythemes)
@@ -678,6 +679,7 @@ ui <- tagList(dashboardPage(
               htmlOutput("basicVonBertalannfyTitle"),
               actionButton("vonBertalannfyInfo", "More Information", class="topLevelInformationButton"),
               fluidRow(id = "box_vonbertalannfy_x",
+                       bsModal("modalExample", "Generalized Von Bertalanffy Growth Function (VBGF)", "vonBertalannfyInfo", size = "large", htmlOutput("vonBertalannfyInfoText")),
                        box( width= 50,  id = "box_vonbertalannfy",
                             fluidRow(
                               box( id="box_vonbertalannfy_in",
@@ -702,6 +704,7 @@ ui <- tagList(dashboardPage(
               htmlOutput("naturalMortalityTitle"),
               actionButton("naturalMortalityInfo", "More Information", class="topLevelInformationButton"),
               fluidRow(id = "box_naturalMortality_x",
+                       bsModal("modalExample2", "Estimating Natural Mortality (M) from FishBase life history parameters", "naturalMortalityInfo", size = "large", htmlOutput("naturalMortalityInfoText")),
                        box( width= 50,  id = "box_naturalMortality",
                             fluidRow(
                               box( id="box_naturalMortality_in",
@@ -2043,30 +2046,44 @@ server <- function(input, output, session) {
     text <- "<span><h3><b>Generalized Von Bertalanffy Growth Function (VBGF)</b></h3></span>"
     text
   })
-  observeEvent(input$vonBertalannfyInfo, {
-    showModal(modalDialog(
-      title = "Generalized Von Bertalanffy Growth Function (VBGF)",
-      strong("The VBGF expresses the length, L, as a function of the age of the fish, t. K is a parameter that controls the curvature"),
-      h5(withMathJax("\\(L_\\infty\\)"), "is is interpreted as 'the mean length of very old (strictly: infinitely old) fish'. it is also called the 'asymptotic length'."),
-      h5("K is a 'curvature parameter' which determines how fast the fish approaches its", withMathJax("\\(L_\\infty.\\)")),
-      h5("Some species, most of them short-lived, almost reach their", withMathJax("\\(L_\\infty\\)"), "in a year or two and have a high value of K. 
-     Other species have a flat growth curve with a low K-value and need many years to reach anything like their", withMathJax("\\(L_\\infty.\\)")),
-      h5("Increasing K with the slider bar will result in a growth curve that has more 'bend'."),
-      h5("The third parameter, ", withMathJax("\\(t_0,\\)"), "sometimes called 'the initial condition parameter', 
-     determines the point in time when the fish has zero length."),
-      h5("Biologically, this has no meaning, because the growth begins at hatching when the larva already has a 
-     certain length, which may be called L(0) when we put t = 0 at the day of birth."),
-      h5("It is easily identified by inserting t = 0 into the equation."),
-      h5("Growth parameters differ from species to species, but they may also vary from stock to stock within the same species, 
-     i.e. growth parameters of a particular species may take different values in different parts of its range. 
-     Also successive cohorts may grow differently depending on environmental conditions."),
-      h5("Further growth parameters often take different values for the two sexes. 
-     If there are pronounced differences between the sexes in their growth parameters, 
-     the input data should be separated by sex and values of K,", withMathJax("\\(L_\\infty,\\)"), "and", withMathJax("\\(t_0\\)"), "should be estimated for each sex separately."),
-      easyClose = TRUE,
-      footer = NULL
-    ))
+  
+  output$vonBertalannfyInfoText <- renderText({
+    text <- "<b>The VBGF expresses the length, L, as a function of the age of the fish, t. K is a parameter that controls the curvature</b>"
+    text <- paste0(text, "<h5>", withMathJax("\\(L_\\infty\\)"), "is is interpreted as 'the mean length of very old (strictly: infinitely old) fish'. it is also called the 'asymptotic length'.", "</h5>")
+    #text <- paste0(text, "<h5>",  "</h5>")
+    text <- paste0(text, "<h5>", "K is a 'curvature parameter' which determines how fast the fish approaches its ", withMathJax("\\(L_\\infty.\\)"), "</h5>")
+    text <- paste0(text, "<h5>", "Some species, most of them short-lived, almost reach their ", withMathJax("\\(L_\\infty\\)"),  "in a year or two and have a high value of K.")
+    text <- paste0(text, "Other species have a flat growth curve with a low K-value and need many years to reach anything like their ", withMathJax("\\(L_\\infty.\\)"),  "</h5>")
+    text <- paste0(text, "<h5>", "Increasing K with the slider bar will result in a growth curve that has more 'bend'.", "</h5>")
+    text <- paste0(text, "<h5>", "The third parameter, ", withMathJax("\\(t_0,\\)"),  "sometimes called 'the initial condition parameter',determines the point in time when the fish has zero length.", "</h5>")
+    text <- paste0(text, "<h5>",  "Biologically, this has no meaning, because the growth begins at hatching when the larva already has a certain length, which may be called L(0) when we put t = 0 at the day of birth.", "</h5>")
+    text <- paste0(text, "<h5>",  "It is easily identified by inserting t = 0 into the equation.", "</h5>")
+    text <- paste0(text, "<h5>",  "Growth parameters differ from species to species, but they may also vary from stock to stock within the same species, i.e. growth parameters of a particular species may take different values in different parts of its range. Also successive cohorts may grow differently depending on environmental conditions.", "</h5>")
+    text <- paste0(text, "<h5>", "Further growth parameters often take different values for the two sexes. If there are pronounced differences between the sexes in their growth parameters, the input data should be separated by sex and values of K, ", withMathJax("\\(L_\\infty,\\)"), " and ", withMathJax("\\(t_0\\)"), "should be estimated for each sex separately.", "</h5>")
   })
+  
+  output$naturalMortalityInfoText <- renderText({
+    text <- "<h5>This tool employs various empirical estimators of natural mortality.</h5>"
+    text <- paste0(text, "<h5>", "When the user enters the scientific name for a fish species, FishBase will be queried for:", "</h5>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>", "(1) Maximum age (Amax)", "</li>")
+    text <- paste0(text, "<li>", "(2) Age at maturity (Amat)", "</li>")
+    text <- paste0(text, "<li>", "(3) L-infinity (in cm) (Linf)", "</li>")
+    text <- paste0(text, "<li>", "(4) Von Bertalannfy Growth Function (VBGF) growth coefficient (k)", "</li>")
+    text <- paste0(text, "<li>", "(5) VBGF age at size 0 (t0)", "</li>")
+    text <- paste0(text, "<li>", "(6) Body length in cm (Bl)", "</li>")
+    text <- paste0(text, "<li>", "(7) Mean water temperature in Celsius (Temp)", "</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<h5>", "Averaging of Von Bertalannfy (VBFG) parameters is done following the specifications of Pauly, D. (1991). Growth performance in fishes: rigorous description of patterns as a basis for understanding causal mechanisms. ICLARM Contribution No. 793.", "</h5>")
+    text <- paste0(text, "<h5>", "Estimates will be displayed in the main panel.",  "</h5>")
+    text <- paste0(text, "<h5>", "Four methods use Amax, three methods use the VBGF parameters, two methods use the VBGF parameters & Temp, one method uses the VBGF parameters & Amat, and three methods use only Amat. These groupings are indicated by the different colors in the top plot.", "</h5>")
+    text <- paste0(text, "<h5>", "<em>The user can also choose to input their own parameters if they have inputs from local studies. These input values will override the FishBase calculations if all the necessary parameters for a particular method are available (e.g., all the VBGF parameters are available for those methods that require them).</em>", "</h5>")
+    text <- paste0(text, "<h5>","The individual estimates of M are combined with defined weightings below (that the user can modify) and a single average M is provided. This average M can be used as input in the YPR/SBPR and ELEFAN applications.",  "</h5>")
+    text <- paste0(text, "<h5>", "References for each method can be found", " <a href=\"javascript:window.open('References_M.html', '_blank','width=600,height=400')\">here</a>", "</h5>")
+    text <- paste0(text, "<h5>",  "</h5>")
+    text
+  })
+  
   output$VBGFplot <- renderPlot({
     ages<-c(1:input$amax)
     lengths.out<-GVBGF(input$Linf,input$k,input$t0, ages)
@@ -2081,29 +2098,9 @@ server <- function(input, output, session) {
     text
   })
   
-  observeEvent(input$naturalMortalityInfo, {
+  observeEvent(input$vonBertalannfyInfo, {
     showModal(modalDialog(
-      title = "Estimating Natural Mortality (M) from FishBase life history parameters",
-      h5(p(em("This tool employs various empirical estimators of natural mortality."))),
-      h5(p(em("When the user enters the scientific name for a fish species, FishBase will be queried for 
-            (1) Maximum age (Amax), (2) Age at maturity (Amat), (3) L-infinity (in cm) (Linf), (4) Von Bertalannfy Growth Function (VBGF) growth coefficient (k),"))),
-      h5(p(em("(5) VBGF age at size 0 (t0), (6) Body length in cm (Bl), and (7) Mean water temperature in Celsius (Temp))."))),
-      h5(p(em("Averaging of Von Bertalannfy (VBFG) parameters is done following the specifications of 
-               Pauly, D. (1991). Growth performance in fishes: rigorous description of patterns as a 
-               basis for understanding causal mechanisms. ICLARM Contribution No. 793."))),
-      h5(p(em("Estimates will be displayed in the main panel."))),
-      br(),
-      h5(p(em("Four methods use Amax, three methods use the VBGF parameters, two methods use the VBGF parameters & Temp, one method uses the VBGF parameters & Amat, and three methods use only Amat."))),
-      h5(p(em("These groupings are indicated by the different colors in the top plot."))),
-      br(),
-      h5(p(em("The user can also choose to input their own parameters if they have inputs from local studies. 
-            These input values will override the FishBase calculations if all the necessary parameters for a 
-            particular method are available (e.g., all the VBGF parameters are available for those methods that require them)."))),
-      br(),
-      h5(p(em("The individual estimates of M are combined with defined weightings below (that the user can modify) and a single average M is provided."))),
-      h5(p(em("This average M can be used as input in the YPR/SBPR and ELEFAN applications."))),
-      br(),
-      h4(p("References for each method can be found",tags$a(href="javascript:window.open('References_M.html', '_blank','width=600,height=400')", "here"))),
+      title = "Generalized Von Bertalanffy Growth Function (VBGF)",
       easyClose = TRUE,
       footer = NULL
     ))
