@@ -16,6 +16,7 @@ library(RCurl)
 library(fishmethods)
 library(TropFishR)
 library(ggplot2)
+library(rfishbase)
 
 
 buildUrl <- function(session, path) {
