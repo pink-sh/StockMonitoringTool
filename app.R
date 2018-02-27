@@ -690,7 +690,7 @@ ui <- tagList(dashboardPage(
                                    sliderInput("k", "k:", 
                                                min = 0.01, max = 1, value = 0.1,step=0.01),
                                    sliderInput("t0", withMathJax("$$t_0:$$"),
-                                               min = -5, max = 5, value = 0,step=0.1) 
+                                               min = -5, max = 5, value = 0,step=0.1)
                               ),
                               box(
                                 plotOutput("VBGFplot"),
@@ -699,6 +699,7 @@ ui <- tagList(dashboardPage(
                             )
                        )
               )
+      
       ),
       tabItem("NaturalMortality",
               htmlOutput("naturalMortalityTitle"),
@@ -709,7 +710,7 @@ ui <- tagList(dashboardPage(
                             fluidRow(
                               box( id="box_naturalMortality_in",
                                    textInput("Species", label="Type genus and species name found in FishBase:", value = "Gadus morhua"),
-                                   submitButton("Submit"),
+                                   actionButton(label="Submit", inputId="nm_sub_fb"),
                                    numericInput("Amax", "Maximum age (years):", value=NA,min=1, max=300, step=0.1),
                                    numericInput("Linf","Linf (in cm):", value=NA,min=1, max=1000, step=0.01),
                                    numericInput("k", "VBGF Growth coeff. k:", value=NA,min = 0.001, max = 1,step=0.01),
@@ -761,7 +762,7 @@ ui <- tagList(dashboardPage(
                                      ),
                                      fluidRow(
                                        column(4,numericInput("UserM","User M",value=1,min = 0, max = 1,step=0.001)))
-                                     )
+                                   )
                               ),
                               box(
                                 h4("Natural mortality (M) estimates by method"),
@@ -771,20 +772,20 @@ ui <- tagList(dashboardPage(
                                   column(6,tableOutput("Mtable")),
                                   column(6,tableOutput("Mtable2")),
                                   div(class="divDividerMain",
-                                  downloadButton('downloadMs', 'Download M values'),
-                                  downloadButton('downloadCW_M_a', 'Download Chen-Wat. age-specific M values'),
-                                  h4("Composite natural mortality"),
-                                  h5(p(em("Blue vertical line indicates median value")))),
+                                      downloadButton('downloadMs', 'Download M values'),
+                                      downloadButton('downloadCW_M_a', 'Download Chen-Wat. age-specific M values'),
+                                      h4("Composite natural mortality"),
+                                      h5(p(em("Blue vertical line indicates median value")))),
                                   div(class="divDividerMain2",
-                                  plotOutput("Mcomposite"),
-                                  downloadButton('downloadMcompositedensityplot', 'Download composite M density plot'),
-                                  downloadButton('downloadMcompositedist', 'Download composite M for resampling'))
+                                      plotOutput("Mcomposite"),
+                                      downloadButton('downloadMcompositedensityplot', 'Download composite M density plot'),
+                                      downloadButton('downloadMcompositedist', 'Download composite M for resampling'))
                                 )
                               )
                             )
                        )
               )
-      )
+        )
     )
   )
 ), tags$footer("This work has received funding from the European Union's Horizon 2020 research and innovation programme under the BlueBRIDGE project (Grant agreement No 675680) and in-kind from NOAA", 
@@ -793,7 +794,7 @@ ui <- tagList(dashboardPage(
 
 
 server <- function(input, output, session) {
-  
+
   cmsy <- reactiveValues()
   output$fill <- renderUI({
     inFile1 <- input$file1
@@ -2085,10 +2086,11 @@ server <- function(input, output, session) {
   })
   
   output$VBGFplot <- renderPlot({
+    
     ages<-c(1:input$amax)
     lengths.out<-GVBGF(input$Linf,input$k,input$t0, ages)
     # plot VBGF
-    plot(ages, lengths.out, col = rgb(0/255,86/255,149/255),xlab="Age",ylab="Length",xlim=c(0,input$amax),ylim=c(0,input$Linf*1.1),type="l",lwd=1.8)
+    plot(ages, lengths.out, col = rgb(0/255,86/255,149/255),xlab="Age",ylab="Length",xlim=c(0,input$amax),ylim=c(0,input$Linf*1.1),type="l",lwd=5)
   })
   
   output$naturalMortalityTitle <- renderText({
@@ -2098,14 +2100,13 @@ server <- function(input, output, session) {
     text
   })
   
-  observeEvent(input$vonBertalannfyInfo, {
-    showModal(modalDialog(
-      title = "Generalized Von Bertalanffy Growth Function (VBGF)",
-      easyClose = TRUE,
-      footer = NULL
-    ))
-  })
-  
+  #observeEvent(input$vonBertalannfyInfo, {
+  #  showModal(modalDialog(
+  #    title = "Generalized Von Bertalanffy Growth Function (VBGF)",
+  #    easyClose = TRUE,
+  #    footer = NULL
+  #  ))
+  #})
   SPEC <- reactive({
     Amax1<-popchar(input$Species, field="tmax")
     Amax<-mean(Amax1$tmax, na.rm=T) 
@@ -2141,7 +2142,7 @@ server <- function(input, output, session) {
     
     # Show the first "n" observations
     output$Ftable <- renderTable({
-      
+      input$nm_sub_fb
       F_table<-data.frame(cbind(Amax, Amat, Bl, Linf, k, t0, Temp))
       colnames(F_table)<-c("Max Age","Age Mat.", "Mean Length", "VB Linf", "VB k", "VB t0", "Temp.")
       F_table
@@ -2212,6 +2213,7 @@ server <- function(input, output, session) {
   #   })   
   
   output$Mplot <- renderPlot({
+    input$nm_sub_fb
     M_vals_all<-M_vals_all()
     M_methods<-c("Then_Amax 1","Then_Amax 2","Then_Amax 3","Hamel_Amax","AnC","Then_VBGF","Jensen_VBGF 1","Jensen_VBGF 2","Pauly_lt","Gislason","Chen-Wat","Roff","Jensen_Amat","Ri_Ef_Amat","User input") #"Pauly_wt","PnW","Lorenzen","GSI",
     # plot M
@@ -2234,6 +2236,7 @@ server <- function(input, output, session) {
   
   # Show the first "n" observations
   output$Mtable <- renderTable({
+    input$nm_sub_fb
     SPEC<-SPEC()
     Amax<-SPEC$Amax
     Amat<-SPEC$Amat
@@ -2267,6 +2270,7 @@ server <- function(input, output, session) {
   })
   # Show the first "n" observations
   output$Mtable2 <- renderTable({
+    input$nm_sub_fb
     SPEC<-SPEC()
     Amax<-SPEC$Amax
     Amat<-SPEC$Amat
@@ -2304,6 +2308,7 @@ server <- function(input, output, session) {
   
   #Plot Composite M
   output$Mcomposite<- renderPlot({    
+    input$nm_sub_fb
     if(all(is.na(M_vals_all()))){return(NULL)}
     else{
       M.wts<-c(input$Then_Amax_1,input$Then_Amax_2,input$Then_Amax_3,input$Hamel_Amax,input$AnC,input$Then_VBGF,input$Jensen_VBGF_1,input$Jensen_VBGF_2,input$Pauly_lt,input$Gislason,input$Chen_Wat,input$Roff,input$Jensen_Amat,input$Ri_Ef_Amat,input$UserM) #input$Pauly_wt,input$PnW,input$Lorenzen,input$Gonosoma,
@@ -2350,8 +2355,6 @@ server <- function(input, output, session) {
         content = function(file) {save(pdf.samples,file=file)}) 
     }
   })
-
-  
 }
 
 # Run the application 
