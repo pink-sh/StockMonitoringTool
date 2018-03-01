@@ -112,6 +112,7 @@ ui <- tagList(dashboardPage(
     ),
     tags$head(tags$script(src="https://cdnjs.cloudflare.com/ajax/libs/eqcss/1.7.0/EQCSS.min.js")),
     tags$head(tags$script(type="text/eqcss", src="styles.eqcss")),
+    tags$head(tags$script(type="text/javascript", src="custom.js")),
     #busyIndicator(wait = 7000),
     tabItems(
       tabItem("homeTab",
