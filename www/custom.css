@@ -49,6 +49,7 @@ footer{
 
 #box_cmsy_results_charts { height: 1400px;}
 
+.italicText {font-style: italic;}
 
 .box-header { height: 46px;}
 
@@ -90,3 +91,35 @@ footer{
 .pheader_elefan {
   font-weight: bold;
 }
+
+.topLevelInformationButton {
+  background-color:#222D32;
+  color: #DBDBDB !important;
+}
+.topLevelInformationButton:hover {
+  background-color:#222D32;
+  color: #FFFFFF !important;
+}
+
+.main-sidebar { width : 240px !important;}
+.logo { width : 240px !important;}
+.navbar {margin-left: 240px !important;}
+.sidebar-collapse .left-side, .sidebar-collapse .main-sidebar { transform: translate(-240px,0) !important; }
+
+.divDividerMain{
+      width: 100%;
+    height: 90px;
+    float: left;
+}
+.divDividerMain2{
+      width: 100%;
+    float: left;
+}
+
+#box_shaefer > .row > .col-sm-6:nth-child(1) { width: 38% !important; }
+#box_shaefer > .row > .col-sm-6:nth-child(2) { width: 61% !important; }
+#box_vonbertalannfy > .row > .col-sm-6:nth-child(1) { width: 38% !important; }
+#box_vonbertalannfy > .row > .col-sm-6:nth-child(2) { width: 61% !important; }
+#box_naturalMortality > .row > .col-sm-6:nth-child(1) { width: 38% !important; }
+#box_naturalMortality > .row > .col-sm-6:nth-child(2) { width: 61% !important; }
+

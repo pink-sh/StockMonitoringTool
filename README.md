@@ -33,7 +33,7 @@ devtools::install_github('jyypma/nloptr')
 ```
 The following libraries can be installed from CRAN
 ```
-install.packages(c('shiny', 'rmarkdown', 'shinythemes', 'shinydashboard', 'TropFishR', 'RCurl', 'V8', 'fishmethods'), repos='https://cloud.r-project.org/')
+install.packages(c('shiny', 'rmarkdown', 'shinythemes', 'shinydashboard', 'TropFishR', 'RCurl', 'V8', 'fishmethods', 'ggplot2'), repos='https://cloud.r-project.org/')
 ```
 
 ### Docker
