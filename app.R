@@ -2,6 +2,7 @@
 # This is the StockMonitoringTools Shiny web application. You can run the application by clicking
 # the 'Run App' button above.
 # The StockMonitoringTools shiny application will support the FAO - SDG 14.4.1 E-learning course
+# Test
 
 library(shiny)
 library(shinyBS)
