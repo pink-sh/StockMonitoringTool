@@ -942,61 +942,6 @@ server <- function(input, output, session) {
       }
     }
   })
-  
-  observeEvent(input$go, {
-    infile <- input$fileElefan
-    
-    if (is.null(infile)) {
-      showModal(modalDialog(
-        title = "Error",
-        "No input file selected",
-        easyClose = TRUE,
-        footer = NULL
-      ))
-      return(NULL)
-    }
-    js$showComputing()
-    inputCsvFile <- infile$datapath
-    js$removeBox("box_elefan_results")
-    js$disableAllButtons()
-    dataset <- read_elefan_csv(inputCsvFile)
-    ds <- lfqModify(dataset, bin_size = 4)
-    
-    ds <- lfqModify(get('synLFQ7', asNamespace('TropFishR')), bin_size = 4)
-    
-    elefan_linf_range <- NA
-    if (!is.na(input$ELEFAN_Linf_range_from) && !is.na(input$ELEFAN_Linf_range_to)) {
-      elefan_linf_range <- seq(from = input$ELEFAN_Linf_range_from, to = input$ELEFAN_Linf_range_to, by = input$ELEFAN_Linf_range_by)
-    }
-    
-    elefan_k_range <- exp(seq(log(0.1), log(10), length.out=100))
-    if (!is.na(input$ELEFAN_K_Range_from) && !is.na(input$ELEFAN_K_range_to)) {
-      elefan_linf_range <- seq(from = input$ELEFAN_K_Range_from, to = input$ELEFAN_K_range_to, by = input$ELEFAN_K_range_by)
-    }
-    
-    
-    elefan_agemax <- input$ELEFAN_agemax 
-    if (is.na(input$ELEFAN_agemax)) {
-      elefan_agemax <- NULL
-    }
-    res <- run_elefan(ds, binSize = 4, Linf_fix = input$ELEFAN_Linf_fix, Linf_range = elefan_linf_range, K_range = elefan_k_range,
-                      C = input$ELEFAN_C, ts = input$ELEFAN_ts, MA = input$ELEFAN_MA, addl.sqrt = input$ELEFAN_addl.sqrt,
-                      agemax = elefan_agemax, contour = input$ELEFAN_contour)
-    js$hideComputing()
-    js$enableAllButtons()
-    if ('error' %in% names(res)) {
-      showModal(modalDialog(
-        title = "Error",
-        res$error,
-        easyClose = TRUE,
-        footer = NULL
-      ))
-    } else {
-      js$showBox("box_elefan_results")
-      elefan$results <- res
-    }
-  })
-  
   ####### END OBSERVERS #######
   
   ####### CMSY OUTPUT FUNCTION #######
@@ -1153,7 +1098,7 @@ server <- function(input, output, session) {
     js$removeBox("box_elefan_ga_results")
     js$disableAllButtons()
     dataset <- read_elefan_csv(inputCsvFile)
-    ds <- lfqModify(dataset, bin_size = 4)
+    ds <- lfqModify(lfqRestructure(dataset), bin_size = 4)
     
     res <- run_elefan_ga(ds,binSize =  4, seasonalised = input$ELEFAN_GA_seasonalised, 
                          low_par = list(Linf = input$ELEFAN_GA_lowPar_Linf, K = input$ELEFAN_GA_lowPar_K, t_anchor = input$ELEFAN_GA_lowPar_t_anchor, C = input$ELEFAN_GA_lowPar_C, ts = input$ELEFAN_GA_lowPar_ts),
@@ -1336,9 +1281,9 @@ server <- function(input, output, session) {
     js$removeBox("box_elefan_ga_results")
     js$disableAllButtons()
     dataset <- read_elefan_csv(inputCsvFile)
-    ds <- lfqModify(dataset, bin_size = 4)
+    ds <- lfqModify(lfqRestructure(dataset), bin_size = 4)
     
-    ds <- lfqModify(get('synLFQ7', asNamespace('TropFishR')), bin_size = 4)
+    #ds <- lfqModify(get('synLFQ7', asNamespace('TropFishR')), bin_size = 4)
     
     res <- run_elefan_sa(ds,binSize =  4, seasonalised = input$ELEFAN_GA_seasonalised, 
                          init_par = list(Linf = input$ELEFAN_SA_initPar_Linf, K = input$ELEFAN_SA_initPar_K, t_anchor = input$ELEFAN_SA_initPar_t_anchor),
@@ -1484,9 +1429,9 @@ server <- function(input, output, session) {
     js$removeBox("box_elefan_results")
     js$disableAllButtons()
     dataset <- read_elefan_csv(inputCsvFile)
-    ds <- lfqModify(dataset, bin_size = 4)
+    ds <- lfqModify(lfqRestructure(dataset), bin_size = 4)
     
-    ds <- lfqModify(get('synLFQ7', asNamespace('TropFishR')), bin_size = 4)
+    #ds <- lfqModify(get('synLFQ7', asNamespace('TropFishR')), bin_size = 4)
     
     elefan_linf_range <- NA
     if (!is.na(input$ELEFAN_Linf_range_from) && !is.na(input$ELEFAN_Linf_range_to)) {
