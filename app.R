@@ -1264,19 +1264,21 @@ server <- function(input, output, session) {
   output$par_ga <- renderText({
     if ("results" %in% names(elefan_ga)) {
       title <- "<hr>"
-      #title <- paste0(title, p("<strong>Length infinity (", withMathJax("\\(L_\\infty\\)"), "in cm):</strong>&nbsp;"), elefan_sa$results$data$par$Linf)
+      title <- paste0(title, "<strong>Length infinity (", withMathJax("\\(L_\\infty\\)"), "in cm):</strong>&nbsp;", elefan_ga$results$data$par$Linf)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Curving coefficient:</strong>&nbsp;", elefan_sa$results$data$par$K)
+      title <- paste0(title, "<strong>Curving coefficient (K):</strong>&nbsp;", elefan_ga$results$data$par$K)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month (t_anchor):</strong>&nbsp;", round(elefan_sa$results$data$par$t_anchor, 2))
+      title <- paste0(title, "<strong>Time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month (t_anchor):</strong>&nbsp;", round(elefan_ga$results$data$par$t_anchor, 2))
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Amplitude of growth oscillation (C):</strong>&nbsp;", elefan_sa$results$data$par$C)
+      title <- paste0(title, "<strong>Amplitude of growth oscillation (C):</strong>&nbsp;", elefan_ga$results$data$par$C)
       title <- paste0(title, "<br/>")
-      #title <- paste0(title, p("Winter point of oscillation (", withMathJax("\\(t_w\\)") , ")"))
-      title <- paste0(title, p("<strong>Summer point of oscillation (", withMathJax("\\(ts\\)"),"=", withMathJax("\\(t_w\\)"), "- 0.5):</strong>&nbsp;"), elefan_sa$results$data$par$ts)
+      title <- paste0(title, "<strong>Winter point of oscillation (</strong>&nbsp;", withMathJax("\\(t_w\\)") , "<strong>)</strong>&nbsp;")
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", round(elefan_sa$results$data$par$phiL, 2))
-      title
+      title <- paste0(title, "<strong>Summer point of oscillation (", withMathJax("\\(ts\\)"),"=", withMathJax("\\(t_w\\)"), "- 0.5):</strong>&nbsp;", round(elefan_ga$results$data$par$ts, 2))
+      title <- paste0(title, "<br/>")
+      title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", round(elefan_ga$results$data$par$phiL, 2))
+      title <- paste0(title, "<br/>")
+      title <- paste0(title, "<br>")
     } else {  "" }
   })
   output$downloadReport_ga <- renderUI({
@@ -1462,18 +1464,21 @@ server <- function(input, output, session) {
   output$par_sa <- renderText({
     if ("results" %in% names(elefan_sa)) {
       title <- "<hr>"
-      title <- paste0(title, p("<strong>Length infinity (", withMathJax("\\(L_\\infty\\)"), "in cm):</strong>&nbsp;"), elefan_sa$results$data$par$Linf)
+      title <- paste0(title, "<strong>Length infinity (", withMathJax("\\(L_\\infty\\)"), "in cm):</strong>&nbsp;", elefan_sa$results$data$par$Linf)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Curving coefficient:</strong>&nbsp;", elefan_sa$results$data$par$K)
+      title <- paste0(title, "<strong>Curving coefficient (K):</strong>&nbsp;", elefan_sa$results$data$par$K)
       title <- paste0(title, "<br/>")
       title <- paste0(title, "<strong>Time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month (t_anchor):</strong>&nbsp;", round(elefan_sa$results$data$par$t_anchor, 2))
       title <- paste0(title, "<br/>")
       title <- paste0(title, "<strong>Amplitude of growth oscillation (C):</strong>&nbsp;", elefan_sa$results$data$par$C)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, p("Winter point of oscillation (", withMathJax("\\(t_w\\)") , ")"))
-      title <- paste0(title, p("<strong>Summer point of oscillation (", withMathJax("\\(ts\\)"),"=", withMathJax("\\(t_w\\)"), "- 0.5):</strong>&nbsp;"), elefan_sa$results$data$par$ts)
+      title <- paste0(title, "<strong>Winter point of oscillation (</strong>&nbsp;", withMathJax("\\(t_w\\)") , "<strong>)</strong>&nbsp;")
+      title <- paste0(title, "<br/>")
+      title <- paste0(title, "<strong>Summer point of oscillation (", withMathJax("\\(ts\\)"),"=", withMathJax("\\(t_w\\)"), "- 0.5):</strong>&nbsp;", round(elefan_sa$results$data$par$ts, 2))
       title <- paste0(title, "<br/>")
       title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", round(elefan_sa$results$data$par$phiL, 2))
+      title <- paste0(title, "<br/>")
+      title <- paste0(title, "<br>")
       title
     } else {  "" }
   })
@@ -1646,18 +1651,21 @@ server <- function(input, output, session) {
   output$par <- renderText({
     if ("results" %in% names(elefan)) {
       title <- "<hr>"
-      title <- paste0(title, p("<strong>Length infinity (", withMathJax("\\(L_\\infty\\)"), "in cm):</strong>&nbsp;"), elefan_sa$results$data$par$Linf)
+      title <- paste0(title, "<strong>Length infinity (", withMathJax("\\(L_\\infty\\)"), "in cm):</strong>&nbsp;", elefan$results$data$par$Linf)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Curving coefficient:</strong>&nbsp;", elefan_sa$results$data$par$K)
+      title <- paste0(title, "<strong>Curving coefficient (K):</strong>&nbsp;", elefan$results$data$par$K)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month (t_anchor):</strong>&nbsp;", round(elefan_sa$results$data$par$t_anchor, 2))
+      title <- paste0(title, "<strong>Time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month (t_anchor):</strong>&nbsp;", round(elefan$results$data$par$t_anchor, 2))
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Amplitude of growth oscillation (C):</strong>&nbsp;", elefan_sa$results$data$par$C)
+      title <- paste0(title, "<strong>Amplitude of growth oscillation (C):</strong>&nbsp;", elefan$results$data$par$C)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, p("Winter point of oscillation (", withMathJax("\\(t_w\\)") , ")"))
-      title <- paste0(title, p("<strong>Summer point of oscillation (", withMathJax("\\(ts\\)"),"=", withMathJax("\\(t_w\\)"), "- 0.5):</strong>&nbsp;"), elefan_sa$results$data$par$ts)
+      title <- paste0(title, "<strong>Winter point of oscillation (</strong>&nbsp;", withMathJax("\\(t_w\\)") , "<strong>)</strong>&nbsp;")
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", round(elefan_sa$results$data$par$phiL, 2))
+      title <- paste0(title, "<strong>Summer point of oscillation (", withMathJax("\\(ts\\)"),"=", withMathJax("\\(t_w\\)"), "- 0.5):</strong>&nbsp;", round(elefan$results$data$par$ts, 2))
+      title <- paste0(title, "<br/>")
+      title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", round(elefan$results$data$par$phiL, 2))
+      title <- paste0(title, "<br/>")
+      title <- paste0(title, "<br>")
       title
     } else {  "" }
   })
