@@ -2,7 +2,6 @@
 # This is the StockMonitoringTools Shiny web application. You can run the application by clicking
 # the 'Run App' button above.
 # The StockMonitoringTools shiny application will support the FAO - SDG 14.4.1 E-learning course
-# Test
 
 library(shiny)
 library(shinyBS)
@@ -93,8 +92,8 @@ ui <- tagList(dashboardPage(
       ),
       menuItem("Supporting Tools",
                menuSubItem("Schaefer logistic growth", tabName = "BasicSchaefer"),
-               menuSubItem("Von Bertalannfy growth function", tabName = "BasicVonBertalannfy"),
-               menuSubItem("Seasonal Von Bertalannfy", tabName = "SeasonalVonBertalannfy"),
+               menuSubItem("Von Bertalanffy growth function", tabName = "BasicVonBertalannfy"),
+               menuSubItem("Seasonal Von Bertalanffy", tabName = "SeasonalVonBertalannfy"),
                menuSubItem("Natural Mortality Estimators", tabName = "NaturalMortality")
       )
     )
@@ -135,6 +134,15 @@ ui <- tagList(dashboardPage(
       tabItem("cmsyMethod",
               htmlOutput("cmsyMethodTitle"),
               fluidRow(
+                box(title = "Data Considerations",
+                    width = NULL,
+                    collapsible = T, 
+                    class = "collapsed-box",
+                    box(
+                      checkboxInput("checkbox_cmsy", label = "Is your time-series at least 15 years in length from starting year to ending year? (Note that years with missing data should be filled with an 'NA' value.", value = F),
+                      p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of natural mortality (M) for the Optional Parameters section.")
+                    )
+                ),
                 box(title = "Main Parameters",
                     width = NULL,
                     collapsible = T, 
@@ -157,46 +165,42 @@ ui <- tagList(dashboardPage(
                     class = "collapsed-box",
                     collapsed = T,
                     box(
-                      numericInput("minOfYear", "Min Year of the catch series", 1970, min = 1900, max = 2020, step=1),
-                      numericInput("maxOfYear", "Max Year of the catch series", 2014, min = 1900, max = 2020, step=1),
-                      textInput("flim", "Fishing mortality biological limit", "NA"),
-                      textInput("fpa", "Fishing mortality precautionary value", "NA"),
-                      textInput("blim", "Biomass biological limit", "NA"),
-                      textInput("bpa", "Biomass precautionary value", "NA"),
-                      textInput("bmsy", "Biomass maximum sustainable yield", "NA"),
-                      textInput("resiliance", "Resilience as qualitative information", "Medium"),
-                      textInput("r.low", "r.low lowest resilience (automatically calculated if not set)", "NA"),
-                      textInput("r.hi", "r.hi highest resilience (automatically calculated if not set)", "NA"),
-                      
-                      numericInput("stb.low", "stb.low lowest possible relative biomass at the beginning of the catch time series", 0, min = 0, max = 10, step=0.1),
-                      numericInput("stb.hi", "stb.hi highest possible relative biomass at the beginning of the catch time series", 0, min = 0, max = 10, step=0.1),
-                      
-                      textInput("int.yr", "int.yr intermediate year (automatically calculated if not set)", "NA"),
-                      textInput("intb.low", "intb.low lowest possible relative biomass at the intermediate year of the catch time series (automatically calculated if not set)", "NA"),
-                      textInput("intb.hi", "intb.hi highest possible relative biomass at the intermediate year of the catch time series (automatically calculated if not set)", "NA"),
-                      
-                      numericInput("endb.low", "endb.low lowest possible relative biomass at the end of the catch time series", 0.01, min = 0, max = 10, step=0.01)
+                      numericInput("minOfYear", "Earliest year of the catch series", 1970, min = 1900, max = 2020, step=1),
+                      numericInput("maxOfYear", "Latest Year of the catch series", 2014, min = 1900, max = 2020, step=1),
+                      textInput("resiliance", "Resilience as qualitative information (input FishBase value", "Medium"),
+                      textInput("r.low", "Lowest resilience (automatically calculated if not set)", "NA"),
+                      textInput("r.hi", "Highest resilience (automatically calculated if not set)", "NA"),
+                      p("**The user should take care when setting the prior estimates for depletion at the beginning and end of the time series. Depletion levels are assumptions about the initial and current state of the stock, and they have a strong influence on the results of CMSY, so careful evaluation of these parameters is recommended. These parameters are determined in CMSY using the relationship between current catch and maximum catch."),
+                      numericInput("stb.low", "Starting depletion range: Lowest possible relative biomass at the beginning of the catch time series", 0, min = 0, max = 10, step=0.1),
+                      numericInput("stb.hi", "Starting depletion range: Highest possible relative biomass at the beginning of the catch time series", 0, min = 0, max = 10, step=0.1),
+                      textInput("int.yr", "Intermediate year (automatically calculated if not set)", "NA"),
+                      textInput("intb.low", "Lowest possible relative biomass at the intermediate year of the catch time series (automatically calculated if not set)", "NA"),
+                      textInput("intb.hi", "Highest possible relative biomass at the intermediate year of the catch time series (automatically calculated if not set)", "NA"),
+                      numericInput("endb.low", "Ending depletion range: Lowest possible relative biomass at the end of the catch time series", 0.01, min = 0, max = 10, step=0.01),
+                      numericInput("endb.hi", "Ending depletion range: Highest possible relative biomass at the end of the catch time series", 0.4, min = 0, max = 10, step=0.1)
                     ),
                     box(
                       numericInput("startYear", "Start Year to process the catch series from", 1970, min = 1900, max = 2020, step=1),
                       numericInput("endYear", "End Year to process the catch series up to", 2014, min = 1900, max = 2020, step=1),
-                      textInput("source", "Source", "-"),
-                      textInput("fmsy", "Fishing mortality maximum sustainable yield", "NA"),
-                      textInput("msy", "Maximum sustainable yield", "NA"),
-                      textInput("msyBTrigger", "Spawning stock biomass at MSY", "NA"),
-                      textInput("b40", "Biomass at 40% over the unfished level", "NA"),
-                      textInput("m", "Natural mortality", "NA"),
-                      textInput("fofl", "Fishing mortality at overfishing level", "NA"),
+                      textInput("blim", p("Biomass biological limit (", withMathJax("\\(B_{lim}\\)"), ")"), "NA"),
+                      textInput("bpa", p("Biomass precautionary value (",withMathJax("\\(B_{pa}\\)") , ")"), "NA"),
+                      textInput("bmsy", p("Biomass maximum sustainable yield (", withMathJax("\\(B_{MSY}\\)"), ")"), "NA"),
+                      textInput("b40", p("Biomass at 40% over the unfished level (", withMathJax("\\(B_{40\\%}\\)"), ")"), "NA"),
+                      textInput("fmsy", p("Fishing mortality at Maximum Sustainable Yield (",withMathJax("\\(F_{MSY}\\)") , ")"), "NA"),
+                      textInput("flim", p("Fishing mortality biological limit (", withMathJax("\\(F_{lim}\\)"), ")"), "NA"),
+                      textInput("fpa", p("Fishing mortality precautionary value (", withMathJax("\\(F_{pa}\\)"), ")"), "NA"),
+                      textInput("fofl", p("Fishing mortality at overfishing level (", withMathJax("\\(F_{ofl}\\)"),")"), "NA"),
                       textInput("last_f", "Last known exploitation rate", "NA"),
-                      
-                      textInput("q.start", "q.start, prior for q value at the beginning of a stable catch-biomass period of min 5 years", "NA"),
-                      textInput("q.end", "q.end, prior for q value at the end of a stable catch-biomass period of min 5 years", "NA"),
-                      textInput("btype", "btype indicates if the catch file contains biomass, CPUE or no information associated to the catch time series", "None"),
-                      
+                      textInput("msy", "Maximum Sustainable Yield (MSY)", "NA"),
+                      textInput("msyBTrigger", p("Spawning Stock Biomass at MSY (", withMathJax("\\(SSB_{MSY}\\)"), ")"), "NA"),
+                      textInput("m", "Natural mortality (M)", "NA"),
+                      textInput("q.start", "Prior for catchability (q) value at the beginning of a stable catch-biomass period of minimum 5 years", "NA"),
+                      textInput("q.end", "Prior for q value at the end of a stable catch-biomass period of minimum 5 years", "NA"),
+                      ##KK: it's not clear to me what the user input would be here if not "None". Suggest deleting (also for Comments.
+                      textInput("btype", "btype indicates if the catch file contains biomass, CPUE or no information associated with the catch time series", "None"),
                       textInput("comments", "Comments on data and computation", "landings"),
+                      checkboxInput("force.cmsy", "Check this if CMSY results are to be preferred over the Bayesian State Model results when biomass or CPUE is available", FALSE)
                       
-                      checkboxInput("force.cmsy", "Check this if CMSY results are to be preferred over the Bayesian State Model results when biomass or CPUE is available", FALSE),
-                      numericInput("endb.hi", "endb.hi highest possible relative biomass at the end of the catch time series", 0.4, min = 0, max = 10, step=0.1)
                     )
                 ),
                 actionButton("go_cmsy", "Run CMSY Method"),
@@ -230,6 +234,18 @@ ui <- tagList(dashboardPage(
       tabItem("ElefanGaWidget",
               htmlOutput("elefanGaTitle"),
               fluidRow(
+                box(title = "Data Considerations",
+                    width = NULL,
+                    collapsible = T, 
+                    class = "collapsed-box",
+                    box(
+                      checkboxInput("checkbox1", label = "Is your length-frequency data representative of the full population? (If this is not so, then estimates of fishing mortality will be biased.)", value = F),
+                      checkboxInput("checkbox2", label = "Were all age groups sampled?", value = F),
+                      checkboxInput("checkbox3", label = "Was the sample from a range of areas where different life histories might live? (e.g., if juveniles occupy nearshore habitat and adults are offshore)", value = F),
+                      checkboxInput("checkbox4", label = "Are a variety of gears with different selectivities used to collect the samples so that the samples contain multiple age groups?", value = F),
+                      p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of ", withMathJax("\\(L_\\infty\\)"), " and von Bertalanffy K in the Optional Parameters section in the ELEFAN_GA tool.")
+                      )
+                ),
                 box(title = "Main Parameters",
                     width = NULL,
                     collapsible = T, 
@@ -250,16 +266,16 @@ ui <- tagList(dashboardPage(
                     collapsed = T,
                     box(
                       checkboxInput("ELEFAN_GA_seasonalised", "Seasonalised", FALSE),
-                      numericInput("ELEFAN_GA_popSize", "Population size", 50, min = 0, max = 10000, step=1),
-                      numericInput("ELEFAN_GA_maxiter", "Maximum number of iterations to run before the GA search is halted", 10, min = 1, max = 1000, step=1),
-                      numericInput("ELEFAN_GA_run", "Number of consecutive generations without any improvement in the best fitness value before the GA is stopped", 100, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_GA_popSize", "Population size:", 50, min = 0, max = 10000, step=1),
+                      numericInput("ELEFAN_GA_maxiter", "Maximum number of iterations to run before the GA search is halted:", 10, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_GA_run", "Number of consecutive generations without any improvement in the best fitness value before the GA is stopped:", 100, min = 1, max = 1000, step=1),
                       checkboxInput("ELEFAN_GA_addl.sqrt", "Additional squareroot transformation of positive values according to Brey et al. (1988)", FALSE)
                     ),
                     box(
-                      numericInput("ELEFAN_GA_pmutation", "Probability of mutation in a parent chromosome. Usually mutation occurs with a small probability", 0.1, min = 0.1, max = 1, step=0.1),
-                      numericInput("ELEFAN_GA_pcrossover", "Probability of crossover between pairs of chromosomes. Typically this is a large value", 0.8, min = 0.1, max = 1, step=0.1),
-                      numericInput("ELEFAN_GA_elitism", "Number of best fitness individuals to survive at each generation", 5, min = 0, max = 100, step=1),
-                      numericInput("ELEFAN_GA_MA", "Number indicating over how many length classes the moving average should be performed", 5, min = 0, max = 100, step=1)
+                      numericInput("ELEFAN_GA_pmutation", "Probability of mutation in a parent chromosome. Usually mutation occurs with a small probability:", 0.1, min = 0.1, max = 1, step=0.1),
+                      numericInput("ELEFAN_GA_pcrossover", "Probability of crossover between pairs of chromosomes. Typically this is a large value:", 0.8, min = 0.1, max = 1, step=0.1),
+                      numericInput("ELEFAN_GA_elitism", "Number of best fitness individuals to survive at each generation:", 5, min = 0, max = 100, step=1),
+                      numericInput("ELEFAN_GA_MA", "Number indicating over how many length classes the moving average should be performed:", 5, min = 0, max = 100, step=1)
                     )
                 ),
                 box(title = "Low Par Parameters",
@@ -268,13 +284,13 @@ ui <- tagList(dashboardPage(
                     class = "collapsed-box",
                     collapsed = T,
                     box(
-                      numericInput("ELEFAN_GA_lowPar_Linf", "Length of infinity in CM", 119, min = 1, max = 1000, step=1),
-                      numericInput("ELEFAN_GA_lowPar_K", "Curving coefficient", 0.01, min = 0, max = 1, step=0.01),
-                      numericInput("ELEFAN_GA_lowPar_t_anchor", "Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month", 0, min = 0, max = 1, step=0.1)
+                      numericInput("ELEFAN_GA_lowPar_Linf", p("Length infinity (",withMathJax("\\(L_\\infty\\)"), "in cm):"), 119, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_GA_lowPar_K", "Curving coefficient (K):", 0.01, min = 0, max = 1, step=0.01),
+                      numericInput("ELEFAN_GA_lowPar_t_anchor", "Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month (t_anchor):", 0, min = 0, max = 1, step=0.1)
                     ),
                     box(
-                      numericInput("ELEFAN_GA_lowPar_C", "Amplitude of growth oscillation", 0, min = 0, max = 1, step=0.1),
-                      numericInput("ELEFAN_GA_lowPar_ts", "Summer point", 0, min = 0, max = 1, step=0.1)
+                      numericInput("ELEFAN_GA_lowPar_C", "Amplitude of growth oscillation (C):", 0, min = 0, max = 1, step=0.1),
+                      numericInput("ELEFAN_GA_lowPar_ts", p("Summer point (", withMathJax("\\(t_s\\)"), "):"), 0, min = 0, max = 1, step=0.1)
                     )
                 ),
                 box(title = "Up Par Parameters",
@@ -283,13 +299,13 @@ ui <- tagList(dashboardPage(
                     class = "collapsed-box",
                     collapsed = T,
                     box(
-                      numericInput("ELEFAN_GA_upPar_Linf", "Length of infinity in CM", 129, min = 1, max = 1000, step=1),
-                      numericInput("ELEFAN_GA_upPar_K", "Curving coefficient", 1, min = 0, max = 1, step=0.01),
-                      numericInput("ELEFAN_GA_upPar_t_anchor", "Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month", 1, min = 0, max = 1, step=0.1)
+                      numericInput("ELEFAN_GA_upPar_Linf", p("Length infinity (",withMathJax("\\(L_\\infty\\)"), "in cm):"), 129, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_GA_upPar_K", "Curving coefficient (K):", 1, min = 0, max = 1, step=0.01),
+                      numericInput("ELEFAN_GA_upPar_t_anchor", "Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month (t_anchor):", 1, min = 0, max = 1, step=0.1)
                     ),
                     box(
-                      numericInput("ELEFAN_GA_upPar_C", "Amplitude of growth oscillation", 1, min = 0, max = 1, step=0.1),
-                      numericInput("ELEFAN_GA_upPar_ts", "Summer point", 1, min = 0, max = 1, step=0.1)
+                      numericInput("ELEFAN_GA_upPar_C", "Amplitude of growth oscillation (C):", 1, min = 0, max = 1, step=0.1),
+                      numericInput("ELEFAN_GA_upPar_ts", p("Summer point (", withMathJax("\\(t_s\\)"), "):"), 1, min = 0, max = 1, step=0.1)
                     )
                 ),
                 actionButton("go_ga", "Run ELEFAN GA"),
@@ -338,6 +354,18 @@ ui <- tagList(dashboardPage(
       tabItem("ElefanSaWidget",
               htmlOutput("elefanSaTitle"),
               fluidRow(
+                box(title = "Data Considerations",
+                    width = NULL,
+                    collapsible = T, 
+                    class = "collapsed-box",
+                    box(
+                      checkboxInput("checkbox1", label = "Is your length-frequency data representative of the full population? (If this is not so, then estimates of fishing mortality will be biased.)", value = F),
+                      checkboxInput("checkbox2", label = "Were all age groups sampled?", value = F),
+                      checkboxInput("checkbox3", label = "Was the sample from a range of areas where different life histories might live? (e.g., if juveniles occupy nearshore habitat and adults are offshore)", value = F),
+                      checkboxInput("checkbox4", label = "Are a variety of gears with different selectivities used to collect the samples so that the samples contain multiple age groups?", value = F),
+                      p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of ", withMathJax("\\(L_\\infty\\)"), " and von Bertalanffy K in the Optional Parameters section in the ELEFAN_SA tool.")
+                    )
+                ),
                 box(title = "Main Parameters",
                     width = NULL,
                     collapsible = T, 
@@ -358,16 +386,16 @@ ui <- tagList(dashboardPage(
                     collapsed = T,
                     box(
                       checkboxInput("ELEFAN_SA_seasonalised", "Seasonalised", FALSE),
-                      numericInput("ELEFAN_SA_initPar_Linf", "Length of infinity in CM", 119, min = 1, max = 1000, step=1),
-                      numericInput("ELEFAN_SA_initPar_K", "Curving coefficient", 0.5, min = 0, max = 1, step=0.1),
-                      numericInput("ELEFAN_SA_initPar_t_anchor", "Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month", 0.5, min = 0, max = 1, step=0.01),
+                      numericInput("ELEFAN_SA_initPar_Linf", p("Length infinity (",withMathJax("\\(L_\\infty\\)"), "in cm):"), 119, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_SA_initPar_K", "Curving coefficient (K):", 0.5, min = 0, max = 1, step=0.1),
+                      numericInput("ELEFAN_SA_initPar_t_anchor", "Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month (t_anchor):", 0.5, min = 0, max = 1, step=0.01),
                       checkboxInput("ELEFAN_SA_addl.sqrt", "Additional squareroot transformation of positive values according to Brey et al. (1988)", FALSE)
                     ),
                     box(
-                      numericInput("ELEFAN_SA_SA_time", "Maximum running time in seconds", 60, min = 0, max = 10000, step=1),
-                      numericInput("ELEFAN_SA_SA_temp", "Initial value for temperature", 100000, min = 1, max = 10000000, step=100),
-                      numericInput("ELEFAN_SA_MA", "Number indicating over how many length classes the moving average should be performed", 5, min = 0, max = 100, step=1),
-                      numericInput("ELEFAN_SA_agemax", "Maximum age of species", 1, min = 0, max = 100, step=1)
+                      numericInput("ELEFAN_SA_SA_time", "Maximum running time in seconds:", 60, min = 0, max = 10000, step=1),
+                      numericInput("ELEFAN_SA_SA_temp", "Initial value for temperature:", 100000, min = 1, max = 10000000, step=100),
+                      numericInput("ELEFAN_SA_MA", "Number indicating over how many length classes the moving average should be performed:", 5, min = 0, max = 100, step=1),
+                      numericInput("ELEFAN_SA_agemax", "Maximum age of species:", 1, min = 0, max = 100, step=1)
                     )
                 ),
                 box(title = "Low Par Parameters",
@@ -376,13 +404,13 @@ ui <- tagList(dashboardPage(
                     class = "collapsed-box",
                     collapsed = T,
                     box(
-                      numericInput("ELEFAN_SA_lowPar_Linf", "Length of infinity in CM", 119, min = 1, max = 1000, step=1),
-                      numericInput("ELEFAN_SA_lowPar_K", "Curving coefficient", 0.01, min = 0, max = 1, step=0.01),
-                      numericInput("ELEFAN_SA_lowPar_t_anchor", "Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month", 0, min = 0, max = 1, step=0.1)
+                      numericInput("ELEFAN_SA_lowPar_Linf", p("Length infinity (",withMathJax("\\(L_\\infty\\)"), "in cm):"), 119, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_SA_lowPar_K", "Curving coefficient (K):", 0.01, min = 0, max = 1, step=0.01),
+                      numericInput("ELEFAN_SA_lowPar_t_anchor", "Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month (t_anchor):", 0, min = 0, max = 1, step=0.1)
                     ),
                     box(
-                      numericInput("ELEFAN_SA_lowPar_C", "Amplitude of growth oscillation", 0, min = 0, max = 1, step=0.1),
-                      numericInput("ELEFAN_SA_lowPar_ts", "Summer point", 0, min = 0, max = 1, step=0.1)
+                      numericInput("ELEFAN_SA_lowPar_C", "Amplitude of growth oscillation (C):", 0, min = 0, max = 1, step=0.1),
+                      numericInput("ELEFAN_SA_lowPar_ts", p("Summer point (", withMathJax("\\(t_s\\)"), "):"), 0, min = 0, max = 1, step=0.1)
                     )
                 ),
                 box(title = "Up Par Parameters",
@@ -391,13 +419,13 @@ ui <- tagList(dashboardPage(
                     class = "collapsed-box",
                     collapsed = T,
                     box(
-                      numericInput("ELEFAN_SA_upPar_Linf", "Length of infinity in CM", 129, min = 1, max = 1000, step=1),
-                      numericInput("ELEFAN_SA_upPar_K", "Curving coefficient", 1, min = 0, max = 1, step=0.01),
-                      numericInput("ELEFAN_SA_upPar_t_anchor", "Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month", 1, min = 0, max = 1, step=0.1)
+                      numericInput("ELEFAN_SA_upPar_Linf", p("Length infinity (",withMathJax("\\(L_\\infty\\)"), "in cm):"), 129, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_SA_upPar_K", "Curving coefficient (K):", 1, min = 0, max = 1, step=0.01),
+                      numericInput("ELEFAN_SA_upPar_t_anchor", "Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month (t_anchor):", 1, min = 0, max = 1, step=0.1)
                     ),
                     box(
-                      numericInput("ELEFAN_SA_upPar_C", "Amplitude of growth oscillation", 1, min = 0, max = 1, step=0.1),
-                      numericInput("ELEFAN_SA_upPar_ts", "Summer point", 1, min = 0, max = 1, step=0.1)
+                      numericInput("ELEFAN_SA_upPar_C", "Amplitude of growth oscillation (C):", 1, min = 0, max = 1, step=0.1),
+                      numericInput("ELEFAN_SA_upPar_ts", p("Summer point (", withMathJax("\\(t_s\\)"), "):"), 1, min = 0, max = 1, step=0.1)
                     )
                 ),
                 actionButton("go_sa", "Run ELEFAN SA"),
@@ -446,6 +474,18 @@ ui <- tagList(dashboardPage(
       tabItem("ElefanWidget",
               htmlOutput("elefanTitle"),
               fluidRow(
+                box(title = "Data Considerations",
+                    width = NULL,
+                    collapsible = T, 
+                    class = "collapsed-box",
+                    box(
+                      checkboxInput("checkbox1", label = "Is your length-frequency data representative of the full population? (If this is not so, then estimates of fishing mortality will be biased.)", value = F),
+                      checkboxInput("checkbox2", label = "Were all age groups sampled?", value = F),
+                      checkboxInput("checkbox3", label = "Was the sample from a range of areas where different life histories might live? (e.g., if juveniles occupy nearshore habitat and adults are offshore)", value = F),
+                      checkboxInput("checkbox4", label = "Are a variety of gears with different selectivities used to collect the samples so that the samples contain multiple age groups?", value = F),
+                      p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of ", withMathJax("\\(L_\\infty\\)"), " and von Bertalanffy K in the Optional Parameters section in the ELEFAN tool.")
+                    )
+                ),
                 box(title = "Main Parameters",
                     width = NULL, 
                     collapsible = T, 
@@ -465,21 +505,21 @@ ui <- tagList(dashboardPage(
                     class = "collapsed-box",
                     collapsed = T,
                     box(
-                      numericInput("ELEFAN_Linf_fix", "Linf: if used the K-Scan method is applied with a fixed Linf value (i.e. varying K only)", NA, min = 1, max = 1000, step=1),
-                      numericInput("ELEFAN_Linf_range_from", "Linf sequence from", NULL, min = 1, max = 1000, step=1),
-                      numericInput("ELEFAN_Linf_range_to", "Linf sequence to", NULL, min = 1, max = 1000, step=1),
-                      numericInput("ELEFAN_Linf_range_by", "Linf increment sequence by", 1, min = 1, max = 1000, step=1),
-                      numericInput("ELEFAN_C", "Growth oscillation amplitude", 0, min = 0, max = 100, step=1),
-                      numericInput("ELEFAN_ts", "Onset of the first oscillation relative to summer point", 0, min = 0, max = 100, step=1),
-                      numericInput("ELEFAN_MA", "Number indicating over how many length classes the moving average should be performed", 5, min = 0, max = 100, step=1)
+                      numericInput("ELEFAN_Linf_fix", p(withMathJax("\\(L_\\infty\\)"), ": if used the K-Scan method is applied with a fixed", withMathJax("\\(L_\\infty\\)"),"value (i.e. varying K only):"), NA, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_Linf_range_from", p(withMathJax("\\(L_\\infty\\)"), "sequence from:"), NULL, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_Linf_range_to", p(withMathJax("\\(L_\\infty\\)"), "sequence to:"), NULL, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_Linf_range_by", p(withMathJax("\\(L_\\infty\\)"), "increment sequence by:"), 1, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_C", "Growth oscillation amplitude (C)", 0, min = 0, max = 100, step=1),
+                      numericInput("ELEFAN_ts", p("Onset of the first oscillation relative to summer point (", withMathJax("\\(t_s\\)"), "):"), 0, min = 0, max = 100, step=1),
+                      numericInput("ELEFAN_MA", "Number indicating over how many length classes the moving average should be performed:", 5, min = 0, max = 100, step=1)
                     ),
                     box(
-                      numericInput("ELEFAN_K_Range_from", "Linf sequence from", NULL, min = 1, max = 1000, step=1),
-                      numericInput("ELEFAN_K_Range_to", "Linf sequence to", NULL, min = 1, max = 1000, step=1),
-                      numericInput("ELEFAN_K_Range_by", "Linf increment sequence by", 1, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_K_Range_from", p(withMathJax("\\(L_\\infty\\)"), "sequence from:"), NULL, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_K_Range_to", p(withMathJax("\\(L_\\infty\\)"), "sequence to:"), NULL, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_K_Range_by", p(withMathJax("\\(L_\\infty\\)"), "increment sequence by:"), 1, min = 1, max = 1000, step=1),
                       checkboxInput("ELEFAN_addl.sqrt", "Additional squareroot transformation of positive values according to Brey et al. (1988)", FALSE),
-                      numericInput("ELEFAN_agemax", "Maximum age of species", NULL, min = 0, max = 100, step=1),
-                      checkboxInput("ELEFAN_contour", "if checked in combination with response surface analysis, contour lines are displayed rather than the score as text in each field of the score plot", FALSE)
+                      numericInput("ELEFAN_agemax", "Maximum age of species:", NULL, min = 0, max = 100, step=1),
+                      checkboxInput("ELEFAN_contour", "If checked in combination with response surface analysis, contour lines are displayed rather than the score as text in each field of the score plot", FALSE)
                     )
                 ),
                 actionButton("go", "Run ELEFAN"),
@@ -528,6 +568,15 @@ ui <- tagList(dashboardPage(
       tabItem("SBPRWidget",
               htmlOutput("sbprTitle"),
               fluidRow(
+                box(title = "Data Considerations",
+                    width = NULL,
+                    collapsible = T, 
+                    class = "collapsed-box",
+                    box(
+                      checkboxInput("checkbox1", label = "Is the weight-at-age data representative of the full population, i.e., are all age groups sampled?", value = F),
+                      p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.")
+                      )
+                ),
                 box(title = "Main Parameters",
                     width = NULL, 
                     collapsible = T, 
@@ -547,14 +596,14 @@ ui <- tagList(dashboardPage(
                     class = "collapsed-box",
                     collapsed = T,
                     box(
-                      numericInput("SBPR_M", "Single natural mortality (M) rate if M is assumed constant over all ages", 0.2, min = 0, max = 10, step=0.1),
-                      numericInput("SBPR_pM", "Proportion of natural mortality that occurs before spawning", 0.1667, min = 0, max = 10, step=0.0001),
-                      numericInput("SBPR_maxF", "Maximum value of F range over which SBPR will be calculated", 2, min = 0, max = 100, step=1)
+                      numericInput("SBPR_M", "Single natural mortality (M) rate if M is assumed constant over all ages:", 0.2, min = 0, max = 10, step=0.1),
+                      numericInput("SBPR_pM", "Proportion of natural mortality that occurs before spawning:", 0.1667, min = 0, max = 10, step=0.0001),
+                      numericInput("SBPR_maxF", "Maximum value of F range over which SBPR will be calculated:", 2, min = 0, max = 100, step=1)
                     ),
                     box(
-                      numericInput("SBPR_pF", "Proportion of fishing mortality that occurs before spawning", 0.2, min = 0, max = 10, step=0.1),
-                      numericInput("SBPR_MSP", "Percentage of maximum spawning potential (percent MSP reference point) for which F and SBPR should be calculated", 30, min = 0, max = 1000, step=1),
-                      numericInput("SBPR_incrF", "F increment for SBPR calculation", 0.001, min = 0, max = 10, step=0.001)
+                      numericInput("SBPR_pF", "Proportion of fishing mortality that occurs before spawning:", 0.2, min = 0, max = 10, step=0.1),
+                      numericInput("SBPR_MSP", "Percentage of maximum spawning potential (percent MSP reference point) for which F and SBPR should be calculated:", 30, min = 0, max = 1000, step=1),
+                      numericInput("SBPR_incrF", "F increment for SBPR calculation:", 0.001, min = 0, max = 10, step=0.001)
                     )
                 ),
                 actionButton("go_sbpr", "Run SBPR"),
@@ -586,6 +635,15 @@ ui <- tagList(dashboardPage(
       tabItem("YPRWidget",
               htmlOutput("yprTitle"),
               fluidRow(
+                box(title = "Data Considerations",
+                    width = NULL,
+                    collapsible = T, 
+                    class = "collapsed-box",
+                    box(
+                      checkboxInput("checkbox1", label = "Is the weight-at-age data representative of the full population, i.e., are all age groups sampled?", value = F),
+                      p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.")
+                    )
+                ),
                 box(title = "Main Parameters",
                     width = NULL, 
                     collapsible = T, 
@@ -943,6 +1001,61 @@ server <- function(input, output, session) {
       }
     }
   })
+  
+ ### observeEvent(input$go, {
+  ###   infile <- input$fileElefan
+    
+  ###if (is.null(infile)) {
+  ### showModal(modalDialog(
+  ###   title = "Error",
+  ###   "No input file selected",
+  ###   easyClose = TRUE,
+  ###   footer = NULL
+  ### ))
+  ### return(NULL)
+  ###}
+  ###js$showComputing()
+  ###inputCsvFile <- infile$datapath
+  ###js$removeBox("box_elefan_results")
+  ###js$disableAllButtons()
+  ###dataset <- read_elefan_csv(inputCsvFile)
+  ###ds <- lfqModify(lfqRestructure(dataset), bin_size = 4)
+    
+  ###   #ds <- lfqModify(get('synLFQ7', asNamespace('TropFishR')), bin_size = 4)
+    
+  ###elefan_linf_range <- NA
+  ###if (!is.na(input$ELEFAN_Linf_range_from) && !is.na(input$ELEFAN_Linf_range_to)) {
+  ###elefan_linf_range <- seq(from = input$ELEFAN_Linf_range_from, to = input$ELEFAN_Linf_range_to, by = input$ELEFAN_Linf_range_by)
+  ###}
+    
+  ###elefan_k_range <- exp(seq(log(0.1), log(10), length.out=100))
+  ###if (!is.na(input$ELEFAN_K_Range_from) && !is.na(input$ELEFAN_K_range_to)) {
+  ###elefan_linf_range <- seq(from = input$ELEFAN_K_Range_from, to = input$ELEFAN_K_range_to, by = input$ELEFAN_K_range_by)
+  ###}
+    
+    
+  ###elefan_agemax <- input$ELEFAN_agemax 
+  ###if (is.na(input$ELEFAN_agemax)) {
+  ###elefan_agemax <- NULL
+  ###}
+  ###res <- run_elefan(ds, binSize = 4, Linf_fix = input$ELEFAN_Linf_fix, Linf_range = elefan_linf_range, K_range = elefan_k_range,
+  ###C = input$ELEFAN_C, ts = input$ELEFAN_ts, MA = input$ELEFAN_MA, addl.sqrt = input$ELEFAN_addl.sqrt,
+  ###agemax = elefan_agemax, contour = input$ELEFAN_contour)
+  ###js$hideComputing()
+  ###js$enableAllButtons()
+  ###if ('error' %in% names(res)) {
+  ###showModal(modalDialog(
+  ###title = "Error",
+  ###res$error,
+  ###easyClose = TRUE,
+  ###footer = NULL
+  ###))
+  ###} else {
+  ###js$showBox("box_elefan_results")
+  ###elefan$results <- res
+  ###}
+  ###})
+  
   ####### END OBSERVERS #######
   
   ####### CMSY OUTPUT FUNCTION #######
@@ -1151,17 +1264,18 @@ server <- function(input, output, session) {
   output$par_ga <- renderText({
     if ("results" %in% names(elefan_ga)) {
       title <- "<hr>"
-      title <- paste0(title, "<strong>Length infinity in cm:</strong>&nbsp;", elefan_ga$results$data$par$Linf)
+      #title <- paste0(title, p("<strong>Length infinity (", withMathJax("\\(L_\\infty\\)"), "in cm):</strong>&nbsp;"), elefan_sa$results$data$par$Linf)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Curving coefficient:</strong>&nbsp;", elefan_ga$results$data$par$K)
+      title <- paste0(title, "<strong>Curving coefficient:</strong>&nbsp;", elefan_sa$results$data$par$K)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month:</strong>&nbsp;", elefan_ga$results$data$par$t_anchor)
+      title <- paste0(title, "<strong>Time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month (t_anchor):</strong>&nbsp;", round(elefan_sa$results$data$par$t_anchor, 2))
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Amplitude of growth oscillation:</strong>&nbsp;", elefan_ga$data$results$par$C)
+      title <- paste0(title, "<strong>Amplitude of growth oscillation (C):</strong>&nbsp;", elefan_sa$results$data$par$C)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Summer point of oscillation (ts = WP - 0.5):</strong>&nbsp;", elefan_ga$results$data$par$ts)
+      #title <- paste0(title, p("Winter point of oscillation (", withMathJax("\\(t_w\\)") , ")"))
+      title <- paste0(title, p("<strong>Summer point of oscillation (", withMathJax("\\(ts\\)"),"=", withMathJax("\\(t_w\\)"), "- 0.5):</strong>&nbsp;"), elefan_sa$results$data$par$ts)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", elefan_ga$results$data$par$phiL)
+      title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", round(elefan_sa$results$data$par$phiL, 2))
       title
     } else {  "" }
   })
@@ -1348,17 +1462,18 @@ server <- function(input, output, session) {
   output$par_sa <- renderText({
     if ("results" %in% names(elefan_sa)) {
       title <- "<hr>"
-      title <- paste0(title, "<strong>Length infinity in cm:</strong>&nbsp;", elefan_sa$results$data$par$Linf)
+      title <- paste0(title, p("<strong>Length infinity (", withMathJax("\\(L_\\infty\\)"), "in cm):</strong>&nbsp;"), elefan_sa$results$data$par$Linf)
       title <- paste0(title, "<br/>")
       title <- paste0(title, "<strong>Curving coefficient:</strong>&nbsp;", elefan_sa$results$data$par$K)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month:</strong>&nbsp;", elefan_sa$results$data$par$t_anchor)
+      title <- paste0(title, "<strong>Time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month (t_anchor):</strong>&nbsp;", round(elefan_sa$results$data$par$t_anchor, 2))
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Amplitude of growth oscillation:</strong>&nbsp;", elefan_sa$results$data$par$C)
+      title <- paste0(title, "<strong>Amplitude of growth oscillation (C):</strong>&nbsp;", elefan_sa$results$data$par$C)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Summer point of oscillation (ts = WP - 0.5):</strong>&nbsp;", elefan_sa$results$data$par$ts)
+      title <- paste0(title, p("Winter point of oscillation (", withMathJax("\\(t_w\\)") , ")"))
+      title <- paste0(title, p("<strong>Summer point of oscillation (", withMathJax("\\(ts\\)"),"=", withMathJax("\\(t_w\\)"), "- 0.5):</strong>&nbsp;"), elefan_sa$results$data$par$ts)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", elefan_sa$results$data$par$phiL)
+      title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", round(elefan_sa$results$data$par$phiL, 2))
       title
     } else {  "" }
   })
@@ -1531,17 +1646,18 @@ server <- function(input, output, session) {
   output$par <- renderText({
     if ("results" %in% names(elefan)) {
       title <- "<hr>"
-      title <- paste0(title, "<strong>Length infinity in cm:</strong>&nbsp;", elefan$results$data$par$Linf)
+      title <- paste0(title, p("<strong>Length infinity (", withMathJax("\\(L_\\infty\\)"), "in cm):</strong>&nbsp;"), elefan_sa$results$data$par$Linf)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Curving coefficient:</strong>&nbsp;", elefan$results$data$par$K)
+      title <- paste0(title, "<strong>Curving coefficient:</strong>&nbsp;", elefan_sa$results$data$par$K)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month:</strong>&nbsp;", elefan$results$data$par$t_anchor)
+      title <- paste0(title, "<strong>Time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month (t_anchor):</strong>&nbsp;", round(elefan_sa$results$data$par$t_anchor, 2))
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Amplitude of growth oscillation:</strong>&nbsp;", elefan$results$data$par$C)
+      title <- paste0(title, "<strong>Amplitude of growth oscillation (C):</strong>&nbsp;", elefan_sa$results$data$par$C)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Summer point of oscillation (ts = WP - 0.5):</strong>&nbsp;", elefan$results$data$par$ts)
+      title <- paste0(title, p("Winter point of oscillation (", withMathJax("\\(t_w\\)") , ")"))
+      title <- paste0(title, p("<strong>Summer point of oscillation (", withMathJax("\\(ts\\)"),"=", withMathJax("\\(t_w\\)"), "- 0.5):</strong>&nbsp;"), elefan_sa$results$data$par$ts)
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", elefan$results$data$par$phiL)
+      title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", round(elefan_sa$results$data$par$phiL, 2))
       title
     } else {  "" }
   })
@@ -1682,7 +1798,7 @@ server <- function(input, output, session) {
   })
   output$downloadYprReport <- renderUI({
     if ("results" %in% names(yprExec)) {
-      colnames(yprExec$results$Reference_Points) <- c("F", "Yield_Per_Recruit")
+      colnames(yprExec$results$Reference_Points) <- c("F", "Yield Per Recruit")
       downloadButton('createYprReport', 'Download Report')
     }
   })
@@ -2033,6 +2149,9 @@ server <- function(input, output, session) {
     text <- paste0(text, "<br/>")
     text <- paste0(text, "<a href='http://onlinelibrary.wiley.com/doi/10.1111/faf.12190/full' target='_blank'>Click here to read the paper.</a>")
     text <- paste0(text, "</p>")
+    text <- paste0(text, "The Schaefer production model parameters are r and k. Different combinations of these parameters will produce different time series of biomass. In CMSY, the Schaefer model is run many times to calculate annual biomasses for r-k pairs randomly drawn from the prior distributions. The model determines which r-k pairs are valid: e.g., those pairs that result in a biomass time series that does not (1) result in a stock collapse or (2) allow the stock to exceeded carrying capacity. Also, those r-k pairs that result in a final relative biomass estimate between the values specified in the inputs (the final depletion range), are accepted and used to calculate MSY (rk/4) and biomass over time.")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "The geometric means of the resulting density distributions of r, k and MSY are taken as the most probable values.")
     #text <- paste0(text, "<br/>")
     #text <- paste0(text, "<p>")
     #text <- paste0(text, "<span><b>CMSY Vectorized</b> is a new adaptation of CMSY designed to increase fitting speed to enable implementation in management strategy evaluation. <br/>This is achieved by adding adaptive parameter search bounds to restrict the inspected r-K space and automatically increase depletion priors if necessary.</span>")
@@ -2044,12 +2163,16 @@ server <- function(input, output, session) {
     text
   })
   output$elefanIntroOut <- renderText({
-    text <- "<h3><b>Elefan methods by TropFishR</b></h3>"
+    text <- "<h3><b>ELEFAN methods by TropFishR</b></h3>"
     text <- paste0(text, "<p>")
     text <- paste0(text, "<b>Elefan</b> is a computational method designed to estimate life history parameters using a time series of length frequency observations.")
     text <- paste0(text, "<br/>")
     text <- paste0(text, "These methods are provided by the <a href='https://cran.r-project.org/web/packages/TropFishR/index.html' target='_blank'>TropFishR library</a>")
     text <- paste0(text, "</p>")
+    text <- paste0(text, "The study of fish growth involves a determination of body size as a function of age. Most stock assessment methods work essentially with age composition data. In temperate waters it is easier to acquire data to estimate age by counting of year rings on hard parts such as scales and otoliths (ear bones). These rings are formed due to strong fluctuations in environmental conditions from summer to winter and vice versa. In tropical areas such drastic changes do not occur and it is therefore very difficult, if not impossible to use this kind of seasonal rings for age determination.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "ELEFAN is one of a number of numerical methods that have been developed, which allow the conversion of length-frequency data into age composition. Although these methods do not require the reading of rings on hard parts, the final interpretation of the results becomes much more reliable if at least some direct age readings are available.")
+    text <- paste0(text, "<p>")
     text <- paste0(text, "<p>")
     text <- paste0(text, "The TropFishR has three different Elefan methods: <b>ELEFAN</b>, <b>ELEFAN GA</b> and <b>ELEFAN SA</b>")
     text <- paste0(text, "</p>")
@@ -2057,7 +2180,7 @@ server <- function(input, output, session) {
     text <- paste0(text, "<p>")
     text <- paste0(text, "<p>")
     text <- paste0(text, "<h4>ELEFAN</h4>")
-    text <- paste0(text, "<b>E</b>lectronic <b>LE</b>ngth <b>F</b>requency <b>AN</b>alysis for estimating growth parameter.<br/>This functions allows to perform the K-Scan and Response surface analysis to estimate growth parameters. It combines the step of restructuring length-frequency data (lfqRestructure) followed by the fitting of VBGF curves through the restructured data (lfqFitCurves). K-Scan is a method used to search for the K parameter with the best fit while keeping the Linf fixed. In contrast, with response surface analysis both parameters are estimated and the fits are displayed in a heatmap. Both methods use optimise to find the best t_anchor value for each combination of K and Linf. To find out more about t_anchor, please refer to the Details description of lfqFitCurves. The score value Rn_max is not comparable with the score value of the other ELEFAN functions (ELEFAN_SA or ELEFAN_GA).")
+    text <- paste0(text, "<b>E</b>lectronic <b>LE</b>ngth <b>F</b>requency <b>AN</b>alysis for estimating growth parameters.<br/>This function performs the K-Scan and Response surface analyses to estimate growth parameters. It combines the step of restructuring length-frequency data (lfqRestructure) followed by the fitting of seasonal von Bertalanffy Growth Function (VBGF) curves (see Supporting tools: Seasonal VBGF) through the restructured data (lfqFitCurves). K-Scan is a method used to search for the K parameter with the best fit while keeping ", withMathJax("\\(L_\\infty\\)"), "fixed. In contrast, with response surface analysis both parameters are estimated and the fits are displayed in a heatmap. Both methods use an optimisation to find the best time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month (t_anchor) value for each combination of K and ", withMathJax("\\(L_\\infty\\)"),". To find out more about t_anchor, please refer to the Details description of lfqFitCurves. The score value Rn_max is not comparable with the score values of the other ELEFAN functions (ELEFAN_SA or ELEFAN_GA).")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<h4>ELEFAN GA (generic algorithm)</h4>")
     text <- paste0(text, "<b>E</b>lectronic <b>LE</b>ngth <b>F</b>requency <b>AN</b>alysis with simulated annealing for estimating growth parameters.<br/>A more detailed description of the generic algorithm (GA) can be found in Scrucca (2013). The score value fitnessValue is not comparable with the score value of the other ELEFAN functions (ELEFAN or ELEFAN_SA).")
@@ -2066,30 +2189,36 @@ server <- function(input, output, session) {
     text <- paste0(text, "<h4>ELEFAN SA (simulated annealing)</h4>")
     text <- paste0(text, "<b>E</b>lectronic <b>LE</b>ngth <b>F</b>requency <b>AN</b>alysis with simulated annealing for estimating growth parameters.<br/>A more detailed description of the simulated annealing (SA) can be found in Xiang et al. (2013). The score value cost_value is not comparable with the score value of the other ELEFAN functions (ELEFAN or ELEFAN_GA).")
     text <- paste0(text, "</p>")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<h4>Method of operation:</h4>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<li>ELEFAN fits a seasonal version (see Supporting Tools) of the von Bertalanffy Growth Function (VBGF).</li>")
+    text <- paste0(text, "<li>The first step is the restructuring of the length-frequency data using a procedure that scores the length bins based on their deviation from a moving average across neighboring bins.</li>")
+    text <- paste0(text, "<li>The second step is the calculation of the cumulative score for a given set of VBGF parameters based on the bin scores that are intersected by resulting growth curves.</li>")
+    text <- paste0(text, "<li>Finally, a search for VBGF parameters results in the maximum score value.</li>")
+    text <- paste0(text, "<li>The ELEFAN method uses a Thompsen and Bell model to determine the F reference points and current F.</li>")
     text <- paste0(text, "<br/>")
     link <- "<a href='https://goo.gl/tsqt64' target='_blank'>Click Here</a>"
     text <- paste0(text, "<h4>Information on the dataset used</h4>")
     text <- paste0(text, "<p><h5>", link,"&nbsp; to download a sample dataset that can be used with <b>Elefan</b> methods", "</h5></p>")
     text <- paste0(text, "<span class=\"elefan_info\">The dataset used by this example is the <b>synLFQ7</b></span><br><br>")
-    text <- paste0(text, "<span class=\"elefan_info\">Synthetic length-frequency data as generated by the function lfqGen from the fishdynr package (Taylor 2016). Can be used by <b>ELEFAN</b>, <b>ELEFAN_SA</b>, or <b>ELEFAN_GA</b>. <br>The data is generated with the following von Bertalanffy growth parameters:</span>")
+    text <- paste0(text, "<span class=\"elefan_info\">Synthetic length-frequency data as generated by the function lfqGen from the fishdynr package (Taylor 2016). Can be used by <b>ELEFAN</b>, <b>ELEFAN_SA</b>, or <b>ELEFAN_GA</b>. <br>The data are generated with the following VBGF parameters:</span>")
     text <- paste0(text, "<ul style=\"margin-top: 10px;\">")
-    text <- paste0(text, "<li>K = 0.2 +/- 0.1 (CV)</li>")
-    text <- paste0(text, "<li>Linf = 123 +/- 0.05 (CV)</li>")
-    text <- paste0(text, "<li>C = 0.3</li>")
-    text <- paste0(text, "<li>ts = 0</li>")
-    text <- paste0(text, "<li>t_anchor between 0.16 and 0.34 (Time when yearly recruitment pulse occurs; e.g. 0 = Jan 1, 0.25 = Apr 1, 0.5 = Jul 1, 0.75 = Oct 1; repro_wt = c(0, 0, 0.2, 1, 0.6, 0, 0, 0, 0, 0, 0, 0))</li>")
+    text <- paste0(text, "<li>Curving coefficient: K = 0.2 +/- 0.1 (CV)</li>")
+    text <- paste0(text, "<li>Length infinity: ", withMathJax("\\(L_\\infty\\)")," = 123 +/- 0.05 (CV)</li>")
+    text <- paste0(text, "<li>Amplitude of growth oscillation: C = 0.3</li>")
+    text <- paste0(text, "<li>Summer point of oscillation: ", withMathJax("\\(t_s\\)")," = 0</li>")
+    text <- paste0(text, "<li>Time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month: t_anchor between 0.16 and 0.34 (Time when yearly recruitment pulse occurs; e.g. 0 = Jan 1, 0.25 = Apr 1, 0.5 = Jul 1, 0.75 = Oct 1; repro_wt = c(0, 0, 0.2, 1, 0.6, 0, 0, 0, 0, 0, 0, 0))</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "<br/>")
     text <- paste0(text, "<h4>Glossary</h4>")
     text <- paste0(text, "<p>")
-    text <- paste0(text, "<b>lfqRestructure:</b> First step of the Electronic LEngth Frequency ANalysis (ELEFAN), which is restructuring lengthfrequency data (lfq). This is done according to a certain protocol, described by many authors (see Details or References for more information).")
+    text <- paste0(text, "<b>lfqRestructure:</b> First step of the Electronic LEngth Frequency ANalysis (ELEFAN), which is restructuring length frequency data (lfq). This is done according to a certain protocol, described by many authors (see Details or References for more information).")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<p>")
-    text <- paste0(text, "<b>lfqFitCurves:</b> This function estimates von Bertalanffy growth function (VBGF) curves for a set of growth parameters.")
+    text <- paste0(text, "<b>lfqFitCurves:</b> This function estimates seasonal von Bertalanffy growth function (VBGF) curves for a set of growth parameters.")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<p>")
-    text <- paste0(text, "<b>lfqFitCurves:</b> This function estimates von Bertalanffy growth function (VBGF) curves for a set of growth parameters.")
-    text <- paste0(text, "</p>")
     text
   })
   output$fishMethodsIntroOut <- renderText({
@@ -2099,24 +2228,30 @@ server <- function(input, output, session) {
     text <- paste0(text, "</p>")
     text <- paste0(text, "<br/>")
     text <- paste0(text, "<p>")
+    text <- paste0(text, "In data-limited situations where long-term, comprehensive catch data does not exist, per-recruit models can be used to determine estimates of optimal fishing mortality. Yield-per-recruit (YPR) and spawning biomass-per-recruit (SBPR) models calculate the equilibrium yield per recruit and spawning stock biomass per recruit, respectively, for a given value of fishing mortality (F) and a given length or age at first capture. Since F and Tc or Lc are values that a fishery manager can control (in theory), the idea is that by focusing on YPR or SBPR, managers can maintain a stock's population by preserving its reproductive capability. These models help to determine the optimum yield to prevent overfishing by instituting management controls on effort and length or age at first capture.")
+    text <- paste0(text, "<br/>")
     text <- paste0(text, "<h4>Methods used</h4>")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<p>")
-    text <- paste0(text, "<b>SBPR</b> Spawning stock biomass-per-recruit(SBPR) analysis is conducted following Gabriel et al. (1989). Reference points of F and SBPR for a percentage of maximum spawning potential are calculated.")
+    text <- paste0(text, "<b>SBPR</b> Spawning stock biomass-per-recruit(SBPR) analysis is conducted following Gabriel et al. (1989). Reference points of fishing mortality (F) and SBPR for a percentage of maximum spawning potential are calculated.")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<p>")
-    text <- paste0(text, "<b>YPR</b> Yield-per-recruit (YPR) analysis is conducted following the modified Thompson-Bell algorithm. Reference points Fmax and F0.1 are calculated.")
+    text <- paste0(text, "<b>YPR</b> Yield-per-recruit (YPR) analysis is conducted following the modified Thompson-Bell algorithm. Reference points",  withMathJax("\\(F_{max}\\)"), "and",  withMathJax("\\(F_{0.1}\\)") ,"are calculated.")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<b>",withMathJax("\\(F_{0.1}\\)"),"</b> Fishing mortality rate corresponding to 10% of the slope of the YPR curve as a function of F when F=0. This is the F at which the marginal increase in equilibrium yield has dropped to 1/10 of its value when the stock was first exploited.")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<b>", withMathJax("\\(F_{max}\\)"), "</b>Fishing mortality rate that produces the maximum yield per recruit.")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<p>")
     text <- paste0(text, "<b>SBPR Options:</b>")
     text <- paste0(text, "<ul>")
     text <- paste0(text, "<li><b>Input file: </b> Input data file</li>")
     text <- paste0(text, "<li><b>M: </b> Single natural mortality (M) rate if M is assumed constant over all ages</li>")
-    text <- paste0(text, "<li><b>pF: </b> Proportion of fishing mortality that occurs before spawning</li>")
-    text <- paste0(text, "<li><b>pM: </b> Proportion of natural mortality that occurs before spawning</li>")
-    text <- paste0(text, "<li><b>MSP: </b> Percentage of maximum spawning potential (percent MSP reference point) for which F and SBPR should be calculated</li>")
-    text <- paste0(text, "<li><b>maxF: </b> Maximum value of F range over which SBPR will be calculated</li>")
-    text <- paste0(text, "<li><b>incrF: </b> F increment for SBPR calculation</li>")
+    text <- paste0(text, "<li><b>pF: </b> Proportion of fishing mortality (F) that occurs before spawning</li>")
+    text <- paste0(text, "<li><b>pM: </b> Proportion of natural mortality (M) that occurs before spawning</li>")
+    text <- paste0(text, "<li><b>MSP: </b> Percentage of maximum spawning potential (%MSP) for which fishing mortality (F) and SBPR should be calculated</li>")
+    text <- paste0(text, "<li><b>maxF: </b> Maximum value of fishing mortality (F) range over which SBPR will be calculated</li>")
+    text <- paste0(text, "<li><b>incrF: </b> Fishing mortality (F) increment for SBPR calculation</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<p>")
@@ -2124,10 +2259,10 @@ server <- function(input, output, session) {
     text <- paste0(text, "<ul>")
     text <- paste0(text, "<li><b>Input file: </b> Input data file</li>")
     text <- paste0(text, "<li><b>M: </b> Single natural mortality (M) rate if M is assumed constant over all ages</li>")
-    text <- paste0(text, "<li><b>maxF: </b> Maximum value of F range over which YPR will be calculated. YPR is calculated for F = 0 to maxF</li>")
+    text <- paste0(text, "<li><b>maxF: </b> Maximum value of fishing mortality (F) range over which YPR will be calculated. YPR is calculated for F = 0 to maxF</li>")
     text <- paste0(text, "<li><b>plus: </b> logical value indicating whether the last age is a plus-group</li>")
     text <- paste0(text, "<li><b>oldest: </b> if plus is checked, a numeric value indicating the oldest age in the plus group</li>")
-    text <- paste0(text, "<li><b>incrF: </b> F increment for YPR calculation</li>")
+    text <- paste0(text, "<li><b>incrF: </b> Fishing mortality (F) increment for YPR calculation</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "</p>")
     text
@@ -2208,12 +2343,12 @@ server <- function(input, output, session) {
     text <- paste0(text, "<li>", "(1) Maximum age (Amax)", "</li>")
     text <- paste0(text, "<li>", "(2) Age at maturity (Amat)", "</li>")
     text <- paste0(text, "<li>", "(3) L-infinity (in cm) (Linf)", "</li>")
-    text <- paste0(text, "<li>", "(4) Von Bertalannfy Growth Function (VBGF) growth coefficient (k)", "</li>")
+    text <- paste0(text, "<li>", "(4) Von Bertalanffy Growth Function (VBGF) growth coefficient (k)", "</li>")
     text <- paste0(text, "<li>", "(5) VBGF age at size 0 (t0)", "</li>")
     text <- paste0(text, "<li>", "(6) Body length in cm (Bl)", "</li>")
     text <- paste0(text, "<li>", "(7) Mean water temperature in Celsius (Temp)", "</li>")
     text <- paste0(text, "</ul>")
-    text <- paste0(text, "<h5>", "Averaging of Von Bertalannfy (VBFG) parameters is done following the specifications of Pauly, D. (1991). Growth performance in fishes: rigorous description of patterns as a basis for understanding causal mechanisms. ICLARM Contribution No. 793.", "</h5>")
+    text <- paste0(text, "<h5>", "Averaging of Von Bertalanffy (VBFG) parameters is done following the specifications of Pauly, D. (1991). Growth performance in fishes: rigorous description of patterns as a basis for understanding causal mechanisms. ICLARM Contribution No. 793.", "</h5>")
     text <- paste0(text, "<h5>", "Estimates will be displayed in the main panel.",  "</h5>")
     text <- paste0(text, "<h5>", "Four methods use Amax, three methods use the VBGF parameters, two methods use the VBGF parameters & Temp, one method uses the VBGF parameters & Amat, and three methods use only Amat. These groupings are indicated by the different colors in the top plot.", "</h5>")
     text <- paste0(text, "<h5>", "<em>The user can also choose to input their own parameters if they have inputs from local studies. These input values will override the FishBase calculations if all the necessary parameters for a particular method are available (e.g., all the VBGF parameters are available for those methods that require them).</em>", "</h5>")
