@@ -38,7 +38,8 @@ cmsyParseXml <- function (xml) {
 #runCmsy <- function (region,subregion,stock,group,name,englishName,scientificName,source,minOfYear,maxOfYear,startYear,endYear,flim,fpa,blim,bpa,bmsy,fmsy,msy,msyBTrigger,b40,m,fofl,last_f,resiliance,r.low,r.hi,stb.low,stb.hi,int.yr,intb.low,intb.hi,endb.low,endb.hi,q.start,q.end,btype,force.cmsy,comments, username, token, inputCsvFile, templateFile)  {
 runCmsy <- function (region,subregion,stock,group,name,englishName,scientificName,source,minOfYear,maxOfYear,startYear,endYear,flim,fpa,blim,bpa,bmsy,fmsy,msy,msyBTrigger,b40,m,fofl,last_f,resiliance,r.low,r.hi,stb.low,stb.hi,int.yr,intb.low,intb.hi,endb.low,endb.hi,q.start,q.end,btype,force.cmsy,comments, token, inputCsvFile, templateFile)  {
   wps_uri = "http://dataminer-cloud1.d4science.org:80/wps/WebProcessingService" #"http://dataminer-bigdata.d4science.org:80/wps/WebProcessingService"
-  
+  print(paste0("SCIENTIFIC NAME:: ", scientificName))
+  print(paste0("SOURCE:: ",source))
   username <- "test"
   #token <- "5b0f903a-3cb1-4424-a2bd-2700c9f1d4ed"
   wpsClient <- paste0(getwd(),"/WPS4D4Science.r")
