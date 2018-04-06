@@ -133,16 +133,16 @@ ui <- tagList(dashboardPage(
       ),
       tabItem("cmsyMethod",
               htmlOutput("cmsyMethodTitle"),
+              actionButton("cmsyDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
               fluidRow(
-                box(title = "Data Considerations",
-                    width = NULL,
-                    collapsible = T, 
-                    class = "collapsed-box",
-                    box(
-                      checkboxInput("checkbox_cmsy", label = "Is your time-series at least 15 years in length from starting year to ending year? (Note that years with missing data should be filled with an 'NA' value.", value = F),
-                      p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of natural mortality (M) for the Optional Parameters section.")
-                    )
-                ),
+                bsModal("modalExampleCMSY", "CMSY Data Considerations", "cmsyDataConsiderations", size = "large", htmlOutput("cmsyDataConsiderationsText")),
+                #box(title = "Data Considerations",
+                #    width = NULL,
+                #    collapsible = T, 
+                #    class = "collapsed-box",
+                #    checkboxInput("checkbox_cmsy", label = "Is your time-series at least 15 years in length from starting year to ending year? (Note that years with missing data should be filled with an 'NA' value.", value = F),
+                #    p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of natural mortality (M) for the Optional Parameters section.")
+                #),
                 box(title = "Main Parameters",
                     width = NULL,
                     collapsible = T, 
@@ -233,19 +233,19 @@ ui <- tagList(dashboardPage(
       ),
       tabItem("ElefanGaWidget",
               htmlOutput("elefanGaTitle"),
+              actionButton("elefanGADataConsiderations", "Data Considerations", class="topLevelInformationButton"),
               fluidRow(
-                box(title = "Data Considerations",
-                    width = NULL,
-                    collapsible = T, 
-                    class = "collapsed-box",
-                    box(
-                      checkboxInput("checkbox1", label = "Is your length-frequency data representative of the full population? (If this is not so, then estimates of fishing mortality will be biased.)", value = F),
-                      checkboxInput("checkbox2", label = "Were all age groups sampled?", value = F),
-                      checkboxInput("checkbox3", label = "Was the sample from a range of areas where different life histories might live? (e.g., if juveniles occupy nearshore habitat and adults are offshore)", value = F),
-                      checkboxInput("checkbox4", label = "Are a variety of gears with different selectivities used to collect the samples so that the samples contain multiple age groups?", value = F),
-                      p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of ", withMathJax("\\(L_\\infty\\)"), " and von Bertalanffy K in the Optional Parameters section in the ELEFAN_GA tool.")
-                      )
-                ),
+                bsModal("modalExampleGA", "ELEFAN_GA Data Considerations", "elefanGADataConsiderations", size = "large", htmlOutput("elefanGADataConsiderationsText")),
+                #box(title = "Data Considerations",
+                #    width = NULL,
+                #    collapsible = T, 
+                #    class = "collapsed-box",
+                #    checkboxInput("checkbox1", label = "Is your length-frequency data representative of the full population? (If this is not so, then estimates of fishing mortality will be biased.)", value = F),
+                #    checkboxInput("checkbox2", label = "Were all age groups sampled?", value = F),
+                #    checkboxInput("checkbox3", label = "Was the sample from a range of areas where different life histories might live? (e.g., if juveniles occupy nearshore habitat and adults are offshore)", value = F),
+                #    checkboxInput("checkbox4", label = "Are a variety of gears with different selectivities used to collect the samples so that the samples contain multiple age groups?", value = F),
+                #    p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of ", withMathJax("\\(L_\\infty\\)"), " and von Bertalanffy K in the Optional Parameters section in the ELEFAN_GA tool.")
+                #),
                 box(title = "Main Parameters",
                     width = NULL,
                     collapsible = T, 
@@ -353,19 +353,19 @@ ui <- tagList(dashboardPage(
       ),
       tabItem("ElefanSaWidget",
               htmlOutput("elefanSaTitle"),
+              actionButton("elefanSADataConsiderations", "Data Considerations", class="topLevelInformationButton"),
               fluidRow(
-                box(title = "Data Considerations",
-                    width = NULL,
-                    collapsible = T, 
-                    class = "collapsed-box",
-                    box(
-                      checkboxInput("checkbox1", label = "Is your length-frequency data representative of the full population? (If this is not so, then estimates of fishing mortality will be biased.)", value = F),
-                      checkboxInput("checkbox2", label = "Were all age groups sampled?", value = F),
-                      checkboxInput("checkbox3", label = "Was the sample from a range of areas where different life histories might live? (e.g., if juveniles occupy nearshore habitat and adults are offshore)", value = F),
-                      checkboxInput("checkbox4", label = "Are a variety of gears with different selectivities used to collect the samples so that the samples contain multiple age groups?", value = F),
-                      p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of ", withMathJax("\\(L_\\infty\\)"), " and von Bertalanffy K in the Optional Parameters section in the ELEFAN_SA tool.")
-                    )
-                ),
+                bsModal("modalExampleSA", "ELEFAN_SA Data Considerations", "elefanSADataConsiderations", size = "large", htmlOutput("elefanSADataConsiderationsText")),
+                #box(title = "Data Considerations",
+                #    width = NULL,
+                #    collapsible = T, 
+                #    class = "collapsed-box",
+                #    checkboxInput("checkbox1", label = "Is your length-frequency data representative of the full population? (If this is not so, then estimates of fishing mortality will be biased.)", value = F),
+                #    checkboxInput("checkbox2", label = "Were all age groups sampled?", value = F),
+                #    checkboxInput("checkbox3", label = "Was the sample from a range of areas where different life histories might live? (e.g., if juveniles occupy nearshore habitat and adults are offshore)", value = F),
+                #    checkboxInput("checkbox4", label = "Are a variety of gears with different selectivities used to collect the samples so that the samples contain multiple age groups?", value = F),
+                #    p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of ", withMathJax("\\(L_\\infty\\)"), " and von Bertalanffy K in the Optional Parameters section in the ELEFAN_SA tool.")
+                #),
                 box(title = "Main Parameters",
                     width = NULL,
                     collapsible = T, 
@@ -473,19 +473,19 @@ ui <- tagList(dashboardPage(
       ),
       tabItem("ElefanWidget",
               htmlOutput("elefanTitle"),
+              actionButton("elefanDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
               fluidRow(
-                box(title = "Data Considerations",
-                    width = NULL,
-                    collapsible = T, 
-                    class = "collapsed-box",
-                    box(
-                      checkboxInput("checkbox1", label = "Is your length-frequency data representative of the full population? (If this is not so, then estimates of fishing mortality will be biased.)", value = F),
-                      checkboxInput("checkbox2", label = "Were all age groups sampled?", value = F),
-                      checkboxInput("checkbox3", label = "Was the sample from a range of areas where different life histories might live? (e.g., if juveniles occupy nearshore habitat and adults are offshore)", value = F),
-                      checkboxInput("checkbox4", label = "Are a variety of gears with different selectivities used to collect the samples so that the samples contain multiple age groups?", value = F),
-                      p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of ", withMathJax("\\(L_\\infty\\)"), " and von Bertalanffy K in the Optional Parameters section in the ELEFAN tool.")
-                    )
-                ),
+                bsModal("modalExampleElefan", "ELEFAN Data Considerations", "elefanDataConsiderations", size = "large", htmlOutput("elefanDataConsiderationsText")),
+                #box(title = "Data Considerations",
+                #    width = NULL,
+                #    collapsible = T, 
+                #    class = "collapsed-box",
+                #    checkboxInput("checkbox1", label = "Is your length-frequency data representative of the full population? (If this is not so, then estimates of fishing mortality will be biased.)", value = F),
+                #    checkboxInput("checkbox2", label = "Were all age groups sampled?", value = F),
+                #    checkboxInput("checkbox3", label = "Was the sample from a range of areas where different life histories might live? (e.g., if juveniles occupy nearshore habitat and adults are offshore)", value = F),
+                #    checkboxInput("checkbox4", label = "Are a variety of gears with different selectivities used to collect the samples so that the samples contain multiple age groups?", value = F),
+                #    p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of ", withMathJax("\\(L_\\infty\\)"), " and von Bertalanffy K in the Optional Parameters section in the ELEFAN tool.")
+                #),
                 box(title = "Main Parameters",
                     width = NULL, 
                     collapsible = T, 
@@ -526,7 +526,7 @@ ui <- tagList(dashboardPage(
                 hr(),
                 
                 box( width= 100,  id = "box_elefan_results",
-                     title = "Results of Elefan SA Computation",
+                     title = "Results of Elefan Computation",
                      tags$style(type="text/css",
                                 ".recalculating {opacity: 1.0;}"
                      ),
@@ -567,16 +567,16 @@ ui <- tagList(dashboardPage(
       ),
       tabItem("SBPRWidget",
               htmlOutput("sbprTitle"),
+              actionButton("SBPRDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
               fluidRow(
-                box(title = "Data Considerations",
-                    width = NULL,
-                    collapsible = T, 
-                    class = "collapsed-box",
-                    box(
-                      checkboxInput("checkbox1", label = "Is the weight-at-age data representative of the full population, i.e., are all age groups sampled?", value = F),
-                      p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.")
-                      )
-                ),
+                bsModal("modalExampleSBPR", "SBPR Data Considerations", "SBPRDataConsiderations", size = "large", htmlOutput("SBPRDataConsiderationsText")),
+                #box(title = "Data Considerations",
+                #    width = NULL,
+                #    collapsible = T, 
+                #    class = "collapsed-box",
+                #    checkboxInput("checkbox1", label = "Is the weight-at-age data representative of the full population, i.e., are all age groups sampled?", value = F),
+                #    p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.")
+                #),
                 box(title = "Main Parameters",
                     width = NULL, 
                     collapsible = T, 
@@ -634,16 +634,16 @@ ui <- tagList(dashboardPage(
       ),
       tabItem("YPRWidget",
               htmlOutput("yprTitle"),
+              actionButton("YPRDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
               fluidRow(
-                box(title = "Data Considerations",
-                    width = NULL,
-                    collapsible = T, 
-                    class = "collapsed-box",
-                    box(
-                      checkboxInput("checkbox1", label = "Is the weight-at-age data representative of the full population, i.e., are all age groups sampled?", value = F),
-                      p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.")
-                    )
-                ),
+                bsModal("modalExampleYPR", "YPR Data Considerations", "YPRDataConsiderations", size = "large", htmlOutput("YPRDataConsiderationsText")),
+                #box(title = "Data Considerations",
+                #    width = NULL,
+                #    collapsible = T, 
+                #    class = "collapsed-box",
+                #    checkboxInput("checkbox1", label = "Is the weight-at-age data representative of the full population, i.e., are all age groups sampled?", value = F),
+                #    p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.")
+                #),
                 box(title = "Main Parameters",
                     width = NULL, 
                     collapsible = T, 
@@ -941,61 +941,83 @@ server <- function(input, output, session) {
     }
     js$showComputing()
     inputCsvFile <- infile1$datapath
-    print(inputCsvFile)
+    yr <- read.csv(inputCsvFile)$yr
     
-    #templateFileDlmTools <- paste0(getwd(), "/assets/cmsy/cmsyFastTemplate.xml")
-    templateFileDlmTools <- paste0(getwd(), "/assets/cmsy/cmsyLegacyTemplate.xml")
-    
-    a <- read.csv(inputCsvFile)
-    
-    group_ = ""
-    name_ = ""
-    en_name_ = ""
-    scientific_name_ = ""
-    sub_region_ = ""
-    region_ = ""
-    for (line in rownames(a)) {
-      if (a[line, "Stock"] == input$stock) {
-        name_ = a[line, "name"]
-        group_ = a[line, "group"]
-        en_name_ = a[line, "english_name"]
-        scientific_name_ = a[line, "scientific_name"]
-        region_ = a[line, "region"]
-        sub_region_ = a[line, "subregion"]
-        break
+    minYr <- NULL
+    maxYr <- NULL
+    for (y in yr) {
+      if (is.null(minYr) || y < minYr) {
+        minYr <- y
+      }
+      if (is.null(maxYr) || y > maxYr) {
+        maxYr <- y
       }
     }
     
-    cmsy$fast <- list()
-    js$disableAllButtons()
-    ret <- runCmsy(region_,toString(sub_region_),input$stock,toString(group_),toString(name_),toString(en_name_),toString(scientific_name_),"-",input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,input$stb.low,input$stb.hi,input$int.yr,input$intb.low,input$intb.hi,input$endb.low,input$endb.hi,input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, inputCsvFile, templateFileDlmTools)
-    js$enableAllButtons()
-    js$hideComputing()
-    js$showBox("box_cmsy_results")
-    for(i in 1:nrow(ret)) {
-      row <- ret[i,]
-      if (row$description == "estimates") {
-        contents <- getURL(row$url)
-        cmsy$method$textRaw <- contents
-        contents <- gsub("\n\r", "<br/>", contents)
-        contents <- gsub("\n", "<br/>", contents)
-        contents <- gsub("----------------------------------------------------------", "", contents)
-        cmsy$method$text <- contents
+    if ((maxYr-minYr)<=15) {
+      offset = maxYr-minYr
+      showModal(modalDialog(
+        title = "Error",
+        paste0("The input time-series must cover at least 15 years in length, the provided one covers ", offset, " years"),
+        easyClose = TRUE,
+        footer = NULL
+      ))
+      return(NULL)
+    } else {
+      #templateFileDlmTools <- paste0(getwd(), "/assets/cmsy/cmsyFastTemplate.xml")
+      templateFileDlmTools <- paste0(getwd(), "/assets/cmsy/cmsyLegacyTemplate.xml")
+      
+      a <- read.csv(inputCsvFile)
+      
+      group_ = ""
+      name_ = ""
+      en_name_ = ""
+      scientific_name_ = ""
+      sub_region_ = ""
+      region_ = ""
+      for (line in rownames(a)) {
+        if (a[line, "Stock"] == input$stock) {
+          name_ = a[line, "name"]
+          group_ = a[line, "group"]
+          en_name_ = a[line, "english_name"]
+          scientific_name_ = a[line, "scientific_name"]
+          region_ = a[line, "region"]
+          sub_region_ = a[line, "subregion"]
+          break
+        }
       }
-      if (row$description == "analysis_charts") {
-        fileAnalisysChart <- tempfile(fileext=".jpg")
-        download.file(row$url, fileAnalisysChart)
-        cmsy$method$analisysChart <- fileAnalisysChart
-        cmsy$method$analisysChartUrl <- row$url
-      }
-      if (row$description == "management_charts") {
-        fileManagementChart <- tempfile(fileext=".jpg")
-        download.file(row$url, fileManagementChart)
-        cmsy$method$managementChart <- fileManagementChart
-        cmsy$method$managementChartUrl <- row$url
-      }
-      if (row$description == "Log of the computation") {
-        cmsy$method$log <- row$url
+      
+      cmsy$fast <- list()
+      js$disableAllButtons()
+      ret <- runCmsy(region_,toString(sub_region_),input$stock,toString(group_),toString(name_),toString(en_name_),toString(scientific_name_),"-",input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,input$stb.low,input$stb.hi,input$int.yr,input$intb.low,input$intb.hi,input$endb.low,input$endb.hi,input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, inputCsvFile, templateFileDlmTools)
+      js$enableAllButtons()
+      js$hideComputing()
+      js$showBox("box_cmsy_results")
+      for(i in 1:nrow(ret)) {
+        row <- ret[i,]
+        if (row$description == "estimates") {
+          contents <- getURL(row$url)
+          cmsy$method$textRaw <- contents
+          contents <- gsub("\n\r", "<br/>", contents)
+          contents <- gsub("\n", "<br/>", contents)
+          contents <- gsub("----------------------------------------------------------", "", contents)
+          cmsy$method$text <- contents
+        }
+        if (row$description == "analysis_charts") {
+          fileAnalisysChart <- tempfile(fileext=".jpg")
+          download.file(row$url, fileAnalisysChart)
+          cmsy$method$analisysChart <- fileAnalisysChart
+          cmsy$method$analisysChartUrl <- row$url
+        }
+        if (row$description == "management_charts") {
+          fileManagementChart <- tempfile(fileext=".jpg")
+          download.file(row$url, fileManagementChart)
+          cmsy$method$managementChart <- fileManagementChart
+          cmsy$method$managementChartUrl <- row$url
+        }
+        if (row$description == "Log of the computation") {
+          cmsy$method$log <- row$url
+        }
       }
     }
   })
@@ -1187,10 +1209,24 @@ server <- function(input, output, session) {
       } else {  "" }
     } else {  "" }
   })
+  output$cmsyDataConsiderationsText <- renderText({
+    text <- "<h5><p><b>Please ensure your time-series at least 15 years in length from starting year to ending year.<br> (Note that years with missing data should be filled with an 'NA' value.</b></p></h5>"
+    text <- paste0(text, "<h5>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of natural mortality (M) for the Optional Parameters section.", "</h5>")
+    text
+  })
   ####### END CMSY TEXT #######
   
   
-  
+  getDataConsiderationTextForElefan <- function() {
+    text <- "<ul>"
+    text <- paste0(text, "<li>", "Ensure that your length-frequency data is representative of the full population. (If this is not so, then estimates of fishing mortality will be biased.)", "</li>")
+    text <- paste0(text, "<li>", "Ensure that all age groups were sampled.", "</li>")
+    text <- paste0(text, "<li>", "Ensure that the sample was from a range of areas where different life histories might live. (e.g., if juveniles occupy nearshore habitat and adults are offshore)", "</li>")
+    text <- paste0(text, "<li>", "Ensure that a variety of gears with different selectivities used to collect the samples so that the samples contain multiple age groups.", "</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<h5>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of ", withMathJax("\\(L_\\infty\\)"), " and von Bertalanffy K in the Optional Parameters section in the %%ELEFAN%% tool.", "</h5>")
+    return (text)
+  }
   
   ######### ELEFAN GA METHOD #########
   observeEvent(input$go_ga, {
@@ -1262,21 +1298,22 @@ server <- function(input, output, session) {
   output$par_ga <- renderText({
     if ("results" %in% names(elefan_ga)) {
       title <- "<hr>"
-      title <- paste0(title, "<strong>Length infinity (", withMathJax("\\(L_\\infty\\)"), "in cm):</strong>&nbsp;", elefan_ga$results$data$par$Linf)
+      title <- paste0(title, "<strong>Length infinity (", withMathJax("\\(L_\\infty\\)"), "in cm):</strong>&nbsp;", round(elefan_ga$results$data$par$Linf, 2))
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Curving coefficient (K):</strong>&nbsp;", elefan_ga$results$data$par$K)
+      title <- paste0(title, "<strong>Curving coefficient (K):</strong>&nbsp;", round(elefan_ga$results$data$par$K, 2))
       title <- paste0(title, "<br/>")
       title <- paste0(title, "<strong>Time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month (t_anchor):</strong>&nbsp;", round(elefan_ga$results$data$par$t_anchor, 2))
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Amplitude of growth oscillation (C):</strong>&nbsp;", elefan_ga$results$data$par$C)
+      title <- paste0(title, "<strong>Amplitude of growth oscillation (NOTE: only if 'Seasonalized' is checked; C):</strong>&nbsp;", ifelse(is.na(elefan_ga$results$data$par$C), NA, round(elefan_ga$results$data$par$C, 2)))
       title <- paste0(title, "<br/>")
       title <- paste0(title, "<strong>Winter point of oscillation (</strong>&nbsp;", withMathJax("\\(t_w\\)") , "<strong>)</strong>&nbsp;")
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Summer point of oscillation (", withMathJax("\\(ts\\)"),"=", withMathJax("\\(t_w\\)"), "- 0.5):</strong>&nbsp;", round(elefan_ga$results$data$par$ts, 2))
+      title <- paste0(title, "<strong>Summer point of oscillation (NOTE: only if 'Seasonalized' is checked; ", withMathJax("\\(ts\\)"),"=", withMathJax("\\(t_w\\)"), "- 0.5):</strong>&nbsp;", ifelse(is.na(elefan_ga$results$data$par$ts), NA, round(elefan_ga$results$data$par$ts, 2)))
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", round(elefan_ga$results$data$par$phiL, 2))
+      title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", ifelse(is.na(elefan_ga$results$data$par$phiL), "--", round(elefan_ga$results$data$par$phiL, 2)))
       title <- paste0(title, "<br/>")
       title <- paste0(title, "<br>")
+      title
     } else {  "" }
   })
   output$downloadReport_ga <- renderUI({
@@ -1301,7 +1338,10 @@ server <- function(input, output, session) {
   include.rownames=TRUE)
   output$tbl2_ga <- renderTable({
     if ('results' %in% names(elefan_ga)) {
-      elefan_ga$results$plot3$currents
+      CURR_GA<-elefan_ga$results$plot3$currents
+      CURR_GA<-CURR_GA[,-7]
+      names(CURR_GA)<-c("Length-at-1st-capture (Lc)", "Age-at-1st-capture (tc)", "Effort","Fishing mortality", "Catch", "Yield", "Biomass")
+      CURR_GA
     }
   }, 
   include.rownames=TRUE)
@@ -1335,13 +1375,13 @@ server <- function(input, output, session) {
   )
   output$title_tbl1_ga <- renderText({
     if ('results' %in% names(elefan_ga)) {
-      txt <- "<p class=\"pheader_elefan\">Biological reference levels</p>"
+      txt <- "<p class=\"pheader_elefan\">Biological reference levels:</p>"
       txt
     }
   })
   output$title_tbl2_ga <- renderText({
     if ('results' %in% names(elefan_ga)) {
-      txt <- "<p class=\"pheader_elefan\">Current yield and biomass levels</p>"
+      txt <- "<p class=\"pheader_elefan\">Current levels:</p>"
       txt
     }
   })
@@ -1374,6 +1414,11 @@ server <- function(input, output, session) {
       txt <- "<h2>Results of the ELEFAN_GA computation</h2>"
       txt
     }
+  })
+  
+  output$elefanGADataConsiderationsText <- renderText({
+    text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getDataConsiderationTextForElefan())
+    text
   })
   ####### END ELEFAN GA METHOD #######
   
@@ -1428,7 +1473,10 @@ server <- function(input, output, session) {
   include.rownames=TRUE)
   output$tbl2_sa <- renderTable({
     if ('results' %in% names(elefan_sa)) {
-      elefan_sa$results$plot3$currents
+      CURR_SA<-elefan_sa$results$plot3$currents
+      CURR_SA<-CURR_SA[,-7]
+      names(CURR_SA)<-c("Length-at-1st-capture (Lc)", "Age-at-1st-capture (tc)", "Effort","Fishing mortality", "Catch", "Yield", "Biomass")
+      CURR_SA
     }
   }, 
   include.rownames=TRUE)
@@ -1462,19 +1510,19 @@ server <- function(input, output, session) {
   output$par_sa <- renderText({
     if ("results" %in% names(elefan_sa)) {
       title <- "<hr>"
-      title <- paste0(title, "<strong>Length infinity (", withMathJax("\\(L_\\infty\\)"), "in cm):</strong>&nbsp;", elefan_sa$results$data$par$Linf)
+      title <- paste0(title, "<strong>Length infinity (", withMathJax("\\(L_\\infty\\)"), "in cm):</strong>&nbsp;", round(elefan_sa$results$data$par$Linf, 2))
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Curving coefficient (K):</strong>&nbsp;", elefan_sa$results$data$par$K)
+      title <- paste0(title, "<strong>Curving coefficient (K):</strong>&nbsp;", round(elefan_sa$results$data$par$K, 2))
       title <- paste0(title, "<br/>")
       title <- paste0(title, "<strong>Time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month (t_anchor):</strong>&nbsp;", round(elefan_sa$results$data$par$t_anchor, 2))
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Amplitude of growth oscillation (C):</strong>&nbsp;", elefan_sa$results$data$par$C)
+      title <- paste0(title, "<strong>Amplitude of growth oscillation (NOTE: only if 'Seasonalized' is checked; C):</strong>&nbsp;", ifelse(is.na(elefan_sa$results$data$par$C), NA, round(elefan_sa$results$data$par$C, 2)))
       title <- paste0(title, "<br/>")
       title <- paste0(title, "<strong>Winter point of oscillation (</strong>&nbsp;", withMathJax("\\(t_w\\)") , "<strong>)</strong>&nbsp;")
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Summer point of oscillation (", withMathJax("\\(ts\\)"),"=", withMathJax("\\(t_w\\)"), "- 0.5):</strong>&nbsp;", round(elefan_sa$results$data$par$ts, 2))
+      title <- paste0(title, "<strong>Summer point of oscillation (NOTE: only if 'Seasonalized' is checked; ", withMathJax("\\(ts\\)"),"=", withMathJax("\\(t_w\\)"), "- 0.5):</strong>&nbsp;", ifelse(is.na(elefan_sa$results$data$par$ts), NA, round(elefan_sa$results$data$par$ts, 2)))
       title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", round(elefan_sa$results$data$par$phiL, 2))
+      title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", ifelse(is.na(elefan_sa$results$data$par$phiL), NA, round(elefan_sa$results$data$par$phiL, 2)))
       title <- paste0(title, "<br/>")
       title <- paste0(title, "<br>")
       title
@@ -1487,13 +1535,13 @@ server <- function(input, output, session) {
   })
   output$title_tbl1_sa <- renderText({
     if ('results' %in% names(elefan_sa)) {
-      txt <- "<p class=\"pheader_elefan\">Biological reference levels</p>"
+      txt <- "<p class=\"pheader_elefan\">Biological reference levels:</p>"
       txt
     }
   })
   output$title_tbl2_sa <- renderText({
     if ('results' %in% names(elefan_sa)) {
-      txt <- "<p class=\"pheader_elefan\">Current yield and biomass levels</p>"
+      txt <- "<p class=\"pheader_elefan\">Current levels:</p>"
       txt
     }
   })
@@ -1526,6 +1574,10 @@ server <- function(input, output, session) {
       txt <- "<h2>Results of the ELEFAN_SA computation</h2>"
       txt
     }
+  })
+  output$elefanSADataConsiderationsText <- renderText({
+    text <- gsub("%%ELEFAN%%", "ELEFAN_SA", getDataConsiderationTextForElefan())
+    text
   })
   ####### END ELEFAN SA METHOD #######
   
@@ -1619,7 +1671,10 @@ server <- function(input, output, session) {
   include.rownames=TRUE)
   output$tbl2_e <- renderTable({
     if ('results' %in% names(elefan)) {
-      elefan$results$plot3$currents
+      CURR<-elefan$results$plot3$currents
+      CURR<-CURR[,-7]
+      names(CURR)<-c("Length-at-1st-capture (Lc)", "Age-at-1st-capture (tc)", "Effort","Fishing mortality", "Catch", "Yield", "Biomass")
+      CURR
     }
   }, 
   include.rownames=TRUE)
@@ -1667,6 +1722,10 @@ server <- function(input, output, session) {
       title
     } else {  "" }
   })
+  output$elefanDataConsiderationsText <- renderText({
+    text <- gsub("%%ELEFAN%%", "ELEFAN", getDataConsiderationTextForElefan())
+    text
+  })
   ####### END ELEFAN METHOD #######
   
   
@@ -1704,17 +1763,17 @@ server <- function(input, output, session) {
   })
   output$sbprOutPlot1 <- renderPlot({
     if ('results' %in% names(sbprExec)) {
-      plot(sbprExec$results$F_vs_SPR[,2]~sbprExec$results$F_vs_SPR[,1],ylab="SPR",xlab="Fishing Mortality",type="l")
+      plot(sbprExec$results$F_vs_SPR[,2]~sbprExec$results$F_vs_SPR[,1],ylab="SPR",xlab="Fishing Mortality (F)",type="l")
       abline(h=sbprExec$results$Reference_Point[1,2], col = "red", lty = 2)
-      legend(1.4, 8, legend=c("SSB_per_recruit"),col=c("red"), lty=2, cex=0.8)
+      legend(1.4, 8, legend=c("SSB_per_recruit"),col=c("red"), lty=2, cex=0.9)
     }
   })
   output$sbprOutPlot2 <- renderPlot({
     if ('results' %in% names(sbprExec)) {
-      plot(sbprExec$results$F_vs_SPR[,3]~sbprExec$results$F_vs_SPR[,1],ylab="% Max SPR",xlab="Fishing Mortality",type="l")
+      plot(sbprExec$results$F_vs_SPR[,3]~sbprExec$results$F_vs_SPR[,1],ylab="% Max SPR",xlab="Fishing Mortality (F)",type="l")
       abline(h=input$SBPR_MSP, v = sbprExec$results$Reference_Point[1,1], col = "red", lty = 2)
       leg <- paste0(input$SBPR_MSP, "% MSP")
-      legend(1.5, 85, legend=c(leg),col=c("red"), lty=2, cex=0.8)
+      legend(1.5, 85, legend=c(leg),col=c("red"), lty=2, cex=0.9)
     }
   })
   output$sbprMSPTableTitle <- renderText({
@@ -1745,6 +1804,11 @@ server <- function(input, output, session) {
       rmarkdown::render(tempReport, output_file = file, params = params)
     }
   )
+  output$SBPRDataConsiderationsText <- renderText({
+    text <- "<h5><b>Ensure that weight-at-age data is representative of the full population, i.e., are all age groups sampled?</b></h5>"
+    text <- paste0(text, "<h5>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.", "</h5>")
+    text
+  })
   ######### END SBPR METHOD #########
   
   
@@ -1783,10 +1847,10 @@ server <- function(input, output, session) {
   output$yprOutPlot <- renderPlot({
     if ('results' %in% names(yprExec)) {
       YPR <- yprExec$results$F_vs_YPR
-      plot(YPR[,2]~YPR[,1],ylab="Yield-Per-Recruit",xlab="Fishing Mortality",type="l")
+      plot(YPR[,2]~YPR[,1],ylab="Yield-Per-Recruit",xlab="Fishing Mortality (F)",type="l")
       abline(h = yprExec$results$Reference_Points[2,2], v = yprExec$results$Reference_Points[2,1], col = "black", lty = 2)
       abline(h = yprExec$results$Reference_Points[1,2], v = yprExec$results$Reference_Points[1,1], col = "red", lty = 2)
-      legend(1.7, 0.09, legend=c("F-0.1", "F-Max"),col=c("red", "black"), lty=2:2, cex=0.8)
+      legend(1.7, 0.09, legend=c("F-0.1", "F-Max"),col=c("red", "black"), lty=2:2, cex=0.9)
     }
   })
   output$yprOutTable <- renderTable({
@@ -1798,7 +1862,7 @@ server <- function(input, output, session) {
   output$yprDifference <- renderText({
     if ('results' %in% names(yprExec)) {
       differenceinYPR = round(yprExec$results$Reference_Points[2,2] - yprExec$results$Reference_Points[1,2], 6)
-      text <- paste0("<b>Difference in YPR: </b>",differenceinYPR)
+      text <- paste0("<b>Difference in YPR: </b>",round(differenceinYPR, 4))
       text
     }
   })
@@ -1817,6 +1881,12 @@ server <- function(input, output, session) {
       rmarkdown::render(tempReport, output_file = file, params = params)
     }
   )
+  
+  output$YPRDataConsiderationsText <- renderText({
+    text <- "<h5><b>Ensure that weight-at-age data is representative of the full population, i.e., are all age groups sampled?</b></h5>"
+    text <- paste0(text, "<h5>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.", "</h5>")
+    text
+  })
   ######### END YPR METHOD #########
   
   
@@ -2370,7 +2440,7 @@ server <- function(input, output, session) {
     text
   })
   output$elefanSaTitle <- renderText({
-    text <- "<span><h3><b>Elefan GA (Simulated Annealing)</b></h3></span>"
+    text <- "<span><h3><b>Elefan SA (Simulated Annealing)</b></h3></span>"
     text
   })
   output$elefanTitle <- renderText({
@@ -2410,19 +2480,19 @@ server <- function(input, output, session) {
   
   output$rnMax_ga <- renderText({
     if ("results" %in% names(elefan_ga)) {
-      title <- paste0("<strong>Highest value of fitness function:</strong>&nbsp;", elefan_ga$results$data$Rn_max)
+      title <- paste0("<strong>Highest value of fitness function:</strong>&nbsp;", round(elefan_ga$results$data$Rn_max, 3))
       title
     } else {  "" }
   })
   output$rnMax_sa <- renderText({
     if ("results" %in% names(elefan_sa)) {
-      title <- paste0("<strong>Highest value of fitness function:</strong>&nbsp;", elefan_sa$results$data$Rn_max)
+      title <- paste0("<strong>Highest value of fitness function:</strong>&nbsp;", round(elefan_sa$results$data$Rn_max, 3))
       title
     } else {  "" }
   })
   output$rnMax <- renderText({
     if ("results" %in% names(elefan)) {
-      title <- paste0("<strong>Highest value of fitness function:</strong>&nbsp;", elefan$results$data$Rn_max)
+      title <- paste0("<strong>Highest value of fitness function:</strong>&nbsp;", round(elefan$results$data$Rn_max, 3))
       title
     } else {  "" }
   })
@@ -2453,13 +2523,13 @@ server <- function(input, output, session) {
   })
   output$title_tbl1_e <- renderText({
     if ('results' %in% names(elefan)) {
-      txt <- "<p class=\"pheader_elefan\">Biological reference levels</p>"
+      txt <- "<p class=\"pheader_elefan\">Biological reference levels:</p>"
       txt
     }
   })
   output$title_tbl2_e <- renderText({
     if ('results' %in% names(elefan)) {
-      txt <- "<p class=\"pheader_elefan\">Current yield and biomass levels</p>"
+      txt <- "<p class=\"pheader_elefan\">Current levels:</p>"
       txt
     }
   })

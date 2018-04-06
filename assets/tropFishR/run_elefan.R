@@ -216,7 +216,6 @@ run_elefan <- function(x, binSize=4, Linf_fix = NA, Linf_range = NA,
     #> 1 0.25 0.1 0.5353319 0.3154574
     
     # Current yield and biomass levels
-    
     TB1$currents
   },
   error=function(cond) {
