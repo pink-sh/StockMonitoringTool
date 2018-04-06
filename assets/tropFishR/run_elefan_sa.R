@@ -21,8 +21,10 @@ run_elefan_sa <- function(x, binSize=4,
     
     # adjust bin size
     
-    synLFQ7a <- lfqModify(x, bin_size = binSize)
-    
+    #synLFQ7a <- lfqModify(x, bin_size = binSize)
+    #synLFQ7a <- lfqModify(lfqRestructure(x), bin_size = binSize)
+    synLFQ7a <- x
+
     # plot raw and restructured LFQ data
     
     lfqbin <- lfqRestructure(synLFQ7a, MA = 5, addl.sqrt = TRUE)
@@ -54,6 +56,7 @@ run_elefan_sa <- function(x, binSize=4,
                         flagging.out = flagging.out,
                         plot = plot,
                         plot.score = plot.score)
+    
     returnResults[['data']] <- res_GA
     
     # show results
@@ -204,7 +207,6 @@ run_elefan_sa <- function(x, binSize=4,
     # plot results
     
     par(mfrow = c(2,1), mar = c(4,5,2,4.5), oma = c(1,0,0,0))
-    
     returnResults[['plot3']] <- TB1
     #plot(TB1, mark = TRUE)
     #mtext("(a)", side = 3, at = -1, line = 0.6)

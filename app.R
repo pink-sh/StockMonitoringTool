@@ -1442,11 +1442,11 @@ server <- function(input, output, session) {
     js$removeBox("box_elefan_ga_results")
     js$disableAllButtons()
     dataset <- read_elefan_csv(inputCsvFile)
-    ds <- lfqModify(lfqRestructure(dataset), bin_size = 4)
+    #ds1 <- lfqModify(lfqRestructure(dataset), bin_size = 4)
     
-    #ds <- lfqModify(get('synLFQ7', asNamespace('TropFishR')), bin_size = 4)
+    #ds2 <- lfqModify(get('synLFQ7', asNamespace('TropFishR')), bin_size = 4)
     
-    res <- run_elefan_sa(ds,binSize =  4, seasonalised = input$ELEFAN_GA_seasonalised, 
+    res <- run_elefan_sa(dataset,binSize =  4, seasonalised = input$ELEFAN_SA_seasonalised, 
                          init_par = list(Linf = input$ELEFAN_SA_initPar_Linf, K = input$ELEFAN_SA_initPar_K, t_anchor = input$ELEFAN_SA_initPar_t_anchor),
                          low_par = list(Linf = as.numeric(input$ELEFAN_SA_lowPar_Linf), K = as.numeric(input$ELEFAN_SA_lowPar_K), t_anchor = as.numeric(input$ELEFAN_SA_lowPar_t_anchor), C = as.numeric(input$ELEFAN_SA_lowPar_C), ts = as.numeric(input$ELEFAN_SA_lowPar_ts)),
                          up_par = list(Linf = as.numeric(input$ELEFAN_SA_upPar_Linf), K = as.numeric(input$ELEFAN_SA_upPar_K), t_anchor = as.numeric(input$ELEFAN_SA_upPar_t_anchor), C = as.numeric(input$ELEFAN_SA_upPar_C), ts = as.numeric(input$ELEFAN_SA_upPar_ts)),
@@ -1462,6 +1462,7 @@ server <- function(input, output, session) {
         footer = NULL
       ))
     } else {
+      print(res$plot3)
       js$showBox("box_elefan_sa_results")
       elefan_sa$results <- res
     }
