@@ -939,7 +939,7 @@ server <- function(input, output, session) {
       ))
       return(NULL)
     }
-    js$showComputing()
+    
     inputCsvFile <- infile1$datapath
     yr <- read.csv(inputCsvFile)$yr
     
@@ -964,6 +964,7 @@ server <- function(input, output, session) {
       ))
       return(NULL)
     } else {
+      js$showComputing()
       #templateFileDlmTools <- paste0(getwd(), "/assets/cmsy/cmsyFastTemplate.xml")
       templateFileDlmTools <- paste0(getwd(), "/assets/cmsy/cmsyLegacyTemplate.xml")
       
