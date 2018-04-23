@@ -998,9 +998,12 @@ server <- function(input, output, session) {
         row <- ret[i,]
         if (row$description == "estimates") {
           contents <- getURL(row$url)
+          print (paste0("Cmsy text url", row$url))
+          contents <- gsub("Results for Management", "Reference points and indicators", contents)
           cmsy$method$textRaw <- contents
           contents <- gsub("\n\r", "<br/>", contents)
           contents <- gsub("\n", "<br/>", contents)
+          contents <- gsub("B/Bmsy in last year", "<b>B/Bmsy in last year</b>", contents)
           contents <- gsub("----------------------------------------------------------", "", contents)
           cmsy$method$text <- contents
         }
@@ -1135,6 +1138,8 @@ server <- function(input, output, session) {
       if (!is.null(cmsy$method)) {
         cmsy$method$text <- gsub("\n\r", "<br/>", cmsy$method$text)
         cmsy$method$text <- gsub("\n", "<br/>", cmsy$method$text)
+        cmsy$method$text <- gsub("Results for Management", "Reference points and indicators", cmsy$method$text)
+        #cmsy$method$text <- gsub("B/Bmsy in last year", "<b>B/Bmsy in last year</b>", cmsy$method$text)
         cmsy$method$text <- gsub("----------------------------------------------------------", "", cmsy$method$text)
         cmsy$method$text
       } else {  "" }
@@ -1197,7 +1202,8 @@ server <- function(input, output, session) {
   output$titleCmsyManagementChart <- renderText({
     if ("method" %in% names(cmsy)) {
       if (!is.null(cmsy$method)) {
-        title <- "<h2> Management Charts </h2>"
+        #title <- "<h2> Management Charts </h2>"
+        title <- "<h2> Output Graphs </h2>"
         title
       } else {  "" }
     } else {  "" }
@@ -1205,8 +1211,8 @@ server <- function(input, output, session) {
   output$titleCmsyAnalisysChart <- renderText({
     if ("method" %in% names(cmsy)) {
       if (!is.null(cmsy$method)) {
-        title <- "<h2> Analysis Charts </h2>"
-        title
+        #title <- "<h2> Analysis Charts </h2>"
+        #title
       } else {  "" }
     } else {  "" }
   })

@@ -9,12 +9,11 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 ```{r echo=FALSE, out.width='100%'}
 cat(params$cmsy$method$textRaw, sep = '\n')
 ```
-`r if(!is.null(params$cmsy$method)){"##Analisys Charts"}`
+`r if(!is.null(params$cmsy$method)){"##Output Graphs"}`
 ```{r echo=FALSE, out.width='100%'}
 knitr::include_graphics(c(params$cmsy$method$analisysChart))
 ```
 
-`r if(!is.null(params$cmsy$method)){"##Management Charts"}`
 ```{r echo=FALSE, out.width='100%'}
 knitr::include_graphics(c(params$cmsy$method$managementChart))
 ```

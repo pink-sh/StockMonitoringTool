@@ -40,16 +40,17 @@ mtext("(b)", side = 3, at = -0.1, line = 0.6)
 
 **Highest value of fitness function:** `r elefan_sa$results$data$Rn_max`
 
+**Length infinity ( $L_\infty$ in cm ):** `r elefan_sa$results$data$par$Linf`
 
-**Length infinity in cm:** `r elefan_sa$results$data$par$Linf`
+**Curving coefficient (K):** `r elefan_sa$results$data$par$K`
 
-**Curving coefficient:** `r elefan_sa$results$data$par$K`
+**Time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month (t_anchor):** `r elefan_sa$results$data$par$t_anchor`
 
-**Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month:** `r elefan_sa$results$data$par$t_anchor`
+**Amplitude of growth oscillation (NOTE: only if 'Seasonalized' is checked; C):** `r elefan_sa$results$data$par$C`
 
-**Amplitude of growth oscillation:** `r elefan_sa$results$data$par$C`
+**Winter point of oscillation ($t_w$)**
 
-**Summer point of oscillation (ts = WP - 0.5):** `r elefan_sa$results$data$par$ts`
+**Summer point of oscillation (NOTE: only if 'Seasonalized' is checked; $ts$=$t_w$-0.5):** `r elefan_sa$results$data$par$ts`
 
 **Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):** `r elefan_sa$results$data$par$phiL`
 
@@ -61,8 +62,11 @@ knitr::kable(df1)
 
 **Current yield and biomass levels:**
 ```{r echo=FALSE, results='asis'}
-df2 <- as.data.frame(elefan_sa$results$plot3$current)
-knitr::kable(df2)
+CURR_GA<-elefan_sa$results$plot3$current
+CURR_GA<-CURR_GA[,-7]
+names(CURR_GA)<-c("Length-1st-capture(Lc)", "Age-1st-capture(tc)", "Effort","Fishing mortality", "Catch", "Yield", "Biomass")
+df2 <- as.data.frame(CURR_GA)
+knitr::kable(df2, digits = 2)
 ```
 
 ******
