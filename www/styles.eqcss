@@ -1,0 +1,66 @@
+@element '#box_cmsy_results' {
+  $parent {
+    visibility: hidden;
+  }
+}
+
+@element '#box_elefan_ga_results' {
+  $parent {
+    visibility: hidden;
+  }
+}
+
+@element '#box_elefan_sa_results' {
+  $parent {
+    visibility: hidden;
+  }
+}
+
+@element '#box_elefan_results' {
+  $parent {
+    visibility: hidden;
+  }
+}
+@element '#box_sbpr_results' {
+  $parent {
+    visibility: hidden;
+  }
+}
+@element '#box_ypr_results' {
+  $parent {
+    visibility: hidden;
+  }
+}
+
+@element '#box_cmsy_results' {
+  $parent > .box-header {
+    color: #357ca5;
+  }
+}
+@element '#box_elefan_ga_results' {
+  $parent > .box-header {
+    color: #357ca5;
+  }
+}
+@element '#box_elefan_sa_results' {
+  $parent > .box-header {
+    color: #357ca5;
+  }
+}
+@element '#box_elefan_results' {
+  $parent > .box-header {
+    color: #357ca5;
+  }
+}
+
+@element '#box_sbpr_results' {
+  $parent > .box-header {
+    color: #357ca5;
+  }
+}
+
+@element '#box_ypr_results' {
+  $parent > .box-header {
+    color: #357ca5;
+  }
+}
