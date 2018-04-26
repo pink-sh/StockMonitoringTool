@@ -57,7 +57,7 @@ mtext("(b)", side = 3, at = -0.1, line = 0.6)
 **Biological reference levels:**
 ```{r echo=FALSE, results='asis'}
 df1 <- as.data.frame(elefan_sa$results$plot3$df_Es)
-knitr::kable(df1)
+knitr::kable(df1, digits = 2, align=rep('c', 5))
 ```
 
 **Current yield and biomass levels:**
@@ -66,7 +66,7 @@ CURR_GA<-elefan_sa$results$plot3$current
 CURR_GA<-CURR_GA[,-7]
 names(CURR_GA)<-c("Length-1st-capture(Lc)", "Age-1st-capture(tc)", "Effort","Fishing mortality", "Catch", "Yield", "Biomass")
 df2 <- as.data.frame(CURR_GA)
-knitr::kable(df2, digits = 2)
+knitr::kable(df2, digits = 2, align=rep('c', 5))
 ```
 
 ******

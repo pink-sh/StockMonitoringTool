@@ -18,8 +18,10 @@ legend(1.5, 85, legend=c(leg),col=c("red"), lty=2, cex=0.8)
 ```
 \pagebreak
 
-## Reference Points
+## Reference Points - F at 30%MSP
 ```{r echo=FALSE, results='asis'}
-df <- as.data.frame(sbprExec$results$Reference_Point)
-knitr::kable(df)
+#df <- as.data.frame(sbprExec$results$Reference_Point)
+df <- data.frame(F=sbprExec$results$Reference_Point[1], SSB_Per_Recruit=sbprExec$results$Reference_Point[2])
+colnames(df) <- c("F", "SSB_Per_Recruit")
+knitr::kable(df, digits = 2, align=rep('c', 5))
 ```

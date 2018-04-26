@@ -16,7 +16,7 @@ legend(1.5, 0.15, legend=c("F-0.1", "F-Max"),col=c("red", "black"), lty=2:2, cex
 ## Reference Points
 ```{r echo=FALSE, results='asis'}
 df <- as.data.frame(yprExec$results$Reference_Points)
-knitr::kable(df)
+knitr::kable(df, digits = 2, align=rep('c', 5))
 ```
 
 
