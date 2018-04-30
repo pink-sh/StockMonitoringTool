@@ -166,43 +166,47 @@ ui <- tagList(dashboardPage(
                     collapsed = T,
                     box(
                       numericInput("minOfYear", "Earliest year of the catch series", 1970, min = 1900, max = 2020, step=1),
-                      numericInput("maxOfYear", "Latest Year of the catch series", 2014, min = 1900, max = 2020, step=1),
-                      textInput("resiliance", "Resilience as qualitative information (input FishBase value", "Medium"),
+                      numericInput("maxOfYear", "Latest year of the catch series", 2014, min = 1900, max = 2020, step=1),
+                      selectInput("resiliance", "Resilience as qualitative information (Use information from FishBase or SeaLifeBase)", choices=c("Very low", "Low", "Medium", "High"), selected="Medium"),
                       textInput("r.low", "Lowest resilience (automatically calculated if not set)", "NA"),
                       textInput("r.hi", "Highest resilience (automatically calculated if not set)", "NA"),
                       p("**The user should take care when setting the prior estimates for depletion at the beginning and end of the time series. Depletion levels are assumptions about the initial and current state of the stock, and they have a strong influence on the results of CMSY, so careful evaluation of these parameters is recommended. These parameters are determined in CMSY using the relationship between current catch and maximum catch."),
-                      numericInput("stb.low", "Starting depletion range: Lowest possible relative biomass at the beginning of the catch time series", 0, min = 0, max = 10, step=0.1),
-                      numericInput("stb.hi", "Starting depletion range: Highest possible relative biomass at the beginning of the catch time series", 0, min = 0, max = 10, step=0.1),
+                      numericInput("stb.low", "**Starting depletion range: Lowest possible relative biomass at the beginning of the catch time series (automatically calculated if not set)", 0, min = 0, max = 10, step=0.1),
+                      numericInput("stb.hi", "**Starting depletion range: Highest possible relative biomass at the beginning of the catch time series (automatically calculated if not set)", 0, min = 0, max = 10, step=0.1),
                       textInput("int.yr", "Intermediate year (automatically calculated if not set)", "NA"),
                       textInput("intb.low", "Lowest possible relative biomass at the intermediate year of the catch time series (automatically calculated if not set)", "NA"),
                       textInput("intb.hi", "Highest possible relative biomass at the intermediate year of the catch time series (automatically calculated if not set)", "NA"),
-                      numericInput("endb.low", "Ending depletion range: Lowest possible relative biomass at the end of the catch time series", 0.01, min = 0, max = 10, step=0.01),
-                      numericInput("endb.hi", "Ending depletion range: Highest possible relative biomass at the end of the catch time series", 0.4, min = 0, max = 10, step=0.1)
+                      numericInput("endb.low", "**Ending depletion range: Lowest possible relative biomass at the end of the catch time series (automatically calculated if not set)", 0.01, min = 0, max = 10, step=0.01),
+                      numericInput("endb.hi", "**Ending depletion range: Highest possible relative biomass at the end of the catch time series (automatically calculated if not set)", 0.4, min = 0, max = 10, step=0.1),
+                      textInput("q.start", "Prior for catchability (q) value at the beginning of a stable catch-biomass period of minimum 5 years", "NA"),
+                      textInput("q.end", "Prior for q value at the end of a stable catch-biomass period of minimum 5 years", "NA")
                     ),
                     box(
-                      numericInput("startYear", "Start Year to process the catch series from", 1970, min = 1900, max = 2020, step=1),
-                      numericInput("endYear", "End Year to process the catch series up to", 2014, min = 1900, max = 2020, step=1),
+                      numericInput("startYear", "Start year to process the catch series from", 1970, min = 1900, max = 2020, step=1),
+                      numericInput("endYear", "End year to process the catch series up to", 2014, min = 1900, max = 2020, step=1),
                       textInput("blim", p("Biomass biological limit (", withMathJax("\\(B_{lim}\\)"), ")"), "NA"),
                       textInput("bpa", p("Biomass precautionary value (",withMathJax("\\(B_{pa}\\)") , ")"), "NA"),
                       textInput("bmsy", p("Biomass maximum sustainable yield (", withMathJax("\\(B_{MSY}\\)"), ")"), "NA"),
                       textInput("b40", p("Biomass at 40% over the unfished level (", withMathJax("\\(B_{40\\%}\\)"), ")"), "NA"),
-                      textInput("fmsy", p("Fishing mortality at Maximum Sustainable Yield (",withMathJax("\\(F_{MSY}\\)") , ")"), "NA"),
+                      textInput("fmsy", p("Fishing mortality at Maximum Sustainable Yield (",withMathJax("\\(F_{MSY}\\)") , "). If" 
+                                           ,withMathJax("\\(F_{MSY}\\)") ,"is known, the resilience prior range (lowest and highest resilience estimates) 
+                                           could be defined to include estimate of", withMathJax("\\(F_{MSY}\\)") , 
+                                          "assuming that r", withMathJax("\\(\\approx\\)"),withMathJax("\\(F_{MSY}\\)")), "NA"),
                       textInput("flim", p("Fishing mortality biological limit (", withMathJax("\\(F_{lim}\\)"), ")"), "NA"),
                       textInput("fpa", p("Fishing mortality precautionary value (", withMathJax("\\(F_{pa}\\)"), ")"), "NA"),
                       textInput("fofl", p("Fishing mortality at overfishing level (", withMathJax("\\(F_{ofl}\\)"),")"), "NA"),
                       textInput("last_f", "Last known exploitation rate", "NA"),
                       textInput("msy", "Maximum Sustainable Yield (MSY)", "NA"),
                       textInput("msyBTrigger", p("Spawning Stock Biomass at MSY (", withMathJax("\\(SSB_{MSY}\\)"), ")"), "NA"),
-                      textInput("m", "Natural mortality (M)", "NA"),
-                      textInput("q.start", "Prior for catchability (q) value at the beginning of a stable catch-biomass period of minimum 5 years", "NA"),
-                      textInput("q.end", "Prior for q value at the end of a stable catch-biomass period of minimum 5 years", "NA"),
+                      textInput("m", "**Natural mortality (M)", "NA"),
+                      p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M here."),
                       ##KK: it's not clear to me what the user input would be here if not "None". Suggest deleting (also for Comments.
-                      textInput("btype", "btype indicates if the catch file contains biomass, CPUE or no information associated with the catch time series", "None"),
-                      textInput("comments", "Comments on data and computation", "landings"),
-                      checkboxInput("force.cmsy", "Check this if CMSY results are to be preferred over the Bayesian State Model results when biomass or CPUE is available", FALSE)
+                      #textInput("btype", "btype indicates if the catch file contains biomass, CPUE or no information associated with the catch time series", "None"),
+                      #textInput("comments", "Comments on data and computation", "landings"),
+                      checkboxInput("force.cmsy", "Check this if CMSY results are to be preferred over the Bayesian State Model results (only when biomass or CPUE is available)", FALSE)
                       
                     )
-                ),
+                      ),
                 actionButton("go_cmsy", "Run CMSY Method"),
                 htmlOutput("cmsyWarning"),
                 hr(),
@@ -505,7 +509,7 @@ ui <- tagList(dashboardPage(
                     class = "collapsed-box",
                     collapsed = T,
                     box(
-                      numericInput("ELEFAN_Linf_fix", p(withMathJax("\\(L_\\infty\\)"), ": if used the K-Scan method is applied with a fixed", withMathJax("\\(L_\\infty\\)"),"value (i.e. varying K only):"), NA, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_Linf_fix", p("\\(L_\\infty\\)", ": if used the K-Scan method is applied with a fixed ", withMathJax("\\(L_\\infty\\)")," value (i.e. varying K only):"), NA, min = 1, max = 1000, step=1),
                       numericInput("ELEFAN_Linf_range_from", p(withMathJax("\\(L_\\infty\\)"), "sequence from:"), NULL, min = 1, max = 1000, step=1),
                       numericInput("ELEFAN_Linf_range_to", p(withMathJax("\\(L_\\infty\\)"), "sequence to:"), NULL, min = 1, max = 1000, step=1),
                       numericInput("ELEFAN_Linf_range_by", p(withMathJax("\\(L_\\infty\\)"), "increment sequence by:"), 1, min = 1, max = 1000, step=1),
@@ -514,9 +518,9 @@ ui <- tagList(dashboardPage(
                       numericInput("ELEFAN_MA", "Number indicating over how many length classes the moving average should be performed:", 5, min = 0, max = 100, step=1)
                     ),
                     box(
-                      numericInput("ELEFAN_K_Range_from", p(withMathJax("\\(L_\\infty\\)"), "sequence from:"), NULL, min = 1, max = 1000, step=1),
-                      numericInput("ELEFAN_K_Range_to", p(withMathJax("\\(L_\\infty\\)"), "sequence to:"), NULL, min = 1, max = 1000, step=1),
-                      numericInput("ELEFAN_K_Range_by", p(withMathJax("\\(L_\\infty\\)"), "increment sequence by:"), 1, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_K_Range_from", "K sequence from:", NULL, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_K_Range_to", "K sequence to:", NULL, min = 1, max = 1000, step=1),
+                      numericInput("ELEFAN_K_Range_by", "K increment sequence by:", 1, min = 1, max = 1000, step=1),
                       checkboxInput("ELEFAN_addl.sqrt", "Additional squareroot transformation of positive values according to Brey et al. (1988)", FALSE),
                       numericInput("ELEFAN_agemax", "Maximum age of species:", NULL, min = 0, max = 100, step=1),
                       checkboxInput("ELEFAN_contour", "If checked in combination with response surface analysis, contour lines are displayed rather than the score as text in each field of the score plot", FALSE)
@@ -703,27 +707,27 @@ ui <- tagList(dashboardPage(
               htmlOutput("basicShaeferTitle"),
               actionButton("basicShaeferMoreInfo", "More Information", class="topLevelInformationButton"),
               fluidRow(id = "box_shaefer_x",
-              bsModal("modalExample3", "Surplus production model", "basicShaeferMoreInfo", size = "large", htmlOutput("basicShaeferInfoText")),
-                box( width= 50,  id = "box_shaefer",
-                     fluidRow(
-                       box( id="box_shaefer_in",
-                         sliderInput("r", "Intrinsic rate of growth (r):", 
-                                     min=0.01, max=1, value=0.5),    
-                         sliderInput("K", "Carrying capacity (K):", 
-                                     min=500, max=3500, value=1000),
-                         withMathJax(),
-                         uiOutput('shaefer_ex1'),
-                         helpText('Once the parameters have been estimated, fishery performance indicators useful to fisheries management can be calculated.'),
-                         uiOutput('shaefer_ex2'),
-                         uiOutput('shaefer_ex3'),
-                         uiOutput('shaefer_ex4')
-                       ),
-                       box(
-                         plotOutput("Biomassplot"),
-                         plotOutput("Growthplot")
+                       bsModal("modalExample3", "Surplus production model", "basicShaeferMoreInfo", size = "large", htmlOutput("basicShaeferInfoText")),
+                       box( width= 50,  id = "box_shaefer",
+                            fluidRow(
+                              box( id="box_shaefer_in",
+                                   sliderInput("r", "Intrinsic rate of growth (r):", 
+                                               min=0.01, max=1, value=0.5),    
+                                   sliderInput("K", "Carrying capacity (K):", 
+                                               min=500, max=3500, value=1000),
+                                   withMathJax(),
+                                   uiOutput('shaefer_ex1'),
+                                   helpText('Once the parameters have been estimated, fishery performance indicators useful to fisheries management can be calculated.'),
+                                   uiOutput('shaefer_ex2'),
+                                   uiOutput('shaefer_ex3'),
+                                   uiOutput('shaefer_ex4')
+                              ),
+                              box(
+                                plotOutput("Biomassplot"),
+                                plotOutput("Growthplot")
+                              )
+                            )
                        )
-                     )
-                )
               )
       ),
       tabItem("BasicVonBertalannfy",
@@ -750,7 +754,7 @@ ui <- tagList(dashboardPage(
                             )
                        )
               )
-      
+              
       ),
       tabItem("SeasonalVonBertalannfy",
               htmlOutput("SeasonalVonBertalannfyTitle"),
@@ -865,7 +869,7 @@ ui <- tagList(dashboardPage(
                             )
                        )
               )
-        )
+      )
     )
   )
 ), tags$footer("This work has received funding from the European Union's Horizon 2020 research and innovation programme under the BlueBRIDGE project (Grant agreement No 675680) and in-kind from NOAA", 
@@ -1026,9 +1030,9 @@ server <- function(input, output, session) {
     }
   })
   
- ### observeEvent(input$go, {
+  ### observeEvent(input$go, {
   ###   infile <- input$fileElefan
-    
+  
   ###if (is.null(infile)) {
   ### showModal(modalDialog(
   ###   title = "Error",
@@ -1044,20 +1048,20 @@ server <- function(input, output, session) {
   ###js$disableAllButtons()
   ###dataset <- read_elefan_csv(inputCsvFile)
   ###ds <- lfqModify(lfqRestructure(dataset), bin_size = 4)
-    
+  
   ###   #ds <- lfqModify(get('synLFQ7', asNamespace('TropFishR')), bin_size = 4)
-    
+  
   ###elefan_linf_range <- NA
   ###if (!is.na(input$ELEFAN_Linf_range_from) && !is.na(input$ELEFAN_Linf_range_to)) {
   ###elefan_linf_range <- seq(from = input$ELEFAN_Linf_range_from, to = input$ELEFAN_Linf_range_to, by = input$ELEFAN_Linf_range_by)
   ###}
-    
+  
   ###elefan_k_range <- exp(seq(log(0.1), log(10), length.out=100))
   ###if (!is.na(input$ELEFAN_K_Range_from) && !is.na(input$ELEFAN_K_range_to)) {
   ###elefan_linf_range <- seq(from = input$ELEFAN_K_Range_from, to = input$ELEFAN_K_range_to, by = input$ELEFAN_K_range_by)
   ###}
-    
-    
+  
+  
   ###elefan_agemax <- input$ELEFAN_agemax 
   ###if (is.na(input$ELEFAN_agemax)) {
   ###elefan_agemax <- NULL
@@ -1180,10 +1184,10 @@ server <- function(input, output, session) {
     }
   })
   ####### END CMSY OUTPUT FUNCTION #######
-
+  
   ####### CMSY TEXT #######
   output$cmsyMethodTitle <- renderText({
-    text <- "<span><h3><b>CMSY (Catch Maximum, Sustainable Yield) Method</b></h3></span>"
+    text <- "<span><h3><b>CMSY (Catch-Maximum Sustainable Yield) Method</b></h3></span>"
     text
   })
   output$downloadCmsyReportButton <- renderUI({
@@ -1400,7 +1404,7 @@ server <- function(input, output, session) {
   })
   output$titlePlot2_elefan_ga <- renderText({
     if ('results' %in% names(elefan_ga)) {
-      txt <- "<p class=\"pheader_elefan\">Reconstructed LFQ data</p>"
+      txt <- "<p class=\"pheader_elefan\">Restructured LFQ data</p>"
       txt
     }
   })
@@ -1561,7 +1565,7 @@ server <- function(input, output, session) {
   })
   output$titlePlot2_elefan_sa <- renderText({
     if ('results' %in% names(elefan_sa)) {
-      txt <- "<p class=\"pheader_elefan\">Reconstructed LFQ data</p>"
+      txt <- "<p class=\"pheader_elefan\">Restructured LFQ data</p>"
       txt
     }
   })
@@ -1813,7 +1817,7 @@ server <- function(input, output, session) {
     }
   )
   output$SBPRDataConsiderationsText <- renderText({
-    text <- "<h5><b>Ensure that weight-at-age data is representative of the full population, i.e., are all age groups sampled?</b></h5>"
+    text <- "<h5><b>Ensure that spawning stock weight-at-age data is representative of the full population, i.e., are all age groups sampled?</b></h5>"
     text <- paste0(text, "<h5>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.", "</h5>")
     text
   })
@@ -1891,7 +1895,7 @@ server <- function(input, output, session) {
   )
   
   output$YPRDataConsiderationsText <- renderText({
-    text <- "<h5><b>Ensure that weight-at-age data is representative of the full population, i.e., are all age groups sampled?</b></h5>"
+    text <- "<h5><b>Ensure that spawning stock weight-at-age data is representative of the full population, i.e., are all age groups sampled?</b></h5>"
     text <- paste0(text, "<h5>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.", "</h5>")
     text
   })
@@ -2226,7 +2230,7 @@ server <- function(input, output, session) {
     text
   })
   output$cmsyIntroOut <- renderText({
-    text <- "<h3><b>CMSY - Catch Maximum, Sustainable Yield</b></h3>"
+    text <- "<h3><b>CMSY - Catch-Maximum Sustainable Yield</b></h3>"
     text <- paste0(text, "<p>")
     text <- paste0(text, "The <b>CMSY</b> method for data-limited stock assessment. Described in Froese, R., Demirel, N., Coro, G., Kleisner, K. M., Winker, H. (2016). Estimating fisheries reference points from catch and resilience. Fish and Fisheries.")
     text <- paste0(text, "<br/>")
@@ -2370,27 +2374,27 @@ server <- function(input, output, session) {
   
   output$vonBertalannfyInfoText <- renderText({
     text <- "<b>The VBGF expresses the length, L, as a function of the age of the fish, t. K is a parameter that controls the curvature</b>"
-    text <- paste0(text, "<h5>", withMathJax("\\(L_\\infty\\)"), "is is interpreted as 'the mean length of very old (strictly: infinitely old) fish'. it is also called the 'asymptotic length'.", "</h5>")
+    text <- paste0(text, "<h5>", withMathJax("\\(L_\\infty\\)"), "is interpreted as 'the mean length of very old (strictly: infinitely old) fish'. It is also called the 'asymptotic length'.", "</h5>")
     text <- paste0(text, "<h5>", "K is a 'curvature parameter' which determines how fast the fish approaches its ", withMathJax("\\(L_\\infty.\\)"), "</h5>")
     text <- paste0(text, "<h5>", "Some species, most of them short-lived, almost reach their ", withMathJax("\\(L_\\infty\\)"),  "in a year or two and have a high value of K.")
     text <- paste0(text, "Other species have a flat growth curve with a low K-value and need many years to reach anything like their ", withMathJax("\\(L_\\infty.\\)"),  "</h5>")
     text <- paste0(text, "<h5>", "Increasing K with the slider bar will result in a growth curve that has more 'bend'.", "</h5>")
-    text <- paste0(text, "<h5>", "The third parameter, ", withMathJax("\\(t_0,\\)"),  "sometimes called 'the initial condition parameter',determines the point in time when the fish has zero length.", "</h5>")
+    text <- paste0(text, "<h5>", "The third parameter, ", withMathJax("\\(t_0,\\)"),  "sometimes called 'the initial condition parameter', determines the point in time when the fish has zero length.", "</h5>")
     text <- paste0(text, "<h5>",  "Biologically, this has no meaning, because the growth begins at hatching when the larva already has a certain length, which may be called L(0) when we put t = 0 at the day of birth.", "</h5>")
     text <- paste0(text, "<h5>",  "It is easily identified by inserting t = 0 into the equation.", "</h5>")
     text <- paste0(text, "<h5>",  "Growth parameters differ from species to species, but they may also vary from stock to stock within the same species, i.e. growth parameters of a particular species may take different values in different parts of its range. Also successive cohorts may grow differently depending on environmental conditions.", "</h5>")
     text <- paste0(text, "<h5>", "Further growth parameters often take different values for the two sexes. If there are pronounced differences between the sexes in their growth parameters, the input data should be separated by sex and values of K, ", withMathJax("\\(L_\\infty,\\)"), " and ", withMathJax("\\(t_0\\)"), "should be estimated for each sex separately.", "</h5>")
   })
   output$seasonalVonBertalannfyInfoText <- renderText({
-    text <- "<h4>Like the generalized VBGF, the seasonal VBGF expresses the length, L, as a function of the age of the fish, t. k is a parameter that controls the curvature.</h4>"
+    text <- "<h4>Like the generalized VBGF, the seasonal VBGF expresses the length, L, as a function of the age of the fish, t. K is a parameter that controls the curvature.</h4>"
     text <- paste0(text, "<h4>", "The addition of the term:", withMathJax("\\(\\frac{Ck}{2\\pi}sin2\\pi(t-t_s)\\)"), "produces seasonal oscillations of the growth rate, by changing ", withMathJax("\\(t_0,\\)"), "during the year. The parameter ", withMathJax("\\(t_s,\\)"))
-    text <- paste0(text, "is called the 'summer point', and takes values between 0 and 1. At the time of the year when")
+    text <- paste0(text, "is called the 'summer point', and takes values between 0 and 1. At the time of the year when ")
     text <- paste0(text, "the fraction ", withMathJax("\\(t_s,\\)"), "has elapsed, the growth rate is the highest. At time")
     text <- paste0(text, " ", withMathJax("\\(t_w = t_s+0.5,\\)"), "which is the 'winter point', the growth rate is the lowest.")
     text <- paste0(text, "</h4>")
     text <- paste0(text, "<h4>")
-    text <- paste0(text, "If C = 0, then the equation reduces to the generalized VBGF. In other words, C = 0 implies that there is no")
-    text <- paste0(text, "seasonality in the growth rate. The higher the value of C the more pronounced are the seasonal oscillations.")
+    text <- paste0(text, "If C = 0, then the equation reduces to the generalized VBGF. In other words, C = 0 implies that there is no ")
+    text <- paste0(text, "seasonality in the growth rate. The higher the value of C the more pronounced are the seasonal oscillations. ")
     text <- paste0(text, "If C = 1, the growth rate becomes zero at the winter point.")
     text <- paste0(text, "</h4>")
     text <- paste0(text, "<br/>")
@@ -2513,7 +2517,7 @@ server <- function(input, output, session) {
   })
   output$titlePlot2_elefan <- renderText({
     if ('results' %in% names(elefan)) {
-      txt <- "<p class=\"pheader_elefan\">Reconstructed LFQ data</p>"
+      txt <- "<p class=\"pheader_elefan\">Restructured LFQ data</p>"
       txt
     }
   })
