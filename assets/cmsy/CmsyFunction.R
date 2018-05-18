@@ -119,13 +119,13 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   filexml<-gsub("#ENDB.HI#", endb.hi, filexml)
   filexml<-gsub("#Q.START#", q.start, filexml)
   filexml<-gsub("#Q.END#", q.end, filexml)
-  filexml<-gsub("#BTYPE#", btype, filexml)
+  filexml<-gsub("#BTYPE#", "None", filexml)
   if (force.cmsy) {
     filexml<-gsub("#FORCE.CMSY#", "true", filexml)
   } else {
     filexml<-gsub("#FORCE.CMSY#", "false", filexml)
   }
-  filexml<-gsub("#COMMENT#", comments, filexml)
+  filexml<-gsub("#COMMENT#", "comments", filexml)
   
   #WRITE THE MODIFIED XML TEMPLATE DOCUMENT LOCALLY#
   filehandle <- file(sentfile,"w+")
