@@ -188,8 +188,8 @@ ui <- tagList(dashboardPage(
                       textInput("bmsy", p("Biomass maximum sustainable yield (", withMathJax("\\(B_{MSY}\\)"), ")"), "NA"),
                       textInput("b40", p("Biomass at 40% over the unfished level (", withMathJax("\\(B_{40\\%}\\)"), ")"), "NA"),
                       textInput("fmsy", p("Fishing mortality at Maximum Sustainable Yield (",withMathJax("\\(F_{MSY}\\)") , "). If" 
-                                           ,withMathJax("\\(F_{MSY}\\)") ,"is known, the resilience prior range (lowest and highest resilience estimates) 
-                                           could be defined to include estimate of", withMathJax("\\(F_{MSY}\\)") , 
+                                          ,withMathJax("\\(F_{MSY}\\)") ,"is known, the resilience prior range (lowest and highest resilience estimates) 
+                                          could be defined to include estimate of", withMathJax("\\(F_{MSY}\\)") , 
                                           "assuming that r", withMathJax("\\(\\approx\\)"),withMathJax("\\(F_{MSY}\\)")), "NA"),
                       textInput("flim", p("Fishing mortality biological limit (", withMathJax("\\(F_{lim}\\)"), ")"), "NA"),
                       textInput("fpa", p("Fishing mortality precautionary value (", withMathJax("\\(F_{pa}\\)"), ")"), "NA"),
@@ -626,8 +626,7 @@ ui <- tagList(dashboardPage(
                        box(
                          plotOutput("sbprOutPlot1"),
                          htmlOutput("sbprMSPTableTitle"),
-                         tableOutput("sbprOutTable"),
-                         htmlOutput("sbprFishingMortality")
+                         tableOutput("sbprOutTable")
                        ), 
                        box(
                          plotOutput("sbprOutPlot2")
@@ -1283,7 +1282,7 @@ server <- function(input, output, session) {
     } else {
       js$showBox("box_elefan_ga_results")
       elefan_ga$results <- res
-      fishingMortality$FcurrGA <- paste0("&nbsp;&nbsp;<strong>", "Fishing mortality from last ELEFAN GA run: " , "</strong>", round(elefan_ga$results$plot3$currents[4]$curr.F, 2))
+      fishingMortality$FcurrGA <- round(elefan_ga$results$plot3$currents[4]$curr.F, 2)
     }
   })
   output$plot_ga_1 <- renderPlot({
@@ -1482,7 +1481,7 @@ server <- function(input, output, session) {
       print(res$plot3)
       js$showBox("box_elefan_sa_results")
       elefan_sa$results <- res
-      fishingMortality$FcurrSA <- paste0("&nbsp;&nbsp;<strong>", "Fishing mortality from last ELEFAN SA run: " , "</strong>", round(elefan_sa$results$plot3$currents[4]$curr.F, 2))
+      fishingMortality$FcurrSA <- round(elefan_sa$results$plot3$currents[4]$curr.F, 2)
     }
   })
   output$tbl1_sa <- renderTable({
@@ -1654,7 +1653,7 @@ server <- function(input, output, session) {
     } else {
       js$showBox("box_elefan_results")
       elefan$results <- res
-      fishingMortality$Fcurr <- paste0("&nbsp;&nbsp;<strong>", "Fishing mortality from last ELEFAN run: " , "</strong>", round(elefan$results$plot3$currents[4]$curr.F, 2))
+      fishingMortality$Fcurr <- round(elefan$results$plot3$currents[4]$curr.F, 2)
     }
   })
   output$plot_1 <- renderPlot({
@@ -1782,24 +1781,24 @@ server <- function(input, output, session) {
       js$showBox("box_sbpr_results")
     }
   })
-
-  output$sbprFishingMortality <- renderText({
-    if (is.na(fishingMortality$FcurrGA) && is.na(fishingMortality$FcurrSA) && is.na(fishingMortality$Fcurr)) {
-      text <- "&nbsp;&nbsp;<strong>To calculate the fishing mortality run an ELEFAN method before SBPR</strong>"
-    } else {
-      text <- ""
-      if (!is.na(fishingMortality$Fcurr)) {
-        text <- paste0(text, fishingMortality$Fcurr, "<br/>")
-      }
-      if (!is.na(fishingMortality$FcurrGA)) {
-        text <- paste0(text, fishingMortality$FcurrGA, "<br/>")
-      }
-      if (!is.na(fishingMortality$FcurrSA)) {
-        text <- paste0(text, fishingMortality$FcurrSA, "<br/>")
-      }
-    }
-    text
-  })
+  
+  #output$sbprFishingMortality <- renderText({
+  #  if (is.na(fishingMortality$FcurrGA) && is.na(fishingMortality$FcurrSA) && is.na(fishingMortality$Fcurr)) {
+  #    text <- "&nbsp;&nbsp;<strong>To calculate the fishing mortality run an ELEFAN method before SBPR</strong>"
+  #  } else {
+  #    text <- ""
+  #    if (!is.na(fishingMortality$Fcurr)) {
+  #      text <- paste0(text, fishingMortality$Fcurr, "<br/>")
+  #    }
+  #    if (!is.na(fishingMortality$FcurrGA)) {
+  #      text <- paste0(text, fishingMortality$FcurrGA, "<br/>")
+  #    }
+  #    if (!is.na(fishingMortality$FcurrSA)) {
+  #      text <- paste0(text, fishingMortality$FcurrSA, "<br/>")
+  #    }
+  #  }
+  #  text
+  #})
   
   output$sbprOutPlot1 <- renderPlot({
     if ('results' %in% names(sbprExec)) {
@@ -1825,10 +1824,23 @@ server <- function(input, output, session) {
   output$sbprOutTable <- renderTable({
     if ('results' %in% names(sbprExec)) {
       df <- as.data.frame(sbprExec$results$Reference_Point)
+      
+      if (!is.na(fishingMortality$Fcurr)) {
+        df$Fcurr <- fishingMortality$Fcurr
+      }
+      else if (!is.na(fishingMortality$FcurrGA)) {
+        df$Fcurr <- fishingMortality$FcurrGA
+      }
+      else if (!is.na(fishingMortality$FcurrSA)) {
+        df$Fcurr <- fishingMortality$FcurrSA
+      } else {
+        df$Fcurr <- "You need to estimate Fcurrent before calculating F30%MSPR, using ELEFAN method if you have lengnth frequency data. The data used for ELEFAN and SBPR analysis should come from the same fish stock."  
+      }
+      colnames(df) <- c("F", "SSB per recruit", "Fishing mortality")
       df
     }
   }, 
-  include.rownames=FALSE)
+  include.rownames=FALSE, align="c")
   output$downloadSbprReport <- renderUI({
     if ("results" %in% names(sbprExec)) {
       downloadButton('createSbprReport', 'Download Report')
@@ -1886,17 +1898,17 @@ server <- function(input, output, session) {
   })
   output$yprFishingMortality <- renderText({
     if (is.na(fishingMortality$FcurrGA) && is.na(fishingMortality$FcurrSA) && is.na(fishingMortality$Fcurr)) {
-      text <- "&nbsp;&nbsp;<strong>To calculate the fishing mortality run an ELEFAN method before SBPR</strong>"
+      text <- "<strong>You need to estimate Fcurrent before calculating YPR, using ELEFAN method if you have lengnth frequency data. The data used for ELEFAN and YPR analysis should come from the same fish stock.</strong>"
     } else {
       text <- ""
       if (!is.na(fishingMortality$Fcurr)) {
-        text <- paste0(text, fishingMortality$Fcurr, "<br/>")
+        text <- paste0(text, "<strong>Fishing moratlity calculated with ELEFAN method: </strong>", fishingMortality$Fcurr, "<br/>")
       }
       if (!is.na(fishingMortality$FcurrGA)) {
-        text <- paste0(text, fishingMortality$FcurrGA, "<br/>")
+        text <- paste0(text, "<strong>Fishing moratlity calculated with ELEFAN GA method: </strong>", fishingMortality$FcurrGA, "<br/>")
       }
       if (!is.na(fishingMortality$FcurrSA)) {
-        text <- paste0(text, fishingMortality$FcurrSA, "<br/>")
+        text <- paste0(text, "<strong>Fishing moratlity calculated with ELEFAN SA method: </strong>", fishingMortality$FcurrSA, "<br/>")
       }
     }
     text
@@ -1915,7 +1927,7 @@ server <- function(input, output, session) {
       yprExec$results$Reference_Points
     }
   }, 
-  include.rownames=TRUE)
+  include.rownames=TRUE, align="c")
   output$yprDifference <- renderText({
     if ('results' %in% names(yprExec)) {
       differenceinYPR = round(yprExec$results$Reference_Points[2,2] - yprExec$results$Reference_Points[1,2], 6)
