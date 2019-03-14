@@ -14,7 +14,6 @@ library(fishmethods)
 library(TropFishR)
 library(ggplot2)
 library(rfishbase)
-library(DT)
 
 buildUrl <- function(session, path) {
   port <- session$clientData$url_port
@@ -25,7 +24,6 @@ buildUrl <- function(session, path) {
 }
 
 ##### Dependencies
-source("assets/commons.R")
 source("assets/tropFishR/elefan_common.R")
 source("assets/tropFishR/run_elefan_ga.R")
 source("assets/tropFishR/run_elefan_sa.R")
