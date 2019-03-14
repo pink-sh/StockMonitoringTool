@@ -14,6 +14,7 @@ library(fishmethods)
 library(TropFishR)
 library(ggplot2)
 library(rfishbase)
+library(DT)
 
 buildUrl <- function(session, path) {
   port <- session$clientData$url_port
@@ -24,6 +25,7 @@ buildUrl <- function(session, path) {
 }
 
 ##### Dependencies
+source("assets/commons.R")
 source("assets/tropFishR/elefan_common.R")
 source("assets/tropFishR/run_elefan_ga.R")
 source("assets/tropFishR/run_elefan_sa.R")
@@ -696,8 +698,8 @@ ui <- tagList(dashboardPage(
                          htmlOutput("yprDifference"),
                          hr(),
                          htmlOutput("<b>Ans Matrix</b>"),
-                         tableOutput("yprOutTable"),
-                         htmlOutput("yprFishingMortality")
+                         tableOutput("yprOutTable")
+                         #htmlOutput("yprFishingMortality")
                        )
                      )
                 )
@@ -1817,14 +1819,14 @@ server <- function(input, output, session) {
   })
   output$sbprMSPTableTitle <- renderText({
     if ('results' %in% names(sbprExec)) {
-      title <- paste0("&nbsp;&nbsp;&nbsp;&nbsp;<b>F", input$SBPR_MSP, "% MSP</b>")
+      title <- ""
+      #title <- paste0("&nbsp;&nbsp;&nbsp;&nbsp;<b>F", input$SBPR_MSP, "% MSP</b>")
       title
     }
   })
   output$sbprOutTable <- renderTable({
     if ('results' %in% names(sbprExec)) {
       df <- as.data.frame(sbprExec$results$Reference_Point)
-      
       if (!is.na(fishingMortality$Fcurr)) {
         df$Fcurr <- fishingMortality$Fcurr
       }
@@ -1834,13 +1836,14 @@ server <- function(input, output, session) {
       else if (!is.na(fishingMortality$FcurrSA)) {
         df$Fcurr <- fishingMortality$FcurrSA
       } else {
-        df$Fcurr <- "You need to estimate Fcurrent before calculating F30%MSPR, using ELEFAN method if you have lengnth frequency data. The data used for ELEFAN and SBPR analysis should come from the same fish stock."  
+        df$Fcurr <- "You need to estimate Fcurrent before calculating F30%MSPR, using ELEFAN method if you have length frequency data."  
       }
-      colnames(df) <- c("F", "SSB per recruit", "Fishing mortality")
+      colnames(df) <- c("F30%MSPR", "SPR at F30%MSPR", "Fcurrent")
       df
     }
-  }, 
-  include.rownames=FALSE, align="c")
+  }, options = list(
+    paging = FALSE, searching = FALSE
+  ))
   output$downloadSbprReport <- renderUI({
     if ("results" %in% names(sbprExec)) {
       downloadButton('createSbprReport', 'Download Report')

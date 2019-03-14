@@ -22,3 +22,11 @@ sbpr_shinyApp<-function(age=NULL,ssbwgt=NULL,partial=NULL,pmat=pmat,M=NULL,pF=NU
   })
   return(res)
 }
+
+round_df <- function(df, digits = 3) {
+  nums <- vapply(df, is.numeric, FUN.VALUE = logical(1))
+  
+  df[,nums] <- round(df[,nums], digits = digits)
+  
+  (df)
+}
