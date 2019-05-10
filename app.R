@@ -1925,7 +1925,22 @@ server <- function(input, output, session) {
   })
   output$yprOutTable <- renderTable({
     if ('results' %in% names(yprExec)) {
-      yprExec$results$Reference_Points
+      #yprExec$results$Reference_Points
+      df <- as.data.frame(yprExec$results$Reference_Points)
+      if (!is.na(fishingMortality$Fcurr)) {
+        df$Fcurr <- fishingMortality$Fcurr
+      }
+      else if (!is.na(fishingMortality$FcurrGA)) {
+        df$Fcurr <- fishingMortality$FcurrGA
+      }
+      else if (!is.na(fishingMortality$FcurrSA)) {
+        df$Fcurr <- fishingMortality$FcurrSA
+      } else {
+        df$Fcurr <- "You need to estimate Fcurrent before calculating F30%MSPR, using ELEFAN method if you have length frequency data."  
+      }
+      #colnames(yprExec$results$Reference_Points) <- c("F", "Yield Per Recruit")
+      colnames(df) <- c("F", "Yield Per Recruit", "Fcurrent")
+      df
     }
   }, 
   include.rownames=TRUE, align="c")
@@ -2425,7 +2440,7 @@ server <- function(input, output, session) {
     text
   })
   output$fishMethodsSampleDataset <- renderText({
-    link <- "<a href='https://goo.gl/24FuzG' target='_blank'>Click Here</a>"
+    link <- "<a href='https://data.d4science.org/shub/E_NnMvMjhHUjB4Q3k4SE1oWjFCamxxMm5zdUxMSEpKbFdlcjVWaHQ1U1ZoTXJJY0dqaWJzRmxHWDVFemFjYVhwcQ==' target='_blank'>Click Here</a>"
     text <- paste0("<p><h4>", link,"&nbsp; to download a sample dataset that can be used with <b>FishMethods</b>", "</h4></p>")
     text
   })
