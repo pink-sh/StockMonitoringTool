@@ -45,5 +45,5 @@ RUN ln -s /root/StockMonitoringTool /srv/shiny/stockMonitoringTools
  
 EXPOSE 3838
 
-#CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools',port=3838,host='0.0.0.0')"]
-CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools')"]
+CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools',port=3838,host='0.0.0.0')"]
+#CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools')"]

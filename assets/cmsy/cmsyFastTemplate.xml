@@ -1,5 +1,5 @@
 <Execute service="WPS" version="1.0.0" xmlns="http://www.opengis.net/wps/1.0.0" xmlns:ns="http://www.opengis.net/ows/1.1" xmlns:xlin="http://www.w3.org/1999/xlink">
-  <ns:Identifier>org.gcube.dataanalysis.wps.statisticalmanager.synchserver.mappedclasses.transducerers.CMSY_2_FAST</ns:Identifier>
+  <ns:Identifier>org.gcube.dataanalysis.wps.statisticalmanager.synchserver.mappedclasses.transducerers.CMSY_2</ns:Identifier>
     <DataInputs>
       <Input>
         <ns:Identifier>catch_file</ns:Identifier>
