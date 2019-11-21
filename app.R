@@ -1262,6 +1262,7 @@ server <- function(input, output, session) {
     js$removeBox("box_elefan_ga_results")
     js$disableAllButtons()
     dataset <- read_elefan_csv(inputCsvFile)
+    print(dataset)
  
     ds <- lfqModify(lfqRestructure(dataset), bin_size = 4)
     
