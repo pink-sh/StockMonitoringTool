@@ -14,6 +14,7 @@ library(fishmethods)
 library(TropFishR)
 library(ggplot2)
 library(rfishbase)
+library(waiter)
 
 buildUrl <- function(session, path) {
   port <- session$clientData$url_port
@@ -66,7 +67,10 @@ d <- data(package = "TropFishR")
 parallel <- FALSE
 fishingMortality <- "NA"
 
-ui <- tagList(dashboardPage(
+ui <- tagList(
+  use_waiter(include_js = FALSE),
+  show_waiter_on_load(spin_fading_circles()),
+  dashboardPage(
   dashboardHeader(title = 'Stock Monitoring Tools'),
   dashboardSidebar(
     sidebarMenu(
@@ -144,7 +148,7 @@ ui <- tagList(dashboardPage(
               actionButton("cmsyDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
               fluidRow(
                 bsModal("modalExampleCMSY", "CMSY Data Considerations", "cmsyDataConsiderations", size = "large", htmlOutput("cmsyDataConsiderationsText")),
-
+                
                 box(title = "Main Parameters",
                     width = NULL,
                     collapsible = T, 
@@ -208,7 +212,7 @@ ui <- tagList(dashboardPage(
                       checkboxInput("force.cmsy", "Check this if CMSY results are to be preferred over the Bayesian State Model results (only when biomass or CPUE is available)", FALSE)
                       
                     )
-                      ),
+                ),
                 actionButton("go_cmsy", "Run CMSY Method"),
                 htmlOutput("cmsyWarning"),
                 hr(),
@@ -243,7 +247,7 @@ ui <- tagList(dashboardPage(
               actionButton("elefanGADataConsiderations", "Data Considerations", class="topLevelInformationButton"),
               fluidRow(
                 bsModal("modalExampleGA", "ELEFAN_GA Data Considerations", "elefanGADataConsiderations", size = "large", htmlOutput("elefanGADataConsiderationsText")),
-
+                
                 box(title = "Main Parameters",
                     width = NULL,
                     collapsible = T, 
@@ -330,20 +334,25 @@ ui <- tagList(dashboardPage(
                        )
                      ),
                      fluidRow (
+                       box(plotOutput("plot_ga_5")),
                        box(
-                         htmlOutput("titlePlot3_elefan_ga"),
-                         plotOutput("plot_ga_3"),
-                         plotOutput("plot_ga_5")
-                       ),
-                       box(
-                         htmlOutput("titlePlot4_elefan_ga"),
-                         plotOutput("plot_ga_4"),
                          htmlOutput("rnMax_ga"),
                          htmlOutput("par_ga"),
                          htmlOutput("title_tbl1_ga"),
                          tableOutput("tbl1_ga"),
                          htmlOutput("title_tbl2_ga"),
                          tableOutput("tbl2_ga")
+                       )
+                     ),
+                     fluidRow (
+                       box(
+                         htmlOutput("titlePlot3_elefan_ga"),
+                         plotOutput("plot_ga_3")
+                       ),
+                       box(
+                         htmlOutput("titlePlot4_elefan_ga"),
+                         plotOutput("plot_ga_4")
+                         
                        )
                      )
                 )
@@ -441,20 +450,24 @@ ui <- tagList(dashboardPage(
                        )
                      ),
                      fluidRow (
+                       box(plotOutput("plot_sa_5")),
                        box(
-                         htmlOutput("titlePlot3_elefan_sa"),
-                         plotOutput("plot_sa_3"),
-                         plotOutput("plot_sa_5")
-                       ),
-                       box(
-                         htmlOutput("titlePlot4_elefan_sa"),
-                         plotOutput("plot_sa_4"),
                          htmlOutput("rnMax_sa"),
                          htmlOutput("par_sa"),
                          htmlOutput("title_tbl1_sa"),
                          tableOutput("tbl1_sa"),
                          htmlOutput("title_tbl2_sa"),
                          tableOutput("tbl2_sa")
+                       )
+                     ),
+                     fluidRow (
+                       box(
+                         htmlOutput("titlePlot3_elefan_sa"),
+                         plotOutput("plot_sa_3")
+                       ),
+                       box(
+                         htmlOutput("titlePlot4_elefan_sa"),
+                         plotOutput("plot_sa_4")
                        )
                      )
                 )
@@ -466,16 +479,6 @@ ui <- tagList(dashboardPage(
               actionButton("elefanDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
               fluidRow(
                 bsModal("modalExampleElefan", "ELEFAN Data Considerations", "elefanDataConsiderations", size = "large", htmlOutput("elefanDataConsiderationsText")),
-                #box(title = "Data Considerations",
-                #    width = NULL,
-                #    collapsible = T, 
-                #    class = "collapsed-box",
-                #    checkboxInput("checkbox1", label = "Is your length-frequency data representative of the full population? (If this is not so, then estimates of fishing mortality will be biased.)", value = F),
-                #    checkboxInput("checkbox2", label = "Were all age groups sampled?", value = F),
-                #    checkboxInput("checkbox3", label = "Was the sample from a range of areas where different life histories might live? (e.g., if juveniles occupy nearshore habitat and adults are offshore)", value = F),
-                #    checkboxInput("checkbox4", label = "Are a variety of gears with different selectivities used to collect the samples so that the samples contain multiple age groups?", value = F),
-                #    p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of ", withMathJax("\\(L_\\infty\\)"), " and von Bertalanffy K in the Optional Parameters section in the ELEFAN tool.")
-                #),
                 box(title = "Main Parameters",
                     width = NULL, 
                     collapsible = T, 
@@ -536,20 +539,24 @@ ui <- tagList(dashboardPage(
                        )
                      ),
                      fluidRow (
+                       box(plotOutput("plot_5")),
                        box(
-                         htmlOutput("titlePlot3_elefan"),
-                         plotOutput("plot_3"),
-                         plotOutput("plot_5")
-                       ),
-                       box(
-                         htmlOutput("titlePlot4_elefan"),
-                         plotOutput("plot_4"),
                          htmlOutput("rnMax"),
                          htmlOutput("par"),
                          htmlOutput("title_tbl1_e"),
                          tableOutput("tbl1_e"),
                          htmlOutput("title_tbl2_e"),
                          tableOutput("tbl2_e")
+                       )
+                     ),
+                     fluidRow (
+                       box(
+                         htmlOutput("titlePlot3_elefan"),
+                         plotOutput("plot_3")
+                       ),
+                       box(
+                         htmlOutput("titlePlot4_elefan"),
+                         plotOutput("plot_4")
                        )
                      )
                 )
@@ -856,8 +863,9 @@ ui <- tagList(dashboardPage(
 server <- function(input, output, session) {
   
   session$allowReconnect("force")
-  
+  hide_waiter()
   session$onSessionEnded(function() {
+    
     print("Lost connection to R server")
     print(session)
   })
@@ -1245,7 +1253,7 @@ server <- function(input, output, session) {
     js$removeBox("box_elefan_ga_results")
     js$disableAllButtons()
     dataset <- read_elefan_csv(inputCsvFile)
-
+    
     ds <- lfqModify(lfqRestructure(dataset), bin_size = 4)
     
     res <- run_elefan_ga(ds,binSize =  4, seasonalised = input$ELEFAN_GA_seasonalised, 

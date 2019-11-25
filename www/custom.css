@@ -7,6 +7,8 @@ footer{
   background-color: rgba(0,0,0,.3);
   z-index: 1000;
   font-size: 0.7em;
+  text-align: right;
+  padding-right:20px;
 }
 .main-header .logo {
   font-size: 1.3em;
@@ -87,6 +89,7 @@ footer{
 }
 .loadingCustomInner {
   padding-bottom: 10px;
+  text-align: center;
 }
 .loadingCustom span{
   margin-right: 10px;
@@ -141,3 +144,45 @@ footer{
 #elefanTitle { margin-bottom: -14px; }
 #sbprTitle { margin-bottom: -14px; }
 #yprTitle { margin-bottom: -14px; }
+
+.navbar {
+  background-color: #3c8dbc !important;
+  /*margin-left: 230px !important;*/
+}
+.logo:hover { background-color: #357ca5 !important; }
+.logo {
+  background-color: #357ca5 !important;
+  color: #fff !important;
+  border-bottom: 0 solid transparent !important;
+  transition: width .3s ease-in-out !important;
+  display: block !important;
+  float: left !important;
+  height: 50px !important;
+  font-size: 20px !important;
+  line-height: 50px !important;
+  text-align: center !important;
+  width: 240px !important;
+  font-family: 'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif !important;
+  padding: 0 15px !important;
+  font-weight: 300 !important;
+  overflow: hidden !important;
+  background-color: #357ca5 !important;
+}
+.sidebar-toggle {
+  color: #fff !important;
+}
+
+.main-sidebar  {
+  background-color: #222d32 !important;
+  color: #fff !important;
+} 
+
+.main-sidebar a {
+  color: #b8c7ce; !important;
+}
+
+li.active {
+  background: #1e282c;
+  border-left-color: #3c8dbc;
+  border-left: 3px solid #357ca5 !important;
+}
