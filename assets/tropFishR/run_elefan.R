@@ -14,6 +14,8 @@ run_elefan <- function(x, binSize=4, Linf_fix = NA, Linf_range = NA,
   returnResults <- list()
   out <- tryCatch( {
     
+    print(paste0("TropFishR version:", packageVersion("TropFishR")))
+    
     # adjust bin size
     
     synLFQ7a <- lfqModify(x, bin_size = binSize)

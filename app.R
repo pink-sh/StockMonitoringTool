@@ -98,7 +98,16 @@ ui <- tagList(dashboardPage(
     )
   ),
   dashboardBody(
-    tags$div(tags$span("Computing results"), tags$img(src = 'loading-circle.gif', height="20px"), class="loadingCustom"),
+    tags$div(
+      tags$div(
+        tags$span("Please wait while your request is being processed. This may take some time..."),
+        class="loadingCustomInner"
+      ),
+      tags$div(
+        tags$img(src = 'loading-circle.gif', height="20px"),
+        class="loadingCustomInner"
+      ),
+      class="loadingCustom"),
     useShinyjs(),
     extendShinyjs(text = jscode),
     tags$head(
@@ -135,13 +144,7 @@ ui <- tagList(dashboardPage(
               actionButton("cmsyDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
               fluidRow(
                 bsModal("modalExampleCMSY", "CMSY Data Considerations", "cmsyDataConsiderations", size = "large", htmlOutput("cmsyDataConsiderationsText")),
-                #box(title = "Data Considerations",
-                #    width = NULL,
-                #    collapsible = T, 
-                #    class = "collapsed-box",
-                #    checkboxInput("checkbox_cmsy", label = "Is your time-series at least 15 years in length from starting year to ending year? (Note that years with missing data should be filled with an 'NA' value.", value = F),
-                #    p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of natural mortality (M) for the Optional Parameters section.")
-                #),
+
                 box(title = "Main Parameters",
                     width = NULL,
                     collapsible = T, 
@@ -164,8 +167,8 @@ ui <- tagList(dashboardPage(
                     class = "collapsed-box",
                     collapsed = T,
                     box(
-                      numericInput("minOfYear", "Earliest year of the catch series", 1970, min = 1900, max = 2020, step=1),
-                      numericInput("maxOfYear", "Latest year of the catch series", 2014, min = 1900, max = 2020, step=1),
+                      numericInput("minOfYear", "Earliest year of the catch series", 2005, min = 1900, max = 2030, step=1),
+                      numericInput("maxOfYear", "Latest year of the catch series", 2016, min = 1900, max = 2030, step=1),
                       selectInput("resiliance", "Resilience as qualitative information (Use information from FishBase or SeaLifeBase)", choices=c("Very low", "Low", "Medium", "High"), selected="Medium"),
                       textInput("r.low", "Lowest resilience (automatically calculated if not set)", "NA"),
                       textInput("r.hi", "Highest resilience (automatically calculated if not set)", "NA"),
@@ -181,8 +184,8 @@ ui <- tagList(dashboardPage(
                       textInput("q.end", "Prior for q value at the end of a stable catch-biomass period of minimum 5 years", "NA")
                     ),
                     box(
-                      numericInput("startYear", "Start year to process the catch series from", 1970, min = 1900, max = 2020, step=1),
-                      numericInput("endYear", "End year to process the catch series up to", 2014, min = 1900, max = 2020, step=1),
+                      numericInput("startYear", "Start year to process the catch series from", 2005, min = 1900, max = 2030, step=1),
+                      numericInput("endYear", "End year to process the catch series up to", 2016, min = 1900, max = 2030, step=1),
                       textInput("blim", p("Biomass biological limit (", withMathJax("\\(B_{lim}\\)"), ")"), "NA"),
                       textInput("bpa", p("Biomass precautionary value (",withMathJax("\\(B_{pa}\\)") , ")"), "NA"),
                       textInput("bmsy", p("Biomass maximum sustainable yield (", withMathJax("\\(B_{MSY}\\)"), ")"), "NA"),
@@ -236,19 +239,11 @@ ui <- tagList(dashboardPage(
       ),
       tabItem("ElefanGaWidget",
               htmlOutput("elefanGaTitle"),
+              htmlOutput("tropFishRLibVersion1", class="subTitle"),
               actionButton("elefanGADataConsiderations", "Data Considerations", class="topLevelInformationButton"),
               fluidRow(
                 bsModal("modalExampleGA", "ELEFAN_GA Data Considerations", "elefanGADataConsiderations", size = "large", htmlOutput("elefanGADataConsiderationsText")),
-                #box(title = "Data Considerations",
-                #    width = NULL,
-                #    collapsible = T, 
-                #    class = "collapsed-box",
-                #    checkboxInput("checkbox1", label = "Is your length-frequency data representative of the full population? (If this is not so, then estimates of fishing mortality will be biased.)", value = F),
-                #    checkboxInput("checkbox2", label = "Were all age groups sampled?", value = F),
-                #    checkboxInput("checkbox3", label = "Was the sample from a range of areas where different life histories might live? (e.g., if juveniles occupy nearshore habitat and adults are offshore)", value = F),
-                #    checkboxInput("checkbox4", label = "Are a variety of gears with different selectivities used to collect the samples so that the samples contain multiple age groups?", value = F),
-                #    p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of ", withMathJax("\\(L_\\infty\\)"), " and von Bertalanffy K in the Optional Parameters section in the ELEFAN_GA tool.")
-                #),
+
                 box(title = "Main Parameters",
                     width = NULL,
                     collapsible = T, 
@@ -356,19 +351,10 @@ ui <- tagList(dashboardPage(
       ),
       tabItem("ElefanSaWidget",
               htmlOutput("elefanSaTitle"),
+              htmlOutput("tropFishRLibVersion2", class="subTitle"),
               actionButton("elefanSADataConsiderations", "Data Considerations", class="topLevelInformationButton"),
               fluidRow(
                 bsModal("modalExampleSA", "ELEFAN_SA Data Considerations", "elefanSADataConsiderations", size = "large", htmlOutput("elefanSADataConsiderationsText")),
-                #box(title = "Data Considerations",
-                #    width = NULL,
-                #    collapsible = T, 
-                #    class = "collapsed-box",
-                #    checkboxInput("checkbox1", label = "Is your length-frequency data representative of the full population? (If this is not so, then estimates of fishing mortality will be biased.)", value = F),
-                #    checkboxInput("checkbox2", label = "Were all age groups sampled?", value = F),
-                #    checkboxInput("checkbox3", label = "Was the sample from a range of areas where different life histories might live? (e.g., if juveniles occupy nearshore habitat and adults are offshore)", value = F),
-                #    checkboxInput("checkbox4", label = "Are a variety of gears with different selectivities used to collect the samples so that the samples contain multiple age groups?", value = F),
-                #    p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of ", withMathJax("\\(L_\\infty\\)"), " and von Bertalanffy K in the Optional Parameters section in the ELEFAN_SA tool.")
-                #),
                 box(title = "Main Parameters",
                     width = NULL,
                     collapsible = T, 
@@ -476,6 +462,7 @@ ui <- tagList(dashboardPage(
       ),
       tabItem("ElefanWidget",
               htmlOutput("elefanTitle"),
+              htmlOutput("tropFishRLibVersion3", class="subTitle"),
               actionButton("elefanDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
               fluidRow(
                 bsModal("modalExampleElefan", "ELEFAN Data Considerations", "elefanDataConsiderations", size = "large", htmlOutput("elefanDataConsiderationsText")),
@@ -570,16 +557,10 @@ ui <- tagList(dashboardPage(
       ),
       tabItem("SBPRWidget",
               htmlOutput("sbprTitle"),
+              htmlOutput("fishMethodsVersion1"),
               actionButton("SBPRDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
               fluidRow(
                 bsModal("modalExampleSBPR", "SBPR Data Considerations", "SBPRDataConsiderations", size = "large", htmlOutput("SBPRDataConsiderationsText")),
-                #box(title = "Data Considerations",
-                #    width = NULL,
-                #    collapsible = T, 
-                #    class = "collapsed-box",
-                #    checkboxInput("checkbox1", label = "Is the weight-at-age data representative of the full population, i.e., are all age groups sampled?", value = F),
-                #    p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.")
-                #),
                 box(title = "Main Parameters",
                     width = NULL, 
                     collapsible = T, 
@@ -637,16 +618,11 @@ ui <- tagList(dashboardPage(
       ),
       tabItem("YPRWidget",
               htmlOutput("yprTitle"),
+              htmlOutput("fishMethodsVersion2"),
               actionButton("YPRDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
               fluidRow(
                 bsModal("modalExampleYPR", "YPR Data Considerations", "YPRDataConsiderations", size = "large", htmlOutput("YPRDataConsiderationsText")),
-                #box(title = "Data Considerations",
-                #    width = NULL,
-                #    collapsible = T, 
-                #    class = "collapsed-box",
-                #    checkboxInput("checkbox1", label = "Is the weight-at-age data representative of the full population, i.e., are all age groups sampled?", value = F),
-                #    p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.")
-                #),
+                
                 box(title = "Main Parameters",
                     width = NULL, 
                     collapsible = T, 
@@ -878,6 +854,13 @@ ui <- tagList(dashboardPage(
 
 
 server <- function(input, output, session) {
+  
+  session$allowReconnect("force")
+  
+  session$onSessionEnded(function() {
+    print("Lost connection to R server")
+    print(session)
+  })
   
   cmsy <- reactiveValues()
   elefan_ga <- reactiveValues()
@@ -1262,8 +1245,7 @@ server <- function(input, output, session) {
     js$removeBox("box_elefan_ga_results")
     js$disableAllButtons()
     dataset <- read_elefan_csv(inputCsvFile)
-    print(dataset)
- 
+
     ds <- lfqModify(lfqRestructure(dataset), bin_size = 4)
     
     res <- run_elefan_ga(ds,binSize =  4, seasonalised = input$ELEFAN_GA_seasonalised, 
@@ -2280,7 +2262,7 @@ server <- function(input, output, session) {
     text <- paste0(text, "</p>")
     
     text <- paste0(text, "<p>")
-    text <- paste0(text, "For <b>ELEFAN</b> you can choose between ELEFAN_GA, ELEFAN_SA and ELEFAN")
+    text <- paste0(text, "For <b>ELEFAN</b> you can choose between ELEFAN_GA, ELEFAN_SA and ELEFAN. These methods are provided by the <a href='https://cran.r-project.org/web/packages/TropFishR/index.html' target='_blank'>TropFishR</a> R library version ", packageVersion("TropFishR"))
     text <- paste0(text, "</p>")
     
     text <- paste0(text, "<p>")
@@ -2292,7 +2274,7 @@ server <- function(input, output, session) {
     text <- paste0(text, "</p>")
     
     text <- paste0(text, "<p>")
-    text <- paste0(text, "<b>YPR</b> and <b>SBPR</b> are provided by the <a href='https://cran.r-project.org/web/packages/fishmethods/index.html' target='_blank'>fishmethods</a> R library")
+    text <- paste0(text, "<b>YPR</b> and <b>SBPR</b> are provided by the <a href='https://cran.r-project.org/web/packages/fishmethods/index.html' target='_blank'>fishmethods</a> R library version ", packageVersion("fishmethods"))
     text <- paste0(text, "</p>")
     
     text <- paste0(text, "<p>")
@@ -2310,19 +2292,13 @@ server <- function(input, output, session) {
     text <- paste0(text, "The <b>CMSY</b> method for data-limited stock assessment. Described in Froese, R., Demirel, N., Coro, G., Kleisner, K. M., Winker, H. (2016). Estimating fisheries reference points from catch and resilience. Fish and Fisheries.")
     text <- paste0(text, "<br/>")
     text <- paste0(text, "<br/>")
+    text <- paste0(text, "The CMSY algorythm can be found <a href='https://github.com/SISTA16/cmsy' target='_blank'>here on Github</a>")
+    text <- paste0(text, "<br/>")
     text <- paste0(text, "<a href='http://onlinelibrary.wiley.com/doi/10.1111/faf.12190/full' target='_blank'>Click here to read the paper.</a>")
     text <- paste0(text, "</p>")
     text <- paste0(text, "The Schaefer production model parameters are r and k. Different combinations of these parameters will produce different time series of biomass. In CMSY, the Schaefer model is run many times to calculate annual biomasses for r-k pairs randomly drawn from the prior distributions. The model determines which r-k pairs are valid: e.g., those pairs that result in a biomass time series that does not (1) result in a stock collapse or (2) allow the stock to exceeded carrying capacity. Also, those r-k pairs that result in a final relative biomass estimate between the values specified in the inputs (the final depletion range), are accepted and used to calculate MSY (rk/4) and biomass over time.")
     text <- paste0(text, "<p>")
     text <- paste0(text, "The geometric means of the resulting density distributions of r, k and MSY are taken as the most probable values.")
-    #text <- paste0(text, "<br/>")
-    #text <- paste0(text, "<p>")
-    #text <- paste0(text, "<span><b>CMSY Vectorized</b> is a new adaptation of CMSY designed to increase fitting speed to enable implementation in management strategy evaluation. <br/>This is achieved by adding adaptive parameter search bounds to restrict the inspected r-K space and automatically increase depletion priors if necessary.</span>")
-    #text <- paste0(text, "</p>")
-    #text <- paste0(text, "<br/>")
-    #text <- paste0(text, "<p>")
-    #text <- paste0(text, "<span>You can download the <b>CMSY Vectorized</b> source code for <b>R</b> by clicking <a href='https://goo.gl/fjfsCL' target='_blank'>here</a></span>")
-    #text <- paste0(text, "</p>")
     text
   })
   output$elefanIntroOut <- renderText({
@@ -2330,7 +2306,7 @@ server <- function(input, output, session) {
     text <- paste0(text, "<p>")
     text <- paste0(text, "<b>Elefan</b> is a computational method designed to estimate life history parameters using a time series of length frequency observations.")
     text <- paste0(text, "<br/>")
-    text <- paste0(text, "These methods are provided by the <a href='https://cran.r-project.org/web/packages/TropFishR/index.html' target='_blank'>TropFishR library</a>")
+    text <- paste0(text, "These methods are provided by the <a href='https://cran.r-project.org/web/packages/TropFishR/index.html' target='_blank'>TropFishR library</a> version 1.6.1")
     text <- paste0(text, "</p>")
     text <- paste0(text, "The study of fish growth involves a determination of body size as a function of age. Most stock assessment methods work essentially with age composition data. In temperate waters it is easier to acquire data to estimate age by counting of year rings on hard parts such as scales and otoliths (ear bones). These rings are formed due to strong fluctuations in environmental conditions from summer to winter and vice versa. In tropical areas such drastic changes do not occur and it is therefore very difficult, if not impossible to use this kind of seasonal rings for age determination.")
     text <- paste0(text, "</p>")
@@ -2345,7 +2321,7 @@ server <- function(input, output, session) {
     text <- paste0(text, "<h4>ELEFAN</h4>")
     text <- paste0(text, "<b>E</b>lectronic <b>LE</b>ngth <b>F</b>requency <b>AN</b>alysis for estimating growth parameters.<br/>This function performs the K-Scan and Response surface analyses to estimate growth parameters. It combines the step of restructuring length-frequency data (lfqRestructure) followed by the fitting of seasonal von Bertalanffy Growth Function (VBGF) curves (see Supporting tools: Seasonal VBGF) through the restructured data (lfqFitCurves). K-Scan is a method used to search for the K parameter with the best fit while keeping ", withMathJax("\\(L_\\infty\\)"), "fixed. In contrast, with response surface analysis both parameters are estimated and the fits are displayed in a heatmap. Both methods use an optimisation to find the best time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month (t_anchor) value for each combination of K and ", withMathJax("\\(L_\\infty\\)"),". To find out more about t_anchor, please refer to the Details description of lfqFitCurves. The score value Rn_max is not comparable with the score values of the other ELEFAN functions (ELEFAN_SA or ELEFAN_GA).")
     text <- paste0(text, "</p>")
-    text <- paste0(text, "<h4>ELEFAN GA (generic algorithm)</h4>")
+    text <- paste0(text, "<h4>ELEFAN GA (genetic algorithm)</h4>")
     text <- paste0(text, "<b>E</b>lectronic <b>LE</b>ngth <b>F</b>requency <b>AN</b>alysis with simulated annealing for estimating growth parameters.<br/>A more detailed description of the generic algorithm (GA) can be found in Scrucca (2013). The score value fitnessValue is not comparable with the score value of the other ELEFAN functions (ELEFAN or ELEFAN_SA).")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<p>")
@@ -2521,9 +2497,33 @@ server <- function(input, output, session) {
     text
   })
   
+  output$tropFishRLibVersion1 <- renderText({
+    text <- paste0("<span class='subTitle'>", "By <a href='https://cran.r-project.org/web/packages/TropFishR/index.html' target='_blank'>TropFishR</a> version ", packageVersion("TropFishR"),"</span>")
+    text
+  })
+  
+  output$tropFishRLibVersion2 <- renderText({
+    text <- paste0("<span class='subTitle'>", "By <a href='https://cran.r-project.org/web/packages/TropFishR/index.html' target='_blank'>TropFishR</a> version ", packageVersion("TropFishR"),"</span>")
+    text
+  })
+  
+  output$tropFishRLibVersion3 <- renderText({
+    text <- paste0("<span class='subTitle'>", "By <a href='https://cran.r-project.org/web/packages/TropFishR/index.html' target='_blank'>TropFishR</a> version ", packageVersion("TropFishR"),"</span>")
+    text
+  })
+  
+  output$fishMethodsVersion1 <- renderText({
+    text <- paste0("<span class='subTitle'>", "By <a href='https://cran.r-project.org/web/packages/fishmethods/index.html' target='_blank'>Fishmethods</a> version ", packageVersion("fishmethods"),"</span>")
+    text
+  })
+  
+  output$fishMethodsVersion2 <- renderText({
+    text <- paste0("<span class='subTitle'>", "By <a href='https://cran.r-project.org/web/packages/fishmethods/index.html' target='_blank'>Fishmethods</a> version ", packageVersion("fishmethods"),"</span>")
+    text
+  })
   
   output$elefanGaTitle <- renderText({
-    text <- "<span><h3><b>Elefan GA (Generic Algorithm)</b></h3></span>"
+    text <- "<span><h3><b>Elefan GA (Genetic Algorithm)</b></h3></span>"
     text
   })
   output$elefanSaTitle <- renderText({

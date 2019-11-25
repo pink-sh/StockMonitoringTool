@@ -18,6 +18,7 @@ run_elefan_sa <- function(x, binSize=4,
   
   returnResults <- list()
   out <- tryCatch( {
+    print(paste0("TropFishR version:", packageVersion("TropFishR")))
     
     # adjust bin size
     
