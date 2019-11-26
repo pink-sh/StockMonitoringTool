@@ -128,7 +128,7 @@ run_elefan_ga <- function(
     if (length(synLFQ7b$dates) > 1) {
       catch_columns <- length(synLFQ7b$dates) - 1
     }
-    res_cc <- catchCurve(synLFQ7b, reg_int = c(9,28), calc_ogive = TRUE, catch_columns = catch_columns)
+    res_cc <- catchCurve(synLFQ7b, reg_int = c(9,28), calc_ogive = TRUE, catch_columns = catch_columns, plot=FALSE)
     #res_cc <- catchCurve(synLFQ7b)
     
     synLFQ7b$Z <- res_cc$Z

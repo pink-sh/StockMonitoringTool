@@ -125,7 +125,7 @@ run_elefan_sa <- function(x, binSize=4,
     if (length(synLFQ7b$dates) > 1) {
       catch_columns <- length(synLFQ7b$dates) - 1
     }
-    res_cc <- catchCurve(synLFQ7b, reg_int = c(9,28), calc_ogive = TRUE, catch_columns = catch_columns)
+    res_cc <- catchCurve(synLFQ7b, reg_int = c(9,28), calc_ogive = TRUE, catch_columns = catch_columns, plot=FALSE)
     
     synLFQ7b$Z <- res_cc$Z
     #############synLFQ7b$Z <- 0.4
