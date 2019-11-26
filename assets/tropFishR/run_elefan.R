@@ -18,7 +18,8 @@ run_elefan <- function(x, binSize=4, Linf_fix = NA, Linf_range = NA,
     
     # adjust bin size
     
-    synLFQ7a <- lfqModify(x, bin_size = binSize)
+    #synLFQ7a <- lfqModify(x, bin_size = binSize)
+    synLFQ7a <- x
     
     # plot raw and restructured LFQ data
     

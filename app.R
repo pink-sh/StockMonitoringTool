@@ -1611,7 +1611,7 @@ server <- function(input, output, session) {
     js$removeBox("box_elefan_results")
     js$disableAllButtons()
     dataset <- read_elefan_csv(inputCsvFile)
-    ds <- lfqModify(lfqRestructure(dataset), bin_size = 4)
+    #ds <- lfqModify(lfqRestructure(dataset), bin_size = 4)
     
     #ds <- lfqModify(get('synLFQ7', asNamespace('TropFishR')), bin_size = 4)
     
@@ -1630,7 +1630,7 @@ server <- function(input, output, session) {
     if (is.na(input$ELEFAN_agemax)) {
       elefan_agemax <- NULL
     }
-    res <- run_elefan(ds, binSize = 4, Linf_fix = input$ELEFAN_Linf_fix, Linf_range = elefan_linf_range, K_range = elefan_k_range,
+    res <- run_elefan(dataset, binSize = 4, Linf_fix = input$ELEFAN_Linf_fix, Linf_range = elefan_linf_range, K_range = elefan_k_range,
                       C = input$ELEFAN_C, ts = input$ELEFAN_ts, MA = input$ELEFAN_MA, addl.sqrt = input$ELEFAN_addl.sqrt,
                       agemax = elefan_agemax, contour = input$ELEFAN_contour)
     js$hideComputing()
