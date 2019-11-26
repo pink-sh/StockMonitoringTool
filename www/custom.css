@@ -9,6 +9,7 @@ footer{
   font-size: 0.7em;
   text-align: right;
   padding-right:20px;
+  padding-bottom: 16px;
 }
 .main-header .logo {
   font-size: 1.3em;
@@ -67,7 +68,7 @@ footer{
   left: 0;
   top: 5px;
   right: 0;
-  bottom: 0px;
+  bottom: 0;
   margin: auto;
   width: 300px;
   height: 150px;
@@ -178,7 +179,7 @@ footer{
 } 
 
 .main-sidebar a {
-  color: #b8c7ce; !important;
+  color: #b8c7ce !important;
 }
 
 li.active {
