@@ -1,5 +1,4 @@
-app_load_spinner <- function(csvFile) {
-  message <- "Initializing R session. This process may take a while..."
+app_load_spinner <- function(message = "") {
   html <- ""
   html <- paste0(html, "<div style=\"position: absolute; left: 50%;\">")
   html <- paste0(html, "<div style=\"color: white; width:150px; margin-left:-75px;\">", message, "</div>")

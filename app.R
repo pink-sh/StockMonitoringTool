@@ -70,7 +70,7 @@ fishingMortality <- "NA"
 
 ui <- tagList(
   use_waiter(include_js = FALSE),
-  show_waiter_on_load(app_load_spinner()),
+  show_waiter_on_load(app_load_spinner("Initializing R session. This process may take a while...")),
   dashboardPage(
   dashboardHeader(title = 'Stock Monitoring Tools'),
   dashboardSidebar(
