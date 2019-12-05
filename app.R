@@ -16,6 +16,75 @@ library(ggplot2)
 library(rfishbase)
 library(waiter)
 
+uploadFolderName <- "StockMonitoringTools"
+uploadFolderDescription <- "SDG 14.4.1 VRE Stock Monitoring Tools results"
+VREUploadText <- "The report has been uploaded to your VRE workspace"
+gcubeTokenQueryParam <- "gcube-token"
+
+createCmsyPDFReport <- function(file, cmsy) {
+  tempReport <- file.path(tempdir(), "cmsyReportSingle.Rmd")
+  file.copy("assets/cmsy/cmsyReportSingle.Rmd", tempReport, overwrite = TRUE)
+  
+  
+  if (!is.null(cmsy$method$analisysChartUrl)) {
+    fileAnalisysChart <- tempfile(fileext=".jpg")
+    download.file(cmsy$method$analisysChartUrl, fileAnalisysChart)
+    cmsy$method$analisysChart <- fileAnalisysChart
+  }
+  if (!is.null(cmsy$method$analisysChartUrl)) {
+    fileManagementChart <- tempfile(fileext=".jpg")
+    download.file(cmsy$method$managementChartUrl, fileManagementChart)
+    cmsy$method$managementChart <- fileManagementChart
+  }
+  
+  # Set up parameters to pass to Rmd document
+  params <- list(cmsy = cmsy)
+  
+  # Knit the document, passing in the `params` list, and eval it in a
+  # child of the global environment (this isolates the code in the document
+  # from the code in this app).
+  rmarkdown::render(tempReport, output_file = file, params = params)
+}
+
+createElefanGaPDFReport <- function(file, elefan_ga) {
+  tempReport <- file.path(tempdir(), "elefan_ga.Rmd")
+  file.copy("assets/tropFishR/elefan_ga.Rmd", tempReport, overwrite = TRUE)
+  params <- list(elefan = elefan_ga)
+  return (rmarkdown::render(tempReport, output_file = file, params = params))
+}
+
+createElefanSaPDFReport <- function(file, elefan_sa) {
+  tempReport <- file.path(tempdir(), "elefan_sa.Rmd")
+  file.copy("assets/tropFishR/elefan_sa.Rmd", tempReport, overwrite = TRUE)
+  params <- list(elefan = elefan_sa)
+  return (rmarkdown::render(tempReport, output_file = file, params = params))
+}
+
+createElefanPDFReport <- function(file, elefan) {
+  tempReport <- file.path(tempdir(), "elefan.Rmd")
+  file.copy("assets/tropFishR/elefan.Rmd", tempReport, overwrite = TRUE)
+  params <- list(elefan = elefan)
+  return (rmarkdown::render(tempReport, output_file = file, params = params))
+}
+
+createSbprPDFReport <- function(file, sbprExec, perc) {
+  print(paste(sep=" ", file))
+  tempReport <- file.path(tempdir(), "sbpr.Rmd")
+  file.copy("assets/fishmethods/sbpr.Rmd", tempReport, overwrite = TRUE)
+  sbprExec$perc <- perc
+  params <- list(sbprExec = sbprExec)
+  rmarkdown::render(tempReport, output_file = file, params = params)
+}
+
+createYprPDFReport <- function(file, yprExec) {
+  tempReport <- file.path(tempdir(), "ypr.Rmd")
+  file.copy("assets/fishmethods/ypr.Rmd", tempReport, overwrite = TRUE)
+  params <- list(yprExec = yprExec)
+  rmarkdown::render(tempReport, output_file = file, params = params)
+}
+
+apiUrl <- "https://api.d4science.org/rest/2/people/profile?gcube-token="
+
 buildUrl <- function(session, path) {
   port <- session$clientData$url_port
   host <- session$clientData$url_hostname
@@ -36,6 +105,7 @@ source("assets/support/vonBertalannfly.R")
 source("assets/support/seasonalVonBertalannfly.R")
 source("assets/support/naturalMortality.R")
 source("assets/commons/commons.R")
+source("assets/commons/storageHub.R")
 
 ##### Common Javascript code
 jscode <- "
@@ -62,7 +132,7 @@ $('.loadingCustom').css('visibility','hidden');
 pdf(NULL)
 dev.off()
 #dev.list()
-
+t
 set.seed(1)
 d <- data(package = "TropFishR")
 parallel <- FALSE
@@ -224,7 +294,8 @@ ui <- tagList(
                      ),
                      fluidRow(
                        box(
-                         uiOutput("downloadCmsyReportButton")
+                         uiOutput("downloadCmsyReportButton"),
+                         uiOutput("CmsyVREUpload")
                        )
                      ),
                      fluidRow(
@@ -321,7 +392,8 @@ ui <- tagList(
                      ),
                      fluidRow(
                        box(
-                         uiOutput("downloadReport_ga")
+                         uiOutput("downloadReport_ga"),
+                         uiOutput("ElefanGaVREUpload")
                        )
                      ),
                      fluidRow(
@@ -437,7 +509,8 @@ ui <- tagList(
                      ),
                      fluidRow(
                        box(
-                         uiOutput("downloadReport_sa")
+                         uiOutput("downloadReport_sa"),
+                         uiOutput("ElefanSaVREUpload")
                        )
                      ),
                      fluidRow(
@@ -526,7 +599,8 @@ ui <- tagList(
                      ),
                      fluidRow(
                        box(
-                         uiOutput("downloadReport")
+                         uiOutput("downloadReport"),
+                         uiOutput("ElefanVREUpload")
                        )
                      ),
                      fluidRow(
@@ -608,7 +682,8 @@ ui <- tagList(
                      ),
                      fluidRow(
                        box(
-                         uiOutput("downloadSbprReport")
+                         uiOutput("downloadSbprReport"),
+                         uiOutput("SBPRVREUpload")
                        )
                      ),
                      fluidRow(
@@ -669,7 +744,8 @@ ui <- tagList(
                      ),
                      fluidRow(
                        box(
-                         uiOutput("downloadYprReport")
+                         uiOutput("downloadYprReport"),
+                         uiOutput("YPRVREUpload")
                        )
                      ),
                      fluidRow(
@@ -867,7 +943,48 @@ server <- function(input, output, session) {
   hide_waiter()
   session$onSessionEnded(function() {
     print("Lost connection to R server")
-    print(session)
+    #print(session)
+  })
+  
+  
+  
+  sessionToken <- reactiveVal(NULL)
+  sessionUsername <- reactiveVal(NULL)
+  sessionMode <- reactiveVal(NULL)
+  
+  
+  ##Guessing run mode
+  observe({
+    query <- parseQueryString(session$clientData$url_search)
+    if (!is.null(query[[gcubeTokenQueryParam]])) {
+      sessionToken(query[[gcubeTokenQueryParam]])
+    }
+  })
+  
+  observe({
+    if (!is.null(sessionToken())) {
+      print (paste0("Session token is: ", sessionToken()))
+      sessionUsername(getVREUsername(apiUrl, sessionToken()))
+    } else {
+      print (paste0("Session token is: ", "NULL"))
+    }
+  })
+  
+  observe({
+    if (!is.null(sessionMode())) {
+      print (paste0("Session mode is: ", sessionMode()))
+    } else {
+      print (paste0("Session mode is: ", "NULL"))
+    }
+  })
+  
+  observe({
+    if (!is.null(sessionUsername())) {
+      print (paste0("Session username is: ", sessionUsername()))
+      sessionMode("GCUBE")
+    } else {
+      print (paste0("Session username is: ", "NULL"))
+    }
   })
   
   cmsy <- reactiveValues()
@@ -1023,6 +1140,28 @@ server <- function(input, output, session) {
           cmsy$method$log <- row$url
         }
       }
+      
+      if (!is.null(sessionMode()) && sessionMode()=="GCUBE") {
+        print("uploading to VRE")
+        reportFileName <- paste("/tmp/","CMSY_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+        createCmsyPDFReport(reportFileName, cmsy)
+        if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
+          print("Creating folder")
+          createFolderWs(
+            sessionUsername(), sessionToken(),
+            paste0("/Home/",sessionUsername(),"/Workspace/"),
+            uploadFolderName, 
+            uploadFolderDescription)
+        }
+        uploadToVREFolder(
+          username = sessionUsername(), 
+          token = sessionToken(), 
+          relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
+          file = reportFileName,
+          overwrite = TRUE,
+          archive = FALSE
+        )
+      }
     }
   })
  
@@ -1039,36 +1178,12 @@ server <- function(input, output, session) {
     
     selectInput("stock", "Select a stock", sort(unique(a$Stock)))
   })
+  
   output$downloadCmsyReport <- downloadHandler(
     # For PDF output, change this to "report.pdf"
-    filename = paste("cmsy_report_",format(Sys.time(), "%Y%m%d%H%M%s"),".pdf",sep=""),
+    filename = paste("CMSY_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
     content = function(file) {
-      # Copy the report file to a temporary directory before processing it, in
-      # case we don't have write permissions to the current working dir (which
-      # can happen when deployed).
-      tempReport <- file.path(tempdir(), "cmsyReportSingle.Rmd")
-      file.copy("assets/cmsy/cmsyReportSingle.Rmd", tempReport, overwrite = TRUE)
-      
-      
-      if (!is.null(cmsy$method$analisysChartUrl)) {
-        fileAnalisysChart <- tempfile(fileext=".jpg")
-        download.file(cmsy$method$analisysChartUrl, fileAnalisysChart)
-        cmsy$method$analisysChart <- fileAnalisysChart
-      }
-      if (!is.null(cmsy$method$analisysChartUrl)) {
-        fileManagementChart <- tempfile(fileext=".jpg")
-        download.file(cmsy$method$managementChartUrl, fileManagementChart)
-        cmsy$method$managementChart <- fileManagementChart
-      }
-      
-      # Set up parameters to pass to Rmd document
-      params <- list(cmsy = cmsy)
-      
-      # Knit the document, passing in the `params` list, and eval it in a
-      # child of the global environment (this isolates the code in the document
-      # from the code in this app).
-      rmarkdown::render(tempReport, output_file = file, params = params)
-      
+      createCmsyPDFReport(file, cmsy)
     }
   )
   output$renderCmsyLog <- renderText({
@@ -1137,6 +1252,17 @@ server <- function(input, output, session) {
       downloadButton("downloadCmsyReport", label = "Download Report")
     }
   })
+  output$CmsyVREUpload <- renderText(
+    {
+      text <- ""
+      if (!is.null(cmsy$dlmTools) || !is.null(cmsy$legacy) || !is.null(cmsy$fast)) {
+        if (!is.null(sessionMode()) && sessionMode() == "GCUBE") {
+          text <- paste0(text, VREUploadText)
+        }
+      }
+      text
+    }
+  )
   output$titleCmsy <- renderText({
     if ("dlmTools" %in% names(cmsy)) {
       if (!is.null(cmsy$dlmTools)) {
@@ -1172,6 +1298,7 @@ server <- function(input, output, session) {
   
   getDataConsiderationTextForElefan <- function() {
     text <- "<ul>"
+    text <- paste0(text, "<li>", "Ensure that your input file has dates in one of the formats:<br/><ul><li>YYYY-MM-DD</li><li>YYYY/MM/DD</li></ul>", "</li>")
     text <- paste0(text, "<li>", "Ensure that your length-frequency data is representative of the full population. (If this is not so, then estimates of fishing mortality will be biased.)", "</li>")
     text <- paste0(text, "<li>", "Ensure that all age groups were sampled.", "</li>")
     text <- paste0(text, "<li>", "Ensure that the sample was from a range of areas where different life histories might live. (e.g., if juveniles occupy nearshore habitat and adults are offshore)", "</li>")
@@ -1221,7 +1348,31 @@ server <- function(input, output, session) {
       js$showBox("box_elefan_ga_results")
       elefan_ga$results <- res
       fishingMortality$FcurrGA <- round(elefan_ga$results$plot3$currents[4]$curr.F, 2)
+      
+      if (!is.null(sessionMode()) && sessionMode()=="GCUBE") {
+        print("uploading to VRE")
+        reportFileName <- paste("/tmp/","ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+        createElefanGaPDFReport(reportFileName,elefan_ga)
+        if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
+          print("Creating folder")
+          createFolderWs(
+            sessionUsername(), sessionToken(),
+            paste0("/Home/",sessionUsername(),"/Workspace/"),
+            uploadFolderName, 
+            uploadFolderDescription)
+        }
+        uploadToVREFolder(
+          username = sessionUsername(), 
+          token = sessionToken(), 
+          relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
+          file = reportFileName,
+          overwrite = TRUE,
+          archive = FALSE
+        )
+      }
     }
+    
+    
   })
   output$plot_ga_1 <- renderPlot({
     if ('results' %in% names(elefan_ga)) {
@@ -1276,13 +1427,21 @@ server <- function(input, output, session) {
       downloadButton('createElefanGAReport', 'Download Report')
     }
   })
+  output$ElefanGaVREUpload <- renderText(
+    {
+      text <- ""
+      if ("results" %in% names(elefan_ga)) {
+        if (!is.null(sessionMode()) && sessionMode() == "GCUBE") {
+          text <- paste0(text, VREUploadText)
+        }
+      }
+      text
+    }
+  )
   output$createElefanGAReport <- downloadHandler(
-    filename = paste("ElefanGA_report_",format(Sys.time(), "%Y%m%d%H%M%s"),".pdf",sep=""),
+    filename = paste("ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
     content = function(file) {
-      tempReport <- file.path(tempdir(), "elefan_ga.Rmd")
-      file.copy("assets/tropFishR/elefan_ga.Rmd", tempReport, overwrite = TRUE)
-      params <- list(elefan = elefan_ga)
-      rmarkdown::render(tempReport, output_file = file, params = params)
+      createElefanGaPDFReport(file, elefan_ga)
     }
   )
   output$tbl1_ga <- renderTable({
@@ -1300,34 +1459,7 @@ server <- function(input, output, session) {
     }
   }, 
   include.rownames=TRUE)
-  output$downloadReport_ga <- renderUI({
-    if ("results" %in% names(elefan_ga)) {
-      downloadButton('createElefanGAReport', 'Download Report')
-    }
-  })
-  output$createElefanGAReport <- downloadHandler(
-    filename = paste("ElefanGA_report_",format(Sys.time(), "%Y%m%d%H%M%s"),".pdf",sep=""),
-    content = function(file) {
-      tempReport <- file.path(tempdir(), "elefan_ga.Rmd")
-      file.copy("assets/tropFishR/elefan_ga.Rmd", tempReport, overwrite = TRUE)
-      params <- list(elefan = elefan_ga)
-      rmarkdown::render(tempReport, output_file = file, params = params)
-    }
-  )
-  output$downloadReport_ga <- renderUI({
-    if ("results" %in% names(elefan_ga)) {
-      downloadButton('createElefanGAReport', 'Download Report')
-    }
-  })
-  output$createElefanGAReport <- downloadHandler(
-    filename = paste("ElefanGA_report_",format(Sys.time(), "%Y%m%d%H%M%s"),".pdf",sep=""),
-    content = function(file) {
-      tempReport <- file.path(tempdir(), "elefan_ga.Rmd")
-      file.copy("assets/tropFishR/elefan_ga.Rmd", tempReport, overwrite = TRUE)
-      params <- list(elefan = elefan_ga)
-      rmarkdown::render(tempReport, output_file = file, params = params)
-    }
-  )
+
   output$title_tbl1_ga <- renderText({
     if ('results' %in% names(elefan_ga)) {
       txt <- "<p class=\"pheader_elefan\">Biological reference levels:</p>"
@@ -1420,6 +1552,28 @@ server <- function(input, output, session) {
       js$showBox("box_elefan_sa_results")
       elefan_sa$results <- res
       fishingMortality$FcurrSA <- round(elefan_sa$results$plot3$currents[4]$curr.F, 2)
+      
+      if (!is.null(sessionMode()) && sessionMode()=="GCUBE") {
+        print("uploading to VRE")
+        reportFileName <- paste("/tmp/","ElefanSA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+        createElefanSaPDFReport(reportFileName,elefan_sa)
+        if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
+          print("Creating folder")
+          createFolderWs(
+            sessionUsername(), sessionToken(),
+            paste0("/Home/",sessionUsername(),"/Workspace/"),
+            uploadFolderName, 
+            uploadFolderDescription)
+        }
+        uploadToVREFolder(
+          username = sessionUsername(), 
+          token = sessionToken(), 
+          relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
+          file = reportFileName,
+          overwrite = TRUE,
+          archive = FALSE
+        )
+      }
     }
   })
   output$tbl1_sa <- renderTable({
@@ -1490,6 +1644,17 @@ server <- function(input, output, session) {
       downloadButton('createElefanSAReport', 'Download Report')
     }
   })
+  output$ElefanSaVREUpload <- renderText(
+    {
+      text <- ""
+      if ("results" %in% names(elefan_sa)) {
+        if (!is.null(sessionMode()) && sessionMode() == "GCUBE") {
+          text <- paste0(text, VREUploadText)
+        }
+      }
+      text
+    }
+  )
   output$title_tbl1_sa <- renderText({
     if ('results' %in% names(elefan_sa)) {
       txt <- "<p class=\"pheader_elefan\">Biological reference levels:</p>"
@@ -1536,6 +1701,12 @@ server <- function(input, output, session) {
     text <- gsub("%%ELEFAN%%", "ELEFAN_SA", getDataConsiderationTextForElefan())
     text
   })
+  output$createElefanSAReport <- downloadHandler(
+    filename = paste("ElefanSA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
+    content = function(file) {
+      createElefanSaPDFReport(file, elefan_ga)
+    }
+  )
   ####### END ELEFAN SA METHOD #######
   
   
@@ -1592,6 +1763,28 @@ server <- function(input, output, session) {
       js$showBox("box_elefan_results")
       elefan$results <- res
       fishingMortality$Fcurr <- round(elefan$results$plot3$currents[4]$curr.F, 2)
+      
+      if (!is.null(sessionMode()) && sessionMode()=="GCUBE") {
+        print("uploading to VRE")
+        reportFileName <- paste("/tmp/","Elefan_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+        createElefanPDFReport(reportFileName,elefan)
+        if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
+          print("Creating folder")
+          createFolderWs(
+            sessionUsername(), sessionToken(),
+            paste0("/Home/",sessionUsername(),"/Workspace/"),
+            uploadFolderName, 
+            uploadFolderDescription)
+        }
+        uploadToVREFolder(
+          username = sessionUsername(), 
+          token = sessionToken(), 
+          relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
+          file = reportFileName,
+          overwrite = TRUE,
+          archive = FALSE
+        )
+      }
     }
   })
   output$plot_1 <- renderPlot({
@@ -1641,24 +1834,24 @@ server <- function(input, output, session) {
       downloadButton('createElefanReport', 'Download Report')
     }
   })
+  output$ElefanVREUpload <- renderText(
+    {
+      text <- ""
+      if ("results" %in% names(elefan)) {
+        if (!is.null(sessionMode()) && sessionMode() == "GCUBE") {
+          text <- paste0(text, VREUploadText)
+        }
+      }
+      text
+    }
+  )
   output$createElefanReport <- downloadHandler(
-    filename = paste("Elefan_report_",format(Sys.time(), "%Y%m%d%H%M%s"),".pdf",sep=""),
+    filename = paste("Elefan_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
     content = function(file) {
-      tempReport <- file.path(tempdir(), "elefan.Rmd")
-      file.copy("assets/tropFishR/elefan.Rmd", tempReport, overwrite = TRUE)
-      params <- list(elefan = elefan)
-      rmarkdown::render(tempReport, output_file = file, params = params)
+      createElefanPDFReport(file,elefan)
     }
   )
-  output$createElefanSAReport <- downloadHandler(
-    filename = paste("ElefanSA_report_",format(Sys.time(), "%Y%m%d%H%M%s"),".pdf",sep=""),
-    content = function(file) {
-      tempReport <- file.path(tempdir(), "elefan_sa.Rmd")
-      file.copy("assets/tropFishR/elefan_sa.Rmd", tempReport, overwrite = TRUE)
-      params <- list(elefan = elefan_sa)
-      rmarkdown::render(tempReport, output_file = file, params = params)
-    }
-  )
+  
   output$par <- renderText({
     if ("results" %in% names(elefan)) {
       title <- "<hr>"
@@ -1717,26 +1910,30 @@ server <- function(input, output, session) {
     } else {
       sbprExec$results <- res
       js$showBox("box_sbpr_results")
+      
+      if (!is.null(sessionMode()) && sessionMode()=="GCUBE") {
+        print("uploading to VRE")
+        reportFileName <- paste("/tmp/","Sbpr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+        createSbprPDFReport(reportFileName, sbprExec, input$SBPR_MSP)
+        if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
+          print("Creating folder")
+          createFolderWs(
+            sessionUsername(), sessionToken(),
+            paste0("/Home/",sessionUsername(),"/Workspace/"),
+            uploadFolderName, 
+            uploadFolderDescription)
+        }
+        uploadToVREFolder(
+          username = sessionUsername(), 
+          token = sessionToken(), 
+          relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
+          file = reportFileName,
+          overwrite = TRUE,
+          archive = FALSE
+        )
+      }
     }
   })
-  
-  #output$sbprFishingMortality <- renderText({
-  #  if (is.na(fishingMortality$FcurrGA) && is.na(fishingMortality$FcurrSA) && is.na(fishingMortality$Fcurr)) {
-  #    text <- "&nbsp;&nbsp;<strong>To calculate the fishing mortality run an ELEFAN method before SBPR</strong>"
-  #  } else {
-  #    text <- ""
-  #    if (!is.na(fishingMortality$Fcurr)) {
-  #      text <- paste0(text, fishingMortality$Fcurr, "<br/>")
-  #    }
-  #    if (!is.na(fishingMortality$FcurrGA)) {
-  #      text <- paste0(text, fishingMortality$FcurrGA, "<br/>")
-  #    }
-  #    if (!is.na(fishingMortality$FcurrSA)) {
-  #      text <- paste0(text, fishingMortality$FcurrSA, "<br/>")
-  #    }
-  #  }
-  #  text
-  #})
   
   output$sbprOutPlot1 <- renderPlot({
     if ('results' %in% names(sbprExec)) {
@@ -1785,14 +1982,21 @@ server <- function(input, output, session) {
       downloadButton('createSbprReport', 'Download Report')
     }
   })
+  output$SBPRVREUpload <- renderText(
+    {
+      text <- ""
+      if ("results" %in% names(sbprExec)) {
+        if (!is.null(sessionMode()) && sessionMode() == "GCUBE") {
+          text <- paste0(text, VREUploadText)
+        }
+      }
+      text
+    }
+  )
   output$createSbprReport <- downloadHandler(
-    filename = paste("Sbpr_report_",format(Sys.time(), "%Y%m%d%H%M%s"),".pdf",sep=""),
+    filename = paste("Sbpr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
     content = function(file) {
-      tempReport <- file.path(tempdir(), "sbpr.Rmd")
-      file.copy("assets/fishmethods/sbpr.Rmd", tempReport, overwrite = TRUE)
-      sbprExec$perc <- input$SBPR_MSP
-      params <- list(sbprExec = sbprExec)
-      rmarkdown::render(tempReport, output_file = file, params = params)
+      createSbprPDFReport(file, sbprExec, input$SBPR_MSP)
     }
   )
   output$SBPRDataConsiderationsText <- renderText({
@@ -1833,6 +2037,28 @@ server <- function(input, output, session) {
     } else {
       yprExec$results <- res
       js$showBox("box_ypr_results")
+      
+      if (!is.null(sessionMode()) && sessionMode()=="GCUBE") {
+        print("uploading to VRE")
+        reportFileName <- paste("/tmp/","Ypr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+        createYprPDFReport(reportFileName, yprExec)
+        if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
+          print("Creating folder")
+          createFolderWs(
+            sessionUsername(), sessionToken(),
+            paste0("/Home/",sessionUsername(),"/Workspace/"),
+            uploadFolderName, 
+            uploadFolderDescription)
+        }
+        uploadToVREFolder(
+          username = sessionUsername(), 
+          token = sessionToken(), 
+          relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
+          file = reportFileName,
+          overwrite = TRUE,
+          archive = FALSE
+        )
+      }
     }
   })
   output$yprFishingMortality <- renderText({
@@ -1895,13 +2121,21 @@ server <- function(input, output, session) {
       downloadButton('createYprReport', 'Download Report')
     }
   })
+  output$YPRVREUpload <- renderText(
+    {
+      text <- ""
+      if ("results" %in% names(yprExec)) {
+        if (!is.null(sessionMode()) && sessionMode() == "GCUBE") {
+          text <- paste0(text, VREUploadText)
+        }
+      }
+      text
+    }
+  )
   output$createYprReport <- downloadHandler(
-    filename = paste("Ypr_report_",format(Sys.time(), "%Y%m%d%H%M%s"),".pdf",sep=""),
+    filename = paste("Ypr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
     content = function(file) {
-      tempReport <- file.path(tempdir(), "ypr.Rmd")
-      file.copy("assets/fishmethods/ypr.Rmd", tempReport, overwrite = TRUE)
-      params <- list(yprExec = yprExec)
-      rmarkdown::render(tempReport, output_file = file, params = params)
+      createYprPDFReport(file, yprExec)
     }
   )
   

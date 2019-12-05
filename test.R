@@ -1,26 +1,22 @@
-library(lubridate)
+source("/home/enrico/Work/StockMonitoringTool/assets/commons/storageHub.R")
+uploadFolderName <- "StockMonitoringTool"
+u<-"enrico.anello"
+t<-"a45a70b4-885b-4e95-879a-8ea0fd5f041c-843339462"
 
-formatTimestamp <- function(ts) {
-        x <- format(as.Date(as.POSIXct(ts, origin="1970-01-01")), format="%Y-%m-%d")
-        return(x)
+if (fileFolderExistsInPath(u,t,paste0("/Home/",u,"/Workspace/"), uploadFolderName) == FALSE) {
+  print("Creating folder")
+  createFolderWs(
+    u,t,
+    paste0("/Home/",u,"/Workspace/"),
+    uploadFolderName, 
+    "Results of the SDG 14.4.1 Stock Monitoring Tool")
 }
 
-x <- c('2016-01-05')
-y <-  c('2016-03-05',
-       '2016-04-05',
-       '2016-07-05',
-       '2016-08-05',
-       '2016-10-05',
-       '09-08-2019')
-
-z <- c('2/7/2016')
-
-timestamps <- as.vector(
-                unlist(
-                        lapply(
-                        lapply(y, parse_date_time, order=c('ymd', 'dmy', 'mdy') )
-                        , formatTimestamp)
-                )
-        )
-print (timestamps)
-
+uploadToVREFolder(
+  username = u, 
+  token = t, 
+  relativePath = paste0("/Home/",u,"/Workspace/", uploadFolderName, "/"), 
+  file = "/tmp/ElefanGA_report_2019120416101575472239.pdf",
+  overwrite = TRUE,
+  archive = FALSE
+)

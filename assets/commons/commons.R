@@ -19,3 +19,18 @@ app_load_spinner <- function(message = "") {
   html <- paste0(html, "</div>")
   return (html)
 }
+
+library(httr)
+library(jsonlite)
+
+getVREUsername <- function(url, token) {
+  url_ <- paste0(url, token)
+  response <-  GET(url_)
+  response$status
+  if (response$status == 200) { 
+    call <- fromJSON(content(response, as = "text"), flatten = TRUE)
+    return (call$result$username)
+  } else {
+    return (NULL)
+  }
+}
