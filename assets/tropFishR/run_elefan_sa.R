@@ -12,7 +12,8 @@ run_elefan_sa <- function(x, binSize=4,
                           agemax = NULL,
                           flagging.out = TRUE,
                           plot = FALSE,
-                          plot.score = TRUE) {
+                          plot.score = TRUE,
+                          plus_group = 0) {
   set.seed(1)
   pdf(NULL)
   
@@ -145,8 +146,17 @@ run_elefan_sa <- function(x, binSize=4,
     #Stock size and status
     
     # add plus group which is smaller than Linf
-    
-    synLFQ7c <- lfqModify(synLFQ7b, plus_group = 122)
+    calculated_plus_group <- plus_group
+    if (plus_group == 0) {
+      calculated_plus_group <- max(synLFQ7b$midLengths)
+      for (x in synLFQ7b$midLengths) {
+        if ((max(synLFQ7b$midLengths) / 2) < x) {
+          calculated_plus_group <- x
+          break
+        }
+      }
+    }
+    synLFQ7c <- lfqModify(synLFQ7b, plus_group = calculated_plus_group)
     
     # assign length-weight parameters to the data list
     

@@ -20,6 +20,7 @@ run_elefan_ga <- function(
   seed = 1,
   plot = FALSE,
   plot.score = TRUE,
+  plus_group = 0,
   ...
 ) {
   set.seed(1)
@@ -36,7 +37,7 @@ run_elefan_ga <- function(
     # plot raw and restructured LFQ data
     
     lfqbin <- lfqRestructure(synLFQ7a, MA = 5, addl.sqrt = TRUE)
-    
+
     opar <- par(mfrow = c(2,1), mar = c(2,5,2,3), oma = c(2,0,0,0))
     
     
@@ -125,10 +126,12 @@ run_elefan_ga <- function(
     
     # assign estimates to the data list
     catch_columns <- NA
+    
     if (length(synLFQ7b$dates) > 1) {
       catch_columns <- length(synLFQ7b$dates) - 1
     }
-    res_cc <- catchCurve(synLFQ7b, reg_int = c(9,28), calc_ogive = TRUE, catch_columns = catch_columns, plot=FALSE)
+    
+    res_cc <- catchCurve(synLFQ7b, reg_int = NULL, calc_ogive = TRUE, catch_columns = catch_columns, plot=FALSE, auto = TRUE)
     #res_cc <- catchCurve(synLFQ7b)
     
     synLFQ7b$Z <- res_cc$Z
@@ -149,8 +152,17 @@ run_elefan_ga <- function(
     #Stock size and status
     
     # add plus group which is smaller than Linf
-    
-    synLFQ7c <- lfqModify(synLFQ7b, plus_group = 122)
+    calculated_plus_group <- plus_group
+    if (plus_group == 0) {
+      calculated_plus_group <- max(synLFQ7b$midLengths)
+      for (x in synLFQ7b$midLengths) {
+        if ((max(synLFQ7b$midLengths) / 2) < x) {
+          calculated_plus_group <- x
+          break
+        }
+      }
+    }
+    synLFQ7c <- lfqModify(synLFQ7b, plus_group = calculated_plus_group)
     
     # assign length-weight parameters to the data list
     

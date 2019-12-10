@@ -349,7 +349,8 @@ ui <- tagList(
                       numericInput("ELEFAN_GA_pmutation", "Probability of mutation in a parent chromosome. Usually mutation occurs with a small probability:", 0.1, min = 0.1, max = 1, step=0.1),
                       numericInput("ELEFAN_GA_pcrossover", "Probability of crossover between pairs of chromosomes. Typically this is a large value:", 0.8, min = 0.1, max = 1, step=0.1),
                       numericInput("ELEFAN_GA_elitism", "Number of best fitness individuals to survive at each generation:", 5, min = 0, max = 100, step=1),
-                      numericInput("ELEFAN_GA_MA", "Number indicating over how many length classes the moving average should be performed:", 5, min = 0, max = 100, step=1)
+                      numericInput("ELEFAN_GA_MA", "Number indicating over how many length classes the moving average should be performed:", 5, min = 0, max = 100, step=1),
+                      numericInput("ELEFAN_GA_PLUS_GROUP", "Plus group", 0, min = 0, max = 100000, step=1)
                     )
                 ),
                 box(title = "Low Par Parameters",
@@ -466,7 +467,8 @@ ui <- tagList(
                       numericInput("ELEFAN_SA_SA_time", "Maximum running time in seconds:", 60, min = 0, max = 10000, step=1),
                       numericInput("ELEFAN_SA_SA_temp", "Initial value for temperature:", 100000, min = 1, max = 10000000, step=100),
                       numericInput("ELEFAN_SA_MA", "Number indicating over how many length classes the moving average should be performed:", 5, min = 0, max = 100, step=1),
-                      numericInput("ELEFAN_SA_agemax", "Maximum age of species:", 1, min = 0, max = 100, step=1)
+                      numericInput("ELEFAN_SA_agemax", "Maximum age of species:", 1, min = 0, max = 100, step=1),
+                      numericInput("ELEFAN_SA_PLUS_GROUP", "Plus group", 0, min = 0, max = 100000, step=1)
                     )
                 ),
                 box(title = "Low Par Parameters",
@@ -586,6 +588,7 @@ ui <- tagList(
                       numericInput("ELEFAN_K_Range_by", "K increment sequence by:", 1, min = 1, max = 1000, step=1),
                       checkboxInput("ELEFAN_addl.sqrt", "Additional squareroot transformation of positive values according to Brey et al. (1988)", FALSE),
                       numericInput("ELEFAN_agemax", "Maximum age of species:", NULL, min = 0, max = 100, step=1),
+                      numericInput("ELEFAN_PLUS_GROUP", "Plus group", 0, min = 0, max = 100000, step=1),
                       checkboxInput("ELEFAN_contour", "If checked in combination with response surface analysis, contour lines are displayed rather than the score as text in each field of the score plot", FALSE)
                     )
                 ),
@@ -1333,7 +1336,7 @@ server <- function(input, output, session) {
                          low_par = list(Linf = input$ELEFAN_GA_lowPar_Linf, K = input$ELEFAN_GA_lowPar_K, t_anchor = input$ELEFAN_GA_lowPar_t_anchor, C = input$ELEFAN_GA_lowPar_C, ts = input$ELEFAN_GA_lowPar_ts),
                          up_par = list(Linf = input$ELEFAN_GA_upPar_Linf, K = input$ELEFAN_GA_upPar_K, t_anchor = input$ELEFAN_GA_upPar_t_anchor, C = input$ELEFAN_GA_upPar_C, ts = input$ELEFAN_GA_upPar_ts),
                          popSize = input$ELEFAN_GA_popSize, maxiter = input$ELEFAN_GA_maxiter, run = input$ELEFAN_GA_run, pmutation = input$ELEFAN_GA_pmutation, pcrossover = input$ELEFAN_GA_pcrossover,
-                         elitism = input$ELEFAN_GA_elitism, MA = input$ELEFAN_GA_MA, addl.sqrt = input$ELEFAN_GA_addl.sqrt)
+                         elitism = input$ELEFAN_GA_elitism, MA = input$ELEFAN_GA_MA, addl.sqrt = input$ELEFAN_GA_addl.sqrt, plus_group = input$ELEFAN_GA_PLUS_GROUP)
     
     js$hideComputing()
     js$enableAllButtons()
@@ -1376,11 +1379,15 @@ server <- function(input, output, session) {
   })
   output$plot_ga_1 <- renderPlot({
     if ('results' %in% names(elefan_ga)) {
+      print("Plot1")
+      print(elefan_ga$results$plot1)
       plot(elefan_ga$results$plot1, Fname = "catch", date.axis = "modern")
     }
   })
   output$plot_ga_2 <- renderPlot({
     if ('results' %in% names(elefan_ga)) {
+      print("Plot2")
+      print(elefan_ga$results$plot2)
       plot(elefan_ga$results$plot2, Fname = "rcounts", date.axis = "modern")
     }
   })
@@ -1537,7 +1544,7 @@ server <- function(input, output, session) {
                          low_par = list(Linf = as.numeric(input$ELEFAN_SA_lowPar_Linf), K = as.numeric(input$ELEFAN_SA_lowPar_K), t_anchor = as.numeric(input$ELEFAN_SA_lowPar_t_anchor), C = as.numeric(input$ELEFAN_SA_lowPar_C), ts = as.numeric(input$ELEFAN_SA_lowPar_ts)),
                          up_par = list(Linf = as.numeric(input$ELEFAN_SA_upPar_Linf), K = as.numeric(input$ELEFAN_SA_upPar_K), t_anchor = as.numeric(input$ELEFAN_SA_upPar_t_anchor), C = as.numeric(input$ELEFAN_SA_upPar_C), ts = as.numeric(input$ELEFAN_SA_upPar_ts)),
                          SA_time = input$ELEFAN_SA_SA_time, SA_temp = input$ELEFAN_SA_SA_temp, MA = input$ELEFAN_SA_MA, addl.sqrt = input$ELEFAN_SA_addl.sqrt,
-                         agemax = input$ELEFAN_SA_agemax)
+                         agemax = input$ELEFAN_SA_agemax, plus_group = input$ELEFAN_SA_PLUS_GROUP)
     js$hideComputing()
     js$enableAllButtons()
     if ('error' %in% names(res)) {
@@ -1749,7 +1756,7 @@ server <- function(input, output, session) {
     }
     res <- run_elefan(dataset, binSize = 4, Linf_fix = input$ELEFAN_Linf_fix, Linf_range = elefan_linf_range, K_range = elefan_k_range,
                       C = input$ELEFAN_C, ts = input$ELEFAN_ts, MA = input$ELEFAN_MA, addl.sqrt = input$ELEFAN_addl.sqrt,
-                      agemax = elefan_agemax, contour = input$ELEFAN_contour)
+                      agemax = elefan_agemax, contour = input$ELEFAN_contour, plus_group = input$ELEFAN_PLUS_GROUP)
     js$hideComputing()
     js$enableAllButtons()
     if ('error' %in% names(res)) {
