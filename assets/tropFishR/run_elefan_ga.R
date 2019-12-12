@@ -52,7 +52,6 @@ run_elefan_ga <- function(
     
     
     # run ELEFAN with genetic algorithm
-    
     res_GA <- ELEFAN_GA(synLFQ7a, MA = MA, seasonalised = seasonalised, maxiter = maxiter, addl.sqrt = addl.sqrt,low_par=low_par,up_par=up_par,monitor=FALSE)
     
     #  res_GA <- ELEFAN_GA(synLFQ7a, MA = 5, seasonalised = TRUE, maxiter = 10, addl.sqrt = TRUE,
@@ -63,7 +62,7 @@ run_elefan_ga <- function(
     #                      
     #                      monitor = FALSE)
     returnResults[['data']] <- res_GA
-    
+
     # show results
     
     res_GA$par; res_GA$Rn_max
@@ -121,9 +120,7 @@ run_elefan_ga <- function(
     #> [1] "M = 0.217"
     
     # summarise catch matrix into vector
-    
     synLFQ7b <- lfqModify(lfqRestructure(synLFQ7a), vectorise_catch = TRUE)
-    
     # assign estimates to the data list
     catch_columns <- NA
     
@@ -131,9 +128,15 @@ run_elefan_ga <- function(
       catch_columns <- length(synLFQ7b$dates) - 1
     }
     
+    if (!exists("synLFQ7b$C")) {
+      synLFQ7b$C <- 0
+    }
+    if (!exists("synLFQ7b$ts")) {
+      synLFQ7b$ts <- 0
+    }
+    
     res_cc <- catchCurve(synLFQ7b, reg_int = NULL, calc_ogive = TRUE, catch_columns = catch_columns, plot=FALSE, auto = TRUE)
     #res_cc <- catchCurve(synLFQ7b)
-    
     synLFQ7b$Z <- res_cc$Z
     #############synLFQ7b$Z <- 0.4
     
@@ -163,7 +166,6 @@ run_elefan_ga <- function(
       }
     }
     synLFQ7c <- lfqModify(synLFQ7b, plus_group = calculated_plus_group)
-    
     # assign length-weight parameters to the data list
     
     synLFQ7c$a <- 0.015

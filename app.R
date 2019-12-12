@@ -1379,15 +1379,11 @@ server <- function(input, output, session) {
   })
   output$plot_ga_1 <- renderPlot({
     if ('results' %in% names(elefan_ga)) {
-      print("Plot1")
-      print(elefan_ga$results$plot1)
       plot(elefan_ga$results$plot1, Fname = "catch", date.axis = "modern")
     }
   })
   output$plot_ga_2 <- renderPlot({
     if ('results' %in% names(elefan_ga)) {
-      print("Plot2")
-      print(elefan_ga$results$plot2)
       plot(elefan_ga$results$plot2, Fname = "rcounts", date.axis = "modern")
     }
   })
@@ -1555,7 +1551,6 @@ server <- function(input, output, session) {
         footer = NULL
       ))
     } else {
-      print(res$plot3)
       js$showBox("box_elefan_sa_results")
       elefan_sa$results <- res
       fishingMortality$FcurrSA <- round(elefan_sa$results$plot3$currents[4]$curr.F, 2)
