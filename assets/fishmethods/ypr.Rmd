@@ -25,3 +25,13 @@ knitr::kable(df, digits = 2, align=rep('c', 5))
 differenceinYPR = round(yprExec$results$Reference_Points[2,2] - yprExec$results$Reference_Points[1,2], 6)
 print(paste0("**Difference in Yeld-Per-Recruit:**", " ", differenceinYPR))
 ```
+  
+******
+## Input parameters  
+Input File: `r input$fileYpr$name`  
+  
+M: `r input$YPR_M`  
+plus: `r input$YPR_Plus`  
+oldest: `r input$YPR_oldest`  
+maxF: `r input$YPR_maxF`  
+incrF: `r input$YPR_incrF`  

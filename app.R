@@ -21,7 +21,7 @@ uploadFolderDescription <- "SDG 14.4.1 VRE Stock Monitoring Tools results"
 VREUploadText <- "The report has been uploaded to your VRE workspace"
 gcubeTokenQueryParam <- "gcube-token"
 
-createCmsyPDFReport <- function(file, cmsy) {
+createCmsyPDFReport <- function(file, cmsy, input) {
   tempReport <- file.path(tempdir(), "cmsyReportSingle.Rmd")
   file.copy("assets/cmsy/cmsyReportSingle.Rmd", tempReport, overwrite = TRUE)
   
@@ -38,7 +38,7 @@ createCmsyPDFReport <- function(file, cmsy) {
   }
   
   # Set up parameters to pass to Rmd document
-  params <- list(cmsy = cmsy)
+  params <- list(cmsy = cmsy, inputParams = input)
   
   # Knit the document, passing in the `params` list, and eval it in a
   # child of the global environment (this isolates the code in the document
@@ -46,40 +46,41 @@ createCmsyPDFReport <- function(file, cmsy) {
   rmarkdown::render(tempReport, output_file = file, params = params)
 }
 
-createElefanGaPDFReport <- function(file, elefan_ga) {
+createElefanGaPDFReport <- function(file, elefan_ga, input) {
+  print(paste0("Input file", input$fileGa))
   tempReport <- file.path(tempdir(), "elefan_ga.Rmd")
   file.copy("assets/tropFishR/elefan_ga.Rmd", tempReport, overwrite = TRUE)
-  params <- list(elefan = elefan_ga)
+  params <- list(elefan = elefan_ga, inputParams = input)
   return (rmarkdown::render(tempReport, output_file = file, params = params))
 }
 
-createElefanSaPDFReport <- function(file, elefan_sa) {
+createElefanSaPDFReport <- function(file, elefan_sa, input) {
   tempReport <- file.path(tempdir(), "elefan_sa.Rmd")
   file.copy("assets/tropFishR/elefan_sa.Rmd", tempReport, overwrite = TRUE)
-  params <- list(elefan = elefan_sa)
+  params <- list(elefan = elefan_sa, inputParams = input)
   return (rmarkdown::render(tempReport, output_file = file, params = params))
 }
 
-createElefanPDFReport <- function(file, elefan) {
+createElefanPDFReport <- function(file, elefan, input) {
   tempReport <- file.path(tempdir(), "elefan.Rmd")
   file.copy("assets/tropFishR/elefan.Rmd", tempReport, overwrite = TRUE)
-  params <- list(elefan = elefan)
+  params <- list(elefan = elefan, inputParams = input)
   return (rmarkdown::render(tempReport, output_file = file, params = params))
 }
 
-createSbprPDFReport <- function(file, sbprExec, perc) {
+createSbprPDFReport <- function(file, sbprExec, input) {
   print(paste(sep=" ", file))
   tempReport <- file.path(tempdir(), "sbpr.Rmd")
   file.copy("assets/fishmethods/sbpr.Rmd", tempReport, overwrite = TRUE)
-  sbprExec$perc <- perc
-  params <- list(sbprExec = sbprExec)
+  sbprExec$perc <- input$SBPR_MSP
+  params <- list(sbprExec = sbprExec, inputParams = input)
   rmarkdown::render(tempReport, output_file = file, params = params)
 }
 
-createYprPDFReport <- function(file, yprExec) {
+createYprPDFReport <- function(file, yprExec, input) {
   tempReport <- file.path(tempdir(), "ypr.Rmd")
   file.copy("assets/fishmethods/ypr.Rmd", tempReport, overwrite = TRUE)
-  params <- list(yprExec = yprExec)
+  params <- list(yprExec = yprExec, inputParams = input)
   rmarkdown::render(tempReport, output_file = file, params = params)
 }
 
@@ -1147,7 +1148,7 @@ server <- function(input, output, session) {
       if (!is.null(sessionMode()) && sessionMode()=="GCUBE") {
         print("uploading to VRE")
         reportFileName <- paste("/tmp/","CMSY_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
-        createCmsyPDFReport(reportFileName, cmsy)
+        createCmsyPDFReport(reportFileName, cmsy, input)
         if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
           print("Creating folder")
           createFolderWs(
@@ -1186,7 +1187,7 @@ server <- function(input, output, session) {
     # For PDF output, change this to "report.pdf"
     filename = paste("CMSY_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
     content = function(file) {
-      createCmsyPDFReport(file, cmsy)
+      createCmsyPDFReport(file, cmsy, input)
     }
   )
   output$renderCmsyLog <- renderText({
@@ -1292,7 +1293,20 @@ server <- function(input, output, session) {
     } else {  "" }
   })
   output$cmsyDataConsiderationsText <- renderText({
-    text <- "<h5><p><b>Please ensure your time-series at least 15 years in length from starting year to ending year.<br> (Note that years with missing data should be filled with an 'NA' value.</b></p></h5>"
+    text <- "<strong>Use the sample dataset as a template to prepare your data.</strong><br/>"
+    text <- paste0(text, "Mandatory fields to run CMSY are")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>Stock (fish stock name)</li>")
+    text <- paste0(text, "<li>Yr (year of the catch)</li>")
+    text <- paste0(text, "<li>Ct (catch)</li>")
+    text <- paste0(text, "<li>bt (biomass estimates, if available; otherwise input “NA”)</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br/>")
+    text <- paste0(text, "<p>Other columns are identifiers that you may choose to include, but they are not necessary to run the model.</p>")
+    text <- paste0(text, "<br/>")
+    text <- paste0(text, "<p>Ensure your data are in .csv format and use a “.” to separate decimals in the data.</p>")
+    text <- paste0(text, "<br/>")
+    text <- paste0(text, "<h5><p><b>Please ensure your time-series at least 15 years in length from starting year to ending year.<br> (Note that years with missing data should be filled with an 'NA' value.</b></p></h5>")
     text <- paste0(text, "<h5>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of natural mortality (M) for the Optional Parameters section.", "</h5>")
     text
   })
@@ -1300,7 +1314,13 @@ server <- function(input, output, session) {
   
   
   getDataConsiderationTextForElefan <- function() {
-    text <- "<ul>"
+    text <- "<b>Mandatory fields for ELEFAN are</b>"
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>Mid-lengths : Length classes are inserted as rows in the first column of the dataset.</li>")
+    text <- paste0(text, "<li>Catches (in number) per length class (rows) and per sampling time (columns).</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<b>If you are creating your own dataset:</b>")
+    text <- paste0(text, "<ul>")
     text <- paste0(text, "<li>", "Ensure that your input file has dates in one of the formats:<br/><ul><li>YYYY-MM-DD</li><li>YYYY/MM/DD</li></ul>", "</li>")
     text <- paste0(text, "<li>", "Ensure that your length-frequency data is representative of the full population. (If this is not so, then estimates of fishing mortality will be biased.)", "</li>")
     text <- paste0(text, "<li>", "Ensure that all age groups were sampled.", "</li>")
@@ -1328,53 +1348,67 @@ server <- function(input, output, session) {
     inputCsvFile <- infile$datapath
     js$removeBox("box_elefan_ga_results")
     js$disableAllButtons()
-    dataset <- read_elefan_csv(inputCsvFile)
-    
-    ds <- lfqModify(lfqRestructure(dataset), bin_size = 4)
-    
-    res <- run_elefan_ga(ds,binSize =  4, seasonalised = input$ELEFAN_GA_seasonalised, 
-                         low_par = list(Linf = input$ELEFAN_GA_lowPar_Linf, K = input$ELEFAN_GA_lowPar_K, t_anchor = input$ELEFAN_GA_lowPar_t_anchor, C = input$ELEFAN_GA_lowPar_C, ts = input$ELEFAN_GA_lowPar_ts),
-                         up_par = list(Linf = input$ELEFAN_GA_upPar_Linf, K = input$ELEFAN_GA_upPar_K, t_anchor = input$ELEFAN_GA_upPar_t_anchor, C = input$ELEFAN_GA_upPar_C, ts = input$ELEFAN_GA_upPar_ts),
-                         popSize = input$ELEFAN_GA_popSize, maxiter = input$ELEFAN_GA_maxiter, run = input$ELEFAN_GA_run, pmutation = input$ELEFAN_GA_pmutation, pcrossover = input$ELEFAN_GA_pcrossover,
-                         elitism = input$ELEFAN_GA_elitism, MA = input$ELEFAN_GA_MA, addl.sqrt = input$ELEFAN_GA_addl.sqrt, plus_group = input$ELEFAN_GA_PLUS_GROUP)
-    
-    js$hideComputing()
-    js$enableAllButtons()
-    if ('error' %in% names(res)) {
+    result = tryCatch({
+      dataset <- read_elefan_csv(inputCsvFile)
+      
+      ds <- lfqModify(lfqRestructure(dataset), bin_size = 4)
+      
+      res <- run_elefan_ga(ds,binSize =  4, seasonalised = input$ELEFAN_GA_seasonalised, 
+                           low_par = list(Linf = input$ELEFAN_GA_lowPar_Linf, K = input$ELEFAN_GA_lowPar_K, t_anchor = input$ELEFAN_GA_lowPar_t_anchor, C = input$ELEFAN_GA_lowPar_C, ts = input$ELEFAN_GA_lowPar_ts),
+                           up_par = list(Linf = input$ELEFAN_GA_upPar_Linf, K = input$ELEFAN_GA_upPar_K, t_anchor = input$ELEFAN_GA_upPar_t_anchor, C = input$ELEFAN_GA_upPar_C, ts = input$ELEFAN_GA_upPar_ts),
+                           popSize = input$ELEFAN_GA_popSize, maxiter = input$ELEFAN_GA_maxiter, run = input$ELEFAN_GA_run, pmutation = input$ELEFAN_GA_pmutation, pcrossover = input$ELEFAN_GA_pcrossover,
+                           elitism = input$ELEFAN_GA_elitism, MA = input$ELEFAN_GA_MA, addl.sqrt = input$ELEFAN_GA_addl.sqrt, plus_group = input$ELEFAN_GA_PLUS_GROUP)
+      
+      js$hideComputing()
+      js$enableAllButtons()
+      if ('error' %in% names(res)) {
+        showModal(modalDialog(
+          title = "Error",
+          res$error,
+          easyClose = TRUE,
+          footer = NULL
+        ))
+      } else {
+        js$showBox("box_elefan_ga_results")
+        elefan_ga$results <- res
+        fishingMortality$FcurrGA <- round(elefan_ga$results$plot3$currents[4]$curr.F, 2)
+        
+        if (!is.null(sessionMode()) && sessionMode()=="GCUBE") {
+          print("uploading to VRE")
+          reportFileName <- paste("/tmp/","ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+          createElefanGaPDFReport(reportFileName,elefan_ga,input,infile$datapath)
+          if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
+            print("Creating folder")
+            createFolderWs(
+              sessionUsername(), sessionToken(),
+              paste0("/Home/",sessionUsername(),"/Workspace/"),
+              uploadFolderName, 
+              uploadFolderDescription)
+          }
+          uploadToVREFolder(
+            username = sessionUsername(), 
+            token = sessionToken(), 
+            relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
+            file = reportFileName,
+            overwrite = TRUE,
+            archive = FALSE
+          )
+        }
+      }
+    }, error = function(err) {
+      print(paste0("Error in Elefan GA",err))
       showModal(modalDialog(
         title = "Error",
-        res$error,
+        "General error, please check your input file",
         easyClose = TRUE,
         footer = NULL
       ))
-    } else {
-      js$showBox("box_elefan_ga_results")
-      elefan_ga$results <- res
-      fishingMortality$FcurrGA <- round(elefan_ga$results$plot3$currents[4]$curr.F, 2)
-      
-      if (!is.null(sessionMode()) && sessionMode()=="GCUBE") {
-        print("uploading to VRE")
-        reportFileName <- paste("/tmp/","ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
-        createElefanGaPDFReport(reportFileName,elefan_ga)
-        if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
-          print("Creating folder")
-          createFolderWs(
-            sessionUsername(), sessionToken(),
-            paste0("/Home/",sessionUsername(),"/Workspace/"),
-            uploadFolderName, 
-            uploadFolderDescription)
-        }
-        uploadToVREFolder(
-          username = sessionUsername(), 
-          token = sessionToken(), 
-          relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
-          file = reportFileName,
-          overwrite = TRUE,
-          archive = FALSE
-        )
-      }
-    }
-    
+      return(NULL)
+    },
+      finally = {
+        js$hideComputing()
+        js$enableAllButtons()
+    })
     
   })
   output$plot_ga_1 <- renderPlot({
@@ -1444,7 +1478,7 @@ server <- function(input, output, session) {
   output$createElefanGAReport <- downloadHandler(
     filename = paste("ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
     content = function(file) {
-      createElefanGaPDFReport(file, elefan_ga)
+      createElefanGaPDFReport(file, elefan_ga, input)
     }
   )
   output$tbl1_ga <- renderTable({
@@ -1534,49 +1568,63 @@ server <- function(input, output, session) {
     #ds1 <- lfqModify(lfqRestructure(dataset), bin_size = 4)
     
     #ds2 <- lfqModify(get('synLFQ7', asNamespace('TropFishR')), bin_size = 4)
-    
-    res <- run_elefan_sa(dataset,binSize =  4, seasonalised = input$ELEFAN_SA_seasonalised, 
-                         init_par = list(Linf = input$ELEFAN_SA_initPar_Linf, K = input$ELEFAN_SA_initPar_K, t_anchor = input$ELEFAN_SA_initPar_t_anchor),
-                         low_par = list(Linf = as.numeric(input$ELEFAN_SA_lowPar_Linf), K = as.numeric(input$ELEFAN_SA_lowPar_K), t_anchor = as.numeric(input$ELEFAN_SA_lowPar_t_anchor), C = as.numeric(input$ELEFAN_SA_lowPar_C), ts = as.numeric(input$ELEFAN_SA_lowPar_ts)),
-                         up_par = list(Linf = as.numeric(input$ELEFAN_SA_upPar_Linf), K = as.numeric(input$ELEFAN_SA_upPar_K), t_anchor = as.numeric(input$ELEFAN_SA_upPar_t_anchor), C = as.numeric(input$ELEFAN_SA_upPar_C), ts = as.numeric(input$ELEFAN_SA_upPar_ts)),
-                         SA_time = input$ELEFAN_SA_SA_time, SA_temp = input$ELEFAN_SA_SA_temp, MA = input$ELEFAN_SA_MA, addl.sqrt = input$ELEFAN_SA_addl.sqrt,
-                         agemax = input$ELEFAN_SA_agemax, plus_group = input$ELEFAN_SA_PLUS_GROUP)
-    js$hideComputing()
-    js$enableAllButtons()
-    if ('error' %in% names(res)) {
-      showModal(modalDialog(
-        title = "Error",
-        res$error,
-        easyClose = TRUE,
-        footer = NULL
-      ))
-    } else {
-      js$showBox("box_elefan_sa_results")
-      elefan_sa$results <- res
-      fishingMortality$FcurrSA <- round(elefan_sa$results$plot3$currents[4]$curr.F, 2)
-      
-      if (!is.null(sessionMode()) && sessionMode()=="GCUBE") {
-        print("uploading to VRE")
-        reportFileName <- paste("/tmp/","ElefanSA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
-        createElefanSaPDFReport(reportFileName,elefan_sa)
-        if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
-          print("Creating folder")
-          createFolderWs(
-            sessionUsername(), sessionToken(),
-            paste0("/Home/",sessionUsername(),"/Workspace/"),
-            uploadFolderName, 
-            uploadFolderDescription)
+    result = tryCatch({ 
+      res <- run_elefan_sa(dataset,binSize =  4, seasonalised = input$ELEFAN_SA_seasonalised, 
+                           init_par = list(Linf = input$ELEFAN_SA_initPar_Linf, K = input$ELEFAN_SA_initPar_K, t_anchor = input$ELEFAN_SA_initPar_t_anchor),
+                           low_par = list(Linf = as.numeric(input$ELEFAN_SA_lowPar_Linf), K = as.numeric(input$ELEFAN_SA_lowPar_K), t_anchor = as.numeric(input$ELEFAN_SA_lowPar_t_anchor), C = as.numeric(input$ELEFAN_SA_lowPar_C), ts = as.numeric(input$ELEFAN_SA_lowPar_ts)),
+                           up_par = list(Linf = as.numeric(input$ELEFAN_SA_upPar_Linf), K = as.numeric(input$ELEFAN_SA_upPar_K), t_anchor = as.numeric(input$ELEFAN_SA_upPar_t_anchor), C = as.numeric(input$ELEFAN_SA_upPar_C), ts = as.numeric(input$ELEFAN_SA_upPar_ts)),
+                           SA_time = input$ELEFAN_SA_SA_time, SA_temp = input$ELEFAN_SA_SA_temp, MA = input$ELEFAN_SA_MA, addl.sqrt = input$ELEFAN_SA_addl.sqrt,
+                           agemax = input$ELEFAN_SA_agemax, plus_group = input$ELEFAN_SA_PLUS_GROUP)
+      js$hideComputing()
+      js$enableAllButtons()
+      if ('error' %in% names(res)) {
+        showModal(modalDialog(
+          title = "Error",
+          res$error,
+          easyClose = TRUE,
+          footer = NULL
+        ))
+      } else {
+        js$showBox("box_elefan_sa_results")
+        elefan_sa$results <- res
+        fishingMortality$FcurrSA <- round(elefan_sa$results$plot3$currents[4]$curr.F, 2)
+        
+        if (!is.null(sessionMode()) && sessionMode()=="GCUBE") {
+          print("uploading to VRE")
+          reportFileName <- paste("/tmp/","ElefanSA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+          createElefanSaPDFReport(reportFileName,elefan_sa, input)
+          if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
+            print("Creating folder")
+            createFolderWs(
+              sessionUsername(), sessionToken(),
+              paste0("/Home/",sessionUsername(),"/Workspace/"),
+              uploadFolderName, 
+              uploadFolderDescription)
+          }
+          uploadToVREFolder(
+            username = sessionUsername(), 
+            token = sessionToken(), 
+            relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
+            file = reportFileName,
+            overwrite = TRUE,
+            archive = FALSE
+          )
         }
-        uploadToVREFolder(
-          username = sessionUsername(), 
-          token = sessionToken(), 
-          relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
-          file = reportFileName,
-          overwrite = TRUE,
-          archive = FALSE
-        )
       }
-    }
+     } , error = function(err) {
+        print(paste0("Error in Elefan GA",err))
+        showModal(modalDialog(
+          title = "Error",
+          "General error, please check your input file",
+          easyClose = TRUE,
+          footer = NULL
+        ))
+        return(NULL)
+    },
+      finally = {
+        js$hideComputing()
+        js$enableAllButtons()
+    })
   })
   output$tbl1_sa <- renderTable({
     if ('results' %in% names(elefan_sa)) {
@@ -1706,7 +1754,7 @@ server <- function(input, output, session) {
   output$createElefanSAReport <- downloadHandler(
     filename = paste("ElefanSA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
     content = function(file) {
-      createElefanSaPDFReport(file, elefan_ga)
+      createElefanSaPDFReport(file, elefan_sa, input)
     }
   )
   ####### END ELEFAN SA METHOD #######
@@ -1729,65 +1777,80 @@ server <- function(input, output, session) {
     inputCsvFile <- infile$datapath
     js$removeBox("box_elefan_results")
     js$disableAllButtons()
-    dataset <- read_elefan_csv(inputCsvFile)
-    #ds <- lfqModify(lfqRestructure(dataset), bin_size = 4)
-    
-    #ds <- lfqModify(get('synLFQ7', asNamespace('TropFishR')), bin_size = 4)
-    
-    elefan_linf_range <- NA
-    if (!is.na(input$ELEFAN_Linf_range_from) && !is.na(input$ELEFAN_Linf_range_to)) {
-      elefan_linf_range <- seq(from = input$ELEFAN_Linf_range_from, to = input$ELEFAN_Linf_range_to, by = input$ELEFAN_Linf_range_by)
-    }
-    
-    elefan_k_range <- exp(seq(log(0.1), log(10), length.out=100))
-    if (!is.na(input$ELEFAN_K_Range_from) && !is.na(input$ELEFAN_K_range_to)) {
-      elefan_linf_range <- seq(from = input$ELEFAN_K_Range_from, to = input$ELEFAN_K_range_to, by = input$ELEFAN_K_range_by)
-    }
-    
-    
-    elefan_agemax <- input$ELEFAN_agemax 
-    if (is.na(input$ELEFAN_agemax)) {
-      elefan_agemax <- NULL
-    }
-    res <- run_elefan(dataset, binSize = 4, Linf_fix = input$ELEFAN_Linf_fix, Linf_range = elefan_linf_range, K_range = elefan_k_range,
-                      C = input$ELEFAN_C, ts = input$ELEFAN_ts, MA = input$ELEFAN_MA, addl.sqrt = input$ELEFAN_addl.sqrt,
-                      agemax = elefan_agemax, contour = input$ELEFAN_contour, plus_group = input$ELEFAN_PLUS_GROUP)
-    js$hideComputing()
-    js$enableAllButtons()
-    if ('error' %in% names(res)) {
-      showModal(modalDialog(
-        title = "Error",
-        res$error,
-        easyClose = TRUE,
-        footer = NULL
-      ))
-    } else {
-      js$showBox("box_elefan_results")
-      elefan$results <- res
-      fishingMortality$Fcurr <- round(elefan$results$plot3$currents[4]$curr.F, 2)
+    result = tryCatch({
+      dataset <- read_elefan_csv(inputCsvFile)
+      #ds <- lfqModify(lfqRestructure(dataset), bin_size = 4)
       
-      if (!is.null(sessionMode()) && sessionMode()=="GCUBE") {
-        print("uploading to VRE")
-        reportFileName <- paste("/tmp/","Elefan_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
-        createElefanPDFReport(reportFileName,elefan)
-        if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
-          print("Creating folder")
-          createFolderWs(
-            sessionUsername(), sessionToken(),
-            paste0("/Home/",sessionUsername(),"/Workspace/"),
-            uploadFolderName, 
-            uploadFolderDescription)
-        }
-        uploadToVREFolder(
-          username = sessionUsername(), 
-          token = sessionToken(), 
-          relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
-          file = reportFileName,
-          overwrite = TRUE,
-          archive = FALSE
-        )
+      #ds <- lfqModify(get('synLFQ7', asNamespace('TropFishR')), bin_size = 4)
+      
+      elefan_linf_range <- NA
+      if (!is.na(input$ELEFAN_Linf_range_from) && !is.na(input$ELEFAN_Linf_range_to)) {
+        elefan_linf_range <- seq(from = input$ELEFAN_Linf_range_from, to = input$ELEFAN_Linf_range_to, by = input$ELEFAN_Linf_range_by)
       }
-    }
+      
+      elefan_k_range <- exp(seq(log(0.1), log(10), length.out=100))
+      if (!is.na(input$ELEFAN_K_Range_from) && !is.na(input$ELEFAN_K_range_to)) {
+        elefan_linf_range <- seq(from = input$ELEFAN_K_Range_from, to = input$ELEFAN_K_range_to, by = input$ELEFAN_K_range_by)
+      }
+      
+      
+      elefan_agemax <- input$ELEFAN_agemax 
+      if (is.na(input$ELEFAN_agemax)) {
+        elefan_agemax <- NULL
+      }
+      res <- run_elefan(dataset, binSize = 4, Linf_fix = input$ELEFAN_Linf_fix, Linf_range = elefan_linf_range, K_range = elefan_k_range,
+                        C = input$ELEFAN_C, ts = input$ELEFAN_ts, MA = input$ELEFAN_MA, addl.sqrt = input$ELEFAN_addl.sqrt,
+                        agemax = elefan_agemax, contour = input$ELEFAN_contour, plus_group = input$ELEFAN_PLUS_GROUP)
+      js$hideComputing()
+      js$enableAllButtons()
+      if ('error' %in% names(res)) {
+        showModal(modalDialog(
+          title = "Error",
+          res$error,
+          easyClose = TRUE,
+          footer = NULL
+        ))
+      } else {
+        js$showBox("box_elefan_results")
+        elefan$results <- res
+        fishingMortality$Fcurr <- round(elefan$results$plot3$currents[4]$curr.F, 2)
+        
+        if (!is.null(sessionMode()) && sessionMode()=="GCUBE") {
+          print("uploading to VRE")
+          reportFileName <- paste("/tmp/","Elefan_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+          createElefanPDFReport(reportFileName,elefan,input)
+          if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
+            print("Creating folder")
+            createFolderWs(
+              sessionUsername(), sessionToken(),
+              paste0("/Home/",sessionUsername(),"/Workspace/"),
+              uploadFolderName, 
+              uploadFolderDescription)
+          }
+          uploadToVREFolder(
+            username = sessionUsername(), 
+            token = sessionToken(), 
+            relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
+            file = reportFileName,
+            overwrite = TRUE,
+            archive = FALSE
+          )
+        }
+      }
+     } , error = function(err) {
+        print(paste0("Error in Elefan GA",err))
+        showModal(modalDialog(
+          title = "Error",
+          "General error, please check your input file",
+          easyClose = TRUE,
+          footer = NULL
+        ))
+        return(NULL)
+    },
+      finally = {
+        js$hideComputing()
+        js$enableAllButtons()
+    })
   })
   output$plot_1 <- renderPlot({
     if ('results' %in% names(elefan)) {
@@ -1850,7 +1913,7 @@ server <- function(input, output, session) {
   output$createElefanReport <- downloadHandler(
     filename = paste("Elefan_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
     content = function(file) {
-      createElefanPDFReport(file,elefan)
+      createElefanPDFReport(file,elefan, input)
     }
   )
   
@@ -1916,7 +1979,7 @@ server <- function(input, output, session) {
       if (!is.null(sessionMode()) && sessionMode()=="GCUBE") {
         print("uploading to VRE")
         reportFileName <- paste("/tmp/","Sbpr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
-        createSbprPDFReport(reportFileName, sbprExec, input$SBPR_MSP)
+        createSbprPDFReport(reportFileName, sbprExec, input)
         if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
           print("Creating folder")
           createFolderWs(
@@ -1998,11 +2061,24 @@ server <- function(input, output, session) {
   output$createSbprReport <- downloadHandler(
     filename = paste("Sbpr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
     content = function(file) {
-      createSbprPDFReport(file, sbprExec, input$SBPR_MSP)
+      createSbprPDFReport(file, sbprExec, input)
     }
   )
   output$SBPRDataConsiderationsText <- renderText({
-    text <- "<h5><b>Ensure that spawning stock weight-at-age data is representative of the full population, i.e., are all age groups sampled?</b></h5>"
+    text <- "<b>Mandatory fields to run YPR/SBPR are</b>"
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>age (the age of the fish)</li>")
+    text <- paste0(text, "<li>ssbwgt (the spawning stock weights for each age)</li>")
+    text <- paste0(text, "<li>partial (the recruitment at each age that is used to determine how much fishing mortality (F) each age group receives)</li>")
+    text <- paste0(text, "<li>pmat (the proportion of mature fish at each age (used only for SBPR)</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<b>If you are creating your own dataset</b>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>Ensure that the column names are identical to the sample dataset.</li>")
+    text <- paste0(text, "<li>Ensure your data are in .csv format.</li>")
+    text <- paste0(text, "<li>Use a “.” to separate decimals in the data.</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<h5><b>Ensure that spawning stock weight-at-age data is representative of the full population, i.e., are all age groups sampled?</b></h5>")
     text <- paste0(text, "<h5>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.", "</h5>")
     text
   })
@@ -2043,7 +2119,7 @@ server <- function(input, output, session) {
       if (!is.null(sessionMode()) && sessionMode()=="GCUBE") {
         print("uploading to VRE")
         reportFileName <- paste("/tmp/","Ypr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
-        createYprPDFReport(reportFileName, yprExec)
+        createYprPDFReport(reportFileName, yprExec, input)
         if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
           print("Creating folder")
           createFolderWs(
@@ -2137,7 +2213,7 @@ server <- function(input, output, session) {
   output$createYprReport <- downloadHandler(
     filename = paste("Ypr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
     content = function(file) {
-      createYprPDFReport(file, yprExec)
+      createYprPDFReport(file, yprExec, input)
     }
   )
   
@@ -2484,11 +2560,24 @@ server <- function(input, output, session) {
     text <- paste0(text, "<br/>")
     text <- paste0(text, "The CMSY algorythm can be found <a href='https://github.com/SISTA16/cmsy' target='_blank'>here on Github</a>")
     text <- paste0(text, "<br/>")
-    text <- paste0(text, "<a href='http://onlinelibrary.wiley.com/doi/10.1111/faf.12190/full' target='_blank'>Click here to read the paper.</a>")
+    text <- paste0(text, "<a href='https://www.researchgate.net/publication/309283306_Estimating_fisheries_reference_points_from_catch_and_resilience' target='_blank'>Click here to read the paper.</a>")
     text <- paste0(text, "</p>")
-    text <- paste0(text, "The Schaefer production model parameters are r and k. Different combinations of these parameters will produce different time series of biomass. In CMSY, the Schaefer model is run many times to calculate annual biomasses for r-k pairs randomly drawn from the prior distributions. The model determines which r-k pairs are valid: e.g., those pairs that result in a biomass time series that does not (1) result in a stock collapse or (2) allow the stock to exceeded carrying capacity. Also, those r-k pairs that result in a final relative biomass estimate between the values specified in the inputs (the final depletion range), are accepted and used to calculate MSY (rk/4) and biomass over time.")
+    text <- paste0(text, "The Schaefer production model parameters are r and k. Different combinations of these parameters will produce different time series of biomass. In CMSY, the Schaefer model is run many times to calculate annual biomasses for r-k pairs randomly drawn from the prior distributions. The model determines which r-k pairs are valid: e.g., those pairs that result in a biomass time series that do not (1) result in a stock collapse or (2) allow the stock to exceeded carrying capacity. Also, those r-k pairs that result in a final relative biomass estimate between the values specified in the inputs (the final depletion range), are accepted and used to calculate MSY (rk/4) and biomass over time.")
     text <- paste0(text, "<p>")
     text <- paste0(text, "The geometric means of the resulting density distributions of r, k and MSY are taken as the most probable values.")
+    text <- paste0(text, "<hr />")
+    text <- paste0(text, "<strong>Mandatory fields to run CMSY are</strong>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>Stock (fish stock name)</li>")
+    text <- paste0(text, "<li>Yr (year of the catch)</li>")
+    text <- paste0(text, "<li>Ct (catch)</li>")
+    text <- paste0(text, "<li>bt (biomass estimates, if available; otherwise input “NA”)</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br/>")
+    text <- paste0(text,"<span>Other columns are identifiers that may be included, but are not necessary to run the model.</span>")
+    text <- paste0(text, "<br/>")
+    text <- paste0(text, "<br/>")
+    text <- paste0(text,"<p>Froese, Rainer & Demirel, Nazli & Coro, Gianpaolo & Kleisner, Kristin & Winker, Henning. (2017). Estimating fisheries reference points from catch and resilience. Fish and Fisheries. 18. 506-526. 10.1111/faf.12190. </p>")
     text
   })
   output$elefanIntroOut <- renderText({
@@ -2512,11 +2601,11 @@ server <- function(input, output, session) {
     text <- paste0(text, "<b>E</b>lectronic <b>LE</b>ngth <b>F</b>requency <b>AN</b>alysis for estimating growth parameters.<br/>This function performs the K-Scan and Response surface analyses to estimate growth parameters. It combines the step of restructuring length-frequency data (lfqRestructure) followed by the fitting of seasonal von Bertalanffy Growth Function (VBGF) curves (see Supporting tools: Seasonal VBGF) through the restructured data (lfqFitCurves). K-Scan is a method used to search for the K parameter with the best fit while keeping ", withMathJax("\\(L_\\infty\\)"), "fixed. In contrast, with response surface analysis both parameters are estimated and the fits are displayed in a heatmap. Both methods use an optimisation to find the best time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month (t_anchor) value for each combination of K and ", withMathJax("\\(L_\\infty\\)"),". To find out more about t_anchor, please refer to the Details description of lfqFitCurves. The score value Rn_max is not comparable with the score values of the other ELEFAN functions (ELEFAN_SA or ELEFAN_GA).")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<h4>ELEFAN GA (genetic algorithm)</h4>")
-    text <- paste0(text, "<b>E</b>lectronic <b>LE</b>ngth <b>F</b>requency <b>AN</b>alysis with simulated annealing for estimating growth parameters.<br/>A more detailed description of the generic algorithm (GA) can be found in Scrucca (2013). The score value fitnessValue is not comparable with the score value of the other ELEFAN functions (ELEFAN or ELEFAN_SA).")
+    text <- paste0(text, "<b>E</b>lectronic <b>LE</b>ngth <b>F</b>requency <b>AN</b>alysis with simulated annealing for estimating growth parameters.<br/>A more detailed description of the genetic algorithm (GA) can be found in <a href='https://pdfs.semanticscholar.org/8b54/b4c7f3c63efcfadac455a32f2c6d775c7184.pdf?_ga=2.102660097.1034706415.1573191124-1938330296.1570694384' target='_blank'>Scrucca (2013)</a>. The score value fitnessValue is not comparable with the score value of the other ELEFAN functions (ELEFAN or ELEFAN_SA).")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<p>")
     text <- paste0(text, "<h4>ELEFAN SA (simulated annealing)</h4>")
-    text <- paste0(text, "<b>E</b>lectronic <b>LE</b>ngth <b>F</b>requency <b>AN</b>alysis with simulated annealing for estimating growth parameters.<br/>A more detailed description of the simulated annealing (SA) can be found in Xiang et al. (2013). The score value cost_value is not comparable with the score value of the other ELEFAN functions (ELEFAN or ELEFAN_GA).")
+    text <- paste0(text, "<b>E</b>lectronic <b>LE</b>ngth <b>F</b>requency <b>AN</b>alysis with simulated annealing for estimating growth parameters.<br/>A more detailed description of the simulated annealing (SA) can be found in <a href='https://journal.r-project.org/archive/2013/RJ-2013-002/RJ-2013-002.pdf' target='_blank'>Xiang et al. (2013)</a>. The score value cost_value is not comparable with the score value of the other ELEFAN functions (ELEFAN or ELEFAN_GA).")
     text <- paste0(text, "</p>")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<h4>Method of operation:</h4>")
@@ -2531,7 +2620,7 @@ server <- function(input, output, session) {
     text <- paste0(text, "<h4>Information on the dataset used</h4>")
     text <- paste0(text, "<p><h5>", link,"&nbsp; to download a sample dataset that can be used with <b>Elefan</b> methods", "</h5></p>")
     text <- paste0(text, "<span class=\"elefan_info\">The dataset used by this example is the <b>synLFQ7</b></span><br><br>")
-    text <- paste0(text, "<span class=\"elefan_info\">Synthetic length-frequency data as generated by the function lfqGen from the fishdynr package (Taylor 2016). Can be used by <b>ELEFAN</b>, <b>ELEFAN_SA</b>, or <b>ELEFAN_GA</b>. <br>The data are generated with the following VBGF parameters:</span>")
+    text <- paste0(text, "<span class=\"elefan_info\">Synthetic length-frequency data as generated by the function lfqGen from the fishdynr package (<a href='https://figshare.com/articles/fishdynr/4212726/2' target='_blank'>Taylor 2016</a>). Can be used by <b>ELEFAN</b>, <b>ELEFAN_SA</b>, or <b>ELEFAN_GA</b>. <br>The data are generated with the following VBGF parameters:</span>")
     text <- paste0(text, "<ul style=\"margin-top: 10px;\">")
     text <- paste0(text, "<li>Curving coefficient: K = 0.2 +/- 0.1 (CV)</li>")
     text <- paste0(text, "<li>Length infinity: ", withMathJax("\\(L_\\infty\\)")," = 123 +/- 0.05 (CV)</li>")
@@ -2557,7 +2646,7 @@ server <- function(input, output, session) {
     text <- paste0(text, "</p>")
     text <- paste0(text, "<br/>")
     text <- paste0(text, "<p>")
-    text <- paste0(text, "In data-limited situations where long-term, comprehensive catch data does not exist, per-recruit models can be used to determine estimates of optimal fishing mortality. Yield-per-recruit (YPR) and spawning biomass-per-recruit (SBPR) models calculate the equilibrium yield per recruit and spawning stock biomass per recruit, respectively, for a given value of fishing mortality (F) and a given length or age at first capture. Since F and Tc or Lc are values that a fishery manager can control (in theory), the idea is that by focusing on YPR or SBPR, managers can maintain a stock's population by preserving its reproductive capability. These models help to determine the optimum yield to prevent overfishing by instituting management controls on effort and length or age at first capture.")
+    text <- paste0(text, "In data-limited situations where long-term, comprehensive catch data do not exist, per-recruit models can be used to determine estimates of optimal fishing mortality. Yield-per-recruit (YPR) and spawning biomass-per-recruit (SBPR) models calculate the equilibrium yield per recruit and spawning stock biomass per recruit, respectively, for a given value of fishing mortality (F) and a given length or age at first capture. Since F and Tc or Lc are values that a fishery manager can control (in theory), the idea is that by focusing on YPR or SBPR, managers can maintain a stock's population by preserving its reproductive capability. These models help to determine the optimum yield to prevent overfishing by instituting management controls on effort and length or age at first capture.")
     text <- paste0(text, "<br/>")
     text <- paste0(text, "<h4>Methods used</h4>")
     text <- paste0(text, "</p>")
@@ -2594,22 +2683,49 @@ server <- function(input, output, session) {
     text <- paste0(text, "<li><b>incrF: </b> Fishing mortality (F) increment for YPR calculation</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "</p>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "W. L. Gabriel, M. P. Sissenwine & W. J. Overholtz (1989) Analysis of Spawning Stock Biomass per Recruit: An Example for Georges Bank Haddock, North American Journal of Fisheries Management, 9:4, 383-391, DOI: <a href='https://doi.org/10.1577/1548-8675(1989)009%3C0383:AOSSBP%3E2.3.CO;2' target='_blank'>10.1577/1548-8675(1989)009<0383:AOSSBP>2.3.CO;2</a>")
+    text <- paste0(text, "</p>")
     text
   })
   
   output$cmsySampleDataset <- renderText({
-    link <- "<a href='https://goo.gl/GPrVRD' target='_blank'>Click Here</a>"
+    link <- "<a href='https://data.d4science.net/qhX2' target='_blank'>Click Here</a>"
     text <- paste0("<p><h4>", link,"&nbsp; to download a sample dataset that can be used with <b>CMSY</b> methods", "</h4></p>")
+    text <- paste0(text, "<hr />")
+    text <- paste0(text, "<strong>If you are creating your own dataset</strong>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>Ensure your time-series at least 15 years in length from the start year to end year.</li>")
+    text <- paste0(text, "<li>Ensure that the column names are identical to the sample dataset.</li>")
+    text <- paste0(text, "<li>Ensure your data are in .csv format.</li>")
+    text <- paste0(text, "<li>Use a “.” to separate decimals in the data.</li>")
+    text <- paste0(text, "<li>Years with missing data should be filled with an 'NA' value.</li>")
+    text <- paste0(text, "</ul>")
     text
   })
   output$elefanSampleDataset <- renderText({
     link <- "<a href='https://goo.gl/tsqt64' target='_blank'>Click Here</a>"
     text <- paste0("<p><h4>", link,"&nbsp; to download a sample dataset that can be used with <b>Elefan</b> methods", "</h4></p>")
+    text <- paste0(text, "<hr>")
+    text <- paste0(text, "<b>If you are creating your own dataset:</b>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>", "Ensure that your input file has dates in one of the formats:<br/><ul><li>YYYY-MM-DD</li><li>YYYY/MM/DD</li></ul>", "</li>")
+    text <- paste0(text, "<li>", "Ensure that your length-frequency data is representative of the full population. (If this is not so, then estimates of fishing mortality will be biased.)", "</li>")
+    text <- paste0(text, "<li>", "Ensure that all age groups were sampled.", "</li>")
+    text <- paste0(text, "<li>", "Ensure that the sample was from a range of areas where different life histories might live. (e.g., if juveniles occupy nearshore habitat and adults are offshore)", "</li>")
+    text <- paste0(text, "<li>", "Ensure that a variety of gears with different selectivities used to collect the samples so that the samples contain multiple age groups.", "</li>")
+    text <- paste0(text, "</ul>")
     text
   })
   output$fishMethodsSampleDataset <- renderText({
     link <- "<a href='https://data.d4science.org/shub/E_NnMvMjhHUjB4Q3k4SE1oWjFCamxxMm5zdUxMSEpKbFdlcjVWaHQ1U1ZoTXJJY0dqaWJzRmxHWDVFemFjYVhwcQ==' target='_blank'>Click Here</a>"
     text <- paste0("<p><h4>", link,"&nbsp; to download a sample dataset that can be used with <b>FishMethods</b>", "</h4></p>")
+    text <- paste0(text, "<b>If you are creating your own dataset</b>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>Ensure that the column names are identical to the sample dataset.</li>")
+    text <- paste0(text, "<li>Ensure your data are in .csv format.</li>")
+    text <- paste0(text, "<li>Use a “.” to separate decimals in the data.</li>")
+    text <- paste0(text, "</ul>")
     text
   })
   

@@ -17,3 +17,39 @@ knitr::include_graphics(c(params$cmsy$method$analisysChart))
 ```{r echo=FALSE, out.width='100%'}
 knitr::include_graphics(c(params$cmsy$method$managementChart))
 ```
+
+******
+## Input parameters  
+Input File: `r input$file1$name`  
+  
+Stock: `r input$stock`  
+Min of year: `r input$minOfYear`  
+Max of year: `r input$maxOfYear`  
+Start year: `r input$startYear`  
+End year: `r input$endYear`  
+FLim: `r input$flim`  
+FPA: `r input$fpa`  
+BLIM: `r input$blim`  
+BPA: `r input$bpa`  
+BMSY: `r input$bmsy`  
+FMSY: `r input$fmsy`  
+MSY: `r input$msy`  
+MSY B trigger: `r input$msyBTrigger`  
+B40: `r input$b40`  
+M: `r input$m`  
+FOFL: `r input$fofl`  
+Last F: `r input$last_f`  
+Resiliance: `r input$resiliance`  
+r low: `r input$r.low`  
+r hi: `r input$r.hi`  
+stb low: `r input$stb.low`  
+stb hi: `r input$stb.hi`  
+int year: `r input$int.yr`  
+intb low: `r input$intb.low`  
+intb hi: `r input$intb.hi`  
+endb low: `r input$endb.low`  
+endb hi: `r input$endb.hi`  
+q start: `r input$q.start`  
+q end:: `r input$q.end`  
+btype: `r input$btype`  
+

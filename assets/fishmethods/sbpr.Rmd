@@ -25,3 +25,14 @@ df <- data.frame(F=sbprExec$results$Reference_Point[1], SSB_Per_Recruit=sbprExec
 colnames(df) <- c("F", "SSB_Per_Recruit")
 knitr::kable(df, digits = 2, align=rep('c', 5))
 ```
+  
+******
+## Input parameters  
+Input File: `r input$fileSbpr$name`  
+
+M: `r input$SBPR_M`  
+pF: `r input$SBPR_pF`  
+pM: `r input$SBPR_pM`  
+MSP: `r input$SBPR_MSP`  
+maxF: `r input$SBPR_maxF`  
+incrF: `r input$SBPR_incrF`  

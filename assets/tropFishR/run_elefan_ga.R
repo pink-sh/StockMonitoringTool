@@ -256,6 +256,7 @@ run_elefan_ga <- function(
     TB1$currents
   },
   error=function(cond) {
+    print("There was an error here")
     message(paste0("Error!!", cond))
     errorResult = list()
     errorResult[['error']] <- gettext(cond)
