@@ -1376,7 +1376,7 @@ server <- function(input, output, session) {
         if (!is.null(sessionMode()) && sessionMode()=="GCUBE") {
           print("uploading to VRE")
           reportFileName <- paste("/tmp/","ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
-          createElefanGaPDFReport(reportFileName,elefan_ga,input,infile$datapath)
+          createElefanGaPDFReport(reportFileName,elefan_ga,input)
           if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
             print("Creating folder")
             createFolderWs(
@@ -1396,7 +1396,7 @@ server <- function(input, output, session) {
         }
       }
     }, error = function(err) {
-      print(paste0("Error in Elefan GA",err))
+      print(paste0("Error in Elefan GA ",err))
       showModal(modalDialog(
         title = "Error",
         "General error, please check your input file",
@@ -1612,7 +1612,7 @@ server <- function(input, output, session) {
         }
       }
      } , error = function(err) {
-        print(paste0("Error in Elefan GA",err))
+        print(paste0("Error in Elefan SA ",err))
         showModal(modalDialog(
           title = "Error",
           "General error, please check your input file",
@@ -1838,7 +1838,7 @@ server <- function(input, output, session) {
         }
       }
      } , error = function(err) {
-        print(paste0("Error in Elefan GA",err))
+        print(paste0("Error in Elefan ",err))
         showModal(modalDialog(
           title = "Error",
           "General error, please check your input file",
@@ -2517,14 +2517,11 @@ server <- function(input, output, session) {
   output$homeInfo <- renderText({
     text <- "<h3>Stock Monitoring Tools for limited data</h3>"
     text <- paste0(text, "<p>")
-    text <- paste0(text, "This is a development version")
-    text <- paste0(text, "</p>")
-    text <- paste0(text, "<p>")
     text <- paste0(text, "On the left hand side you can choose between <b>CMSY</b>, <b>ELEFAN</b> and <b>YPR</b>/<b>SBPR</b> methods.")
     text <- paste0(text, "</p>")
     
     text <- paste0(text, "<p>")
-    text <- paste0(text, "The <b>CMSY</b> method is provided by the <a href='http://www.bluebridge-vres.eu/' target='blank_'>BlueBridge Infrastructure</a>")
+    text <- paste0(text, "The <b>CMSY</b> method is provided by the <a href='http://www.bluebridge-vres.eu/' target='blank_'>iMarine Infrastructure</a>")
     text <- paste0(text, "</p>")
     
     text <- paste0(text, "<p>")

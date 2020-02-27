@@ -39,7 +39,7 @@ RUN R -e "install.packages(c('XML'), repos='https://cloud.r-project.org/')"
 RUN R -e "install.packages(c('DT'), repos='https://cloud.r-project.org/')"
 RUN R -e "devtools::install_version('TropFishR', version='1.6.1', repos = 'http://cran.us.r-project.org')"
 
-RUN git -C /root/ clone https://github.com/pink-sh/StockMonitoringTool.git && echo "OK"
+RUN git -C /root/ clone https://github.com/pink-sh/StockMonitoringTool.git && echo "OK!"
 RUN mkdir -p /srv/shiny/
 RUN ln -s /root/StockMonitoringTool /srv/shiny/stockMonitoringTools
  
