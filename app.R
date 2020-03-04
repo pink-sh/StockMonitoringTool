@@ -1003,6 +1003,13 @@ server <- function(input, output, session) {
   fishingMortality$FcurrSA <- NA
   fishingMortality$Fcurr <- NA
   
+  cmsyUploadVreResult <- reactiveValues()
+  elefanGaUploadVreResult <- reactiveValues()
+  elefanSaUploadVreResult <- reactiveValues()
+  elefanUploadVreResult <- reactiveValues()
+  sbprUploadVreResult <- reactiveValues()
+  yprUploadVreResult <- reactiveValues()
+  
   ####### OBSERVERS #######
   observeEvent(input$stock, {
     inFile1 <- input$file1
@@ -1149,22 +1156,29 @@ server <- function(input, output, session) {
         print("uploading to VRE")
         reportFileName <- paste("/tmp/","CMSY_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
         createCmsyPDFReport(reportFileName, cmsy, input)
-        if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
-          print("Creating folder")
-          createFolderWs(
-            sessionUsername(), sessionToken(),
-            paste0("/Home/",sessionUsername(),"/Workspace/"),
-            uploadFolderName, 
-            uploadFolderDescription)
-        }
-        uploadToVREFolder(
-          username = sessionUsername(), 
-          token = sessionToken(), 
-          relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
-          file = reportFileName,
-          overwrite = TRUE,
-          archive = FALSE
-        )
+        cmsyUploadVreResult$res <- FALSE
+        tryCatch({
+          if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
+            print("Creating folder")
+            createFolderWs(
+              sessionUsername(), sessionToken(),
+              paste0("/Home/",sessionUsername(),"/Workspace/"),
+              uploadFolderName, 
+              uploadFolderDescription)
+          }
+          uploadToVREFolder(
+            username = sessionUsername(), 
+            token = sessionToken(), 
+            relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
+            file = reportFileName,
+            overwrite = TRUE,
+            archive = FALSE
+          )
+          cmsyUploadVreResult$res <- TRUE
+        }, error = function(err) {
+          print(paste0("Error uploading CMSY report to the Workspace: ", err))
+          cmsyUploadVreResult$res <- FALSE
+        }, finally = {})
       }
     }
   })
@@ -1261,7 +1275,9 @@ server <- function(input, output, session) {
       text <- ""
       if (!is.null(cmsy$dlmTools) || !is.null(cmsy$legacy) || !is.null(cmsy$fast)) {
         if (!is.null(sessionMode()) && sessionMode() == "GCUBE") {
-          text <- paste0(text, VREUploadText)
+          if (isTRUE(cmsyUploadVreResult$res)) {
+            text <- paste0(text, VREUploadText)
+          }
         }
       }
       text
@@ -1377,22 +1393,29 @@ server <- function(input, output, session) {
           print("uploading to VRE")
           reportFileName <- paste("/tmp/","ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createElefanGaPDFReport(reportFileName,elefan_ga,input)
-          if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
-            print("Creating folder")
-            createFolderWs(
-              sessionUsername(), sessionToken(),
-              paste0("/Home/",sessionUsername(),"/Workspace/"),
-              uploadFolderName, 
-              uploadFolderDescription)
-          }
-          uploadToVREFolder(
-            username = sessionUsername(), 
-            token = sessionToken(), 
-            relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
-            file = reportFileName,
-            overwrite = TRUE,
-            archive = FALSE
-          )
+          elefanGaUploadVreResult$res <- FALSE
+          tryCatch({
+            if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
+              print("Creating folder")
+              createFolderWs(
+                sessionUsername(), sessionToken(),
+                paste0("/Home/",sessionUsername(),"/Workspace/"),
+                uploadFolderName, 
+                uploadFolderDescription)
+            }
+            uploadToVREFolder(
+              username = sessionUsername(), 
+              token = sessionToken(), 
+              relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
+              file = reportFileName,
+              overwrite = TRUE,
+              archive = FALSE
+            )
+            elefanGaUploadVreResult$res <- TRUE
+          }, error = function(err) {
+            print(paste0("Error uploading Elefan GA report to the Workspace: ", err))
+            elefanGaUploadVreResult$res <- FALSE
+          }, finally = {})
         }
       }
     }, error = function(err) {
@@ -1469,7 +1492,9 @@ server <- function(input, output, session) {
       text <- ""
       if ("results" %in% names(elefan_ga)) {
         if (!is.null(sessionMode()) && sessionMode() == "GCUBE") {
-          text <- paste0(text, VREUploadText)
+          if (isTRUE(elefanGaUploadVreResult$res)) {
+            text <- paste0(text, VREUploadText)
+          }
         }
       }
       text
@@ -1593,22 +1618,29 @@ server <- function(input, output, session) {
           print("uploading to VRE")
           reportFileName <- paste("/tmp/","ElefanSA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createElefanSaPDFReport(reportFileName,elefan_sa, input)
-          if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
-            print("Creating folder")
-            createFolderWs(
-              sessionUsername(), sessionToken(),
-              paste0("/Home/",sessionUsername(),"/Workspace/"),
-              uploadFolderName, 
-              uploadFolderDescription)
-          }
-          uploadToVREFolder(
-            username = sessionUsername(), 
-            token = sessionToken(), 
-            relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
-            file = reportFileName,
-            overwrite = TRUE,
-            archive = FALSE
-          )
+          elefanSaUploadVreResult$res <- FALSE
+          tryCatch({
+            if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
+              print("Creating folder")
+              createFolderWs(
+                sessionUsername(), sessionToken(),
+                paste0("/Home/",sessionUsername(),"/Workspace/"),
+                uploadFolderName, 
+                uploadFolderDescription)
+            }
+            uploadToVREFolder(
+              username = sessionUsername(), 
+              token = sessionToken(), 
+              relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
+              file = reportFileName,
+              overwrite = TRUE,
+              archive = FALSE
+            )
+            elefanSaUploadVreResult$res <- TRUE
+          }, error = function(err) {
+            print(paste0("Error uploading Elefan SA report to the Workspace: ", err))
+            elefanSaUploadVreResult$res <- FALSE
+          }, finally = {})
         }
       }
      } , error = function(err) {
@@ -1699,7 +1731,9 @@ server <- function(input, output, session) {
       text <- ""
       if ("results" %in% names(elefan_sa)) {
         if (!is.null(sessionMode()) && sessionMode() == "GCUBE") {
-          text <- paste0(text, VREUploadText)
+          if (isTRUE(elefanSaUploadVreResult$res)) {
+            text <- paste0(text, VREUploadText)
+          }
         }
       }
       text
@@ -1819,22 +1853,29 @@ server <- function(input, output, session) {
           print("uploading to VRE")
           reportFileName <- paste("/tmp/","Elefan_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createElefanPDFReport(reportFileName,elefan,input)
-          if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
-            print("Creating folder")
-            createFolderWs(
-              sessionUsername(), sessionToken(),
-              paste0("/Home/",sessionUsername(),"/Workspace/"),
-              uploadFolderName, 
-              uploadFolderDescription)
-          }
-          uploadToVREFolder(
-            username = sessionUsername(), 
-            token = sessionToken(), 
-            relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
-            file = reportFileName,
-            overwrite = TRUE,
-            archive = FALSE
-          )
+          elefanUploadVreResult$res <- FALSE
+          tryCatch({
+            if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
+              print("Creating folder")
+              createFolderWs(
+                sessionUsername(), sessionToken(),
+                paste0("/Home/",sessionUsername(),"/Workspace/"),
+                uploadFolderName, 
+                uploadFolderDescription)
+            }
+            uploadToVREFolder(
+              username = sessionUsername(), 
+              token = sessionToken(), 
+              relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
+              file = reportFileName,
+              overwrite = TRUE,
+              archive = FALSE
+            )
+            elefanUploadVreResult$res <- TRUE
+          }, error = function(err) {
+            print(paste0("Error uploading SBPR report to the Workspace: ", err))
+            elefanUploadVreResult$res <- FALSE
+          }, finally = {})
         }
       }
      } , error = function(err) {
@@ -1904,7 +1945,9 @@ server <- function(input, output, session) {
       text <- ""
       if ("results" %in% names(elefan)) {
         if (!is.null(sessionMode()) && sessionMode() == "GCUBE") {
-          text <- paste0(text, VREUploadText)
+          if (isTRUE(elefanUploadVreResult$res)) {
+            text <- paste0(text, VREUploadText)
+          }
         }
       }
       text
@@ -1958,6 +2001,7 @@ server <- function(input, output, session) {
       ))
       return(NULL)
     }
+    result = tryCatch({
     js$showComputing()
     js$removeBox("box_sbpr_results")
     inputCsvFile <- infile$datapath
@@ -1975,30 +2019,51 @@ server <- function(input, output, session) {
     } else {
       sbprExec$results <- res
       js$showBox("box_sbpr_results")
-      
+      sbprUploadVreResult$res <- FALSE
       if (!is.null(sessionMode()) && sessionMode()=="GCUBE") {
-        print("uploading to VRE")
-        reportFileName <- paste("/tmp/","Sbpr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
-        createSbprPDFReport(reportFileName, sbprExec, input)
-        if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
-          print("Creating folder")
-          createFolderWs(
-            sessionUsername(), sessionToken(),
-            paste0("/Home/",sessionUsername(),"/Workspace/"),
-            uploadFolderName, 
-            uploadFolderDescription)
-        }
-        uploadToVREFolder(
-          username = sessionUsername(), 
-          token = sessionToken(), 
-          relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
-          file = reportFileName,
-          overwrite = TRUE,
-          archive = FALSE
-        )
-      }
+        tryCatch({
+          print("uploading to VRE")
+          reportFileName <- paste("/tmp/","Sbpr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+          createSbprPDFReport(reportFileName, sbprExec, input)
+          if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
+            print("Creating folder")
+            createFolderWs(
+              sessionUsername(), sessionToken(),
+              paste0("/Home/",sessionUsername(),"/Workspace/"),
+              uploadFolderName, 
+              uploadFolderDescription)
+          }
+          resUploadSbpr = uploadToVREFolder(
+            username = sessionUsername(), 
+            token = sessionToken(), 
+            relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
+            file = reportFileName,
+            overwrite = TRUE,
+            archive = FALSE
+          )
+          sbprUploadVreResult$res <- TRUE
+        }, error = function(err) {
+          print(paste0("Error uploading YPR report to the Workspace: ", err))
+          sbprUploadVreResult$res <- FALSE
+        }, finally = {})
+        
+        print(paste0("uploading result: ", sbprUploadVreResult))
     }
-  })
+    
+    }}, error = function(err) {
+      print(paste0("Error in Elefan ",err))
+      showModal(modalDialog(
+        title = "Error",
+        "General error, please check your input file",
+        easyClose = TRUE,
+        footer = NULL
+      ))
+      return(NULL)
+    },
+    finally = {
+      js$hideComputing()
+      js$enableAllButtons()
+    })})
   
   output$sbprOutPlot1 <- renderPlot({
     if ('results' %in% names(sbprExec)) {
@@ -2052,7 +2117,9 @@ server <- function(input, output, session) {
       text <- ""
       if ("results" %in% names(sbprExec)) {
         if (!is.null(sessionMode()) && sessionMode() == "GCUBE") {
-          text <- paste0(text, VREUploadText)
+          if (isTRUE(sbprUploadVreResult$res)) {
+            text <- paste0(text, VREUploadText)
+          }
         }
       }
       text
@@ -2120,22 +2187,29 @@ server <- function(input, output, session) {
         print("uploading to VRE")
         reportFileName <- paste("/tmp/","Ypr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
         createYprPDFReport(reportFileName, yprExec, input)
-        if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
-          print("Creating folder")
-          createFolderWs(
-            sessionUsername(), sessionToken(),
-            paste0("/Home/",sessionUsername(),"/Workspace/"),
-            uploadFolderName, 
-            uploadFolderDescription)
-        }
-        uploadToVREFolder(
-          username = sessionUsername(), 
-          token = sessionToken(), 
-          relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
-          file = reportFileName,
-          overwrite = TRUE,
-          archive = FALSE
-        )
+        yprUploadVreResult$res <- FALSE
+        tryCatch({
+          if (fileFolderExistsInPath(sessionUsername(),sessionToken(),paste0("/Home/",sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
+            print("Creating folder")
+            createFolderWs(
+              sessionUsername(), sessionToken(),
+              paste0("/Home/",sessionUsername(),"/Workspace/"),
+              uploadFolderName, 
+              uploadFolderDescription)
+          }
+          uploadToVREFolder(
+            username = sessionUsername(), 
+            token = sessionToken(), 
+            relativePath = paste0("/Home/",sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
+            file = reportFileName,
+            overwrite = TRUE,
+            archive = FALSE
+          )
+          yprUploadVreResult$res <- TRUE
+        }, error = function(err) {
+          print(paste0("Error uploading SBPR report to the Workspace: ", err))
+          yprUploadVreResult$res <- FALSE
+        }, finally = {})
       }
     }
   })
@@ -2204,7 +2278,9 @@ server <- function(input, output, session) {
       text <- ""
       if ("results" %in% names(yprExec)) {
         if (!is.null(sessionMode()) && sessionMode() == "GCUBE") {
-          text <- paste0(text, VREUploadText)
+          if (isTRUE(yprUploadVreResult$res)) {
+            text <- paste0(text, VREUploadText)
+          }
         }
       }
       text

@@ -17,6 +17,8 @@ library(pracma)
 getStoragehubEP <- function (username, token) {
   print(paste(sep=" ", "Username:",username,"Token:",token))
   urlString = paste("http://registry.d4science.org/icproxy/gcube/service/GCoreEndpoint/DataAccess/StorageHub?gcube-token=",token,sep="")
+  #urlString = paste("http://registry.d5science.org/icproxy/gcube/service/GCoreEndpoint/DataAccess/StorageHub?gcube-token=",token,sep="")
+  
   got<-GET(urlString,authenticate(username,token), timeout(1*3600))
   xmlfile <- xmlTreeParse(got)
   class(xmlfile)
@@ -382,45 +384,53 @@ uploadWS<-function(username,token,path,file,overwrite){
 
 
 uploadToVREFolder<-function(username,token,relativePath, file,overwrite,archive){
-  #getCredentials()
-  description = basename(file)
-  name = basename(file)
-  mimetype=""
-  
-  pathID<-getVREFolderID(username,token)
-  
-  if (nchar(relativePath)>0){
-    if (!endsWith(relativePath,"/"))
-    {
-      relativePath<-paste0(relativePath,"/")
+  result = tryCatch({
+    #getCredentials()
+    description = basename(file)
+    name = basename(file)
+    mimetype=""
+    
+    pathID<-getVREFolderID(username,token)
+    
+    if (nchar(relativePath)>0){
+      if (!endsWith(relativePath,"/"))
+      {
+        relativePath<-paste0(relativePath,"/")
+      }
+      pathID <- searchWSFolderID(username,token,relativePath)
     }
-    pathID <- searchWSFolderID(username,token,relativePath)
-  }
-  absolutefile <- tools:::file_path_as_absolute(file)
-  wdfile<- paste(getwd(),"/",basename(file),sep="")
-  localfile <- absolutefile#basename(file)
+    absolutefile <- tools:::file_path_as_absolute(file)
+    wdfile<- paste(getwd(),"/",basename(file),sep="")
+    localfile <- absolutefile#basename(file)
+    
+    cat("Uploading",file,"to",pathID,"\n")
+    
+    if (!archive){
+      command = paste(sep="",'curl -s -F "name=', name,'" ',
+                      '-F "description=empty" ',
+                      '-F "file=@',absolutefile,'" ',
+                      getStoragehubEP(username,token), "/items/",pathID,'/create/FILE?gcube-token=',token)
+    }else{
+      command = paste(sep="",'curl -s -F "parentFolderName=', name,'" ',
+                      '-F "file=@',absolutefile,'" ',
+                      getStoragehubEP(username,token), "/items/",pathID,'/create/ARCHIVE?gcube-token=',token)
+    }
   
-  cat("Uploading",file,"to",pathID,"\n")
-  
-  if (!archive){
-    command = paste(sep="",'curl -s -F "name=', name,'" ',
-                    '-F "description=empty" ',
-                    '-F "file=@',absolutefile,'" ',
-                    getStoragehubEP(username,token), "/items/",pathID,'/create/FILE?gcube-token=',token)
-  }else{
-    command = paste(sep="",'curl -s -F "parentFolderName=', name,'" ',
-                    '-F "file=@',absolutefile,'" ',
-                    getStoragehubEP(username,token), "/items/",pathID,'/create/ARCHIVE?gcube-token=',token)
-  }
-
-  
-  fileID<-system(command,intern=T)
-  output<-F
-  if (length(fileID)==1)
-    output<-T
-  
-  cat("All done.\n")
-  return(output)
+    
+    fileID<-system(command,intern=T)
+    output<-F
+    if (length(fileID)==1)
+      output<-T
+    
+    print(paste0(file, " uploaded to the VRE folder"))
+    return(output)
+  }, error = function(err) {
+    print(paste0("Error uploading file to VRE folder ",err))
+    return(NULL)
+  },
+  finally = {
+    
+  })
 }
 
 createFolderWs<-function(username,token,inFolder,folderName,folderDescription) {
