@@ -1,3 +1,41 @@
+library(httr)
+library(jsonlite)
+
+########## CONSTANTS ##########
+
+uploadFolderName <- "StockMonitoringTools"
+uploadFolderDescription <- "SDG 14.4.1 VRE Stock Monitoring Tools results"
+VREUploadText <- "The report has been uploaded to your VRE workspace"
+gcubeTokenQueryParam <- "gcube-token"
+apiUrl <- "https://api.d4science.org/rest/2/people/profile?gcube-token="
+vreToken <- "96d4f92a-ef32-42ab-a47a-425ee5618644-843339462"
+
+
+######## END CONSTANTS ########
+
+##### COMMON JAVASCRIPT CODE #####
+jscode <- "
+shinyjs.showBox = function(boxid) {
+$('#' + boxid).parent('div').css('visibility','visible');
+}
+shinyjs.removeBox = function(boxid) {
+$('#' + boxid).parent('div').css('visibility','hidden');
+}
+shinyjs.disableAllButtons = function() {
+$('.action-button').attr('disabled', true);
+}
+shinyjs.enableAllButtons = function() {
+$('.action-button').attr('disabled', false);
+}
+shinyjs.showComputing = function() {
+$('.loadingCustom').css('visibility','visible');
+}
+shinyjs.hideComputing = function() {
+$('.loadingCustom').css('visibility','hidden');
+}
+"
+##### END COMMON JAVASCRIPT CODE #####
+
 app_load_spinner <- function(message = "") {
   html <- ""
   html <- paste0(html, "<div style=\"position: absolute; left: 50%;\">")
@@ -20,9 +58,6 @@ app_load_spinner <- function(message = "") {
   return (html)
 }
 
-library(httr)
-library(jsonlite)
-
 getVREUsername <- function(url, token) {
   url_ <- paste0(url, token)
   response <-  GET(url_)
@@ -33,4 +68,77 @@ getVREUsername <- function(url, token) {
   } else {
     return (NULL)
   }
+}
+
+buildUrl <- function(session, path) {
+  port <- session$clientData$url_port
+  host <- session$clientData$url_hostname
+  protocol <- session$clientData$url_protocol
+  url <- paste0(protocol, "//", host, ":", port, "/", path)
+  return (url);
+}
+
+
+########### Save reports to file #############
+createCmsyPDFReport <- function(file, cmsy, input) {
+  tempReport <- file.path(tempdir(), "cmsyReportSingle.Rmd")
+  file.copy("assets/cmsy/cmsyReportSingle.Rmd", tempReport, overwrite = TRUE)
+  
+  
+  if (!is.null(cmsy$method$analisysChartUrl)) {
+    fileAnalisysChart <- tempfile(fileext=".jpg")
+    download.file(cmsy$method$analisysChartUrl, fileAnalisysChart)
+    cmsy$method$analisysChart <- fileAnalisysChart
+  }
+  if (!is.null(cmsy$method$analisysChartUrl)) {
+    fileManagementChart <- tempfile(fileext=".jpg")
+    download.file(cmsy$method$managementChartUrl, fileManagementChart)
+    cmsy$method$managementChart <- fileManagementChart
+  }
+  
+  # Set up parameters to pass to Rmd document
+  params <- list(cmsy = cmsy, inputParams = input)
+  
+  # Knit the document, passing in the `params` list, and eval it in a
+  # child of the global environment (this isolates the code in the document
+  # from the code in this app).
+  rmarkdown::render(tempReport, output_file = file, params = params)
+}
+
+createElefanGaPDFReport <- function(file, elefan_ga, input) {
+  print(paste0("Input file", input$fileGa))
+  tempReport <- file.path(tempdir(), "elefan_ga.Rmd")
+  file.copy("assets/tropFishR/markdown/elefan_ga.Rmd", tempReport, overwrite = TRUE)
+  params <- list(elefan = elefan_ga, inputParams = input)
+  return (rmarkdown::render(tempReport, output_file = file, params = params))
+}
+
+createElefanSaPDFReport <- function(file, elefan_sa, input) {
+  tempReport <- file.path(tempdir(), "elefan_sa.Rmd")
+  file.copy("assets/tropFishR/markdown/elefan_sa.Rmd", tempReport, overwrite = TRUE)
+  params <- list(elefan = elefan_sa, inputParams = input)
+  return (rmarkdown::render(tempReport, output_file = file, params = params))
+}
+
+createElefanPDFReport <- function(file, elefan, input) {
+  tempReport <- file.path(tempdir(), "elefan.Rmd")
+  file.copy("assets/tropFishR/markdown/elefan.Rmd", tempReport, overwrite = TRUE)
+  params <- list(elefan = elefan, inputParams = input)
+  return (rmarkdown::render(tempReport, output_file = file, params = params))
+}
+
+createSbprPDFReport <- function(file, sbprExec, input) {
+  print(paste(sep=" ", file))
+  tempReport <- file.path(tempdir(), "sbpr.Rmd")
+  file.copy("assets/fishmethods/sbpr.Rmd", tempReport, overwrite = TRUE)
+  sbprExec$perc <- input$SBPR_MSP
+  params <- list(sbprExec = sbprExec, inputParams = input)
+  rmarkdown::render(tempReport, output_file = file, params = params)
+}
+
+createYprPDFReport <- function(file, yprExec, input) {
+  tempReport <- file.path(tempdir(), "ypr.Rmd")
+  file.copy("assets/fishmethods/ypr.Rmd", tempReport, overwrite = TRUE)
+  params <- list(yprExec = yprExec, inputParams = input)
+  rmarkdown::render(tempReport, output_file = file, params = params)
 }
