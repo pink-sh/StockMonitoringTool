@@ -5,9 +5,9 @@ elefanGaModule <- function(input, output, session) {
   
 
   observeEvent(input$go_ga, {
-    infile <- input$fileGa
+    inFileElefanGa <- input$fileGa
     
-    if (is.null(infile)) {
+    if (is.null(inFileElefanGa)) {
       showModal(modalDialog(
         title = "Error",
         "No input file selected",
@@ -17,7 +17,7 @@ elefanGaModule <- function(input, output, session) {
       return(NULL)
     }
     js$showComputing()
-    inputCsvFile <- infile$datapath
+    inputCsvFile <- inFileElefanGa$datapath
     js$removeBox("box_elefan_ga_results")
     js$disableAllButtons()
     result = tryCatch({
@@ -46,7 +46,7 @@ elefanGaModule <- function(input, output, session) {
         session$userData$fishingMortality$FcurrGA <- round(elefan_ga$results$plot3$currents[4]$curr.F, 2)
         
         if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
-          print("uploading to VRE")
+          flog.info("Uploading Elefan GA report to VRE")
           reportFileName <- paste("/tmp/","ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createElefanGaPDFReport(reportFileName,elefan_ga,input)
           elefanGaUploadVreResult$res <- FALSE
@@ -69,7 +69,7 @@ elefanGaModule <- function(input, output, session) {
             )
             elefanGaUploadVreResult$res <- TRUE
           }, error = function(err) {
-            print(paste0("Error uploading Elefan GA report to the Workspace: ", err))
+            flog.error("Error uploading Elefan GA report to the Workspace: %s", err)
             elefanGaUploadVreResult$res <- FALSE
           }, finally = {})
         }

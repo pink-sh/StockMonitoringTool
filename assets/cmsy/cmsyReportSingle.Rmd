@@ -20,7 +20,7 @@ knitr::include_graphics(c(params$cmsy$method$managementChart))
 
 ******
 ## Input parameters  
-Input File: `r input$file1$name`  
+Input File: `r input$fileCmsy$name`  
   
 Stock: `r input$stock`  
 Min of year: `r input$minOfYear`  

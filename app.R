@@ -35,7 +35,9 @@ source("ui/support/BasicVonBertalannfyUI.R")
 source("ui/support/NaturalMortalityUI.R")
 source("ui/support/SeasonalVonBertalannfyUI.R")
 source("server/common.R")
+source("server/cmsy/cmsyServer.R")
 source("server/elefan/elefanGaServer.R")
+source("server/elefan/elefanSaServer.R")
 source("assets/tropFishR/elefan_common.R")
 source("assets/tropFishR/algorithms/run_elefan_ga.R")
 source("assets/tropFishR/algorithms/run_elefan_sa.R")
@@ -101,9 +103,9 @@ ui <- tagList(
       tabElefanSampleDataset,
       tabFishMethodsIntro,
       tabFishMethodsSampleDataset,
-      tabCmsy,
+      tabCmsy("cmsyModule"),
       tabElefanGa("elefanGaModule"),
-      tabElefanSa,
+      tabElefanSa("elefanSaModule"),
       tabElefan,
       tabSbpr,
       tabYpr,
@@ -131,6 +133,10 @@ server <- function(input, output, session) {
   session$userData$sessionUsername <- reactiveVal(NULL)
   session$userData$sessionMode <- reactiveVal(NULL)
   
+  ## Hide any overlay when session starts
+  observe({
+    js$hideComputing()
+  })
   
   ##Guessing run mode
   observe({
@@ -185,11 +191,10 @@ server <- function(input, output, session) {
   session$userData$sbprUploadVreResult <- reactiveValues()
   session$userData$yprUploadVreResult <- reactiveValues()
   
-  source("server/cmsy/cmsyServer.R", local=TRUE)
-  
-  
+  callModule(cmsyModule, "cmsyModule")
   callModule(elefanGaModule, "elefanGaModule")
-  source("server/elefan/elefanSaServer.R", local=TRUE)
+  callModule(elefanSaModule, "elefanSaModule")
+  #source("server/elefan/elefanSaServer.R", local=TRUE)
   source("server/elefan/elefanServer.R", local=TRUE)
   source("server/fishMethods/sbprServer.R", local=TRUE)
   source("server/fishMethods/yprServer.R", local=TRUE)
@@ -201,5 +206,6 @@ server <- function(input, output, session) {
   
   
 }
+
 # Run the application 
 shinyApp(ui = ui, server = server)

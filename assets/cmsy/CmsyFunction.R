@@ -41,11 +41,13 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
 
   username <- "test"
   #token <- "5b0f903a-3cb1-4424-a2bd-2700c9f1d4ed"
-  wpsClient <- paste0(getwd(),"/WPS4D4Science.r")
+  wpsClient <- paste0(getwd(),"/assets/cmsy/WPS4D4Science.r")
   cat(file=stderr(), wpsClient, "\n")
   source("assets/cmsy/WPS4D4Science.r")
   library("tcltk")
   require("XML")
+  
+  flog.info("CMSY running with inputfile %s", inputCsvFile)
   
   if (is.null(region)) { region = "" }
   if (is.null(subregion)) { subregion = "" }
@@ -134,21 +136,25 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   close(filehandle)
   
   #SEND THE REQUEST#  
-  out <- tryCatch({
-    POST(url = wps_uri, config=c(authenticate(username, token, type = "basic")),body = upload_file(sentfile, type="text/xml"),encode = c("multipart"), handle = NULL, timeout(10))
-  }, error = function(err) {
-    return (NULL)    
-  }
-  )
-  print (out)
-  
+  flog.info("Sending CMSY/POST request to: %s", wps_uri)
+  out <- POST(url = wps_uri, config=c(authenticate(username, token, type = "basic")),body = upload_file(sentfile, type="text/xml"),encode = c("multipart"), handle = NULL, timeout(10))
+  flog.info("Got from CMSY: %s", out)
+
   #CHECK IF THE PROCESS HAS ALREADY FINISHED#
   stop_condition_success<-grepl("Process successful",as.character(out))
   stop_condition_fail<-grepl("Exception",as.character(out))
   
+  flog.warn("CMSY SUCCESS %s",stop_condition_success)
+  flog.warn("CMSY FAIL %s",stop_condition_fail)
+  
+  if (stop_condition_fail) {
+    stop("CMSY WPS call failed.")
+  }
+  
   #GET THE STATUS LOCATION FROM THE ACCEPTANCE RESPONSE#
   lout<-as.character(out)
   print(lout)
+  flog.info("Got from CMSY: %s", lout)
   statusLocation='statusLocation=\"'
   endstatusLocation='">\n'
   pos1 = regexpr(statusLocation, lout)
@@ -160,9 +166,15 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   while (!stop_condition_fail && !stop_condition_success){
     print("Checking...")
     #CHECK THE STATUS URL#
+    flog.info("Sending CMSY/GET request to: %s", wps_uri)
     out1<-GET(url = llout, config=c(authenticate(username, token, type = "basic")),handle = NULL, timeout(3600), encoding="utf-8")
+    if (is.null(out1)) {
+      stop_condition_fail<-grepl("Exception","CMSY WPS call failed")
+    }
+    flog.info("Got: %s", out1)
     outstring<-content(out1, "text", encoding = "UTF-8")
     cat(file=stderr(), outstring, "\n")
+    flog.info("Got: %s, %s", out1, outstring)
     stop_condition_success<-grepl("ProcessSucceeded",outstring)
     stop_condition_fail<-grepl("Exception",outstring)
     #SLEEP FOR 10 SECONDS BEFORE THE NEXT CHECK#
@@ -175,6 +187,10 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
     file.remove(dffile)
     file.remove(sentfile)
     return (cmsyParseXml(out1))
+  }
+  
+  if (stop_condition_fail) {
+    stop(stop_condition_fail)
   }
   
   closeAllConnections()
