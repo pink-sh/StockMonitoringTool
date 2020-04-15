@@ -69,7 +69,7 @@ tabElefanSa <- function(id) {
             numericInput("ELEFAN_SA_upPar_ts", p("Summer point (", withMathJax("\\(t_s\\)"), "):"), 1, min = 0, max = 1, step=0.1)
           )
         ),
-        tags$div( actionButton(ns("go_sa"), "Run ELEFAN SA", class="topLevelInformationButton"),
+        tags$div( disabled(actionButton(ns("go_sa"), "Run ELEFAN SA", class="topLevelInformationButton")),
                   actionButton(ns("reset_sa"), "Reset", class="topLevelInformationButton"), style="margin-left: 15px;"),
         hr(),
         box( width= 100, id = "box_elefan_sa_results",

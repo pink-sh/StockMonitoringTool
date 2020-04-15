@@ -1,4 +1,5 @@
-tabBasicSchaefer <-
+tabBasicSchaefer <- function(id) {
+  ns <- NS(id)
   tabItem("BasicSchaefer",
     htmlOutput("basicShaeferTitle"),
     actionButton("basicShaeferMoreInfo", "More Information", class="topLevelInformationButton"),
@@ -7,9 +8,9 @@ tabBasicSchaefer <-
       box( width= 50,  id = "box_shaefer",
         fluidRow(
           box( id="box_shaefer_in",
-            sliderInput("r", "Intrinsic rate of growth (r):", 
+            sliderInput(ns("r"), "Intrinsic rate of growth (r):", 
               min=0.01, max=1, value=0.5),    
-            sliderInput("K", "Carrying capacity (K):", 
+            sliderInput(ns("K"), "Carrying capacity (K):", 
               min=500, max=3500, value=1000),
             withMathJax(),
             uiOutput('shaefer_ex1'),
@@ -19,10 +20,11 @@ tabBasicSchaefer <-
             uiOutput('shaefer_ex4')
           ),
           box(
-            plotOutput("Biomassplot"),
-            plotOutput("Growthplot")
+            plotOutput(ns("Biomassplot")),
+            plotOutput(ns("Growthplot"))
           )
         )
       )
     )
   )
+}

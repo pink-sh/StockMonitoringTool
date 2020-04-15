@@ -38,6 +38,13 @@ source("server/common.R")
 source("server/cmsy/cmsyServer.R")
 source("server/elefan/elefanGaServer.R")
 source("server/elefan/elefanSaServer.R")
+source("server/elefan/elefanServer.R")
+source("server/fishMethods/sbprServer.R")
+source("server/fishMethods/yprServer.R")
+source("server/support/BasicSchaeferServer.R")
+source("server/support/BasicVonBertalannfyServer.R")
+source("server/support/SeasonalVonBertalannfyServer.R")
+source("server/support/NaturalMortalityServer.R")
 source("assets/tropFishR/elefan_common.R")
 source("assets/tropFishR/algorithms/run_elefan_ga.R")
 source("assets/tropFishR/algorithms/run_elefan_sa.R")
@@ -106,13 +113,13 @@ ui <- tagList(
       tabCmsy("cmsyModule"),
       tabElefanGa("elefanGaModule"),
       tabElefanSa("elefanSaModule"),
-      tabElefan,
-      tabSbpr,
-      tabYpr,
-      tabBasicSchaefer,
-      tabBasicVonBertalannfy,
-      tabSeasonalVonBertalannfy,
-      tabNaturalMortality
+      tabElefan("elefanModule"),
+      tabSbpr("sbprModule"),
+      tabYpr("yprModule"),
+      tabBasicSchaefer("basicShaeferModule"),
+      tabBasicVonBertalannfy("vonBertalannfyModule"),
+      tabSeasonalVonBertalannfy("seasonalVonBertalannfyModule"),
+      tabNaturalMortality("naturalMortalityModule")
     )
   )
 ), tags$footer(footer, align = "center")
@@ -194,14 +201,15 @@ server <- function(input, output, session) {
   callModule(cmsyModule, "cmsyModule")
   callModule(elefanGaModule, "elefanGaModule")
   callModule(elefanSaModule, "elefanSaModule")
-  #source("server/elefan/elefanSaServer.R", local=TRUE)
-  source("server/elefan/elefanServer.R", local=TRUE)
-  source("server/fishMethods/sbprServer.R", local=TRUE)
-  source("server/fishMethods/yprServer.R", local=TRUE)
-  source("server/support/BasicSchaeferServer.R", local=TRUE)
-  source("server/support/BasicVonBertalannfyServer.R", local=TRUE)
-  source("server/support/SeasonalVonBertalannfyServer.R", local=TRUE)
-  source("server/support/NaturalMortalityServer.R", local=TRUE)
+  callModule(elefanModule, "elefanModule")
+  callModule(sbprModule, "sbprModule")
+  callModule(yprModule, "yprModule")
+  callModule(basicShaeferModule, "basicShaeferModule")
+  callModule(vonBertalannfyModule, "vonBertalannfyModule")
+  callModule(seasonalVonBertalannfyModule, "seasonalVonBertalannfyModule")
+  callModule(naturalMortalityModule, "naturalMortalityModule")
+  
+  
   source("server/labels.R", local=TRUE)
   
   

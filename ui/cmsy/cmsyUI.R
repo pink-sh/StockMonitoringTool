@@ -71,7 +71,7 @@ tabCmsy <- function(id) {
                   checkboxInput(ns("force.cmsy"), "Check this if CMSY results are to be preferred over the Bayesian State Model results (only when biomass or CPUE is available)", FALSE)
                 )
             ),
-            tags$div(actionButton(ns("go_cmsy"), "Run CMSY Method", class="topLevelInformationButton"),
+            tags$div(disabled(actionButton(ns("go_cmsy"), "Run CMSY Method", class="topLevelInformationButton")),
                      actionButton(ns("reset_cmsy"), "Reset", class="topLevelInformationButton"), style="margin-left: 15px;")
             ,
             htmlOutput("cmsyWarning"),

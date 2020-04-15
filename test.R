@@ -1,22 +1,72 @@
-source("/home/enrico/Work/StockMonitoringTool/assets/commons/storageHub.R")
-uploadFolderName <- "StockMonitoringTool"
-u<-"enrico.anello"
-t<-"a45a70b4-885b-4e95-879a-8ea0fd5f041c-843339462"
 
-if (fileFolderExistsInPath(u,t,paste0("/Home/",u,"/Workspace/"), uploadFolderName) == FALSE) {
-  print("Creating folder")
-  createFolderWs(
-    u,t,
-    paste0("/Home/",u,"/Workspace/"),
-    uploadFolderName, 
-    "Results of the SDG 14.4.1 Stock Monitoring Tool")
+library (lubridate)
+formatTimestamp <- function(ts) {
+  return(format(as.Date(as.POSIXct(ts, origin="1970-01-01")), format="%Y-%m-%d"))
 }
 
-uploadToVREFolder(
-  username = u, 
-  token = t, 
-  relativePath = paste0("/Home/",u,"/Workspace/", uploadFolderName, "/"), 
-  file = "/tmp/ElefanGA_report_2019120416101575472239.pdf",
-  overwrite = TRUE,
-  archive = FALSE
-)
+validateElefanInputFile <- function(file) {
+  contents <- read.csv(file)
+  
+  a<-as.vector(colnames(contents))
+  print(head(a,1))
+  if (head(a,1) != 'midLength') {
+    print("RET1")
+    return (NULL)
+  } else {
+    for (row in 2:length(a)) {
+      x <- a[row]
+      if (startsWith(x, 'X')) {
+        x <- substring(x, 2)
+      }
+      d <- formatTimestamp(parse_date_time(x, c('ymd', 'dmy', 'mdy')))
+      if (is.na(d)) {
+        print("RET2")
+        return (NULL)
+      }
+    }
+  }
+  return (contents)
+}
+
+read_elefan_csv <- function(csvFile) {
+  a <- validateElefanInputFile(csvFile)
+  if (is.null(a)) {
+    return (NULL)
+  }
+  dataSet <- list()
+  dataSet$sample.no <- seq(1, nrow(as.matrix(a[,-1])))
+  colname <- as.vector(unlist(lapply(colnames(a)[2:length(colnames(a))], substring, 2)))
+  
+  vectorDates <- as.vector(
+    unlist(
+      lapply(
+        lapply(colname, parse_date_time, order=c('ymd', 'dmy', 'mdy') )
+        , formatTimestamp)
+    )
+  )
+  dataSet$dates <- as.Date(vectorDates, "%Y-%m-%d")
+  
+  #dataSet$dates <- as.Date(colnames(a)[2:length(colnames(a))], "X%Y.%m.%d")
+  dataSet$midLengths <- a[[1]]
+  dataSet$catch <- as.matrix(a[,-1])
+  return (dataSet)
+  
+}
+contents <- read_elefan_csv("/home/enrico/Work/elefanSampleFile.csv")
+print(contents)
+
+t <- formatTimestamp(parse_date_time('test', c('ymd', 'dmy', 'mdy', '%Y-%m-%d', '%Y.%m.%d')))
+if (is.na(t)) {
+  print ("test is not a date")
+} else {
+  print ("test is a date??")
+}
+
+testDate <- '2020.04.15'
+t <- formatTimestamp(parse_date_time(testDate, c('ymd', 'dmy', 'mdy', '%Y-%m-%d', '%Y.%m.%d')))
+if (is.na(t)) {
+  print (paste0(testDate," is not a date??"))
+} else {
+  print (paste0(testDate, " is a date"))
+}
+

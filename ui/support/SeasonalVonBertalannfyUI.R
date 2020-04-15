@@ -1,4 +1,5 @@
-tabSeasonalVonBertalannfy <-
+tabSeasonalVonBertalannfy <- function(id) {
+  ns <- NS(id)
   tabItem("SeasonalVonBertalannfy",
     htmlOutput("SeasonalVonBertalannfyTitle"),
     actionButton("SeasonalVonBertalannfyInfo", "More Information", class="topLevelInformationButton"),
@@ -7,24 +8,25 @@ tabSeasonalVonBertalannfy <-
       box( width= 50,  id = "box_seasonal_vonbertalannfy",
         fluidRow(
           box( id="box_seasonal_vonbertalannfy_in",
-            sliderInput("samax", "Age classes:", 
+            sliderInput(ns("samax"), "Age classes:", 
               min=1, max=50, value=5),    
-            sliderInput("sLinf", withMathJax("$$L_\\infty:$$"), 
+            sliderInput(ns("sLinf"), withMathJax("$$L_\\infty:$$"), 
               min=1, max=500, value=21),
-            sliderInput("sk", "k:", 
+            sliderInput(ns("sk"), "k:", 
               min = 0.01, max = 1, value = 0.8,step=0.01),
-            sliderInput("st0", withMathJax("$$t_0:$$"),
+            sliderInput(ns("st0"), withMathJax("$$t_0:$$"),
               min = -2, max = 2, value = 0,step=0.01) ,
-            sliderInput("sts", withMathJax("$$t_s:$$"),
+            sliderInput(ns("sts"), withMathJax("$$t_s:$$"),
               min = 0, max = 1, value = 0.5,step=0.01),
-            sliderInput("sC", "C (amplitude):",
+            sliderInput(ns("sC"), "C (amplitude):",
               min = 0, max = 1, value = 1,step=0.01) 
             ),
             box(
-              plotOutput("SVBGFplot"),
+              plotOutput(ns("SVBGFplot")),
               h3(strong(withMathJax(helpText('$$L_t = L_\\infty(1-e^{(-k(t-t_0)-\\frac{Ck}{2\\pi}sin2\\pi(t-t_s))})$$'))))
             )
           )
         )
       ) 
     )
+}

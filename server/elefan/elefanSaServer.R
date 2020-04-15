@@ -2,29 +2,41 @@ elefanSaModule <- function(input, output, session) {
   
   elefan_sa <- reactiveValues()
   elefanSaUploadVreResult <- reactiveValues()
-
-  observeEvent(input$go_sa, {
-    infile <- input$fileSa
-    
-    if (is.null(infile)) {
+  
+  inputElefanSaData <- reactiveValues()
+  
+  elefanSaFileData <- reactive({
+    contents <- read_elefan_csv(input$fileSa$datapath)
+    if (is.null(contents)) {
+      shinyjs::disable("go_sa")
       showModal(modalDialog(
         title = "Error",
-        "No input file selected",
+        "Input file seems invalid",
         easyClose = TRUE,
         footer = NULL
       ))
-      return(NULL)
+      return (NULL)
+    } else {
+      shinyjs::enable("go_sa")
+      return (contents)  
     }
+    
+  })
+  
+  observeEvent(input$fileSa, {
+    inputElefanSaData$data <- elefanSaFileData()
+  })
+
+  observeEvent(input$go_sa, {
+    
     js$showComputing()
-    inputCsvFile <- infile$datapath
     js$removeBox("box_elefan_ga_results")
     js$disableAllButtons()
-    dataset <- read_elefan_csv(inputCsvFile)
     #ds1 <- lfqModify(lfqRestructure(dataset), bin_size = 4)
     
     #ds2 <- lfqModify(get('synLFQ7', asNamespace('TropFishR')), bin_size = 4)
     result = tryCatch({ 
-      res <- run_elefan_sa(dataset,binSize =  4, seasonalised = input$ELEFAN_SA_seasonalised, 
+      res <- run_elefan_sa(inputElefanSaData$data,binSize =  4, seasonalised = input$ELEFAN_SA_seasonalised, 
                            init_par = list(Linf = input$ELEFAN_SA_initPar_Linf, K = input$ELEFAN_SA_initPar_K, t_anchor = input$ELEFAN_SA_initPar_t_anchor),
                            low_par = list(Linf = as.numeric(input$ELEFAN_SA_lowPar_Linf), K = as.numeric(input$ELEFAN_SA_lowPar_K), t_anchor = as.numeric(input$ELEFAN_SA_lowPar_t_anchor), C = as.numeric(input$ELEFAN_SA_lowPar_C), ts = as.numeric(input$ELEFAN_SA_lowPar_ts)),
                            up_par = list(Linf = as.numeric(input$ELEFAN_SA_upPar_Linf), K = as.numeric(input$ELEFAN_SA_upPar_K), t_anchor = as.numeric(input$ELEFAN_SA_upPar_t_anchor), C = as.numeric(input$ELEFAN_SA_upPar_C), ts = as.numeric(input$ELEFAN_SA_upPar_ts)),

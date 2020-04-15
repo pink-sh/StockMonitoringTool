@@ -3,6 +3,9 @@ cmsyModule <- function(input, output, session) {
   cmsy <- reactiveValues()
   cmsyUploadVreResult <- reactiveValues()
   
+  fileContents <- reactiveValues()
+  filePath <- reactiveValues()
+  
   basicValidation <- function (a) {
     if (is.null(colnames(a[1])) || is.na(colnames(a[1]))) return (FALSE)
     if (tolower(colnames(a[1])) == 'stock') return(TRUE)
@@ -12,13 +15,23 @@ cmsyModule <- function(input, output, session) {
   cmsyFileData <- reactive({
     inFileCmsy <- input$fileCmsy
     if (is.null(inFileCmsy)) {
-      shinyjs::disable("go_cmsy")
       removeUI(selector="#stockSelectorContainerInner")
       return (NULL)
     }
     contents <- read.csv(inFileCmsy$datapath)
     
     if (!basicValidation(contents)) {
+      
+      return (NULL)
+    }
+    return (contents)
+  })
+  
+  
+  observeEvent(input$fileCmsy, {
+    filePath$datapath <- input$fileCmsy$datapath
+    contents <- cmsyFileData()
+    if (is.null(contents)) {
       shinyjs::disable("go_cmsy")
       removeUI(selector="#stockSelectorContainerInner")
       showModal(modalDialog(
@@ -27,34 +40,40 @@ cmsyModule <- function(input, output, session) {
         easyClose = TRUE,
         footer = NULL
       ))
-      return (NULL)
+      fileContents$data <- NULL
+      flog.error("Input file for CMSY %s seems invalid", filePath$datapath)
+    } else {
+      insertUI(
+        ui=tags$div(
+          selectInput(session$ns("stock"), "Select a stock", sort(unique(contents$Stock))), 
+          id="stockSelectorContainerInner"), 
+        selector="#stockSelectorContainer")
+      shinyjs::enable("go_cmsy")
+      fileContents$data <- contents
+      flog.info("Input file for CMSY %s seems valid", filePath$datapath)
     }
-    
-    return (contents)
   })
   
   observeEvent(input$stock, {
     
-    a <- cmsyFileData()
-    
-    if (is.null(a)) {
+    if (is.null(fileContents$data)) {
       return(NULL)
     }
     
     maxYear <- 0
     minYear <- 0
     i<-0
-    for (line in rownames(a)) {
-      if (a[line, "Stock"] == input$stock) {
+    for (line in rownames(fileContents$data)) {
+      if (fileContents$data[line, "Stock"] == input$stock) {
         if (i == 0) {
-          maxYear <- a[line, "yr"]
-          minYear <- a[line, "yr"]
+          maxYear <- fileContents$data[line, "yr"]
+          minYear <- fileContents$data[line, "yr"]
         } else {
-          if (maxYear < a[line, "yr"]) {
-            maxYear <- a[line, "yr"]
+          if (maxYear < fileContents$data[line, "yr"]) {
+            maxYear <- fileContents$data[line, "yr"]
           }
-          if (minYear > a[line, "yr"]) {
-            minYear <- a[line, "yr"]
+          if (minYear > fileContents$data[line, "yr"]) {
+            minYear <- fileContents$data[line, "yr"]
           }
         }
         i <- i + 1
@@ -78,13 +97,10 @@ cmsyModule <- function(input, output, session) {
 
     query <- parseQueryString(session$clientData$url_search)
     
-    contents <- cmsyFileData()
-    
-    if (is.null(contents)) {
+    if (is.null(fileContents$data)) {
       return (NULL)
     }
-    
-    yr <- contents$yr
+    yr <- fileContents$data$yr
     
     minYr <- NULL
     maxYr <- NULL
@@ -112,7 +128,7 @@ cmsyModule <- function(input, output, session) {
         #templateFileDlmTools <- paste0(getwd(), "/assets/cmsy/cmsyFastTemplate.xml")
         templateFileDlmTools <- paste0(getwd(), "/assets/cmsy/cmsyLegacyTemplate.xml")
         
-        a <- contents
+        a <- fileContents$data
         
         group_ = ""
         name_ = ""
@@ -134,7 +150,7 @@ cmsyModule <- function(input, output, session) {
         
         cmsy$fast <- list()
         js$disableAllButtons()
-        ret <- runCmsy(region_,toString(sub_region_),input$stock,toString(group_),toString(name_),toString(en_name_),toString(scientific_name_),"-",input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,input$stb.low,input$stb.hi,input$int.yr,input$intb.low,input$intb.hi,input$endb.low,input$endb.hi,input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, input$fileCmsy$datapath, templateFileDlmTools)
+        ret <- runCmsy(region_,toString(sub_region_),input$stock,toString(group_),toString(name_),toString(en_name_),toString(scientific_name_),"-",input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,input$stb.low,input$stb.hi,input$int.yr,input$intb.low,input$intb.hi,input$endb.low,input$endb.hi,input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, filePath$datapath, templateFileDlmTools)
         js$enableAllButtons()
         js$hideComputing()
         js$showBox("box_cmsy_results")
@@ -216,24 +232,6 @@ cmsyModule <- function(input, output, session) {
   observeEvent(input$reset_cmsy, {
     resetCmsyInputValues()
     cmsy$method <- NULL
-  })
-
-  observeEvent(input$fileCmsy, {
-    if (is.null(input$fileCmsy)) {
-      shinyjs::disable("go_cmsy")
-    } else {
-      shinyjs::enable("go_cmsy")
-    }
-    removeUI(selector="#stockSelectorContainerInner")
-    inFileCmsy <- input$fileCmsy
-    if (!is.null(inFileCmsy)) {
-      a <- read.csv(inFileCmsy$datapath)
-      insertUI(
-        ui=tags$div(
-          selectInput(session$ns("stock"), "Select a stock", sort(unique(a$Stock))), 
-          id="stockSelectorContainerInner"), 
-        selector="#stockSelectorContainer")
-    }
   })
   ####### END OBSERVERS #######
   

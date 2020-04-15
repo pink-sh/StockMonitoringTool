@@ -3,27 +3,38 @@ elefanGaModule <- function(input, output, session) {
   elefan_ga <- reactiveValues()
   elefanGaUploadVreResult <- reactiveValues()
   
-
-  observeEvent(input$go_ga, {
-    inFileElefanGa <- input$fileGa
-    
-    if (is.null(inFileElefanGa)) {
+  inputElefanGaData <- reactiveValues()
+  
+  elefanGaFileData <- reactive({
+    contents <- read_elefan_csv(input$fileGa$datapath)
+    if (is.null(contents)) {
+      shinyjs::disable("go_ga")
       showModal(modalDialog(
         title = "Error",
-        "No input file selected",
+        "Input file seems invalid",
         easyClose = TRUE,
         footer = NULL
       ))
-      return(NULL)
+      return (NULL)
+    } else {
+      shinyjs::enable("go_ga")
+      return (contents)  
     }
+    
+  })
+  
+  observeEvent(input$fileGa, {
+    inputElefanGaData$data <- elefanGaFileData()
+  })
+  
+  observeEvent(input$go_ga, {
+
     js$showComputing()
-    inputCsvFile <- inFileElefanGa$datapath
     js$removeBox("box_elefan_ga_results")
     js$disableAllButtons()
     result = tryCatch({
-      dataset <- read_elefan_csv(inputCsvFile)
-      
-      ds <- lfqModify(lfqRestructure(dataset), bin_size = 4)
+
+      ds <- lfqModify(lfqRestructure(inputElefanGaData$data), bin_size = 4)
       
       res <- run_elefan_ga(ds,binSize =  4, seasonalised = input$ELEFAN_GA_seasonalised, 
                            low_par = list(Linf = input$ELEFAN_GA_lowPar_Linf, K = input$ELEFAN_GA_lowPar_K, t_anchor = input$ELEFAN_GA_lowPar_t_anchor, C = input$ELEFAN_GA_lowPar_C, ts = input$ELEFAN_GA_lowPar_ts),
@@ -52,7 +63,7 @@ elefanGaModule <- function(input, output, session) {
           elefanGaUploadVreResult$res <- FALSE
           tryCatch({
             if (fileFolderExistsInPath(session$userData$sessionUsername(),session$userData$sessionToken(),paste0("/Home/",session$userData$sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
-              print("Creating folder")
+              flog.info("Creating VRE folder")
               createFolderWs(
                 session$userData$sessionUsername(), session$userData$sessionToken(),
                 paste0("/Home/",session$userData$sessionUsername(),"/Workspace/"),
