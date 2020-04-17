@@ -68,20 +68,14 @@ d <- data(package = "TropFishR")
 parallel <- FALSE
 fishingMortality <- "NA"
 
+sidebar <- dashboardSidebar(uiOutput("sidebar"))
+
 ui <- tagList(
   use_waiter(include_js = FALSE),
   waiter_show_on_load(app_load_spinner("Initializing R session. This process may take a while...")),
   dashboardPage(
   dashboardHeader(title = 'Stock Monitoring Tools'),
-  dashboardSidebar(
-    sidebarMenu(
-      menuHome,
-      menuCmsy,
-      menuElefan,
-      menuFishMethods,
-      menuSupportingTools
-    )
-  ),
+  sidebar,
   dashboardBody(
     tags$div(
       tags$div(
@@ -136,6 +130,34 @@ server <- function(input, output, session) {
     flog.warn("Lost connection to R server")
   })
   
+  output$sidebar <- renderUI({
+    dashboardSidebar(
+      sidebarMenu(id="smt-tabs",
+        menuItem("Home", tabName="homeTab"),
+        menuCmsy,
+        menuElefan,
+        menuFishMethods,
+        menuSupportingTools
+      )
+    )
+  })
+  observe({
+    query <- parseQueryString(session$clientData$url_search)
+    if (!is.null(query$page)) {
+      switch(query$page,
+             'cmsy'= {isolate({updateTabItems(session, "smt-tabs", "cmsyWidget")})},
+             'elefan-ga' = {isolate({updateTabItems(session, "smt-tabs", "ElefanGaWidget")})},
+             'elefan-sa' = {isolate({updateTabItems(session, "smt-tabs", "ElefanSaWidget")})},
+             'elefan' = {isolate({updateTabItems(session, "smt-tabs", "ElefanWidget")})},
+             'sbpr' = {isolate({updateTabItems(session, "smt-tabs", "SBPRWidget")})},
+             'ypr' = {isolate({updateTabItems(session, "smt-tabs", "YPRWidget")})},
+             {isolate({updateTabItems(session, "smt-tabs", "homeTab")})}
+      )
+    } else {
+      isolate({updateTabItems(session, "smt-tabs", "homeTab")})
+    }
+  })
+
   session$userData$sessionToken <- reactiveVal(NULL)
   session$userData$sessionUsername <- reactiveVal(NULL)
   session$userData$sessionMode <- reactiveVal(NULL)
