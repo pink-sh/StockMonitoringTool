@@ -141,6 +141,8 @@ server <- function(input, output, session) {
       )
     )
   })
+  
+  ### If the page Query param is set to a specific page force the rendering to that
   observe({
     query <- parseQueryString(session$clientData$url_search)
     if (!is.null(query$page)) {

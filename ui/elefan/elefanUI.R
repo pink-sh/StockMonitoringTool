@@ -3,9 +3,9 @@ tabElefan <- function(id) {
   tabItem("ElefanWidget",
     htmlOutput("elefanTitle"),
     htmlOutput("tropFishRLibVersion3", class="subTitle"),
-    actionButton("elefanDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
+    actionButton(ns("elefanDataConsiderations"), "Data Considerations", class="topLevelInformationButton"),
     fluidRow(
-      bsModal("modalExampleElefan", "ELEFAN Data Considerations", "elefanDataConsiderations", size = "large", htmlOutput("elefanDataConsiderationsText")),
+      bsModal("modalExampleElefan", "ELEFAN Data Considerations", ns("elefanDataConsiderations"), size = "large", htmlOutput(ns("elefanDataConsiderationsText"))),
       box(title = "Main Parameters",
         width = NULL, 
         collapsible = T, 

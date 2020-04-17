@@ -17,7 +17,7 @@ tabCmsy <- function(id) {
                             accept = c(
                               "text/csv",
                               "text/comma-separated-values,text/plain",
-                              ".csv")
+                              ".csv", id="fileCmsy")
                   )
                 ),
                 box(
