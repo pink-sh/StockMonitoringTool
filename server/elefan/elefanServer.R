@@ -53,6 +53,7 @@ elefanModule <- function(input, output, session) {
       if (is.na(input$ELEFAN_agemax)) {
         elefan_agemax <- NULL
       }
+      flog.info("Starting Elegan computation")
       res <- run_elefan(inputElefanData$data, binSize = 4, Linf_fix = input$ELEFAN_Linf_fix, Linf_range = elefan_linf_range, K_range = elefan_k_range,
                         C = input$ELEFAN_C, ts = input$ELEFAN_ts, MA = input$ELEFAN_MA, addl.sqrt = input$ELEFAN_addl.sqrt,
                         agemax = elefan_agemax, contour = input$ELEFAN_contour, plus_group = input$ELEFAN_PLUS_GROUP)

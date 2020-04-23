@@ -34,6 +34,7 @@ sbprModule <- function(input, output, session) {
       js$removeBox("box_sbpr_results")
       dat <- inputSbprData$data
       
+      flog.info("Starting SBPR computation")
       res <- sbpr_shinyApp(age=dat$age,ssbwgt=dat$ssbwgt,partial=dat$partial,pmat=dat$pmat,M=input$SBPR_M,pF=input$SBPR_pF, pM=input$SBPR_pM,MSP=input$SBPR_MSP,plus=FALSE,maxF=input$SBPR_maxF,incrF=input$SBPR_incrF, graph=FALSE)
       js$hideComputing()
       if ('error' %in% names(res)) {

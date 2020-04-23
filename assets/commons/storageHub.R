@@ -29,11 +29,11 @@ getStoragehubEP <- function (username, token) {
   listx<-(rapply(listxpath, function(x) head(x, 1)))
   if (length(listx)>0){
     storagehubEP<-as.character(listx[which(listx=="Endpoint")[[1]]+3])
-    cat("StorageHub EP",storagehubEP,"\n")
+    flog.info("StorageHub EP %s",storagehubEP)
     return (storagehubEP)
     
   }else{
-    cat("Found no storage ub endpoint\n")
+    flog.error("Found no storage ub endpoint\n")
     return (NULL)
   }
 }
@@ -266,9 +266,9 @@ deleteWS<-function(username,token,file){
   wsid<-searchWSFolderID(username,token,file)
   document <- DELETE(url = gsub("#ID#", wsid, getDeleteFileReq(username,token)),authenticate(username,token), timeout(1*3600))
   if (document$status_code==200){
-    cat("Delete OK\n")
+    flog.info("StorageHub: Delete OK")
     return(T)
-  }else {cat("Delete KO\n"); return(F)}
+  }else {flog.error("StorageHub: Delete KO"); return(F)}
 }
 
 getPublicFileLinkWS<-function(username,token,remotefile){
@@ -308,65 +308,65 @@ downloadWS<-function(username,token,element,isfile){
   if (!isfile){
     
     filename<-paste(uuidGen(),".zip",sep="")
-    cat("The entire folder will be downloaded to",filename,"\n")
+    flog.info("StorageHub: The entire folder will be downloaded to %s",filename)
     
   } else{filename<-substring(element,g[1]+1,nchar(element))}
   
-  cat("Downloading...\n")
+  flog.info("StorageHub: Downloading...")
   
   if (isfile){
     urlToD<-getPublicFileLinkWS(username,token,element)
     urlToD<-str_replace(urlToD,"https","http")
-    cat("Downloading from public url",urlToD,"to",filename,"\n")
+    flog.info("StorageHub: Downloading from public url %s to %s",urlToD,filename,)
     download.file(url = urlToD, destfile = filename, method="wget", quiet = T, mode = "w",cacheOK = FALSE)
   }else{
     wsid<-searchWSFolderID(username,token,element)
     urltodwn<-gsub("#ID#", wsid, getDownloadWSElementUrl(username,token))
     urltodwn<-str_replace(urltodwn,"https","http")
     urltodwn<-str_replace(urltodwn,":443","")
-    cat("Downloading url",urltodwn,"\n")
+    flog.info("StorageHub: Downloading url %s",urltodwn)
     command = paste(sep="",'wget --no-check-certificate ',urltodwn," -O ",filename)
     exitstat<-system(command,intern=T)
-    print(exitstat)
+    flog.info("StorageHub: %s",exitstat)
     #download.file(url = urltodwn, destfile = filename, method="wget", quiet = T, mode = "w",cacheOK = FALSE)
     
     return(filename)
   }
-  cat("All done.\n")
+  flog.info("StorageHub: All done.")
 }
 
 
 
 downloadFromVREFolder<-function(username,token,element){
   #getCredentials()
-  cat("About to download",element,"\n")
+  flog.info("StorageHub: About to download %s",element)
   g <- regexpr("/[^/]*$", element)
   
   filename<-substring(element,g[1]+1,nchar(element))
   
-  cat("Downloading...\n")
+  flog.info("StorageHub: Downloading...")
   urlToD<-getPublicFileLinkVREFolder(username,token,element) #getPublicFileLinkVREFolder(element)
   urlToD<-str_replace(urlToD,"https","http")
-  cat("Downloading from public url",urlToD,"to",filename,"\n")
+  flog.info("StorageHub: Downloading from public url %s to %s",urlToD,filename)
   download.file(url = urlToD, destfile = filename, method="wget", quiet = T, mode = "w",cacheOK = FALSE)
   
-  cat("All done.\n")
+  flog.info("StorageHub: All done.")
 }
 
 downloadFromVREFolder<-function(username,token,element){
   #getCredentials()
-  cat("About to download",element,"\n")
+  flog.info("StorageHub: About to download %s",element)
   g <- regexpr("/[^/]*$", element)
   
   filename<-substring(element,g[1]+1,nchar(element))
   
-  cat("Downloading...\n")
+  flog.info("StorageHub: Downloading...")
   urlToD<-getPublicFileLinkVREFolder(element)
   urlToD<-str_replace(urlToD,"https","http")
-  cat("Downloading from public url",urlToD,"to",filename,"\n")
+  flog.info("StorageHub: Downloading from public url %s to %s",urlToD,filename)
   download.file(url = urlToD, destfile = filename, method="wget", quiet = T, mode = "w",cacheOK = FALSE)
   
-  cat("All done.\n")
+  flog.info("StorageHub: All done.")
 }
 
 downloadFileWS<-function(username,token,element){
@@ -382,8 +382,30 @@ uploadWS<-function(username,token,path,file,overwrite){
   uploadWSManager(username,token,path,file,overwrite,F)
 }
 
+uploadToVREFolder <- function(username,token,relativePath, file,overwrite,archive) {
+  maxtries <- 3
+  try <- 1
+  
+  while (try <= maxtries) {
+    result = tryCatch({
+      res <- uploadToVREFolder_(username,token,relativePath, file,overwrite,archive)
+      if (!is.null(res)) {
+        flog.info("%s uploaded with res: %s", file, res)
+        return (res)
+      } else {
+        flog.info("StorageHub: Error uploading file %s", file)
+        try <- try + 1
+      }
+    }, error = function(err) {
+      try <- try + 1
+    })
+  }
+  
+  stop()
+  
+}
 
-uploadToVREFolder<-function(username,token,relativePath, file,overwrite,archive){
+uploadToVREFolder_ <- function(username,token,relativePath, file,overwrite,archive) {
   result = tryCatch({
     #getCredentials()
     description = basename(file)
@@ -403,7 +425,7 @@ uploadToVREFolder<-function(username,token,relativePath, file,overwrite,archive)
     wdfile<- paste(getwd(),"/",basename(file),sep="")
     localfile <- absolutefile#basename(file)
     
-    cat("Uploading",file,"to",pathID,"\n")
+    flog.info("StorageHub: Uploading %s to %s",file,pathID)
     
     if (!archive){
       command = paste(sep="",'curl -s -F "name=', name,'" ',
@@ -422,10 +444,10 @@ uploadToVREFolder<-function(username,token,relativePath, file,overwrite,archive)
     if (length(fileID)==1)
       output<-T
     
-    print(paste0(file, " uploaded to the VRE folder"))
+    flog.info("StorageHub: %s uploaded to the VRE folder", file)
     return(output)
   }, error = function(err) {
-    print(paste0("Error uploading file to VRE folder ",err))
+    flog.error("StorageHub: Error uploading file to VRE folder %s",err)
     return(NULL)
   },
   finally = {
@@ -444,7 +466,7 @@ createFolderWs<-function(username,token,inFolder,folderName,folderDescription) {
   if (length(fileID)==1)
     output<-T
   
-  cat("All done.\n")
+  flog.info("StorageHub: All done.")
   return(output)
 
 
@@ -463,7 +485,7 @@ uploadWSManager<-function(username,token,path,file,overwrite,archive){
   wdfile<- paste(getwd(),"/",basename(file),sep="")
   localfile <- absolutefile#basename(file)
   
-  cat("Uploading",file,"to",path,"\n")
+  flog.info("StorageHub: Uploading %s to %s",file,path)
   
   if (!archive){
     command = paste(sep="",'curl -s -F "name=', name,'" ',
@@ -482,7 +504,7 @@ uploadWSManager<-function(username,token,path,file,overwrite,archive){
   if (length(fileID)==1)
     output<-T
   
-  cat("All done.\n")
+  flog.info("StorageHub: All done.")
   return(output)
 }
 
@@ -491,14 +513,14 @@ uploadAllWS<-function(username,token,path){
   home=corrFolder(paste("/Home/",username,"/Workspace",sep=""))
   pathverification = corrFolder(path)
   if (pathverification==home){
-    cat("Cannot upload to the Home folder directly\n")
+    flog.error("StorageHub: Cannot upload to the Home folder directly")
     return()
   }
   #getCredentials()
   zipfile<-"all.zip"
   
   if (file.exists(zipfile)){cat("Cleaning...\n"); file.remove(zipfile)}
-  cat("Preparing workspace package\n")
+  flog.info("StorageHub: Preparing workspace package")
   
   wd<-username
   exclude<-paste("-x ",wd,"/.**\\* ",wd,"/R/**\\*",sep="")
@@ -507,13 +529,13 @@ uploadAllWS<-function(username,token,path){
   
   returns<-F
   if (file.exists(zipfile)){
-    cat("Ready to upload to",path,"\n")
+    flog.info("StorageHub: Ready to upload to %s",path)
     q<-uploadWSManager(username,token,path,zipfile,overwrite,T)
-    cat("Cleaning...\n")
+    flog.info("Cleaning...")
     if (file.exists(zipfile)){file.remove(zipfile)}
-    cat("All done.\n")
+    flog.info("All done.")
     returns<-q
-  }else{cat("Error - could not create zip package\n")}
+  }else{flog.error("Error - could not create zip package")}
   return(returns)
 }
 

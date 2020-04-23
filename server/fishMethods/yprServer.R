@@ -33,6 +33,7 @@ yprModule <- function(input, output, session) {
     js$removeBox("box_ypr_results")
     dat <- inputYprData$data
     
+    flog.info("Starting YPR computation")
     res <- ypr_shinyApp(age=dat$age,wgt=dat$ssbwgt,partial=dat$partial,M=input$YPR_M,plus=input$YPR_Plus,oldest=input$YPR_oldest,maxF=input$YPR_maxF,incrF=input$YPR_incrF, graph = FALSE)
     js$hideComputing()
     if ('error' %in% names(res)) {
