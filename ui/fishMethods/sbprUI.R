@@ -1,7 +1,7 @@
 tabSbpr <- function(id) {
   ns <- NS(id)
   tabItem("SBPRWidget",
-    htmlOutput("sbprTitle"),
+    htmlOutput(ns("sbprTitle")),
     htmlOutput("fishMethodsVersion1"),
     actionButton("SBPRDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
     fluidRow(

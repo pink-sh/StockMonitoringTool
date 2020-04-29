@@ -29,7 +29,7 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get update && apt-get upgrade -y
 
  # install dependencies of the Stock monitoring tool app
-RUN R -e "install.packages(c('shiny', 'rmarkdown', 'shinythemes', 'shinydashboard', 'RCurl', 'devtools', 'ggplot2', 'rfishbase', 'shinyBS', 'XML', 'lubridate', 'waiter', 'pracma', 'googleVis'), repos='https://cloud.r-project.org/')"
+RUN R -e "install.packages(c('shiny', 'rmarkdown', 'shinythemes', 'shinydashboard', 'RCurl', 'devtools', 'ggplot2', 'rfishbase', 'shinyBS', 'XML', 'lubridate', 'waiter', 'pracma', 'googleVis', 'stringr'), repos='https://cloud.r-project.org/')"
 RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
 RUN R -e "devtools::install_github('daattali/shinyjs')"
 RUN R -e "devtools::install_github('jyypma/nloptr')"
@@ -45,6 +45,8 @@ RUN mkdir -p /srv/shiny/
 RUN ln -s /root/StockMonitoringTool /srv/shiny/stockMonitoringTools
  
 EXPOSE 3838
+
+RUN export SMT_LOG=/tmp/session.log
 
 RUN apt-get install -y curl
 #CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools',port=3838,host='0.0.0.0')"]

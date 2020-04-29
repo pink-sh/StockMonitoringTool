@@ -1,5 +1,6 @@
 ########################### ALL LABELS ###########################
 output$homeInfo <- renderText({
+  session$userData$page("home")
   text <- "<h3>Stock Monitoring Tools for limited data</h3>"
   text <- paste0(text, "<p>")
   text <- paste0(text, "On the left hand side you can choose between <b>CMSY</b>, <b>ELEFAN</b> and <b>YPR</b>/<b>SBPR</b> methods.")
@@ -35,6 +36,7 @@ output$homeInfo <- renderText({
   text
 })
 output$cmsyIntroOut <- renderText({
+  session$userData$page("cmsy-intro")
   text <- "<h3><b>CMSY - Catch-Maximum Sustainable Yield</b></h3>"
   text <- paste0(text, "<p>")
   text <- paste0(text, "The <b>CMSY</b> method for data-limited stock assessment. Described in <a target='_blank' href='https://www.researchgate.net/publication/309283306_Estimating_fisheries_reference_points_from_catch_and_resilience'>Froese et al.</a>")
@@ -83,6 +85,7 @@ output$cmsyIntroOut <- renderText({
   text
 })
 output$elefanIntroOut <- renderText({
+  session$userData$page('elefan-intro')
   text <- "<h3><b>ELEFAN methods by TropFishR</b></h3>"
   text <- paste0(text, "<p>")
   text <- paste0(text, "<b>Elefan</b> is a computational method designed to estimate life history parameters using a time series of length frequency observations.")
@@ -192,6 +195,7 @@ output$elefanIntroOut <- renderText({
   text
 })
 output$fishMethodsIntroOut <- renderText({
+  session$userData$page('fishmethods-intro')
   text <- "<h3><b>FishMethods</b></h3>"
   text <- paste0(text, "<p>")
   text <- paste0(text, "<b>Fishmethods: </b>Fishery science methods and models from published literature and contributions from colleagues.")
@@ -242,6 +246,7 @@ output$fishMethodsIntroOut <- renderText({
 })
 
 output$cmsySampleDataset <- renderText({
+  session$userData$page('cmsy-sample')
   link <- "<a href='https://data.d4science.net/qhX2' target='_blank'>Click Here</a>"
   text <- paste0("<p><h4>", link,"&nbsp; to download a sample dataset that can be used with <b>CMSY</b> methods", "</h4></p>")
   text <- paste0(text, "<hr />")
@@ -266,6 +271,7 @@ output$cmsySampleDataset <- renderText({
   text
 })
 output$elefanSampleDataset <- renderText({
+  session$userData$page('elefan-sample')
   link <- "<a href='https://goo.gl/tsqt64' target='_blank'>Click Here</a>"
   text <- paste0("<p><h4>", link,"&nbsp; to download a sample dataset that can be used with <b>Elefan</b> methods", "</h4></p>")
   text <- paste0(text, "<hr>")
@@ -291,6 +297,7 @@ output$elefanSampleDataset <- renderText({
   text
 })
 output$fishMethodsSampleDataset <- renderText({
+  session$userData$page('fishmethods-sample')
   link <- "<a href='https://data.d4science.org/shub/E_NnMvMjhHUjB4Q3k4SE1oWjFCamxxMm5zdUxMSEpKbFdlcjVWaHQ1U1ZoTXJJY0dqaWJzRmxHWDVFemFjYVhwcQ==' target='_blank'>Click Here</a>"
   text <- paste0("<p><h4>", link,"&nbsp; to download a sample dataset that can be used with <b>FishMethods</b>", "</h4></p>")
   text <- paste0(text, "<b>If you are creating your own dataset</b>")
@@ -401,43 +408,23 @@ output$fishMethodsVersion2 <- renderText({
   text
 })
 
-output$elefanGaTitle <- renderText({
-  text <- "<span><h3><b>Elefan GA (Genetic Algorithm)</b></h3></span>"
-  text
-})
-output$elefanSaTitle <- renderText({
-  text <- "<span><h3><b>Elefan SA (Simulated Annealing)</b></h3></span>"
-  text
-})
-output$elefanTitle <- renderText({
-  text <- "<span><h3><b>Elefan</b></h3></span>"
-  text
-})
-output$SBPRTitle <- renderText({
-  text <- "<span><h3><b>Spawning stock biomass-per-recruit(SBPR)</b></h3></span>"
-  text
-})
-output$sbprTitle <- renderText({
-  text <- "<span><h3><b>Spawning stock biomass-per-recruit (SBPR)</b></h3></span>"
-  text
-})
-output$yprTitle <- renderText({
-  text <- "<span><h3><b>Yield-per-recruit (YPR)</b></h3></span>"
-  text
-})
 output$basicShaeferTitle <- renderText({
+  session$userData$page('basic-shaefer')
   text <- "<span><h3><b>Run surplus production model</b></h3></span>"
   text
 })
 output$basicVonBertalannfyTitle <- renderText({
+  session$userData$page('basic-von-bertalannfy')
   text <- "<span><h3><b>Generalized Von Bertalanffy Growth Function (VBGF)</b></h3></span>"
   text
 })
 output$SeasonalVonBertalannfyTitle <- renderText({
+  session$userData$page('seasonal-von-bertalannfy')
   text <- "<span><h3><b>Seasonal Von Bertalanffy Growth Function (soVBGF)</b></h3></span>"
   text
 })
 output$naturalMortalityTitle <- renderText({
+  session$userData$page('natural-mortality')
   text <- "<div style='width: 100%;position: relative;height: 100px; margin-bottom:3px;'>"
   text <- paste0(text, "<div style='float: left; width: 70%;'><span><h3><b>Estimating Natural Mortality (M) from FishBase life history parameters</b></h3><br>This application is a modified version of the Barefoot Ecologist tool developed by Jason Cope: <a target='_blank' href='http://barefootecologist.com.au/shiny_m.html'>http://barefootecologist.com.au/shiny_m.html</a></span></div>")
   text <- paste0(text, "</div>")

@@ -58,30 +58,17 @@ elefanSaModule <- function(input, output, session) {
         session$userData$fishingMortality$FcurrSA <- round(elefan_sa$results$plot3$currents[4]$curr.F, 2)
         
         if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
-          flog.info("Uploading Elefan SA report to VRE")
+          flog.info("Uploading Elefan SA report to i-Marine workspace")
           reportFileName <- paste("/tmp/","ElefanSA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createElefanSaPDFReport(reportFileName,elefan_sa, input)
           elefanSaUploadVreResult$res <- FALSE
+          
+          basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
           tryCatch({
-            if (fileFolderExistsInPath(session$userData$sessionUsername(),session$userData$sessionToken(),paste0("/Home/",session$userData$sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
-              print("Creating folder")
-              createFolderWs(
-                session$userData$sessionUsername(), session$userData$sessionToken(),
-                paste0("/Home/",sessionUsername(),"/Workspace/"),
-                uploadFolderName, 
-                uploadFolderDescription)
-            }
-            uploadToVREFolder(
-              username = session$userData$sessionUsername(), 
-              token = session$userData$sessionToken(), 
-              relativePath = paste0("/Home/",session$userData$sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
-              file = reportFileName,
-              overwrite = TRUE,
-              archive = FALSE
-            )
+            uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
             elefanSaUploadVreResult$res <- TRUE
           }, error = function(err) {
-            flog.error("Error uploading Elefan SA report to the Workspace: %s", err)
+            flog.error("Error uploading Elefan SA report to the i-Marine Workspace: %s", err)
             elefanSaUploadVreResult$res <- FALSE
           }, finally = {})
         }
@@ -239,4 +226,10 @@ elefanSaModule <- function(input, output, session) {
       createElefanSaPDFReport(file, elefan_sa, input)
     }
   )
+  
+  output$elefanSaTitle <- renderText({
+    session$userData$page("elefan-sa")
+    text <- "<span><h3><b>Elefan SA (Simulated Annealing)</b></h3></span>"
+    text
+  })
 }

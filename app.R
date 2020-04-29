@@ -59,6 +59,12 @@ source("assets/commons/commons.R")
 source("assets/commons/storageHub.R")
 source("assets/commons/labels.R")
 
+fileLog <- Sys.getenv("SMT_LOG")
+if (is.null(fileLog) || is.na(fileLog) || fileLog == "") {
+  fileLog <- "session.log"
+}
+print(paste0("Logging to: ", fileLog))
+
 pdf(NULL)
 dev.off()
 #dev.list()
@@ -97,7 +103,7 @@ ui <- tagList(
     tags$head(tags$script(type="text/javascript", src="custom.js")),
     #busyIndicator(wait = 7000),
     tabItems(
-      tabItem("homeTab",htmlOutput("homeInfo")),
+      tabItem("homeTab",htmlOutput("homeInfo"), selected=T),
       tabCmsyIntro,
       tabCmsySampleDataset,
       tabElefanIntro,
@@ -122,7 +128,8 @@ ui <- tagList(
 
 server <- function(input, output, session) {
   flog.threshold(DEBUG)
-  flog.appender(appender.file("session.log"))
+  
+  flog.appender(appender.file(fileLog))
   
   session$allowReconnect("force")
   waiter_hide()
@@ -142,17 +149,39 @@ server <- function(input, output, session) {
     )
   })
   
-  ### If the page Query param is set to a specific page force the rendering to that
+  session$userData$page <- reactiveVal(NULL)
+  
+  ### Render the page set as last visited in session or by page= query param
   observe({
-    query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query$page)) {
-      switch(query$page,
+    currentPage <- NA
+    if (!is.null(session$userData$page())) {
+      currentPage <- session$userData$page()
+    } else {
+      query <- parseQueryString(session$clientData$url_search)
+      if (!is.null(query$page)) {
+        currentPage <- query$page
+      }
+    }
+    flog.info("Current Page: %s", currentPage)
+    if (!is.na(currentPage)) {
+      switch(currentPage,
+             'cmsy-intro'= {isolate({updateTabItems(session, "smt-tabs", "cmsyIntro")})},
              'cmsy'= {isolate({updateTabItems(session, "smt-tabs", "cmsyWidget")})},
+             'cmsy-sample'= {isolate({updateTabItems(session, "smt-tabs", "cmsySampleDataset")})},
+             'elefan-intro' = {isolate({updateTabItems(session, "smt-tabs", "ElefanIntro")})},
              'elefan-ga' = {isolate({updateTabItems(session, "smt-tabs", "ElefanGaWidget")})},
              'elefan-sa' = {isolate({updateTabItems(session, "smt-tabs", "ElefanSaWidget")})},
              'elefan' = {isolate({updateTabItems(session, "smt-tabs", "ElefanWidget")})},
+             'elefan-sample' = {isolate({updateTabItems(session, "smt-tabs", "ElefanSampleDataset")})},
+             'fishmethods-intro' = {isolate({updateTabItems(session, "smt-tabs", "FishMethodsIntro")})},
              'sbpr' = {isolate({updateTabItems(session, "smt-tabs", "SBPRWidget")})},
              'ypr' = {isolate({updateTabItems(session, "smt-tabs", "YPRWidget")})},
+             'fishmethods-sample' = {isolate({updateTabItems(session, "smt-tabs", "FishMethodsSampleDataset")})},
+             'basic-shaefer' = {isolate({updateTabItems(session, "smt-tabs", "BasicSchaefer")})},
+             'basic-von-bertalannfy' = {isolate({updateTabItems(session, "smt-tabs", "BasicVonBertalannfy")})},
+             'seasonal-von-bertalannfy' = {isolate({updateTabItems(session, "smt-tabs", "SeasonalVonBertalannfy")})},
+             'natural-mortality' = {isolate({updateTabItems(session, "smt-tabs", "NaturalMortality")})},
+             'home' = {isolate({updateTabItems(session, "smt-tabs", "homeTab")})},
              {isolate({updateTabItems(session, "smt-tabs", "homeTab")})}
       )
     } else {
@@ -198,6 +227,8 @@ server <- function(input, output, session) {
     if (!is.null(session$userData$sessionUsername())) {
       flog.info("Session username is: %s", session$userData$sessionUsername())
       session$userData$sessionMode("GCUBE")
+      username <<- session$userData$sessionUsername()
+      token <<- session$userData$sessionToken()
     } else {
       flog.info("Session username is: %s", "NULL")
     }

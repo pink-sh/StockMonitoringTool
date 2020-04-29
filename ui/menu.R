@@ -1,8 +1,8 @@
-menuHome <- menuItem("Home", tabName="homeTab")
+menuHome <- menuItem("Home", tabName="homeTab", selected = TRUE)
 menuCmsy <- menuItem("CMSY",
-         menuSubItem("Introduction", tabName = "CmsyIntro"),
+         menuSubItem("Introduction", tabName = "cmsyIntro"),
          menuSubItem("CMSY Method", tabName = "cmsyWidget"),
-         menuSubItem("CMSY Sample Dataset", tabName = "CmsySampleDataset"), id="cmsy-main"
+         menuSubItem("CMSY Sample Dataset", tabName = "cmsySampleDataset"), id="cmsy-main"
 )
 menuElefan <- menuItem("Elefan by TropFishR",
          menuSubItem("Introduction", tabName = "ElefanIntro"),

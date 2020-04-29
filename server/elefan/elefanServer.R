@@ -72,30 +72,16 @@ elefanModule <- function(input, output, session) {
         session$userData$fishingMortality$Fcurr <- round(elefan$results$plot3$currents[4]$curr.F, 2)
         
         if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
-          flog.info("Uploading Elefan report to VRE")
+          flog.info("Uploading Elefan report to i-Marine workspace")
           reportFileName <- paste("/tmp/","Elefan_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createElefanPDFReport(reportFileName,elefan,input)
-          elefanUploadVreResult$res <- FALSE
+          
+          basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
           tryCatch({
-            if (fileFolderExistsInPath(session$userData$sessionUsername(),session$userData$sessionToken(),paste0("/Home/",session$userData$sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
-              flog.info("Creating VRE folder")
-              createFolderWs(
-                session$userData$sessionUsername(), session$userData$sessionToken(),
-                paste0("/Home/",session$userData$sessionUsername(),"/Workspace/"),
-                uploadFolderName, 
-                uploadFolderDescription)
-            }
-            uploadToVREFolder(
-              username = session$userData$sessionUsername(), 
-              token = session$userData$sessionToken(), 
-              relativePath = paste0("/Home/",session$userData$sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
-              file = reportFileName,
-              overwrite = TRUE,
-              archive = FALSE
-            )
+            uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
             elefanUploadVreResult$res <- TRUE
           }, error = function(err) {
-            flog.error("Error uploading Elefan report to the Workspace: %s", err)
+            flog.error("Error uploading Elefan report to the i-Marine Workspace: %s", err)
             elefanUploadVreResult$res <- FALSE
           }, finally = {})
         }
@@ -210,6 +196,12 @@ elefanModule <- function(input, output, session) {
   })
   output$elefanDataConsiderationsText <- renderText({
     text <- gsub("%%ELEFAN%%", "ELEFAN", getDataConsiderationTextForElefan())
+    text
+  })
+  
+  output$elefanTitle <- renderText({
+    session$userData$page("elefan")
+    text <- "<span><h3><b>Elefan</b></h3></span>"
     text
   })
 }

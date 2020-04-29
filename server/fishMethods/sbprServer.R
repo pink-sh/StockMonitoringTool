@@ -49,35 +49,20 @@ sbprModule <- function(input, output, session) {
         js$showBox("box_sbpr_results")
         sbprUploadVreResult$res <- FALSE
         if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
-          tryCatch({
-            flog.info("Uploading SBPR report to VRE")
+            flog.info("Uploading SBPR report to i-Marine workspace")
             reportFileName <- paste("/tmp/","Sbpr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
             createSbprPDFReport(reportFileName, sbprExec, input)
-            if (fileFolderExistsInPath(session$userData$sessionUsername(),session$userData$sessionToken(),paste0("/Home/",session$userData$sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
-              print("Creating folder")
-              createFolderWs(
-                session$userData$sessionUsername(), session$userData$sessionToken(),
-                paste0("/Home/",session$userData$sessionUsername(),"/Workspace/"),
-                uploadFolderName, 
-                uploadFolderDescription)
-            }
-            resUploadSbpr = uploadToVREFolder(
-              username = session$userData$sessionUsername(), 
-              token = session$userData$sessionToken(), 
-              relativePath = paste0("/Home/",session$userData$sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
-              file = reportFileName,
-              overwrite = TRUE,
-              archive = FALSE
-            )
-            sbprUploadVreResult$res <- TRUE
-          }, error = function(err) {
-            flog.error("Error uploading SBPR report to the Workspace: %s", err)
             sbprUploadVreResult$res <- FALSE
-          }, finally = {})
-          
-          flog.info("uploading result: %s", sbprUploadVreResult)
+            
+            basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
+            tryCatch({
+              uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
+              sbprUploadVreResult$res <- TRUE
+            }, error = function(err) {
+              flog.error("Error uploading SBPR report to the i-Marine Workspace: %s", err)
+              sbprUploadVreResult$res <- FALSE
+            }, finally = {})
         }
-        
       }}, error = function(err) {
         flog.error("Error in SBPR: %s ",err)
         showModal(modalDialog(
@@ -179,6 +164,12 @@ sbprModule <- function(input, output, session) {
     text <- paste0(text, "</ul>")
     text <- paste0(text, "<h5><b>Ensure that spawning stock weight-at-age data is representative of the full population, i.e., are all age groups sampled?</b></h5>")
     text <- paste0(text, "<h5>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.", "</h5>")
+    text
+  })
+  
+  output$sbprTitle <- renderText({
+    session$userData$page("sbpr")
+    text <- "<span><h3><b>Spawning stock biomass-per-recruit (SBPR)</b></h3></span>"
     text
   })
 }

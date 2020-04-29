@@ -1,5 +1,5 @@
-tabCmsyIntro <- tabItem("CmsyIntro",htmlOutput("cmsyIntroOut"))
-tabCmsySampleDataset <- tabItem("CmsySampleDataset",htmlOutput("cmsySampleDataset"))
+tabCmsyIntro <- tabItem("cmsyIntro",htmlOutput("cmsyIntroOut"))
+tabCmsySampleDataset <- tabItem("cmsySampleDataset",htmlOutput("cmsySampleDataset"))
 
 tabCmsy <- function(id) {
   ns <- NS(id)

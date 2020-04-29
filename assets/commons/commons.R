@@ -1,5 +1,6 @@
 library(httr)
 library(jsonlite)
+library(pracma)
 
 ########## CONSTANTS ##########
 
@@ -141,4 +142,43 @@ createYprPDFReport <- function(file, yprExec, input) {
   file.copy("assets/fishmethods/ypr.Rmd", tempReport, overwrite = TRUE)
   params <- list(yprExec = yprExec, inputParams = input)
   rmarkdown::render(tempReport, output_file = file, params = params)
+}
+
+fileFolderExistsInPath <- function(path, entity) {
+  folders <- listWS(path)
+  
+  if (!endsWith(path,"/")) {
+    path<-paste0(path,"/")
+  }
+  
+  hasEntity <- FALSE
+  fullPath <- paste0(path,entity)
+  for (e in folders) {
+    if (strcmp(e,fullPath)) {
+      hasEntity <- TRUE
+    }
+  }
+  return (hasEntity)
+} 
+
+uploadToIMarineFolder <- function(file, baseFolder, folderName) {
+  tryCatch({
+    if (fileFolderExistsInPath(baseFolder, folderName) == FALSE) {
+      flog.info("Creating folder [%s] in i-Marine workspace path: %s", folderName, baseFolder)
+      createFolderWs(
+        baseFolder,
+        folderName, 
+        uploadFolderDescription)
+    }
+    flog.info("Trying to upload %s to i-Marine workspace folder %s", file, paste0(baseFolder, uploadFolderName, "/"))
+    uploadWS(
+      path = paste0(baseFolder, folderName, "/"), 
+      file = file,
+      overwrite = TRUE
+    )
+    flog.info("File %s successfully uploaded to the i-Marine folder %s", file, paste0(baseFolder, folderName))
+  }, error = function(err) {
+    flog.error("Error uploading report to the i-Marine workspace: %s", err)
+    stop(err)
+  }, finally = {})
 }

@@ -57,30 +57,18 @@ elefanGaModule <- function(input, output, session) {
         session$userData$fishingMortality$FcurrGA <- round(elefan_ga$results$plot3$currents[4]$curr.F, 2)
         
         if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
-          flog.info("Uploading Elefan GA report to VRE")
+          flog.info("Uploading Elefan GA report to i-Marine workspace")
           reportFileName <- paste("/tmp/","ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createElefanGaPDFReport(reportFileName,elefan_ga,input)
           elefanGaUploadVreResult$res <- FALSE
+          
+          basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
+          
           tryCatch({
-            if (fileFolderExistsInPath(session$userData$sessionUsername(),session$userData$sessionToken(),paste0("/Home/",session$userData$sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
-              flog.info("Creating VRE folder")
-              createFolderWs(
-                session$userData$sessionUsername(), session$userData$sessionToken(),
-                paste0("/Home/",session$userData$sessionUsername(),"/Workspace/"),
-                uploadFolderName, 
-                uploadFolderDescription)
-            }
-            uploadToVREFolder(
-              username = session$userData$sessionUsername(), 
-              token = session$userData$sessionToken(), 
-              relativePath = paste0("/Home/",session$userData$sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
-              file = reportFileName,
-              overwrite = TRUE,
-              archive = FALSE
-            )
+            uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
             elefanGaUploadVreResult$res <- TRUE
           }, error = function(err) {
-            flog.error("Error uploading Elefan GA report to the Workspace: %s", err)
+            flog.error("Error uploading Elefan GA report to the i-Marine Workspace: %s", err)
             elefanGaUploadVreResult$res <- FALSE
           }, finally = {})
         }
@@ -247,5 +235,11 @@ elefanGaModule <- function(input, output, session) {
       title <- paste0("<strong>Highest value of fitness function:</strong>&nbsp;", round(elefan_ga$results$data$Rn_max, 3))
       title
     } else {  "" }
+  })
+  
+  output$elefanGaTitle <- renderText({
+    session$userData$page("elefan-ga")
+    text <- "<span><h3><b>Elefan GA (Genetic Algorithm)</b></h3></span>"
+    text
   })
 }

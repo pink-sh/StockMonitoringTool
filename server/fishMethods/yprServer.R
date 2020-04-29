@@ -48,30 +48,17 @@ yprModule <- function(input, output, session) {
       js$showBox("box_ypr_results")
       
       if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
-        print("uploading to VRE")
+        flog.info("Uploading YPR report to i-Marine workspace")
         reportFileName <- paste("/tmp/","Ypr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
         createYprPDFReport(reportFileName, yprExec, input)
         yprUploadVreResult$res <- FALSE
+        
+        basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
         tryCatch({
-          if (fileFolderExistsInPath(session$userData$sessionUsername(),session$userData$sessionToken(),paste0("/Home/",session$userData$sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
-            print("Creating folder")
-            createFolderWs(
-              session$userData$sessionUsername(), session$userData$sessionToken(),
-              paste0("/Home/",session$userData$sessionUsername(),"/Workspace/"),
-              uploadFolderName, 
-              uploadFolderDescription)
-          }
-          uploadToVREFolder(
-            username = session$userData$sessionUsername(), 
-            token = session$userData$sessionToken(), 
-            relativePath = paste0("/Home/",session$userData$sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
-            file = reportFileName,
-            overwrite = TRUE,
-            archive = FALSE
-          )
+          uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
           yprUploadVreResult$res <- TRUE
         }, error = function(err) {
-          print(paste0("Error uploading SBPR report to the Workspace: ", err))
+          flog.error("Error uploading YPR report to the i-Marine Workspace: %s", err)
           yprUploadVreResult$res <- FALSE
         }, finally = {})
       }
@@ -160,6 +147,12 @@ yprModule <- function(input, output, session) {
   output$YPRDataConsiderationsText <- renderText({
     text <- "<h5><b>Ensure that spawning stock weight-at-age data is representative of the full population, i.e., are all age groups sampled?</b></h5>"
     text <- paste0(text, "<h5>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.", "</h5>")
+    text
+  })
+  
+  output$yprTitle <- renderText({
+    session$userData$page("ypr")
+    text <- "<span><h3><b>Yield-per-recruit (YPR)</b></h3></span>"
     text
   })
 }

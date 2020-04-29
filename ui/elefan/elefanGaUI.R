@@ -1,7 +1,7 @@
 tabElefanGa <- function(id) {
   ns <- NS(id)
   tabItem("ElefanGaWidget",
-    htmlOutput("elefanGaTitle"),
+    htmlOutput(ns("elefanGaTitle")),
     htmlOutput("tropFishRLibVersion1", class="subTitle"),
     actionButton(ns("elefanGADataConsiderations"), "Data Considerations", class="topLevelInformationButton"),
       fluidRow(

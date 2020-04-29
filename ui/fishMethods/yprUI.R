@@ -1,7 +1,7 @@
 tabYpr <- function(id) {
   ns <- NS(id)
   tabItem("YPRWidget",
-    htmlOutput("yprTitle"),
+    htmlOutput(ns("yprTitle")),
     htmlOutput("fishMethodsVersion2"),
     actionButton("YPRDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
     fluidRow(

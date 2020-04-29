@@ -186,30 +186,17 @@ cmsyModule <- function(input, output, session) {
         }
         
         if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
-          print("uploading to VRE")
+          flog.info("Uploading CMSY report to i-Marine workspace")
           reportFileName <- paste("/tmp/","CMSY_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createCmsyPDFReport(reportFileName, cmsy, input)
           cmsyUploadVreResult$res <- FALSE
+          
+          basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
           tryCatch({
-            if (fileFolderExistsInPath(session$userData$sessionUsername(),session$userData$sessionToken(),paste0("/Home/",session$userData$sessionUsername(),"/Workspace/"), uploadFolderName) == FALSE) {
-              print("Creating folder")
-              createFolderWs(
-                session$userData$sessionUsername(), session$userData$sessionToken(),
-                paste0("/Home/",session$userData$sessionUsername(),"/Workspace/"),
-                uploadFolderName, 
-                uploadFolderDescription)
-            }
-            uploadToVREFolder(
-              username = session$userData$sessionUsername(), 
-              token = sessionToken(), 
-              relativePath = paste0("/Home/",session$userData$sessionUsername(),"/Workspace/", uploadFolderName, "/"), 
-              file = reportFileName,
-              overwrite = TRUE,
-              archive = FALSE
-            )
+            uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
             cmsyUploadVreResult$res <- TRUE
           }, error = function(err) {
-            print(paste0("Error uploading CMSY report to the Workspace: ", err))
+            flog.error("Error uploading CMSY report to the i-Marine Workspace: %s", err)
             cmsyUploadVreResult$res <- FALSE
           }, finally = {})
         }
@@ -302,6 +289,7 @@ cmsyModule <- function(input, output, session) {
   
   ####### CMSY TEXT #######
   output$cmsyMethodTitle <- renderText({
+    session$userData$page("cmsy")
     text <- "<span><h3><b>CMSY (Catch-Maximum Sustainable Yield) Method</b></h3></span>"
     text
   })
