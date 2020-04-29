@@ -46,7 +46,7 @@ RUN ln -s /root/StockMonitoringTool /srv/shiny/stockMonitoringTools
  
 EXPOSE 3838
 
-RUN export SMT_LOG=/tmp/session.log
+ENV SMT_LOG=/tmp/session.log
 
 RUN apt-get install -y curl
 #CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools',port=3838,host='0.0.0.0')"]
