@@ -4,9 +4,16 @@ elefanGaModule <- function(input, output, session) {
   elefanGaUploadVreResult <- reactiveValues()
   
   inputElefanGaData <- reactiveValues()
+  fileGaState <- reactiveValues(
+    upload = NULL
+  )
   
   elefanGaFileData <- reactive({
-    contents <- read_elefan_csv(input$fileGa$datapath)
+    if (is.null(input$fileGa) || is.null(fileGaState$upload)) {
+      return(NA)
+    }
+    contents <- read_elefan_csv(input$fileGa$datapath, input$elefanGaDateFormat)
+    print(input$fileGa)
     if (is.null(contents)) {
       shinyjs::disable("go_ga")
       showModal(modalDialog(
@@ -24,6 +31,11 @@ elefanGaModule <- function(input, output, session) {
   })
   
   observeEvent(input$fileGa, {
+    fileGaState$upload <- 'uploaded'
+    inputElefanGaData$data <- elefanGaFileData()
+  })
+  
+  observeEvent(input$elefanGaDateFormat, {
     inputElefanGaData$data <- elefanGaFileData()
   })
   
@@ -77,7 +89,7 @@ elefanGaModule <- function(input, output, session) {
       flog.error("Error in Elefan GA: %s ",err)
       showModal(modalDialog(
         title = "Error",
-        HTML(sprintf("General error running Elefan GA <hr/> <b>%s</b>", err)),
+        HTML(sprintf(getErrorMessage("ELEFAN GA"), err)),
         easyClose = TRUE,
         footer = NULL
       ))
@@ -91,6 +103,7 @@ elefanGaModule <- function(input, output, session) {
   })
   
   observeEvent(input$reset_ga, {
+    fileGaState$upload <- NULL
     resetElefanGaInputValues()
   })
   

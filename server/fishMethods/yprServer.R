@@ -28,42 +28,59 @@ yprModule <- function(input, output, session) {
   })
   
   observeEvent(input$go_YPR, {
+    result = tryCatch({
+      js$showComputing()
+      js$removeBox("box_ypr_results")
+      dat <- inputYprData$data
     
-    js$showComputing()
-    js$removeBox("box_ypr_results")
-    dat <- inputYprData$data
-    
-    flog.info("Starting YPR computation")
-    res <- ypr_shinyApp(age=dat$age,wgt=dat$ssbwgt,partial=dat$partial,M=input$YPR_M,plus=input$YPR_Plus,oldest=input$YPR_oldest,maxF=input$YPR_maxF,incrF=input$YPR_incrF, graph = FALSE)
-    js$hideComputing()
-    if ('error' %in% names(res)) {
-      showModal(modalDialog(
-        title = "Error",
-        res$error,
-        easyClose = TRUE,
-        footer = NULL
-      ))
-    } else {
-      yprExec$results <- res
-      js$showBox("box_ypr_results")
+      flog.info("Starting YPR computation")
+      res <- ypr_shinyApp(age=dat$age,wgt=dat$ssbwgt,partial=dat$partial,M=input$YPR_M,plus=input$YPR_Plus,oldest=input$YPR_oldest,maxF=input$YPR_maxF,incrF=input$YPR_incrF, graph = FALSE)
+      js$hideComputing()
+      if ('error' %in% names(res)) {
+        showModal(modalDialog(
+          title = "Error",
+          res$error,
+          easyClose = TRUE,
+          footer = NULL
+        ))
+      } else {
+        yprExec$results <- res
+        js$showBox("box_ypr_results")
       
-      if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
-        flog.info("Uploading YPR report to i-Marine workspace")
-        reportFileName <- paste("/tmp/","Ypr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
-        createYprPDFReport(reportFileName, yprExec, input)
-        yprUploadVreResult$res <- FALSE
-        
-        basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
-        tryCatch({
-          uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
-          yprUploadVreResult$res <- TRUE
-        }, error = function(err) {
-          flog.error("Error uploading YPR report to the i-Marine Workspace: %s", err)
+        if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
+          flog.info("Uploading YPR report to i-Marine workspace")
+          reportFileName <- paste("/tmp/","Ypr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+          createYprPDFReport(reportFileName, yprExec, input)
           yprUploadVreResult$res <- FALSE
-        }, finally = {})
-      }
-    }
+        
+          basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
+          tryCatch({
+            uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
+            yprUploadVreResult$res <- TRUE
+          }, error = function(err) {
+            flog.error("Error uploading YPR report to the i-Marine Workspace: %s", err)
+            yprUploadVreResult$res <- FALSE
+          }, finally = {})
+        }
+      }}, error = function(err) {
+        flog.error("Error in YPR: %s ",err)
+        showModal(modalDialog(
+          title = "Error",
+          HTML(sprintf(getErrorMessage("YPR"), err)),
+          easyClose = TRUE,
+          footer = NULL
+        ))
+        return(NULL)
+      },
+      finally = {
+        js$hideComputing()
+        js$enableAllButtons()
+      })})
+  
+  observeEvent(input$reset_ypr, {
+    resetYPRInputValues()
   })
+  
   output$yprFishingMortality <- renderText({
     if (is.na(session$userData$fishingMortality$FcurrGA) && is.na(session$userData$fishingMortality$FcurrSA) && is.na(session$userData$fishingMortality$Fcurr)) {
       text <- "<strong>You need to estimate Fcurrent before calculating YPR, using ELEFAN method if you have lengnth frequency data. The data used for ELEFAN and YPR analysis should come from the same fish stock.</strong>"
@@ -145,9 +162,7 @@ yprModule <- function(input, output, session) {
   )
   
   output$YPRDataConsiderationsText <- renderText({
-    text <- "<h5><b>Ensure that spawning stock weight-at-age data is representative of the full population, i.e., are all age groups sampled?</b></h5>"
-    text <- paste0(text, "<h5>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.", "</h5>")
-    text
+    fishMethodsDataConsiderationText()
   })
   
   output$yprTitle <- renderText({

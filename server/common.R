@@ -13,7 +13,7 @@ getDataConsiderationTextForCmsy <- function() {
   text <- paste0(text, "<p>Ensure your data are in .csv format and use a “.” to separate decimals in the data.</p>")
   text <- paste0(text, "<br/>")
   text <- paste0(text, "<h5><p><b>Please ensure your time-series at least 15 years in length from starting year to ending year.<br> (Note that years with missing data should be filled with an 'NA' value.</b></p></h5>")
-  text <- paste0(text, "<h5>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of natural mortality (M) for the Optional Parameters section.", "</h5>")
+  text <- paste0(text, "<i>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of natural mortality (M) for the Optional Parameters section.", "</i>")
   text
 }
 
@@ -34,6 +34,40 @@ getDataConsiderationTextForElefan <- function() {
   text <- paste0(text, "<li>", "Ensure your data are in .csv format.", "</li>")
   text <- paste0(text, "<li>", "Use a “.” to separate decimals in the data.", "</li>")
   text <- paste0(text, "</ul>")
-  text <- paste0(text, "<h5>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of ", withMathJax("\\(L_\\infty\\)"), " and von Bertalanffy K in the Optional Parameters section in the %%ELEFAN%% tool.", "</h5>")
+  text <- paste0(text, "<i>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of ", withMathJax("\\(L_\\infty\\)"), " and von Bertalanffy K in the Optional Parameters section in the %%ELEFAN%% tool.", "</i>")
+  return (text)
+}
+
+getErrorMessage <- function(forWhat) {
+  return (paste0("Ops! unfortunately something went wrong running the ",forWhat," method<br/>Don't give up and try again in a few minutes.<hr/> <b>%s</b>"))
+}
+
+fishMethodsDataConsiderationText <- function() {
+  text <- "<div>"
+  text <- paste0(text, "<p>")
+  text <- paste0(text, "<b>Mandatory fields to run YPR/SBPR are:</b>")
+  text <- paste0(text, "<ul>")
+  text <- paste0(text, "<li>age (the age of the fish)</li>")
+  text <- paste0(text, "<li>ssbwgt (the spawning stock weights for each age)</li>")
+  text <- paste0(text, "<li>partial (the recruitment at each age that is used to determine how much fishing mortality (F) each age group receives)</li>")
+  text <- paste0(text, "<li>pmat (the proportion of mature fish at each age (used only for SBPR)</li>")
+  text <- paste0(text, "</ul>")
+  text <- paste0(text, "</p>")
+  
+  text <- paste0(text, "<p>")
+  text <- paste0(text, "If you are creating your own dataset:<br/>")
+  text <- paste0(text, "Ensure that the column names are identical to the sample dataset. Ensure your data are in .csv format. Use a “.” to separate decimals in the data.")
+  text <- paste0(text, "</p>")
+  
+  text <- paste0(text, "<p>")
+  text <- paste0(text, "<strong>Ensure that spawning stock weight-at-age data is representative of the full population, i.e., are all age groups sampled?</strong>")
+  text <- paste0(text, "</p>")
+  
+  text <- paste0(text, "<p>")
+  text <- paste0(text, "<i>**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.</i>")
+  text <- paste0(text, "</p>")
+  
+  text <- paste0(text, "</div>")
+  
   return (text)
 }

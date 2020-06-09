@@ -81,8 +81,8 @@ K range: `r input$elefan_k_range`
 C: `r input$ELEFAN_C`  
 MA: `r input$ELEFAN_MA`  
 Age max: `r input$ELEFAN_agemax`  
-ContourL `r input$ELEFAN_contour`  
-sqrt: `r input$ELEFAN_GA_addl.sqrt`  
+ContourL `r if(input$ELEFAN_contour){"TRUE"}else{"FALSE"}`  
+sqrt: `r if(input$ELEFAN_GA_addl.sqrt){"TRUE"}else{"FALSE"}`  
 Plus group: `r input$ELEFAN_GA_PLUS_GROUP`  
 
 ******

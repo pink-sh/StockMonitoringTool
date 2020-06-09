@@ -72,7 +72,7 @@ knitr::kable(df2, digits = 2, align=rep('c', 5))
 ******
 ## Input parameters  
 Input File: `r input$fileGa$name`  
-Seasonalized: `r input$ELEFAN_GA_seasonalised`  
+Seasonalized: `r if(input$ELEFAN_GA_seasonalised){"TRUE"}else{"FALSE"}`  
   
 **Low Par**  
 Linf: `r input$ELEFAN_GA_lowPar_Linf`  
@@ -96,7 +96,7 @@ P Mutation: `r input$ELEFAN_GA_pmutation`
 P Crossover: `r input$ELEFAN_GA_pcrossover`  
 Elitism: `r input$ELEFAN_GA_elitism`  
 MA: `r input$ELEFAN_GA_MA`  
-sqrt: `r input$ELEFAN_GA_addl.sqrt`  
+sqrt: `r if(input$ELEFAN_GA_addl.sqrt){"TRUE"}else{"FALSE"}`  
 Plus group: `r input$ELEFAN_GA_PLUS_GROUP`  
 
 ******

@@ -67,7 +67,7 @@ sbprModule <- function(input, output, session) {
         flog.error("Error in SBPR: %s ",err)
         showModal(modalDialog(
           title = "Error",
-          HTML(sprintf("General error running SBPR <hr/> <b>%s</b>", err)),
+          HTML(sprintf(getErrorMessage("SBPR"), err)),
           easyClose = TRUE,
           footer = NULL
         ))
@@ -149,22 +149,7 @@ sbprModule <- function(input, output, session) {
     }
   )
   output$SBPRDataConsiderationsText <- renderText({
-    text <- "<b>Mandatory fields to run YPR/SBPR are</b>"
-    text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li>age (the age of the fish)</li>")
-    text <- paste0(text, "<li>ssbwgt (the spawning stock weights for each age)</li>")
-    text <- paste0(text, "<li>partial (the recruitment at each age that is used to determine how much fishing mortality (F) each age group receives)</li>")
-    text <- paste0(text, "<li>pmat (the proportion of mature fish at each age (used only for SBPR)</li>")
-    text <- paste0(text, "</ul>")
-    text <- paste0(text, "<b>If you are creating your own dataset</b>")
-    text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li>Ensure that the column names are identical to the sample dataset.</li>")
-    text <- paste0(text, "<li>Ensure your data are in .csv format.</li>")
-    text <- paste0(text, "<li>Use a “.” to separate decimals in the data.</li>")
-    text <- paste0(text, "</ul>")
-    text <- paste0(text, "<h5><b>Ensure that spawning stock weight-at-age data is representative of the full population, i.e., are all age groups sampled?</b></h5>")
-    text <- paste0(text, "<h5>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.", "</h5>")
-    text
+    fishMethodsDataConsiderationText()
   })
   
   output$sbprTitle <- renderText({

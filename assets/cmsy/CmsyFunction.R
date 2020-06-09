@@ -148,7 +148,7 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   flog.warn("CMSY FAIL %s",stop_condition_fail)
   
   if (stop_condition_fail) {
-    stop("CMSY WPS call failed.")
+    stop("Cannot call WPS service.")
   }
   
   #GET THE STATUS LOCATION FROM THE ACCEPTANCE RESPONSE#
@@ -190,7 +190,7 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   }
   
   if (stop_condition_fail) {
-    stop(stop_condition_fail)
+    stop("WPS call failed.")
   }
   
   closeAllConnections()

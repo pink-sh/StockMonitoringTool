@@ -28,7 +28,18 @@ validateElefanInputFile <- function(file) {
   return (contents)
 }
 
-read_elefan_csv <- function(csvFile) {
+read_elefan_csv <- function(csvFile, format="") {
+  Sys.setlocale("LC_TIME", "C")
+  
+  order = c('ymd', 'dmy', 'mdy')
+  if (format == "mdy") {
+    order <- c('mdy')
+  } else if (format == "dmy") {
+    order <- c('dmy')
+  } else if (format == 'ymd') {
+    order = c('ymd')
+  }
+  
   a <- validateElefanInputFile(csvFile)
   if (is.null(a)) {
     return (NULL)
@@ -40,7 +51,8 @@ read_elefan_csv <- function(csvFile) {
   vectorDates <- as.vector(
     unlist(
       lapply(
-        lapply(colname, parse_date_time, order=c('ymd', 'dmy', 'mdy') )
+        lapply(colname, parse_date_time, order )
+        #lapply(colname, dmy )
         , formatTimestamp)
     )
   )
@@ -49,24 +61,25 @@ read_elefan_csv <- function(csvFile) {
   #dataSet$dates <- as.Date(colnames(a)[2:length(colnames(a))], "X%Y.%m.%d")
   dataSet$midLengths <- a[[1]]
   dataSet$catch <- as.matrix(a[,-1])
+  colnames(dataSet$catch) <- vectorDates
   return (dataSet)
   
 }
-contents <- read_elefan_csv("/home/enrico/Work/elefanSampleFile.csv")
+contents <- read_elefan_csv("/home/enrico/Work/elefanSampleFile2.csv", format="mdy")
 print(contents)
 
-t <- formatTimestamp(parse_date_time('test', c('ymd', 'dmy', 'mdy', '%Y-%m-%d', '%Y.%m.%d')))
-if (is.na(t)) {
-  print ("test is not a date")
-} else {
-  print ("test is a date??")
-}
+#t <- formatTimestamp(parse_date_time('test', c('ymd', 'dmy', 'mdy', '%Y-%m-%d', '%Y.%m.%d')))
+#if (is.na(t)) {
+#  print ("test is not a date")
+#} else {
+#  print ("test is a date??")
+#}
 
-testDate <- '2020.04.15'
-t <- formatTimestamp(parse_date_time(testDate, c('ymd', 'dmy', 'mdy', '%Y-%m-%d', '%Y.%m.%d')))
-if (is.na(t)) {
-  print (paste0(testDate," is not a date??"))
-} else {
-  print (paste0(testDate, " is a date"))
-}
+#testDate <- '2020.04.15'
+#t <- formatTimestamp(parse_date_time(testDate, c('ymd', 'dmy', 'mdy', '%Y-%m-%d', '%Y.%m.%d')))
+#if (is.na(t)) {
+#  print (paste0(testDate," is not a date??"))
+#} else {
+#  print (paste0(testDate, " is a date"))
+#}
 

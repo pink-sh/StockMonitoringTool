@@ -204,7 +204,7 @@ cmsyModule <- function(input, output, session) {
         flog.error("Error in CMSY: %s ",err)
         showModal(modalDialog(
           title = "Error",
-          HTML(sprintf("General error running CMSY <hr/> <b>%s</b>", err)),
+          HTML(sprintf(getErrorMessage("CMSY"), err)),
           easyClose = TRUE,
           footer = NULL
         ))

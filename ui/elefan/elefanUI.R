@@ -10,14 +10,17 @@ tabElefan <- function(id) {
         width = NULL, 
         collapsible = T, 
         class = "collapsed-box",
-        box(
-          fileInput(ns("fileElefan"), "Choose Input CSV File",
-          accept = c(
-            "text/csv",
-            "text/comma-separated-values,text/plain",
-            ".csv")
+          box(
+            fileInput(ns("fileElefan"), "Choose Input CSV File",
+            accept = c(
+              "text/csv",
+              "text/comma-separated-values,text/plain",
+              ".csv")
+            )
+          ),
+          box(
+            selectInput(ns("elefanDateFormat"), "Choose CSV date format", choices = c("Automatic guess" = "auto", "Year Month Day" = "ymd", "Year Day Month" = "ydm", "Day Month Year" = "dmy", "Month Day Year" = "mdy" ))
           )
-        )
       ),
       box(title = "Optional Parameters",
         width = NULL,
@@ -110,4 +113,7 @@ resetElefanInputValues <- function() {
   shinyjs::reset("ELEFAN_agemax")
   shinyjs::reset("ELEFAN_PLUS_GROUP")
   shinyjs::reset("ELEFAN_contour")
+  shinyjs::disable("go")
+  clearResults("box_elefan_results")
+  shinyjs::reset("elefanDateFormat")
 }

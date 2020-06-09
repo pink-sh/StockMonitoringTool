@@ -182,3 +182,8 @@ uploadToIMarineFolder <- function(file, baseFolder, folderName) {
     stop(err)
   }, finally = {})
 }
+
+clearResults <- function(id) {
+  localJs <- paste0("document.getElementById('", id, "').parentElement.style.visibility = 'hidden'" )
+  shinyjs::runjs(localJs)
+}

@@ -3,9 +3,9 @@ tabSbpr <- function(id) {
   tabItem("SBPRWidget",
     htmlOutput(ns("sbprTitle")),
     htmlOutput("fishMethodsVersion1"),
-    actionButton("SBPRDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
+    actionButton(ns("SBPRDataConsiderations"), "Data Considerations", class="topLevelInformationButton"),
     fluidRow(
-      bsModal("modalExampleSBPR", "SBPR Data Considerations", "SBPRDataConsiderations", size = "large", htmlOutput("SBPRDataConsiderationsText")),
+      bsModal("modalExampleSBPR", "SBPR Data Considerations", ns("SBPRDataConsiderations"), size = "large", htmlOutput(ns("SBPRDataConsiderationsText"))),
       box(title = "Main Parameters",
         width = NULL, 
         collapsible = T, 
@@ -72,4 +72,6 @@ resetSBPRInputValues <- function() {
   shinyjs::reset("SBPR_pF")
   shinyjs::reset("SBPR_MSP")
   shinyjs::reset("SBPR_incrF")
+  shinyjs::disable("go_sbpr")
+  clearResults("box_sbpr_results")
 }

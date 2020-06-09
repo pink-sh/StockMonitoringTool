@@ -4,9 +4,15 @@ elefanSaModule <- function(input, output, session) {
   elefanSaUploadVreResult <- reactiveValues()
   
   inputElefanSaData <- reactiveValues()
+  fileSaState <- reactiveValues(
+    upload = NULL
+  )
   
   elefanSaFileData <- reactive({
-    contents <- read_elefan_csv(input$fileSa$datapath)
+    if (is.null(input$fileSa) || is.null(fileSaState$upload)) {
+      return(NA)
+    }
+    contents <- read_elefan_csv(input$fileSa$datapath, input$elefanSaDateFormat)
     if (is.null(contents)) {
       shinyjs::disable("go_sa")
       showModal(modalDialog(
@@ -24,6 +30,11 @@ elefanSaModule <- function(input, output, session) {
   })
   
   observeEvent(input$fileSa, {
+    fileSaState$upload <- 'uploaded'
+    inputElefanSaData$data <- elefanSaFileData()
+  })
+  
+  observeEvent(input$elefanSaDateFormat, {
     inputElefanSaData$data <- elefanSaFileData()
   })
 
@@ -77,7 +88,7 @@ elefanSaModule <- function(input, output, session) {
       flog.error("Error in Elefan SA: %s ",err)
       showModal(modalDialog(
         title = "Error",
-        HTML(sprintf("General error running Elefan SA <hr/> <b>%s</b>", err)),
+        HTML(sprintf(getErrorMessage("ELEFAN SA"), err)),
         easyClose = TRUE,
         footer = NULL
       ))
@@ -90,6 +101,7 @@ elefanSaModule <- function(input, output, session) {
   })
   
   observeEvent(input$reset_sa, {
+    fileSaState$upload <- NULL
     resetElefanSaInputValues()
   })
   

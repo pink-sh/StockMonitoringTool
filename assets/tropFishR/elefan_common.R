@@ -8,9 +8,8 @@ validateElefanInputFile <- function(file) {
   contents <- read.csv(file)
   
   a<-as.vector(colnames(contents))
-  print(head(a,1))
+  #print(head(a,1))
   if (head(a,1) != 'midLength') {
-    print("RET1")
     return (NULL)
   } else {
     for (row in 2:length(a)) {
@@ -20,7 +19,6 @@ validateElefanInputFile <- function(file) {
       }
       d <- formatTimestamp(parse_date_time(x, c('ymd', 'dmy', 'mdy')))
       if (is.na(d)) {
-        print("RET2")
         return (NULL)
       }
     }
@@ -28,7 +26,25 @@ validateElefanInputFile <- function(file) {
   return (contents)
 }
 
-read_elefan_csv <- function(csvFile) {
+read_elefan_csv <- function(csvFile, format="") {
+  Sys.setlocale("LC_TIME", "C")
+  
+  print (paste0("Format is: ", format))
+  
+  if (is.null(format) || is.na(format)) {
+    order <- c('ymd', 'ydm', 'dmy', 'mdy')
+  } else if (format == "mdy") {
+    order <- c('mdy')
+  } else if (format == "dmy") {
+    order <- c('dmy')
+  } else if (format == 'ymd') {
+    order = c('ymd', 'ydm')
+  } else if (format == 'ydm') {
+    order = c('ydm', 'ymd')
+  } else {
+    order <- c('ymd', 'ydm', 'dmy', 'mdy')
+  }
+  
   a <- validateElefanInputFile(csvFile)
   if (is.null(a)) {
     return (NULL)
@@ -40,7 +56,7 @@ read_elefan_csv <- function(csvFile) {
   vectorDates <- as.vector(
     unlist(
       lapply(
-        lapply(colname, parse_date_time, order=c('ymd', 'dmy', 'mdy') )
+        lapply(colname, parse_date_time, order )
         , formatTimestamp)
     )
   )
@@ -49,6 +65,9 @@ read_elefan_csv <- function(csvFile) {
   #dataSet$dates <- as.Date(colnames(a)[2:length(colnames(a))], "X%Y.%m.%d")
   dataSet$midLengths <- a[[1]]
   dataSet$catch <- as.matrix(a[,-1])
+  
+  colnames(dataSet$catch) <- vectorDates
+  
   return (dataSet)
   
 }

@@ -3,9 +3,9 @@ tabYpr <- function(id) {
   tabItem("YPRWidget",
     htmlOutput(ns("yprTitle")),
     htmlOutput("fishMethodsVersion2"),
-    actionButton("YPRDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
+    actionButton(ns("YPRDataConsiderations"), "Data Considerations", class="topLevelInformationButton"),
     fluidRow(
-      bsModal("modalExampleYPR", "YPR Data Considerations", "YPRDataConsiderations", size = "large", htmlOutput("YPRDataConsiderationsText")),
+      bsModal("modalExampleYPR", "YPR Data Considerations", ns("YPRDataConsiderations"), size = "large", htmlOutput(ns("YPRDataConsiderationsText"))),
       box(title = "Main Parameters",
         width = NULL, 
         collapsible = T, 
@@ -69,4 +69,6 @@ resetYPRInputValues <- function() {
   shinyjs::reset("YPR_Plus")
   shinyjs::reset("YPR_oldest")
   shinyjs::reset("YPR_incrF")
+  shinyjs::disable("go_YPR")
+  clearResults("box_ypr_results")
 }
