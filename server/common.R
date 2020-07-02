@@ -39,7 +39,11 @@ getDataConsiderationTextForElefan <- function() {
 }
 
 getErrorMessage <- function(forWhat) {
-  return (paste0("Ops! unfortunately something went wrong running the ",forWhat," method<br/>Don't give up and try again in a few minutes.<hr/> <b>%s</b>"))
+  if(forWhat=="CMSY"){
+    return (paste0("Ops! Unfortunately the ",forWhat, " method experienced a problem with the server.<br/>Don't give up and try again in a few minutes or refresh your Stock Monitoring Tool instance.<hr/> <b>%s</b>"))
+  }else{
+    return (paste0("Ops! unfortunately something went wrong running the ",forWhat," method<br/>Don't give up and try again in a few minutes.<hr/> <b>%s</b>"))
+  }
 }
 
 fishMethodsDataConsiderationText <- function() {
