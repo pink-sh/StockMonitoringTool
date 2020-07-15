@@ -24,10 +24,20 @@ elefanGaModule <- function(input, output, session) {
       ))
       return (NULL)
     } else {
+      if(is.Date(contents$dates)&&is.unsorted(contents$dates)){
+      shinyjs::disable("go")
+      showModal(modalDialog(
+        title = "Error",
+        "Please ensure that your dates are input in chronological order from left to right.",
+        easyClose = TRUE,
+        footer = NULL
+      ))
+      return(NULL)
+    } else {
       shinyjs::enable("go_ga")
       return (contents)  
     }
-    
+    }
   })
   
   observeEvent(input$fileGa, {
@@ -59,10 +69,19 @@ elefanGaModule <- function(input, output, session) {
       if ('error' %in% names(res)) {
         showModal(modalDialog(
           title = "Error",
-          res$error,
+          if(grep("POSIXlt",res$error)==1) {
+            HTML(sprintf("Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>",res$error)) 
+          }else{res$error},
           easyClose = TRUE,
           footer = NULL
         ))
+      # } else if(is.unsorted(contents$dates, na.rm = FALSE, strictly = FALSE)){
+      #   showModal(modalDialog(
+      #     title = "Error",
+      #     HTML(sprintf("Please ensure that your dates are input in chronological order from left to right.")), 
+      #     easyClose = TRUE,
+      #     footer = NULL
+      #   ))
       } else {
         js$showBox("box_elefan_ga_results")
         elefan_ga$results <- res
