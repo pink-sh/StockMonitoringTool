@@ -29,7 +29,7 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get update && apt-get upgrade -y
 
  # install dependencies of the Stock monitoring tool app
-RUN R -e "install.packages(c('shiny', 'rmarkdown', 'shinythemes', 'shinydashboard', 'RCurl', 'devtools', 'ggplot2', 'rfishbase', 'shinyBS', 'XML', 'lubridate', 'waiter', 'pracma', 'googleVis', 'stringr'), repos='https://cloud.r-project.org/')"
+RUN R -e "install.packages(c('shiny', 'rmarkdown', 'shinythemes', 'shinydashboard', 'RCurl', 'devtools', 'ggplot2', 'rfishbase', 'shinyBS', 'XML', 'lubridate', 'waiter', 'pracma', 'googleVis', 'stringr','R.utils'), repos='https://cloud.r-project.org/')"
 RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
 RUN R -e "devtools::install_github('daattali/shinyjs')"
 RUN R -e "devtools::install_github('jyypma/nloptr')"
@@ -40,7 +40,7 @@ RUN R -e "install.packages(c('DT'), repos='https://cloud.r-project.org/')"
 RUN R -e "install.packages('futile.logger', repos='https://cloud.r-project.org/')"
 RUN R -e "devtools::install_version('TropFishR', version='1.6.1', repos = 'http://cran.r-project.org')"
 
-RUN git -C /root/ clone https://github.com/pink-sh/StockMonitoringTool.git && echo "OK!"
+RUN git -C /root/ clone https://github.com/abennici/StockMonitoringTool.git && echo "OK!"
 RUN mkdir -p /srv/shiny/
 RUN ln -s /root/StockMonitoringTool /srv/shiny/stockMonitoringTools
  
@@ -49,5 +49,5 @@ EXPOSE 3838
 ENV SMT_LOG=session.log
 
 RUN apt-get install -y curl
-#CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools',port=3838,host='0.0.0.0')"]
-CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools')"]
+CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools',port=3838,host='0.0.0.0')"]
+#CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools')"]
