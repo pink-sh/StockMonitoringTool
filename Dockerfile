@@ -28,14 +28,20 @@ RUN apt-get update && apt-get install -y \
 
 RUN apt-get update && apt-get upgrade -y
 
- # install dependencies of the Stock monitoring tool app
-RUN R -e "install.packages(c('shiny', 'rmarkdown', 'shinythemes', 'shinydashboard', 'RCurl', 'devtools', 'ggplot2', 'rfishbase', 'shinyBS', 'XML', 'lubridate', 'waiter', 'pracma', 'googleVis', 'stringr','R.utils'), repos='https://cloud.r-project.org/')"
+#Install XML package from archive
+#Issue is that XML package from 2020-07 is referenced as depending on R >= 4.0
+#To temporarily solve that we use the previous XML package version from archive
+RUN wget https://cran.r-project.org/src/contrib/Archive/XML/XML_3.99-0.3.tar.gz
+RUN R -e "install.packages('~/XML_3.99-0.3.tar.gz', repos = NULL, type = 'source')"
+
+# install dependencies of the Stock monitoring tool app
+RUN R -e "install.packages(c('shiny', 'rmarkdown', 'shinythemes', 'shinydashboard', 'RCurl', 'devtools', 'ggplot2', 'rfishbase', 'shinyBS', 'lubridate', 'waiter', 'pracma', 'googleVis', 'stringr','R.utils'), repos='https://cloud.r-project.org/')"
 RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
 RUN R -e "devtools::install_github('daattali/shinyjs')"
 RUN R -e "devtools::install_github('jyypma/nloptr')"
 RUN R -e "install.packages(c('fishmethods'), repos='https://cloud.r-project.org/')"
 RUN R -e "install.packages(c('V8'), repos='https://cloud.r-project.org/')"
-RUN R -e "install.packages(c('XML'), repos='https://cloud.r-project.org/')"
+#RUN R -e "install.packages(c('XML'), repos='https://cloud.r-project.org/')"
 RUN R -e "install.packages(c('DT'), repos='https://cloud.r-project.org/')"
 RUN R -e "install.packages('futile.logger', repos='https://cloud.r-project.org/')"
 RUN R -e "devtools::install_version('TropFishR', version='1.6.1', repos = 'http://cran.r-project.org')"
