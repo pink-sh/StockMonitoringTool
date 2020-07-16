@@ -19,6 +19,7 @@ library(ggplot2)
 library(rfishbase)
 library(waiter)
 library(futile.logger)
+library(R.utils)
 
 ##### Dependencies
 source("ui/menu.R")

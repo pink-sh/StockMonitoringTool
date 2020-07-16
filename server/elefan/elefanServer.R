@@ -13,6 +13,7 @@ elefanModule <- function(input, output, session) {
       return(NA)
     }
     contents <- read_elefan_csv(input$fileElefan$datapath, input$elefanDateFormat)
+    
     if (is.null(contents)) {
       shinyjs::disable("go")
       showModal(modalDialog(
@@ -22,12 +23,22 @@ elefanModule <- function(input, output, session) {
         footer = NULL
       ))
       return (NULL)
+      } else {
+       if(is.Date(contents$dates)&&is.unsorted(contents$dates)){
+        shinyjs::disable("go")
+        showModal(modalDialog(
+          title = "Error",
+          "Please ensure that your dates are input in chronological order from left to right.",
+          easyClose = TRUE,
+          footer = NULL
+        ))
+        return(NULL)
     } else {
       shinyjs::enable("go")
       return (contents)  
     }
-    
-  })
+      }
+   })
   
   observeEvent(input$fileElefan, {
     fileState$upload <- 'uploaded'
@@ -65,19 +76,45 @@ elefanModule <- function(input, output, session) {
         elefan_agemax <- NULL
       }
       flog.info("Starting Elegan computation")
-      res <- run_elefan(inputElefanData$data, binSize = 4, Linf_fix = input$ELEFAN_Linf_fix, Linf_range = elefan_linf_range, K_range = elefan_k_range,
-                        C = input$ELEFAN_C, ts = input$ELEFAN_ts, MA = input$ELEFAN_MA, addl.sqrt = input$ELEFAN_addl.sqrt,
-                        agemax = elefan_agemax, contour = input$ELEFAN_contour, plus_group = input$ELEFAN_PLUS_GROUP)
+      maxtime=600
+      res<-withTimeout(run_elefan(inputElefanData$data, binSize = 4, Linf_fix = input$ELEFAN_Linf_fix, Linf_range = elefan_linf_range, K_range = elefan_k_range,
+                             C = input$ELEFAN_C, ts = input$ELEFAN_ts, MA = input$ELEFAN_MA, addl.sqrt = input$ELEFAN_addl.sqrt,
+                             agemax = elefan_agemax, contour = input$ELEFAN_contour, plus_group = input$ELEFAN_PLUS_GROUP),timeout = maxtime, onTimeout = "warning")
+      #res<-run_elefan(inputElefanData$data, binSize = 4, Linf_fix = input$ELEFAN_Linf_fix, Linf_range = elefan_linf_range, K_range = elefan_k_range,
+      #                            C = input$ELEFAN_C, ts = input$ELEFAN_ts, MA = input$ELEFAN_MA, addl.sqrt = input$ELEFAN_addl.sqrt,
+      #                            agemax = elefan_agemax, contour = input$ELEFAN_contour, plus_group = input$ELEFAN_PLUS_GROUP)
+      
+            
       js$hideComputing()
       js$enableAllButtons()
       if ('error' %in% names(res)) {
         showModal(modalDialog(
           title = "Error",
-          res$error,
+          if (!is.null(grep("POSIXlt",res$error))) {
+            HTML(sprintf("Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>",res$error))
+            
+       }else  if (!is.null(grep("reached elapsed time limit",res$error))){
+         HTML(sprintf("Maximum time (%s min) overpassed, the process of the calculations is abnormally long.", round(maxtime/60,2)))
+       }else{res$error},
           easyClose = TRUE,
           footer = NULL
         ))
-      } else {
+        # ###Test2
+        # }else if ('error' %in% names(res)) {
+        #   showModal(modalDialog(
+        #     title = "Error",
+        #     if (grep("POSIXlt",res$error)==1) {
+        #       HTML(sprintf("Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>",res$error)) 
+        #     }else{res$error},
+        #     easyClose = TRUE,
+        #     footer = NULL
+        #   ))
+        
+        
+        ###EndTest
+        
+      
+      } else  {
         js$showBox("box_elefan_results")
         elefan$results <- res
         session$userData$fishingMortality$Fcurr <- round(elefan$results$plot3$currents[4]$curr.F, 2)
