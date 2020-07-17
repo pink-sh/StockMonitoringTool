@@ -90,12 +90,12 @@ elefanModule <- function(input, output, session) {
       if ('error' %in% names(res)) {
         showModal(modalDialog(
           title = "Error",
-          if (!is.null(grep("POSIXlt",res$error))) {
+          if(!is.null(res$error)){if (!is.null(grep("POSIXlt",res$error))) {
             HTML(sprintf("Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>",res$error))
             
        }else  if (!is.null(grep("reached elapsed time limit",res$error))){
          HTML(sprintf("Maximum time (%s min) overpassed, the process of the calculations is abnormally long.", round(maxtime/60,2)))
-       }else{res$error},
+       }else{res$error}},
           easyClose = TRUE,
           footer = NULL
         ))

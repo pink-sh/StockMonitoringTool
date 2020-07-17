@@ -69,9 +69,9 @@ elefanGaModule <- function(input, output, session) {
       if ('error' %in% names(res)) {
         showModal(modalDialog(
           title = "Error",
-          if(grep("POSIXlt",res$error)==1) {
+          if(!is.null(res$error)){if(grep("POSIXlt",res$error)==1) {
             HTML(sprintf("Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>",res$error)) 
-          }else{res$error},
+          }else{res$error}},
           easyClose = TRUE,
           footer = NULL
         ))
