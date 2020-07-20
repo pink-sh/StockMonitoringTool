@@ -14,11 +14,14 @@ elefanGaModule <- function(input, output, session) {
     }
     contents <- read_elefan_csv(input$fileGa$datapath, input$elefanGaDateFormat)
     print(input$fileGa)
-    if (is.null(contents)) {
+    if (is.null(contents$catch)) {
       shinyjs::disable("go_ga")
       showModal(modalDialog(
         title = "Error",
-        "Input file seems invalid",
+        if(!is.null(contents$checkDec)){
+          if(contents$checkDec=="not point"){"Please ensure your separate decimals using points ‘.’ or you don't have non numeric value"
+          }else if(contents$checkName=="colname error"){"Please ensure your first column name is : 'midLength'"
+          } else{"Input file seems invalid"}},
         easyClose = TRUE,
         footer = NULL
       ))
