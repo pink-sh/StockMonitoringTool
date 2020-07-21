@@ -79,7 +79,10 @@ elefanModule <- function(input, output, session) {
         elefan_agemax <- NULL
       }
       flog.info("Starting Elegan computation")
-      maxtime=600
+      maxtime=as.numeric(object.size(inputElefanData$data))*0.145
+      td<-seconds_to_period(round(maxtime,0))
+      td<-sprintf('%02d:%02d:%02d', td@hour, minute(td), second(td))
+      cat(sprintf("Time out fixed to %s",td),"\n")
       res<-withTimeout(run_elefan(inputElefanData$data, binSize = 4, Linf_fix = input$ELEFAN_Linf_fix, Linf_range = elefan_linf_range, K_range = elefan_k_range,
                              C = input$ELEFAN_C, ts = input$ELEFAN_ts, MA = input$ELEFAN_MA, addl.sqrt = input$ELEFAN_addl.sqrt,
                              agemax = elefan_agemax, contour = input$ELEFAN_contour, plus_group = input$ELEFAN_PLUS_GROUP),timeout = maxtime, onTimeout = "warning")
@@ -97,26 +100,11 @@ elefanModule <- function(input, output, session) {
             HTML(sprintf("Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>",res$error))
             
        }else  if (!is.null(grep("reached elapsed time limit",res$error))){
-         HTML(sprintf("Maximum time (%s min) overpassed, the process of the calculations is abnormally long.", round(maxtime/60,2)))
+         HTML(sprintf("Maximum time (%s) overpassed, the process of the calculations is abnormally long.", td))
        }else{res$error}},
           easyClose = TRUE,
           footer = NULL
         ))
-        # ###Test2
-        # }else if ('error' %in% names(res)) {
-        #   showModal(modalDialog(
-        #     title = "Error",
-        #     if (grep("POSIXlt",res$error)==1) {
-        #       HTML(sprintf("Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>",res$error)) 
-        #     }else{res$error},
-        #     easyClose = TRUE,
-        #     footer = NULL
-        #   ))
-        
-        
-        ###EndTest
-        
-      
       } else  {
         js$showBox("box_elefan_results")
         elefan$results <- res
