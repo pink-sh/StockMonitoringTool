@@ -72,7 +72,7 @@ knitr::kable(df2, digits = 2, align=rep('c', 5))
 ******
   ## Input parameters  
   Input File: `r input$fileElefan$name`  
-Seasonalized: `r input$ELEFAN_SA_seasonalised`  
+<!-- Seasonalized: `r input$ELEFAN_SA_seasonalised`   -->
 
 **Optional Parameters**  
   Linf fix: `r input$ELEFAN_Linf_fix`  
@@ -81,9 +81,9 @@ K range: `r input$elefan_k_range`
 C: `r input$ELEFAN_C`  
 MA: `r input$ELEFAN_MA`  
 Age max: `r input$ELEFAN_agemax`  
-ContourL `r if(input$ELEFAN_contour){"TRUE"}else{"FALSE"}`  
-sqrt: `r if(input$ELEFAN_GA_addl.sqrt){"TRUE"}else{"FALSE"}`  
-Plus group: `r input$ELEFAN_GA_PLUS_GROUP`  
+ContourL `r if (!is.null(input$ELEFAN_contour)){if(input$ELEFAN_contour){"TRUE"}else{"FALSE"}} else {"FALSE"}`  
+<!-- sqrt: `r if (!is.null(input$ELEFAN_GA_addl.sqrt)){if(input$ELEFAN_GA_addl.sqrt){"TRUE"}else{"FALSE"}} else {"FALSE"}`   -->
+Plus group: `r input$ELEFAN_PLUS_GROUP`  
 
 ******
   ## Dataset

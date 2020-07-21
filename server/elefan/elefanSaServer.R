@@ -14,11 +14,14 @@ elefanSaModule <- function(input, output, session) {
     }
     contents <- read_elefan_csv(input$fileSa$datapath, input$elefanSaDateFormat)
     print(input$fileSa)
-    if (is.null(contents)) {
+    if (is.null(contents$catch)) {
       shinyjs::disable("go_sa")
       showModal(modalDialog(
         title = "Error",
-        "Input file seems invalid",
+        if(!is.null(contents$checkDec)){
+          if(contents$checkDec=="not point"){"Please ensure your separate decimals using points ‘.’ or you don't have non numeric value"
+          }else if(contents$checkName=="colname error"){"Please ensure your first column name is : 'midLength'"
+          } else{"Input file seems invalid"}},
         easyClose = TRUE,
         footer = NULL
       ))
@@ -70,9 +73,9 @@ elefanSaModule <- function(input, output, session) {
       if ('error' %in% names(res)) {
         showModal(modalDialog(
           title = "Error",
-          if(grep("POSIXlt",res$error)==1) {
+          if(!is.null(res$error)){if(grep("POSIXlt",res$error)==1) {
             HTML(sprintf("Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>",res$error)) 
-          }else{res$error},
+          }else{res$error}},
           easyClose = TRUE,
           footer = NULL
         ))

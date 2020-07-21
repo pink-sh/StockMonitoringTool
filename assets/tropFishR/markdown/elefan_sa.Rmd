@@ -72,7 +72,7 @@ knitr::kable(df2, digits = 2, align=rep('c', 5))
 ******
 ## Input parameters  
 Input File: `r input$fileSa$name`  
-Seasonalized: `r if(input$ELEFAN_SA_seasonalised){"TRUE"}else{"FALSE"}`  
+Seasonalized: `r if(!is.null(input$ELEFAN_SA_seasonalised)){if(input$ELEFAN_SA_seasonalised){"TRUE"}else{"FALSE"}} else{"FALSE"}`  
   
 **Init Par**
 Linf: `r input$ELEFAN_SA_initPar_Linf`  
@@ -98,8 +98,8 @@ SA Time: `r input$ELEFAN_SA_SA_time`
 SA Temp: `r input$ELEFAN_SA_SA_temp`  
 MA: `r input$ELEFAN_SA_MA`  
 Age max: `r input$ELEFAN_SA_agemax`  
-sqrt: `r if(input$ELEFAN_GA_addl.sqrt){"TRUE"}else{"FALSE"}`  
-Plus group: `r input$ELEFAN_GA_PLUS_GROUP`  
+sqrt: `r if(!is.null(input$ELEFAN_SA_addl.sqrt)){if(input$ELEFAN_SA_addl.sqrt){"TRUE"}else{"FALSE"}}else{"FALSE"}`  
+Plus group: `r input$ELEFAN_SA_PLUS_GROUP`  
 
 ******
 ## Dataset
