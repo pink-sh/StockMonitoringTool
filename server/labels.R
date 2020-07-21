@@ -1,7 +1,7 @@
 ########################### ALL LABELS ###########################
 output$homeInfo <- renderText({
   session$userData$page("home")
-  text <- "<h3>Stock Monitoring Tools for limited data</h3>"
+  text <- "<h3>Stock Monitoring Tools for limited data - TEST</h3>"
   text <- paste0(text, "<p>")
   text <- paste0(text, "On the left hand side you can choose between <b>CMSY</b>, <b>ELEFAN</b> and <b>YPR</b>/<b>SBPR</b> methods.")
   text <- paste0(text, "</p>")
