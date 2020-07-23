@@ -7,11 +7,13 @@ cmsyModule <- function(input, output, session) {
   filePath <- reactiveValues()
   
   basicValidation <- function (a) {
-    if (is.null(colnames(a[1])) || is.na(colnames(a[1]))) return (FALSE)
-    if (tolower(colnames(a[1])) == 'stock') return(TRUE)
-    return (FALSE)
+    #if (is.null(colnames(a[1])) || is.na(colnames(a[1]))) return (FALSE)
+    #if (tolower(colnames(a[1])) == 'stock') return(TRUE)
+    validInputColumns<-c("stock","yr","ct","bt")
+    if (length(setdiff(tolower(names(a[1:4])),validInputColumns))!=0) {return ("colname error")
+    } else if (!is.numeric(a$ct)) {return ("not point")
+    }  else {return(a)}
   }
-  
   cmsyFileData <- reactive({
     inFileCmsy <- input$fileCmsy
     if (is.null(inFileCmsy)) {
@@ -19,9 +21,8 @@ cmsyModule <- function(input, output, session) {
       return (NULL)
     }
     contents <- read.csv(inFileCmsy$datapath)
-    
-    if (!basicValidation(contents)) {
-      
+    contents <- basicValidation(contents)
+    if (is.null(contents)) {
       return (NULL)
     }
     return (contents)
@@ -31,12 +32,23 @@ cmsyModule <- function(input, output, session) {
   observeEvent(input$fileCmsy, {
     filePath$datapath <- input$fileCmsy$datapath
     contents <- cmsyFileData()
-    if (is.null(contents)) {
+    if (!is.data.frame(contents)) {
       shinyjs::disable("go_cmsy")
       removeUI(selector="#stockSelectorContainerInner")
       showModal(modalDialog(
         title = "Error",
-        "Input file seems invalid",
+        if(is.null(contents)){"Input file seems invalid"
+          }else if(contents=="not point"){"Please ensure your separate decimals using points ‘.’ or you don't have non numeric value"
+          }else if(contents=="colname error"){
+            text<-"Please ensure your columns names exactly match the guidelines, i.e."
+            text<-paste0(text, "<ul>")
+            text <- paste0(text, "<li>Stock</li>")
+            text <- paste0(text, "<li>yr</li>")
+            text <- paste0(text, "<li>ct</li>")
+            text <- paste0(text, "<li>bt</li>")
+            text <- paste0(text, "</ul>")
+            HTML(text)
+          } else{"Input file seems invalid"},
         easyClose = TRUE,
         footer = NULL
       ))
