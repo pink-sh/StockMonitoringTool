@@ -1,7 +1,7 @@
 ########################### ALL LABELS ###########################
 output$homeInfo <- renderText({
   session$userData$page("home")
-  text <- "<h3>Stock Monitoring Tools for limited data - TEST</h3>"
+  text <- "<h3>Stock Monitoring Tools for limited data</h3>"
   text <- paste0(text, "<p>")
   text <- paste0(text, "On the left hand side you can choose between <b>CMSY</b>, <b>ELEFAN</b> and <b>YPR</b>/<b>SBPR</b> methods.")
   text <- paste0(text, "</p>")
@@ -67,8 +67,8 @@ output$cmsyIntroOut <- renderText({
   text <- paste0(text, "Mandatory fields to run CMSY are:")
   text <- paste0(text, "<ul>")
   text <- paste0(text, "<li>Stock (fish stock name)</li>")
-  text <- paste0(text, "<li>Yr (year of the catch)</li>")
-  text <- paste0(text, "<li>Ct (catch)</li>")
+  text <- paste0(text, "<li>yr (year of the catch)</li>")
+  text <- paste0(text, "<li>ct (catch)</li>")
   text <- paste0(text, "<li>bt (biomass estimates, if available; otherwise input “NA”)</li>")
   text <- paste0(text, "<li>Other columns are identifiers that may be included, but are not necessary to run the model.</li>")
   text <- paste0(text, "<li>Ensure your data are in .csv format and use a “.” to separate decimals in the data.</li>")
@@ -255,8 +255,8 @@ output$cmsySampleDataset <- renderText({
   text <- paste0(text, "<li>Mandatory fields required to run CMSY are</li>")
   text <- paste0(text, "<ul>")
   text <- paste0(text, "<li>Stock (fish stock name)</li>")
-  text <- paste0(text, "<li>Yr (year of the catch)</li>")
-  text <- paste0(text, "<li>Ct (catch)</li>")
+  text <- paste0(text, "<li>yr (year of the catch)</li>")
+  text <- paste0(text, "<li>ct (catch)</li>")
   text <- paste0(text, "<li>bt (biomass estimates, if available; otherwise input “NA”)</li>")
   text <- paste0(text, "<li>Other columns are identifiers that may be included, but are not necessary to run the model.</li>")
   text <- paste0(text, "</ul>")

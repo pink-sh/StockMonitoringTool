@@ -29,6 +29,7 @@ tabElefanGa <- function(id) {
               collapsed = T,
               box(
                 checkboxInput(ns("ELEFAN_GA_seasonalised"), "Seasonalised", FALSE),
+                numericInput(ns("ELEFAN_GA_binSize"), "Bin size:", 4, min = 1, max = 100, step=1),
                 numericInput(ns("ELEFAN_GA_popSize"), "Population size:", 50, min = 0, max = 10000, step=1),
                 numericInput(ns("ELEFAN_GA_maxiter"), "Maximum number of iterations to run before the GA search is halted:", 10, min = 1, max = 1000, step=1),
                 numericInput(ns("ELEFAN_GA_run"), "Number of consecutive generations without any improvement in the best fitness value before the GA is stopped:", 100, min = 1, max = 1000, step=1),

@@ -7,18 +7,30 @@ yprModule <- function(input, output, session) {
   
   yprFileData <- reactive({
     contents <- validateFishMethodsFile(input$fileYpr$datapath)
-    if (is.null(contents)) {
-      shinyjs::disable("go_YPR")
-      showModal(modalDialog(
-        title = "Error",
-        "Input file seems invalid",
-        easyClose = TRUE,
-        footer = NULL
-      ))
-      return (NULL)
+    
+      if (is.null(contents$contents)) {
+        shinyjs::disable("go_YPR")
+        showModal(modalDialog(
+          title = "Error",
+          if(!is.null(contents$checkDec)){
+            if(contents$checkDec=="not point"){"Please ensure your separate decimals using points ‘.’ or you don't have non numeric value"
+            }else if(contents$checkName=="colname error"){
+              text<-"Please ensure your columns names exactly match the guidelines, i.e."
+              text<-paste0(text, "<ul>")
+              text <- paste0(text, "<li>age</li>")
+              text <- paste0(text, "<li>ssbwgt</li>")
+              text <- paste0(text, "<li>partial</li>")
+              text <- paste0(text, "<li>pmat</li>")
+              text <- paste0(text, "</ul>")
+              HTML(text)
+            } else{"Input file seems invalid"}},
+          easyClose = TRUE,
+          footer = NULL
+        ))
+        return (NULL)
     } else {
       shinyjs::enable("go_YPR")
-      return (contents)  
+      return (contents$contents)  
     }
     
   })

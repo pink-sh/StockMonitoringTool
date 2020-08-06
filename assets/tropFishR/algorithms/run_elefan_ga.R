@@ -2,7 +2,8 @@ library(TropFishR)
 
 run_elefan_ga <- function(
   x,
-  binSize = 4,
+  binSize = NULL,
+  #binSize = 4,
   seasonalised = FALSE,
   low_par = NULL,
   up_par = NULL,
