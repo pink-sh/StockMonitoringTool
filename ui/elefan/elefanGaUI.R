@@ -20,7 +20,8 @@ tabElefanGa <- function(id) {
                 ),
               box(
                 selectInput(ns("elefanGaDateFormat"), "Choose CSV date format", choices = c("Automatic guess" = "auto", "Year Month Day" = "ymd", "Year Day Month" = "ydm", "Day Month Year" = "dmy", "Month Day Year" = "mdy" ))
-              )
+                #selectInput(ns("elefanGaDateFormat"), "Choose CSV date format", choices = c("Year Month Day" = "ymd", "Year Day Month" = "ydm", "Day Month Year" = "dmy", "Month Day Year" = "mdy" ))
+                 )
             ),
             box(title = "Optional Parameters",
               width = NULL,

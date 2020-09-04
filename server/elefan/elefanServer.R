@@ -83,12 +83,12 @@ elefanModule <- function(input, output, session) {
       td<-seconds_to_period(round(maxtime,0))
       td<-sprintf('%02d:%02d:%02d', td@hour, minute(td), second(td))
       cat(sprintf("Time out fixed to %s",td),"\n")
-      res<-withTimeout(run_elefan(inputElefanData$data, binSize = 4, Linf_fix = input$ELEFAN_Linf_fix, Linf_range = elefan_linf_range, K_range = elefan_k_range,
-                             C = input$ELEFAN_C, ts = input$ELEFAN_ts, MA = input$ELEFAN_MA, addl.sqrt = input$ELEFAN_addl.sqrt,
-                             agemax = elefan_agemax, contour = input$ELEFAN_contour, plus_group = input$ELEFAN_PLUS_GROUP),timeout = maxtime, onTimeout = "warning")
-      #res<-run_elefan(inputElefanData$data, binSize = 4, Linf_fix = input$ELEFAN_Linf_fix, Linf_range = elefan_linf_range, K_range = elefan_k_range,
+       res<-withTimeout(run_elefan(inputElefanData$data, binSize = 4, Linf_fix = input$ELEFAN_Linf_fix, Linf_range = elefan_linf_range, K_range = elefan_k_range,
+                              C = input$ELEFAN_C, ts = input$ELEFAN_ts, MA = input$ELEFAN_MA, addl.sqrt = input$ELEFAN_addl.sqrt,
+                              agemax = elefan_agemax, contour = input$ELEFAN_contour, plus_group = input$ELEFAN_PLUS_GROUP),timeout = maxtime, onTimeout = "warning")
+      #res<-withTimeout(run_elefan(inputElefanData$data, binSize = input$ELEFAN_binSize, Linf_fix = input$ELEFAN_Linf_fix, Linf_range = elefan_linf_range, K_range = elefan_k_range, #Bin size option
       #                            C = input$ELEFAN_C, ts = input$ELEFAN_ts, MA = input$ELEFAN_MA, addl.sqrt = input$ELEFAN_addl.sqrt,
-      #                            agemax = elefan_agemax, contour = input$ELEFAN_contour, plus_group = input$ELEFAN_PLUS_GROUP)
+      #                            agemax = elefan_agemax, contour = input$ELEFAN_contour, plus_group = input$ELEFAN_PLUS_GROUP),timeout = maxtime, onTimeout = "warning")
       
             
       js$hideComputing()
@@ -100,7 +100,7 @@ elefanModule <- function(input, output, session) {
             HTML(sprintf("Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>",res$error))
             
        }else  if (!is.null(grep("reached elapsed time limit",res$error))){
-         HTML(sprintf("Maximum time (%s) overpassed, the process of the calculations is abnormally long.", td))
+         HTML(sprintf("Maximum computation time (%s) has been exceeded. Please restart the Stock Monitoring Tool and try again.", td))
        }else{res$error}},
           easyClose = TRUE,
           footer = NULL

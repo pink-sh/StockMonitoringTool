@@ -20,7 +20,8 @@ tabElefanSa <- function(id) {
               ),
             box(
               selectInput(ns("elefanSaDateFormat"), "Choose CSV date format", choices = c("Automatic guess" = "auto", "Year Month Day" = "ymd", "Year Day Month" = "ydm", "Day Month Year" = "dmy", "Month Day Year" = "mdy" ))
-            )
+              #selectInput(ns("elefanSaDateFormat"), "Choose CSV date format", choices = c("Year Month Day" = "ymd", "Year Day Month" = "ydm", "Day Month Year" = "dmy", "Month Day Year" = "mdy" ))            
+              )
           ),
           box(title = "Optional Parameters",
             width = NULL,
@@ -29,6 +30,7 @@ tabElefanSa <- function(id) {
             collapsed = T,
             box(
               checkboxInput(ns("ELEFAN_SA_seasonalised"), "Seasonalised", FALSE),
+              numericInput(ns("ELEFAN_SA_binSize"), "Bin size:", 4, min = 1, max = 100, step=1),
               numericInput(ns("ELEFAN_SA_initPar_Linf"), p("Length infinity (",withMathJax("\\(L_\\infty\\)"), "in cm):"), 119, min = 1, max = 1000, step=1),
               numericInput(ns("ELEFAN_SA_initPar_K"), "Curving coefficient (K):", 0.5, min = 0, max = 1, step=0.1),
               numericInput(ns("ELEFAN_SA_initPar_t_anchor"), "Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month (t_anchor):", 0.5, min = 0, max = 1, step=0.01),
