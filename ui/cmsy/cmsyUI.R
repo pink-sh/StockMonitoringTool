@@ -34,6 +34,7 @@ tabCmsy <- function(id) {
                   numericInput(ns("maxOfYear"), "Latest year of the catch series", 2016, min = 1900, max = 2030, step=1),
                   selectInput(ns("resiliance"), "Resilience as qualitative information (Use information from FishBase or SeaLifeBase)", choices=c("Very low", "Low", "Medium", "High"), selected="Medium"),
                   textInput(ns("r.low"), "Lowest resilience (automatically calculated if not set)", "NA"),
+                  #numericInput(ns("r.low"), "Lowest resilience (automatically calculated if not set)", "NA", min = 10^-5, max = NA, step=NA),
                   textInput(ns("r.hi"), "Highest resilience (automatically calculated if not set)", "NA"),
                   p("**The user should take care when setting the prior estimates for depletion at the beginning and end of the time series. Depletion levels are assumptions about the initial and current state of the stock, and they have a strong influence on the results of CMSY, so careful evaluation of these parameters is recommended. These parameters are determined in CMSY using the relationship between current catch and maximum catch."),
                   numericInput(ns("stb.low"), "**Starting depletion range: Lowest possible relative biomass at the beginning of the catch time series (automatically calculated if not set)", 0, min = 0, max = 10, step=0.1),

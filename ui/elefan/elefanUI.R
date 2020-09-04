@@ -20,7 +20,8 @@ tabElefan <- function(id) {
           ),
           box(
             selectInput(ns("elefanDateFormat"), "Choose CSV date format", choices = c("Automatic guess" = "auto", "Year Month Day" = "ymd", "Year Day Month" = "ydm", "Day Month Year" = "dmy", "Month Day Year" = "mdy" ))
-          )
+            #selectInput(ns("elefanDateFormat"), "Choose CSV date format", choices = c("Year Month Day" = "ymd", "Year Day Month" = "ydm", "Day Month Year" = "dmy", "Month Day Year" = "mdy" ))
+            )
       ),
       box(title = "Optional Parameters",
         width = NULL,
@@ -37,6 +38,7 @@ tabElefan <- function(id) {
           numericInput(ns("ELEFAN_MA"), "Number indicating over how many length classes the moving average should be performed:", 5, min = 0, max = 100, step=1)
         ),
         box(
+          numericInput(ns("ELEFAN_binSize"), "Bin size:", 4, min = 1, max = 1000, step=1),
           numericInput(ns("ELEFAN_K_Range_from"), "K sequence from:", NULL, min = 1, max = 1000, step=1),
           numericInput(ns("ELEFAN_K_Range_to"), "K sequence to:", NULL, min = 1, max = 1000, step=1),
           numericInput(ns("ELEFAN_K_Range_by"), "K increment sequence by:", 1, min = 1, max = 1000, step=1),
