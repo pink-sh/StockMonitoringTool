@@ -1,4 +1,4 @@
-FROM r-base:3.6.3
+FROM openanalytics/r-base:3.6.1
 
 MAINTAINER Enrico Anello "enrico.anello@fao.org"
 
