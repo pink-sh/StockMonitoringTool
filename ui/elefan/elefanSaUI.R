@@ -34,14 +34,16 @@ tabElefanSa <- function(id) {
               numericInput(ns("ELEFAN_SA_initPar_Linf"), p("Length infinity (",withMathJax("\\(L_\\infty\\)"), "in cm):"), 119, min = 1, max = 1000, step=1),
               numericInput(ns("ELEFAN_SA_initPar_K"), "Curving coefficient (K):", 0.5, min = 0, max = 1, step=0.1),
               numericInput(ns("ELEFAN_SA_initPar_t_anchor"), "Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month (t_anchor):", 0.5, min = 0, max = 1, step=0.01),
-              checkboxInput(ns("ELEFAN_SA_addl.sqrt"), "Additional squareroot transformation of positive values according to Brey et al. (1988)", FALSE)
-            ),
+              numericInput(ns("ELEFAN_SA_initPar_C"), "Amplitude of growth oscillation (C):", 0.5, min = 0, max = 1, step=0.1),
+              numericInput(ns("ELEFAN_SA_initPar_ts"), p("Summer point (", withMathJax("\\(t_s\\)"), "):"), 0.5, min = 0, max = 1, step=0.1)
+              ),
             box(
               numericInput(ns("ELEFAN_SA_SA_time"), "Maximum running time in seconds:", 60, min = 0, max = 10000, step=1),
               numericInput(ns("ELEFAN_SA_SA_temp"), "Initial value for temperature:", 100000, min = 1, max = 10000000, step=100),
               numericInput(ns("ELEFAN_SA_MA"), "Number indicating over how many length classes the moving average should be performed:", 5, min = 0, max = 100, step=1),
               numericInput(ns("ELEFAN_SA_agemax"), "Maximum age of species:", 1, min = 0, max = 100, step=1),
-              numericInput(ns("ELEFAN_SA_PLUS_GROUP"), "Plus group", 0, min = 0, max = 100000, step=1)
+              numericInput(ns("ELEFAN_SA_PLUS_GROUP"), "Plus group", 0, min = 0, max = 100000, step=1),
+              checkboxInput(ns("ELEFAN_SA_addl.sqrt"), "Additional squareroot transformation of positive values according to Brey et al. (1988)", FALSE)
             )
           ),
           box(title = "Low Par Parameters",
@@ -128,9 +130,12 @@ tabElefanSa <- function(id) {
 resetElefanSaInputValues <- function() {
   shinyjs::reset("fileSa")
   shinyjs::reset("ELEFAN_SA_seasonalised")
+  shinyjs::reset("ELEFAN_SA_binSize")
   shinyjs::reset("ELEFAN_SA_initPar_Linf")
   shinyjs::reset("ELEFAN_SA_initPar_K")
   shinyjs::reset("ELEFAN_SA_initPar_t_anchor")
+  shinyjs::reset("ELEFAN_SA_initPar_C")
+  shinyjs::reset("ELEFAN_SA_initPar_ts")
   shinyjs::reset("ELEFAN_SA_addl.sqrt")
   shinyjs::reset("ELEFAN_SA_SA_time")
   shinyjs::reset("ELEFAN_SA_SA_temp")

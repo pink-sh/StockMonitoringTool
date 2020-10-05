@@ -66,8 +66,10 @@ tabYpr <- function(id) {
 
 resetYPRInputValues <- function() {
   shinyjs::reset("fileYpr")
+  shinyjs::reset("YPR_M")
   shinyjs::reset("YPR_Plus")
   shinyjs::reset("YPR_oldest")
+  shinyjs::reset("YPR_maxF")
   shinyjs::reset("YPR_incrF")
   shinyjs::disable("go_YPR")
   clearResults("box_ypr_results")

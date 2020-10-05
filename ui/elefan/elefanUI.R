@@ -108,6 +108,7 @@ resetElefanInputValues <- function() {
   shinyjs::reset("ELEFAN_C")
   shinyjs::reset("ELEFAN_ts")
   shinyjs::reset("ELEFAN_MA")
+  shinyjs::reset("ELEFAN_binSize")
   shinyjs::reset("ELEFAN_K_Range_from")
   shinyjs::reset("ELEFAN_K_Range_to")
   shinyjs::reset("ELEFAN_K_Range_by")

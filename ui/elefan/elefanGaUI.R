@@ -127,6 +127,7 @@ tabElefanGa <- function(id) {
 resetElefanGaInputValues <- function() {
   shinyjs::reset("fileGa")
   shinyjs::reset("ELEFAN_GA_seasonalised")
+  shinyjs::reset("ELEFAN_GA_binSize")
   shinyjs::reset("ELEFAN_GA_popSize")
   shinyjs::reset("ELEFAN_GA_maxiter")
   shinyjs::reset("ELEFAN_GA_run")
