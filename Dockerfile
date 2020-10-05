@@ -1,4 +1,4 @@
-FROM openanalytics/r-base
+FROM openanalytics/r-base:3.6.1
 
 MAINTAINER Enrico Anello "enrico.anello@fao.org"
 
@@ -35,9 +35,9 @@ RUN wget https://cran.r-project.org/src/contrib/Archive/XML/XML_3.99-0.3.tar.gz
 
 RUN R -e "install.packages('XML_3.99-0.3.tar.gz', repos = NULL, type = 'source')"
 # install dependencies of the Stock monitoring tool app
-RUN R -e "install.packages(c('shiny', 'rmarkdown', 'shinythemes', 'shinydashboard', 'RCurl', 'devtools', 'ggplot2', 'rfishbase', 'shinyBS', 'lubridate', 'waiter', 'pracma', 'googleVis', 'stringr','R.utils'), repos='https://cloud.r-project.org/')"
+RUN R -e "install.packages(c('shiny', 'rmarkdown','shinyjs', 'shinythemes', 'shinydashboard', 'RCurl', 'devtools', 'ggplot2', 'rfishbase', 'shinyBS', 'lubridate', 'waiter', 'pracma', 'googleVis', 'stringr','R.utils'), repos='https://cloud.r-project.org/')"
 RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
-RUN R -e "devtools::install_github('daattali/shinyjs')"
+#RUN R -e "devtools::install_github('daattali/shinyjs')"
 RUN R -e "devtools::install_github('jyypma/nloptr')"
 RUN R -e "install.packages(c('fishmethods'), repos='https://cloud.r-project.org/')"
 RUN R -e "install.packages(c('V8'), repos='https://cloud.r-project.org/')"

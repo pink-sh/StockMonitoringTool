@@ -95,7 +95,7 @@ ui <- tagList(
       ),
       class="loadingCustom"),
     useShinyjs(),
-    extendShinyjs(text = jscode),
+    extendShinyjs(text = jscode, functions =  c("showBox", "removeBox", "disableAllButtons", "enableAllButtons", "showComputing", "hideComputing")),
     tags$head(
       tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
     ),
