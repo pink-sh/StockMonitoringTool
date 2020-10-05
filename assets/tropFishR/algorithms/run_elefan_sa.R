@@ -3,7 +3,7 @@ library(TropFishR)
 #run_elefan_sa <- function(x, binSize=NULL,  #bonsize option
 run_elefan_sa <- function(x, binSize=4,
                           seasonalised = FALSE,
-                          init_par = list(Linf = 50, K = 0.5, t_anchor = 0.5, C = 0, ts = 0),
+                          init_par = NULL, #list(Linf = 50, K = 0.5, t_anchor = 0.5, C = 0.5, ts = 0.5),
                           low_par = NULL, #list(Linf = 1, K = 0.01, t_anchor = 0, C = 0, ts = 0),
                           up_par = NULL, #list(Linf = 1000, K = 10, t_anchor = 1, C = 1, ts = 1),
                           SA_time = 60 * 1,

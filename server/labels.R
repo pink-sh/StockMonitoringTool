@@ -7,7 +7,7 @@ output$homeInfo <- renderText({
   text <- paste0(text, "</p>")
   
   text <- paste0(text, "<p>")
-  text <- paste0(text, "The <b>CMSY</b> method is provided by the <a href='http://www.bluebridge-vres.eu/' target='blank_'>iMarine Infrastructure</a>")
+  text <- paste0(text, "The <b>CMSY</b> method is provided by the <a href='http://www.bluebridge-vres.eu/' target='blank_'>iMarine Infrastructure</a> and requires internet connection to run.")
   text <- paste0(text, "</p>")
   
   text <- paste0(text, "<p>")
@@ -33,13 +33,38 @@ output$homeInfo <- renderText({
   text <- paste0(text, "</ul>")
   text <- paste0(text, "</p>")
   
+  text <- paste0(text, "<h4>Running time with sample dataset for each methods : </h4>")
+  text <- paste0(text, "<p>")
+  text <- paste0(text, "<ul>")
+  text <- paste0(text, "<li><b>CMSY:</b>&nbsp;< 1 min</li>")
+  text <- paste0(text, "<li><b>ELEFAN GA:</b>&nbsp;30 sec</li>")
+  text <- paste0(text, "<li><b>ELEFAN SA:</b>&nbsp;< 1 min 20 sec</li>")
+  text <- paste0(text, "<li><b>ELEFAN:</b>&nbsp;2-4 min</li>")
+  text <- paste0(text, "<li><b>YPR:</b>&nbsp;< 10 sec</li>")
+  text <- paste0(text, "<li><b>SBPR:</b>&nbsp;10 sec</li>")
+  text <- paste0(text, "</ul>")
+  text <- paste0(text, "</p>")
+  
+  text <- paste0(text, "<h4>Instruction to build a Docker image of this application : </h4>")
+  text <- paste0(text, "<p>")
+  text <- paste0(text, "A Dockerfile is provided and can be used to build up containers with the application.")
+  text <- paste0(text, "To build and run the application issue the following commands")
+  text <- paste0(text, "<ul>")
+  text <- paste0(text, "<li>sudo wget https://raw.githubusercontent.com/pink-sh/StockMonitoringTool/master/Dockerfile</li>")
+  text <- paste0(text, "<li>sudo docker build -t stock_monitoring_tools . </li>")
+  text <- paste0(text, "<li>sudo docker run -p 3839:3838 stock_monitoring_tools</li>")
+  text <- paste0(text, "</ul>")
+  text <- paste0(text, "And then point your browser to http://localhost:3839")
+  text <- paste0(text, "</p>")
+ 
   text
 })
 output$cmsyIntroOut <- renderText({
   session$userData$page("cmsy-intro")
   text <- "<h3><b>CMSY - Catch-Maximum Sustainable Yield</b></h3>"
   text <- paste0(text, "<p>")
-  text <- paste0(text, "The <b>CMSY</b> method for data-limited stock assessment. Described in <a target='_blank' href='https://www.researchgate.net/publication/309283306_Estimating_fisheries_reference_points_from_catch_and_resilience'>Froese et al.</a>")
+# text <- paste0(text, "The <b>CMSY</b> method for data-limited stock assessment. Described in <a target='_blank' href='https://www.researchgate.net/publication/309283306_Estimating_fisheries_reference_points_from_catch_and_resilience'>Froese et al.</a>")
+  text <- paste0(text, "The <b>CMSY</b> method for data-limited stock assessment. Described in <a target='_blank' href='https://github.com/SISTA16/cmsy/blob/master/CMSY_2019_9f_UserGuide.pdf'>Froese et al.</a>")
   text <- paste0(text, "<br/>")
   text <- paste0(text, "The CMSY algorithm can be found <a href='https://github.com/SISTA16/cmsy' target='_blank'>here on Github</a>")
   text <- paste0(text, "</p>")
@@ -78,6 +103,14 @@ output$cmsyIntroOut <- renderText({
 </li>")
   text <- paste0(text, "</ul>")
   text <- paste0(text, "</p>")
+  
+  text <- paste0(text, "<p>")
+  text <- paste0(text, "<h4>Running time with sample dataset</h4>")
+  text <- paste0(text, "<ul>")
+  text <- paste0(text, "<li><b>CMSY:</b>&nbsp;< 1 min</li>")
+  text <- paste0(text, "</ul>")
+  text <- paste0(text, "</p>")
+  
   text <- paste0(text, "<p>")
   text <- paste0(text, "<strong>References</strong><br/>")
   text <- paste0(text,"&nbsp;&nbsp;Froese, Rainer & Demirel, Nazli & Coro, Gianpaolo & Kleisner, Kristin & Winker, Henning. (2017). Estimating fisheries reference points from catch and resilience. Fish and Fisheries. 18. 506-526. 10.1111/faf.12190.")
@@ -154,7 +187,17 @@ output$elefanIntroOut <- renderText({
   text <- paste0(text, "<li>Ensure that the “midLength” column name is identical to the sample dataset.</li>")
   text <- paste0(text, "<li>Ensure your data are in .csv format.</li>")
   text <- paste0(text, "<li>Use a “.” to separate decimals in the data.</li>")
-    text <- paste0(text, "</ul>")
+  text <- paste0(text, "</ul>")
+  
+  text <- paste0(text, "<p>")
+  text <- paste0(text, "<h4>Running time with sample dataset</h4>")
+  text <- paste0(text, "<ul>")
+  text <- paste0(text, "<li><b>ELEFAN GA:</b>&nbsp;30 sec</li>")
+  text <- paste0(text, "<li><b>ELEFAN SA:</b>&nbsp;< 1 min 20 sec</li>")
+  text <- paste0(text, "<li><b>ELEFAN:</b>&nbsp;2-4 min</li>")
+  text <- paste0(text, "</ul>")
+  text <- paste0(text, "</p>")
+    
   text <- paste0(text, "<h5>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of ", withMathJax("\\(L_\\infty\\)"), " and von Bertalanffy K in the Optional Parameters section in the ELEFAN_GA tool.", "</h5>")
   text <- paste0(text, "</p>")
   
@@ -234,6 +277,15 @@ output$fishMethodsIntroOut <- renderText({
   text <- paste0(text, "<li><b>incrF: </b> Fishing mortality (F) increment for YPR calculation</li>")
   text <- paste0(text, "</ul>")
   text <- paste0(text, "</p>")
+  
+  text <- paste0(text, "<p>")
+  text <- paste0(text, "<h4>Running time with sample dataset</h4>")
+  text <- paste0(text, "<ul>")
+  text <- paste0(text, "<li><b>SBPR:</b>&nbsp;10 sec</li>")
+  text <- paste0(text, "<li><b>YPR:</b>&nbsp;< 10 sec</li>")
+  text <- paste0(text, "</ul>")
+  text <- paste0(text, "</p>")
+  
   text <- paste0(text, "<p>")
   text <- paste0(text, "W. L. Gabriel, M. P. Sissenwine & W. J. Overholtz (1989) Analysis of Spawning Stock Biomass per Recruit: An Example for Georges Bank Haddock, North American Journal of Fisheries Management, 9:4, 383-391, DOI: <a href='https://doi.org/10.1577/1548-8675(1989)009%3C0383:AOSSBP%3E2.3.CO;2' target='_blank'>10.1577/1548-8675(1989)009<0383:AOSSBP>2.3.CO;2</a>")
   text <- paste0(text, "</p>")
