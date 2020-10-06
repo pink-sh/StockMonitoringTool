@@ -125,7 +125,7 @@ output$elefanIntroOut <- renderText({
   text <- paste0(text, "</p>")
   text <- paste0(text, "<p>")
   text <- paste0(text, "<h4>Method version</h4>")
-  text <- paste0(text, "These methods are provided by the <a href='https://cran.r-project.org/web/packages/TropFishR/index.html' target='_blank'>TropFishR library</a> version 1.6.1")
+  text <- paste0(text, "These methods are provided by the <a href='https://cran.r-project.org/web/packages/TropFishR/vignettes/tutorial.html' target='_blank'>TropFishR library</a> version 1.6.1")
   text <- paste0(text, "</p>")
   text <- paste0(text, "<p>")
   text <- paste0(text, "<h4>Method description</h4>")
