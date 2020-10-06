@@ -40,7 +40,7 @@ tabElefanGa <- function(id) {
                 numericInput(ns("ELEFAN_GA_pmutation"), "Probability of mutation in a parent chromosome. Usually mutation occurs with a small probability:", 0.1, min = 0.1, max = 1, step=0.1),
                 numericInput(ns("ELEFAN_GA_pcrossover"), "Probability of crossover between pairs of chromosomes. Typically this is a large value:", 0.8, min = 0.1, max = 1, step=0.1),
                 numericInput(ns("ELEFAN_GA_elitism"), "Number of best fitness individuals to survive at each generation:", 5, min = 0, max = 100, step=1),
-                numericInput(ns("ELEFAN_GA_MA"), "Number indicating over how many length classes the moving average should be performed:", 5, min = 0, max = 100, step=1),
+                numericInput(ns("ELEFAN_GA_MA"), "Number indicating over how many length classes the moving average should be performed (must be a odd number):", 5, min = 1, max = 101, step=2),
                 numericInput(ns("ELEFAN_GA_PLUS_GROUP"), "Plus group", 0, min = 0, max = 100000, step=1)
               )
             ),

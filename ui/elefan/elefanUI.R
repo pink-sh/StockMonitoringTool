@@ -35,7 +35,7 @@ tabElefan <- function(id) {
           numericInput(ns("ELEFAN_Linf_range_by"), p(withMathJax("\\(L_\\infty\\)"), "increment sequence by:"), 1, min = 1, max = 1000, step=1),
           numericInput(ns("ELEFAN_C"), "Growth oscillation amplitude (C)", 0, min = 0, max = 100, step=1),
           numericInput(ns("ELEFAN_ts"), p("Onset of the first oscillation relative to summer point (", withMathJax("\\(t_s\\)"), "):"), 0, min = 0, max = 100, step=1),
-          numericInput(ns("ELEFAN_MA"), "Number indicating over how many length classes the moving average should be performed:", 5, min = 0, max = 100, step=1)
+          numericInput(ns("ELEFAN_MA"), "Number indicating over how many length classes the moving average should be performed (must be a odd number):", 5, min = 1, max = 101, step=2)
         ),
         box(
           numericInput(ns("ELEFAN_binSize"), "Bin size:", 4, min = 1, max = 1000, step=1),

@@ -72,7 +72,9 @@ elefanGaModule <- function(input, output, session) {
       if ('error' %in% names(res)) {
         showModal(modalDialog(
           title = "Error",
-          if(!is.null(res$error)){if(grep("POSIXlt",res$error)==1) {
+          if(!is.null(res$error)){if (!is.null(grep("MA must be an odd integer",res$error))) {
+            HTML(sprintf("Please length of classes indicate for the moving average must be a odd number.<hr/> <b>%s</b>",res$error))
+          }else if(grep("POSIXlt",res$error)==1) {
             HTML(sprintf("Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>",res$error)) 
           }else{res$error}},
           easyClose = TRUE,
