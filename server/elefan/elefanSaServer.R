@@ -62,6 +62,10 @@ elefanSaModule <- function(input, output, session) {
     #ds2 <- lfqModify(get('synLFQ7', asNamespace('TropFishR')), bin_size = 4)
     result = tryCatch({ 
       flog.info("Starting Elegan SA computation")
+     # print(do.call(data.frame,list(Linf_init = as.numeric(input$ELEFAN_SA_initPar_Linf), K = as.numeric(input$ELEFAN_SA_initPar_K), t_anchor = as.numeric(input$ELEFAN_SA_initPar_t_anchor), C = as.numeric(input$ELEFAN_SA_initPar_C), ts = as.numeric(input$ELEFAN_SA_initPar_ts))))
+      #print(do.call(data.frame,list(Linf_low = as.numeric(input$ELEFAN_SA_lowPar_Linf), K = as.numeric(input$ELEFAN_SA_lowPar_K), t_anchor = as.numeric(input$ELEFAN_SA_lowPar_t_anchor), C = as.numeric(input$ELEFAN_SA_lowPar_C), ts = as.numeric(input$ELEFAN_SA_lowPar_ts))))
+      #print(list(Linf_up = as.numeric(input$ELEFAN_SA_upPar_Linf), K = as.numeric(input$ELEFAN_SA_upPar_K), t_anchor = as.numeric(input$ELEFAN_SA_upPar_t_anchor), C = as.numeric(input$ELEFAN_SA_upPar_C), ts = as.numeric(input$ELEFAN_SA_upPar_ts)))
+      
       #res <- run_elefan_sa(inputElefanSaData$data,binSize = input$ELEFAN_SA_binSize, seasonalised = input$ELEFAN_SA_seasonalised,# binsize option
       res <- run_elefan_sa(inputElefanSaData$data,binSize = 4, seasonalised = input$ELEFAN_SA_seasonalised, 
                            init_par = list(Linf = as.numeric(input$ELEFAN_SA_initPar_Linf), K = as.numeric(input$ELEFAN_SA_initPar_K), t_anchor = as.numeric(input$ELEFAN_SA_initPar_t_anchor), C = as.numeric(input$ELEFAN_SA_initPar_C), ts = as.numeric(input$ELEFAN_SA_initPar_ts)),

@@ -1,6 +1,6 @@
 library(TropFishR)
 
-#run_elefan_sa <- function(x, binSize=NULL,  #bonsize option
+#run_elefan_sa <- function(x, binSize=NULL,  #binsize option
 run_elefan_sa <- function(x, binSize=4,
                           seasonalised = FALSE,
                           init_par = NULL, #list(Linf = 50, K = 0.5, t_anchor = 0.5, C = 0.5, ts = 0.5),
@@ -49,8 +49,8 @@ run_elefan_sa <- function(x, binSize=4,
     
     res_GA <- ELEFAN_SA(synLFQ7a, seasonalised = seasonalised,
                         init_par = init_par,
-                        low_par = low_par, #list(Linf = 1, K = 0.01, t_anchor = 0, C = 0, ts = 0),
-                        up_par = up_par, #list(Linf = 1000, K = 10, t_anchor = 1, C = 1, ts = 1),
+                        low_par = low_par,#list(Linf = 119, K = 0.001, t_anchor = 0, C = 0, ts = 0),
+                        up_par = up_par,#list(Linf = 129, K = 1, t_anchor = 1, C = 1, ts = 1),
                         SA_time = SA_time,
                         SA_temp = SA_temp,
                         verbose = verbose,

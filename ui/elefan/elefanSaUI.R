@@ -72,8 +72,8 @@ tabElefanSa <- function(id) {
             numericInput(ns("ELEFAN_SA_upPar_t_anchor"), "Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month (t_anchor):", 1, min = 0, max = 1, step=0.1)
           ),
           box(
-            numericInput("ELEFAN_SA_upPar_C", "Amplitude of growth oscillation (C):", 1, min = 0, max = 1, step=0.1),
-            numericInput("ELEFAN_SA_upPar_ts", p("Summer point (", withMathJax("\\(t_s\\)"), "):"), 1, min = 0, max = 1, step=0.1)
+            numericInput(ns("ELEFAN_SA_upPar_C"), "Amplitude of growth oscillation (C):", 1, min = 0, max = 1, step=0.1),
+            numericInput(ns("ELEFAN_SA_upPar_ts"), p("Summer point (", withMathJax("\\(t_s\\)"), "):"), 1, min = 0, max = 1, step=0.1)
           )
         ),
         tags$div( disabled(actionButton(ns("go_sa"), "Run ELEFAN SA", class="topLevelInformationButton")),
