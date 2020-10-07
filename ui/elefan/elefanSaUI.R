@@ -93,15 +93,18 @@ tabElefanSa <- function(id) {
         fluidRow(
           box(
             htmlOutput(ns("titlePlot1_elefan_sa")),
+            "Length frequency data visualised in terms of catches.",
             plotOutput(ns("plot_sa_1"))
           ),
           box(
             htmlOutput(ns("titlePlot2_elefan_sa")),
+            "Restructured data with bin sizes and the number of bins over which the moving average is calculated as defined in the optional parameters.",
             plotOutput(ns("plot_sa_2"))
           )
         ),
         fluidRow (
-          box(plotOutput(ns("plot_sa_5"))),
+          box("Graphical fit of growth curves plotted through the length frequency data.",
+            plotOutput(ns("plot_sa_5"))),
           box(
             htmlOutput(ns("rnMax_sa")),
             htmlOutput(ns("par_sa")),
@@ -114,10 +117,12 @@ tabElefanSa <- function(id) {
         fluidRow (
           box(
             htmlOutput(ns("titlePlot3_elefan_sa")),
+            "Results of the Thompson and Bell model: Curves of yield and biomass per recruit. The black dot represents yield and biomass under current fishing pressure. The yellow and red dashed lines represent fishing mortality for maximum sustainable yield (Fmsy) and fishing mortality to fish the stock at 50% of the virgin biomass (F0.5).",
             plotOutput(ns("plot_sa_3"))
           ),
           box(
             htmlOutput(ns("titlePlot4_elefan_sa")),
+            "Exploration of impact of different exploitation rates and Lc values on the relative yield per recruit.",
             plotOutput(ns("plot_sa_4"))
           )
         )
