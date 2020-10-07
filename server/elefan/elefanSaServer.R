@@ -62,6 +62,10 @@ elefanSaModule <- function(input, output, session) {
     #ds2 <- lfqModify(get('synLFQ7', asNamespace('TropFishR')), bin_size = 4)
     result = tryCatch({ 
       flog.info("Starting Elegan SA computation")
+     # print(do.call(data.frame,list(Linf_init = as.numeric(input$ELEFAN_SA_initPar_Linf), K = as.numeric(input$ELEFAN_SA_initPar_K), t_anchor = as.numeric(input$ELEFAN_SA_initPar_t_anchor), C = as.numeric(input$ELEFAN_SA_initPar_C), ts = as.numeric(input$ELEFAN_SA_initPar_ts))))
+      #print(do.call(data.frame,list(Linf_low = as.numeric(input$ELEFAN_SA_lowPar_Linf), K = as.numeric(input$ELEFAN_SA_lowPar_K), t_anchor = as.numeric(input$ELEFAN_SA_lowPar_t_anchor), C = as.numeric(input$ELEFAN_SA_lowPar_C), ts = as.numeric(input$ELEFAN_SA_lowPar_ts))))
+      #print(list(Linf_up = as.numeric(input$ELEFAN_SA_upPar_Linf), K = as.numeric(input$ELEFAN_SA_upPar_K), t_anchor = as.numeric(input$ELEFAN_SA_upPar_t_anchor), C = as.numeric(input$ELEFAN_SA_upPar_C), ts = as.numeric(input$ELEFAN_SA_upPar_ts)))
+      
       #res <- run_elefan_sa(inputElefanSaData$data,binSize = input$ELEFAN_SA_binSize, seasonalised = input$ELEFAN_SA_seasonalised,# binsize option
       res <- run_elefan_sa(inputElefanSaData$data,binSize = 4, seasonalised = input$ELEFAN_SA_seasonalised, 
                            init_par = list(Linf = as.numeric(input$ELEFAN_SA_initPar_Linf), K = as.numeric(input$ELEFAN_SA_initPar_K), t_anchor = as.numeric(input$ELEFAN_SA_initPar_t_anchor), C = as.numeric(input$ELEFAN_SA_initPar_C), ts = as.numeric(input$ELEFAN_SA_initPar_ts)),
@@ -74,7 +78,9 @@ elefanSaModule <- function(input, output, session) {
       if ('error' %in% names(res)) {
         showModal(modalDialog(
           title = "Error",
-          if(!is.null(res$error)){if(grep("POSIXlt",res$error)==1) {
+          if(!is.null(res$error)){if (!is.null(grep("MA must be an odd integer",res$error))) {
+            HTML(sprintf("Please length of classes indicate for the moving average must be a odd number.<hr/> <b>%s</b>",res$error))
+          }else if(grep("POSIXlt",res$error)==1) {
             HTML(sprintf("Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>",res$error)) 
           }else{res$error}},
           easyClose = TRUE,
@@ -94,11 +100,12 @@ elefanSaModule <- function(input, output, session) {
         
         if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
           flog.info("Uploading Elefan SA report to i-Marine workspace")
-          reportFileName <- paste("/tmp/","ElefanSA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+          reportFileName <- paste(tempdir(),"/","ElefanSA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createElefanSaPDFReport(reportFileName,elefan_sa, input)
           elefanSaUploadVreResult$res <- FALSE
           
           basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
+         
           tryCatch({
             uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
             elefanSaUploadVreResult$res <- TRUE

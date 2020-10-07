@@ -40,7 +40,7 @@ tabElefanSa <- function(id) {
             box(
               numericInput(ns("ELEFAN_SA_SA_time"), "Maximum running time in seconds:", 60, min = 0, max = 10000, step=1),
               numericInput(ns("ELEFAN_SA_SA_temp"), "Initial value for temperature:", 100000, min = 1, max = 10000000, step=100),
-              numericInput(ns("ELEFAN_SA_MA"), "Number indicating over how many length classes the moving average should be performed:", 5, min = 0, max = 100, step=1),
+              numericInput(ns("ELEFAN_SA_MA"), "Number indicating over how many length classes the moving average should be performed (must be a odd number):", 5, min = 1, max = 101, step=2),
               numericInput(ns("ELEFAN_SA_agemax"), "Maximum age of species:", 1, min = 0, max = 100, step=1),
               numericInput(ns("ELEFAN_SA_PLUS_GROUP"), "Plus group", 0, min = 0, max = 100000, step=1),
               checkboxInput(ns("ELEFAN_SA_addl.sqrt"), "Additional squareroot transformation of positive values according to Brey et al. (1988)", FALSE)
@@ -72,8 +72,8 @@ tabElefanSa <- function(id) {
             numericInput(ns("ELEFAN_SA_upPar_t_anchor"), "Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month (t_anchor):", 1, min = 0, max = 1, step=0.1)
           ),
           box(
-            numericInput("ELEFAN_SA_upPar_C", "Amplitude of growth oscillation (C):", 1, min = 0, max = 1, step=0.1),
-            numericInput("ELEFAN_SA_upPar_ts", p("Summer point (", withMathJax("\\(t_s\\)"), "):"), 1, min = 0, max = 1, step=0.1)
+            numericInput(ns("ELEFAN_SA_upPar_C"), "Amplitude of growth oscillation (C):", 1, min = 0, max = 1, step=0.1),
+            numericInput(ns("ELEFAN_SA_upPar_ts"), p("Summer point (", withMathJax("\\(t_s\\)"), "):"), 1, min = 0, max = 1, step=0.1)
           )
         ),
         tags$div( disabled(actionButton(ns("go_sa"), "Run ELEFAN SA", class="topLevelInformationButton")),
@@ -93,15 +93,18 @@ tabElefanSa <- function(id) {
         fluidRow(
           box(
             htmlOutput(ns("titlePlot1_elefan_sa")),
+            "Length frequency data visualised in terms of catches.",
             plotOutput(ns("plot_sa_1"))
           ),
           box(
             htmlOutput(ns("titlePlot2_elefan_sa")),
+            "Restructured data with bin sizes and the number of bins over which the moving average is calculated as defined in the optional parameters.",
             plotOutput(ns("plot_sa_2"))
           )
         ),
         fluidRow (
-          box(plotOutput(ns("plot_sa_5"))),
+          box("Graphical fit of growth curves plotted through the length frequency data.",
+            plotOutput(ns("plot_sa_5"))),
           box(
             htmlOutput(ns("rnMax_sa")),
             htmlOutput(ns("par_sa")),
@@ -114,10 +117,12 @@ tabElefanSa <- function(id) {
         fluidRow (
           box(
             htmlOutput(ns("titlePlot3_elefan_sa")),
+            "Results of the Thompson and Bell model: Curves of yield and biomass per recruit. The black dot represents yield and biomass under current fishing pressure. The yellow and red dashed lines represent fishing mortality for maximum sustainable yield (Fmsy) and fishing mortality to fish the stock at 50% of the virgin biomass (F0.5).",
             plotOutput(ns("plot_sa_3"))
           ),
           box(
             htmlOutput(ns("titlePlot4_elefan_sa")),
+            "Exploration of impact of different exploitation rates and Lc values on the relative yield per recruit.",
             plotOutput(ns("plot_sa_4"))
           )
         )

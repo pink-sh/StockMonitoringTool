@@ -7,28 +7,42 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 > Electronic LEngth Frequency ANalysis with simulated annealing for estimating growth parameters
 
 ## Raw LFQ data
+
+Length frequency data visualised in terms of catches.
+
 ```{r echo=FALSE}
 plot(elefan_sa$results$plot1, Fname = "catch", date.axis = "modern")
 ```
 
 ## Recontructed LFQ data
+
+Restructured data with bin sizes and the number of bins over which the moving average is calculated as defined in the optional parameters.
+
 ```{r echo=FALSE}
 plot(elefan_sa$results$plot2, Fname = "rcounts", date.axis = "modern")
 ```
 
 ## Results of the computation
 
+Graphical fit of growth curves plotted through the length frequency data.
+
 ```{r echo=FALSE}
 plot(elefan_sa$results$data)
 ```
 
 ## Thompson and Bell model with changes in F
+
+Results of the Thompson and Bell model: Curves of yield and biomass per recruit. The black dot represents yield and biomass under current fishing pressure. The yellow and red dashed lines represent fishing mortality for maximum sustainable yield (Fmsy) and fishing mortality to fish the stock at 50% of the virgin biomass (F0.5).
+
 ```{r echo=FALSE}
 plot(elefan_sa$results$plot3, mark = TRUE)
 mtext("(a)", side = 3, at = -1, line = 0.6)
 ```
 
 ## Thompson and Bell model with changes in F and Lc
+
+Exploration of impact of different exploitation rates and Lc values on the relative yield per recruit.
+
 ```{r echo=FALSE}
 plot(elefan_sa$results$plot4, type = "Isopleth", xaxis1 = "FM", mark = TRUE, contour = 6)
 mtext("(b)", side = 3, at = -0.1, line = 0.6)

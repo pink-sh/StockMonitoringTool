@@ -12,7 +12,8 @@ cmsyModule <- function(input, output, session) {
     validInputColumns<-c("stock","yr","ct","bt")
     if (length(setdiff(tolower(names(a[1:4])),validInputColumns))!=0) {return ("colname error")
     } else if (!is.numeric(a$ct)) {return ("not point")
-    }  else {return(a)}
+    } else if ((max(as.numeric(a$yr))-min(as.numeric(a$yr)))<15) {return("under 15")
+    } else {return(a)}
   }
   cmsyFileData <- reactive({
     inFileCmsy <- input$fileCmsy
@@ -48,6 +49,7 @@ cmsyModule <- function(input, output, session) {
             text <- paste0(text, "<li>bt</li>")
             text <- paste0(text, "</ul>")
             HTML(text)
+          }else if(contents=="under 15"){"Catch time series must be at least 15 years"
           } else{"Input file seems invalid"},
         easyClose = TRUE,
         footer = NULL
@@ -199,7 +201,7 @@ cmsyModule <- function(input, output, session) {
         
         if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
           flog.info("Uploading CMSY report to i-Marine workspace")
-          reportFileName <- paste("/tmp/","CMSY_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+          reportFileName <- paste(tempdir(),"/","CMSY_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createCmsyPDFReport(reportFileName, cmsy, input)
           cmsyUploadVreResult$res <- FALSE
           

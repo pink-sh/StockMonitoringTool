@@ -96,7 +96,9 @@ elefanModule <- function(input, output, session) {
       if ('error' %in% names(res)) {
         showModal(modalDialog(
           title = "Error",
-          if(!is.null(res$error)){if (!is.null(grep("POSIXlt",res$error))) {
+          if(!is.null(res$error)){if (!is.null(grep("MA must be an odd integer",res$error))) {
+            HTML(sprintf("Please length of classes indicate for the moving average must be a odd number.<hr/> <b>%s</b>",res$error))
+          }else if (!is.null(grep("POSIXlt",res$error))) {
             HTML(sprintf("Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>",res$error))
             
        }else  if (!is.null(grep("reached elapsed time limit",res$error))){
@@ -112,7 +114,7 @@ elefanModule <- function(input, output, session) {
         
         if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
           flog.info("Uploading Elefan report to i-Marine workspace")
-          reportFileName <- paste("/tmp/","Elefan_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+          reportFileName <- paste(tempdir(),"/","Elefan_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createElefanPDFReport(reportFileName,elefan,input)
           
           basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
