@@ -201,7 +201,7 @@ cmsyModule <- function(input, output, session) {
         
         if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
           flog.info("Uploading CMSY report to i-Marine workspace")
-          reportFileName <- paste("/tmp/","CMSY_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+          reportFileName <- paste(tempdir(),"/","CMSY_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createCmsyPDFReport(reportFileName, cmsy, input)
           cmsyUploadVreResult$res <- FALSE
           

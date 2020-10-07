@@ -61,7 +61,7 @@ sbprModule <- function(input, output, session) {
         sbprUploadVreResult$res <- FALSE
         if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
             flog.info("Uploading SBPR report to i-Marine workspace")
-            reportFileName <- paste("/tmp/","Sbpr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+            reportFileName <- paste(tempdir(),"/","Sbpr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
             createSbprPDFReport(reportFileName, sbprExec, input)
             sbprUploadVreResult$res <- FALSE
             

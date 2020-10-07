@@ -61,7 +61,7 @@ yprModule <- function(input, output, session) {
       
         if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
           flog.info("Uploading YPR report to i-Marine workspace")
-          reportFileName <- paste("/tmp/","Ypr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+          reportFileName <- paste(tempdir(),"/","Ypr_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createYprPDFReport(reportFileName, yprExec, input)
           yprUploadVreResult$res <- FALSE
         

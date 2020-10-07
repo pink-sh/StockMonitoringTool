@@ -94,7 +94,7 @@ elefanGaModule <- function(input, output, session) {
         
         if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
           flog.info("Uploading Elefan GA report to i-Marine workspace")
-          reportFileName <- paste("/tmp/","ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+          reportFileName <- paste(tempdir(),"/","ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createElefanGaPDFReport(reportFileName,elefan_ga,input)
           elefanGaUploadVreResult$res <- FALSE
           

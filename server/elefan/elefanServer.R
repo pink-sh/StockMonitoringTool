@@ -114,7 +114,7 @@ elefanModule <- function(input, output, session) {
         
         if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
           flog.info("Uploading Elefan report to i-Marine workspace")
-          reportFileName <- paste("/tmp/","Elefan_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+          reportFileName <- paste(tempdir(),"/","Elefan_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createElefanPDFReport(reportFileName,elefan,input)
           
           basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
