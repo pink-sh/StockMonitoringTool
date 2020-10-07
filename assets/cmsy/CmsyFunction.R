@@ -41,6 +41,8 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   icproxy = XML::xmlParse(content(GET("https://registry.d4science.org/icproxy/gcube/service//ServiceEndpoint/DataAnalysis/DataMiner?gcube-scope=/d4science.research-infrastructures.eu/D4Research/SDG-Indicator14.4.1"), "text"))
   wps_uri = xpathSApply(icproxy, "//AccessPoint/Interface/Endpoint", xmlValue)[1]
   
+  flog.info("WPS url select : %s",wps_uri)
+  
   username <- "test"
   #token <- "5b0f903a-3cb1-4424-a2bd-2700c9f1d4ed"
   wpsClient <- paste0(getwd(),"/assets/cmsy/WPS4D4Science.r")
@@ -70,7 +72,9 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   dffile<-paste("/tmp/cmsy_data_",Sys.time(),".csv",sep="")
   dffile<-gsub(":", "_", dffile)
   dffile<-gsub(" ", "_", dffile)
-  write.csv(data,file=dffile, quote = FALSE, eol = "\n", row.names = FALSE,  fileEncoding = "UTF-8")
+  flog.info("Avant ecriture: %s",dffile)
+    write.csv(data,file=dffile, quote = FALSE, eol = "\n", row.names = FALSE,  fileEncoding = "UTF-8")
+  flog.info("Apres ecriture")
   #LOAD THE TEMPLATE#    
   #templateFile="/home/enrico/Work/BlueBridge/Cmsy/cmsyForDlmToolsTemplate.xml";
   #PREPARE THE REQUEST FILE BY ALTERING THE TEMPLATE#    
@@ -137,11 +141,16 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   #write(filexml, file = "sentfile.xml",append = FALSE, sep = "")
   close(filehandle)
   
+  #CHEAK THE REQUEST
+  flog.info("XML ready to send : %s",filexml)
+  print(filexml)
   #SEND THE REQUEST#  
   flog.info("Sending CMSY/POST request to: %s", wps_uri)
+  print(wps_uri)
+  
   out <- POST(url = wps_uri, config=c(authenticate(username, token, type = "basic")),body = upload_file(sentfile, type="text/xml"),encode = c("multipart"), handle = NULL, timeout(10))
   flog.info("Got from CMSY: %s", out)
-
+  print(out)
   #CHECK IF THE PROCESS HAS ALREADY FINISHED#
   stop_condition_success<-grepl("Process successful",as.character(out))
   stop_condition_fail<-grepl("Exception",as.character(out))
