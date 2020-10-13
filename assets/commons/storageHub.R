@@ -1,4 +1,5 @@
 ###########WORKSPACE INTERACTION FUNCTIONS####################
+#Version 3.4: added create folder feature
 #Version 3.3: fixed get public link for shared folders
 #Version 3.2: changed functions for Storage Hub Interaction and VRE folders managed
 # GoogleVIS is very verbose
@@ -30,6 +31,7 @@ discoverStorageHub<-function(){
     deleteFileReq<<-paste(sep="",storagehubEP,"/items/#ID#?exclude=hl:accounting&gcube-token=",token);
     listElementsUrl<<-paste(sep="",storagehubEP,"/items/#ID#/children?exclude=hl:accounting&gcube-token=",token);
     downloadWSElementUrl<<-paste(sep="",storagehubEP,"/items/#ID#/download?exclude=hl:accounting&gcube-token=",token);
+    createWSFolder<<-paste(sep="",storagehubEP,"/items/#ID#/create/FOLDER?exclude=hl:accounting&gcube-token=",token);
     WSFolderReq<<-paste(sep="",storagehubEP,"/vrefolder?exclude=hl:accounting&gcube-token=",token);
     cat("StorageHub EP",storagehubEP,"\n")
   }else{
@@ -46,7 +48,7 @@ getWSRootID<-function(){
 getWSElementID<-function(parentFolderID,folderPath){
   
   
-  document <<- fromJSON(txt=gsub("#ID#", parentFolderID, listElementsUrl),authenticate(username,token), timeout(1*3600))
+  document <- fromJSON(txt=gsub("#ID#", parentFolderID, listElementsUrl),authenticate(username,token), timeout(1*3600))
   wsFolderID<-""
   for (el in document$itemlist){
     cat("->",el$path,"\n")
@@ -458,6 +460,70 @@ uploadAllWS<-function(path){
   }else{cat("Error - could not create zip package\n")}
   return(returns)
 }
+
+createPrivateFolder<-function(path,foldername,description){
+  return(createPrivateFolderWithDescription(path,foldername,foldername))
+}
+
+createPrivateFolderWithDescription<-function(path,foldername,description){
+  getCredentials()
+  pathID<-searchWSFolderID(path)
+  command = paste(sep="",'curl -s -d "name=', foldername,'&description=',description,'&hidden=false" ',' -H "Content-Type:application/x-www-form-urlencoded" ',
+                  storagehubEP, "/items/",pathID,'/create/FOLDER?gcube-token=',token)
+  
+  fileID<-system(command,intern=T)
+  print(fileID)
+  output<-F
+  if (length(fileID)==1)
+    output<-T
+  else
+    output<-fileID
+  
+  cat("All done.\n")
+  return(output)
+}
+
+createFolderWs <- function(baseFolder,folderName, uploadFolderDescription, hidden = FALSE, quietly = TRUE){
+  getCredentials()
+  pathID<-searchWSFolderID(baseFolder)
+  
+  req <- NULL
+  if(quietly){
+    req = httr::POST(
+      paste0(storagehubEP, "/items/",pathID,'/create/FOLDER?gcube-token=',token),
+      body = list(
+        name = folderName,
+        description = uploadFolderDescription,
+        hidden = hidden
+      ),
+      encode = "form"
+    )
+  }else{
+    req <- httr::with_verbose(
+      httr::POST(
+        paste0(storagehubEP, "/items/",pathID,'/create/FOLDER?gcube-token=',token),
+        body = list(
+          name = folderName,
+          description = description,
+          hidden = hidden
+        ),
+        encode = "form"
+      )
+    )
+  }
+  stop_for_status(req)
+  fileID<-content(req, "text")
+  print(fileID)
+  output<-F
+  if (length(fileID)==1)
+    output<-T
+  else
+    output<-fileID
+  
+  cat("All done.\n")
+  return(output)
+}
+
 
 
 ###########END - WORKSPACE INTERACTION FUNCTIONS####################

@@ -42,6 +42,7 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   wps_uri = xpathSApply(icproxy, "//AccessPoint/Interface/Endpoint", xmlValue)[1]
   
   flog.info("WPS url select : %s",wps_uri)
+  print(wps_uri)
   
   username <- "test"
   #token <- "5b0f903a-3cb1-4424-a2bd-2700c9f1d4ed"
