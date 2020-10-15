@@ -38,10 +38,6 @@ RUN R -e "install.packages('XML_3.99-0.3.tar.gz', repos = NULL, type = 'source')
 #RUN R -e "install.packages(c('shiny', 'rmarkdown','shinyjs', 'shinythemes', 'shinydashboard', 'RCurl', 'devtools', 'ggplot2', 'rfishbase', 'shinyBS', 'lubridate', #'waiter', 'pracma', 'googleVis', 'stringr','R.utils'), repos='https://cloud.r-project.org/')"
 
 RUN R -e "install.packages(c('devtools'), repos='https://cloud.r-project.org/')"
-
-RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
-RUN R -e "devtools::install_github('jyypma/nloptr')"
-
 RUN R -e "devtools::install_version('shiny', version='1.5.0', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('rmarkdown', version='2.3', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('shinyjs', version='1.1', repos = 'http://cran.r-project.org')"
@@ -63,6 +59,8 @@ RUN R -e "devtools::install_version('DT', version='0.14', repos = 'http://cran.r
 RUN R -e "devtools::install_version('futile.logger', version='1.4.3', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('TropFishR', version='1.6.2', repos = 'http://cran.r-project.org')"
 
+RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
+RUN R -e "devtools::install_github('jyypma/nloptr')"
 
 #RUN R -e "install.packages(c('fishmethods'), repos='https://cloud.r-project.org/')"
 #RUN R -e "install.packages(c('V8'), repos='https://cloud.r-project.org/')"
