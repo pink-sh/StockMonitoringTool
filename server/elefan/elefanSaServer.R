@@ -18,7 +18,9 @@ elefanSaModule <- function(input, output, session) {
       shinyjs::disable("go_sa")
       showModal(modalDialog(
         title = "Error",
-        if(!is.null(contents$checkDec)){
+        if(!is.null(contents$checkDelim)){
+          if(contents$checkDelim=="not ok"){"Please ensure that your .csv file delimiter is a comma ','"  }
+        }else if(!is.null(contents$checkDec)){
           if(contents$checkDec=="not point"){"Please ensure your separate decimals using points ‘.’ or you don't have non numeric value"
           }else if(contents$checkName=="colname error"){"Please ensure your first column name is : 'midLength'"
           } else{"Input file seems invalid"}},
@@ -31,7 +33,7 @@ elefanSaModule <- function(input, output, session) {
       shinyjs::disable("go")
       showModal(modalDialog(
         title = "Error",
-        "Please ensure that your dates are input in chronological order from left to right.",
+        "Please ensure that your dates are input in chronological order from left to right.  If dates are in the right order select the date format coresponding to your file.",
         easyClose = TRUE,
         footer = NULL
       ))
@@ -66,7 +68,7 @@ elefanSaModule <- function(input, output, session) {
       #print(do.call(data.frame,list(Linf_low = as.numeric(input$ELEFAN_SA_lowPar_Linf), K = as.numeric(input$ELEFAN_SA_lowPar_K), t_anchor = as.numeric(input$ELEFAN_SA_lowPar_t_anchor), C = as.numeric(input$ELEFAN_SA_lowPar_C), ts = as.numeric(input$ELEFAN_SA_lowPar_ts))))
       #print(list(Linf_up = as.numeric(input$ELEFAN_SA_upPar_Linf), K = as.numeric(input$ELEFAN_SA_upPar_K), t_anchor = as.numeric(input$ELEFAN_SA_upPar_t_anchor), C = as.numeric(input$ELEFAN_SA_upPar_C), ts = as.numeric(input$ELEFAN_SA_upPar_ts)))
       
-      #res <- run_elefan_sa(inputElefanSaData$data,binSize = input$ELEFAN_SA_binSize, seasonalised = input$ELEFAN_SA_seasonalised,# binsize option
+      #res <- run_elefan_sa(inputElefanSaData$data,binsize = input$ELEFAN_SA_binSize, seasonalised = input$ELEFAN_SA_seasonalised,
       res <- run_elefan_sa(inputElefanSaData$data,binSize = 4, seasonalised = input$ELEFAN_SA_seasonalised, 
                            init_par = list(Linf = as.numeric(input$ELEFAN_SA_initPar_Linf), K = as.numeric(input$ELEFAN_SA_initPar_K), t_anchor = as.numeric(input$ELEFAN_SA_initPar_t_anchor), C = as.numeric(input$ELEFAN_SA_initPar_C), ts = as.numeric(input$ELEFAN_SA_initPar_ts)),
                            low_par = list(Linf = as.numeric(input$ELEFAN_SA_lowPar_Linf), K = as.numeric(input$ELEFAN_SA_lowPar_K), t_anchor = as.numeric(input$ELEFAN_SA_lowPar_t_anchor), C = as.numeric(input$ELEFAN_SA_lowPar_C), ts = as.numeric(input$ELEFAN_SA_lowPar_ts)),

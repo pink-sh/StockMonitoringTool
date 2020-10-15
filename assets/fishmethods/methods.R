@@ -1,16 +1,19 @@
 validateFishMethodsFile <- function(file) {
   contents <- read.csv(file)
+  delimiter<-if(ncol(contents)!=1){"ok"}else{"not ok"}
   decimal<-if(length(setdiff(names(contents),names(contents)[sapply(contents, is.numeric)]))==0){"point"}else{"not point"}
   
   validInputColumns <- c('age', 'ssbwgt', 'partial', 'pmat')
-  if (decimal!="point") {
-    return (list(checkDec=decimal,checkName=NULL,contents=NULL))
+  if(delimiter!="ok") {
+    return (list(checkDelim=delimiter,checkDec=NULL,checkName=NULL,contents=NULL))
+  } else if (decimal!="point") {
+    return (list(checkDelim=NULL,checkDec=decimal,checkName=NULL,contents=NULL))
   } else if(length(setdiff(names(contents),validInputColumns))!=0){
-    return (list(checkDec=decimal,checkName="colname error",contents=NULL))
+    return (list(checkDelim=NULL,checkDec=decimal,checkName="colname error",contents=NULL))
   }else{
-    return (list(checkDec=NULL,checkName=NULL,contents=contents))
+    return (list(checkDelim=NULL,checkDec=NULL,checkName=NULL,contents=contents))
   } 
-  return(list(checkDec=NULL,checkName=NULL,contents=contents))
+  return(list(checkDelim=NULL,checkDec=NULL,checkName=NULL,contents=contents))
 }
  
 

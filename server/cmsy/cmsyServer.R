@@ -10,7 +10,8 @@ cmsyModule <- function(input, output, session) {
     #if (is.null(colnames(a[1])) || is.na(colnames(a[1]))) return (FALSE)
     #if (tolower(colnames(a[1])) == 'stock') return(TRUE)
     validInputColumns<-c("stock","yr","ct","bt")
-    if (length(setdiff(tolower(names(a[1:4])),validInputColumns))!=0) {return ("colname error")
+    if(ncol(a)==1){return ("delimiter error")
+    } else if (length(setdiff(tolower(names(a[1:4])),validInputColumns))!=0) {return ("colname error")
     } else if (!is.numeric(a$ct)) {return ("not point")
     } else if ((max(as.numeric(a$yr))-min(as.numeric(a$yr)))<15) {return("under 15")
     } else {return(a)}
@@ -39,6 +40,7 @@ cmsyModule <- function(input, output, session) {
       showModal(modalDialog(
         title = "Error",
         if(is.null(contents)){"Input file seems invalid"
+          }else if(contents=="delimiter error"){"Please ensure that your .csv file delimiter is a comma ','" 
           }else if(contents=="not point"){"Please ensure your separate decimals using points ‘.’ or you don't have non numeric value"
           }else if(contents=="colname error"){
             text<-"Please ensure your columns names exactly match the guidelines, i.e."
@@ -99,11 +101,13 @@ cmsyModule <- function(input, output, session) {
     updateTextInput(session, "endYear", value=as.integer(maxYear)-1)
     
     if (minYear < 1960) {
-      updateTextInput(session, "stb.low", value=0.5)
-      updateTextInput(session, "stb.hi", value=0.9)
+      updateSliderInput(session,"stb",value=c(0.5,0.9))
+      #updateTextInput(session, "stb.low", value=0.5)
+      #updateTextInput(session, "stb.hi", value=0.9)
     } else {
-      updateTextInput(session, "stb.low", value=0.2)
-      updateTextInput(session, "stb.hi", value=0.6)
+      updateSliderInput(session,"stb",value=c(0.2,0.6))
+      #updateTextInput(session, "stb.low", value=0.2)
+      #updateTextInput(session, "stb.hi", value=0.6)
     }
   })
   
@@ -165,7 +169,8 @@ cmsyModule <- function(input, output, session) {
         cmsy$fast <- list()
         js$disableAllButtons()
         flog.info("Starting CMSY computation")
-        ret <- runCmsy(region_,toString(sub_region_),input$stock,toString(group_),toString(name_),toString(en_name_),toString(scientific_name_),"-",input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,input$stb.low,input$stb.hi,input$int.yr,input$intb.low,input$intb.hi,input$endb.low,input$endb.hi,input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, filePath$datapath, templateFileDlmTools)
+      # ret <- runCmsy(region_,toString(sub_region_),input$stock,toString(group_),toString(name_),toString(en_name_),toString(scientific_name_),"-",input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,input$stb.low,input$stb.hi,input$int.yr,input$intb.low,input$intb.hi,input$endb.low,input$endb.hi,input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, filePath$datapath, templateFileDlmTools)
+        ret <- runCmsy(region_,toString(sub_region_),input$stock,toString(group_),toString(name_),toString(en_name_),toString(scientific_name_),"-",input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,min(input$stb),max(input$stb),input$int.yr,input$intb.low,input$intb.hi,min(input$endb),max(input$endb),input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, filePath$datapath, templateFileDlmTools)
         js$enableAllButtons()
         js$hideComputing()
         js$showBox("box_cmsy_results")

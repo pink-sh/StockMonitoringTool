@@ -37,13 +37,17 @@ tabCmsy <- function(id) {
                   #numericInput(ns("r.low"), "Lowest resilience (automatically calculated if not set)", "NA", min = 10^-5, max = NA, step=NA),
                   textInput(ns("r.hi"), "Highest resilience (both the hi and low range of this parameter must be set by the user, otherwise, the range is calculated automatically from Resilience)", "NA"),
                   p("**The user should take care when setting the prior estimates for depletion at the beginning and end of the time series. Depletion levels are assumptions about the initial and current state of the stock, and they have a strong influence on the results of CMSY, so careful evaluation of these parameters is recommended. These parameters are determined in CMSY using the relationship between current catch and maximum catch."),
-                  numericInput(ns("stb.low"), "**Starting depletion range: Lowest possible relative biomass at the beginning of the catch time series (automatically calculated if not set)", 0, min = 0, max = 10, step=0.1),
-                  numericInput(ns("stb.hi"), "**Starting depletion range: Highest possible relative biomass at the beginning of the catch time series (automatically calculated if not set)", 0, min = 0, max = 10, step=0.1),
+                  #numericInput(ns("stb.low"), "**Starting depletion range: Lowest possible relative biomass at the beginning of the catch time series (automatically calculated if not set)", 0, min = 0, max = 10, step=0.1),
+                  #numericInput(ns("stb.hi"), "**Starting depletion range: Highest possible relative biomass at the beginning of the catch time series (automatically calculated if not set)", 0, min = 0, max = 10, step=0.1),
+                  sliderInput(ns("stb"), "**Starting depletion range: Lowest and highest possible relative biomass at the beginning of the catch time series (automatically calculated if not set)",min = 0, max = 10,step=0.1,value = c(0,0)),
                   textInput(ns("int.yr"), "Intermediate year (the intermediate year, low range and high range must all be set by user; otherwise they will be automatically calculated)", "NA"),
                   textInput(ns("intb.low"), "Lowest possible relative biomass at the intermediate year of the catch time series (the intermediate year, low range and high range must all be set by user; otherwise they will be automatically calculated)", "NA"),
                   textInput(ns("intb.hi"), "Highest possible relative biomass at the intermediate year of the catch time series (the intermediate year, low range and high range must all be set by user; otherwise they will be automatically calculated)", "NA"),
-                  numericInput(ns("endb.low"), "**Ending depletion range: Lowest possible relative biomass at the end of the catch time series (automatically calculated if not set)", 0.01, min = 0, max = 10, step=0.01),
-                  numericInput(ns("endb.hi"), "**Ending depletion range: Highest possible relative biomass at the end of the catch time series (automatically calculated if not set)", 0.4, min = 0, max = 10, step=0.1),
+                  #numericInput(ns("endb.low"), "**Ending depletion range: Lowest possible relative biomass at the end of the catch time series (automatically calculated if not set)", 0.01, min = 0, max = 10, step=0.01),
+                  #numericInput(ns("endb.hi"), "**Ending depletion range: Highest possible relative biomass at the end of the catch time series (automatically calculated if not set)", 0.4, min = 0, max = 10, step=0.1),
+                  sliderInput(ns("endb"), "**Ending depletion range: Lowest and highest possible relative biomass at the end of the catch time series (automatically calculated if not set)",min = 0, max = 10,step=0.1,value = c(0.01,0.4)),
+                  
+                  
                   textInput(ns("q.start"), "Prior for catchability (q) value at the beginning of a stable catch-biomass period of minimum 5 years", "NA"),
                   textInput(ns("q.end"), "Prior for q value at the end of a stable catch-biomass period of minimum 5 years", "NA")
                 ),
@@ -114,13 +118,15 @@ resetCmsyInputValues <- function() {
   shinyjs::reset("resiliance")
   shinyjs::reset("r.low")
   shinyjs::reset("r.hi")
-  shinyjs::reset("stb.low")
-  shinyjs::reset("stb.hi")
+#shinyjs::reset("stb.low")
+#shinyjs::reset("stb.hi")
+  shinyjs::reset("stb")
   shinyjs::reset("int.yr")
   shinyjs::reset("intb.low")
   shinyjs::reset("intb.hi")
-  shinyjs::reset("endb.low")
-  shinyjs::reset("endb.hi")
+ #shinyjs::reset("endb.low")
+ #shinyjs::reset("endb.hi")
+  shinyjs::reset("endb")
   shinyjs::reset("q.start")
   shinyjs::reset("q.end")
   shinyjs::reset("startYear")

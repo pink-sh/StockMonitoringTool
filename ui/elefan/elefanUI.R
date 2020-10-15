@@ -38,7 +38,7 @@ tabElefan <- function(id) {
           numericInput(ns("ELEFAN_MA"), "Number indicating over how many length classes the moving average should be performed (must be a odd number):", 5, min = 1, max = 101, step=2)
         ),
         box(
-          numericInput(ns("ELEFAN_binSize"), "Bin size:", 4, min = 1, max = 1000, step=1),
+         # numericInput(ns("ELEFAN_binSize"), "Bin size:", 4, min = 1, max = 1000, step=1),
           numericInput(ns("ELEFAN_K_Range_from"), "K sequence from:", NULL, min = 1, max = 1000, step=1),
           numericInput(ns("ELEFAN_K_Range_to"), "K sequence to:", NULL, min = 1, max = 1000, step=1),
           numericInput(ns("ELEFAN_K_Range_by"), "K increment sequence by:", 1, min = 1, max = 1000, step=1),
@@ -113,7 +113,7 @@ resetElefanInputValues <- function() {
   shinyjs::reset("ELEFAN_C")
   shinyjs::reset("ELEFAN_ts")
   shinyjs::reset("ELEFAN_MA")
-  shinyjs::reset("ELEFAN_binSize")
+ # shinyjs::reset("ELEFAN_binSize")
   shinyjs::reset("ELEFAN_K_Range_from")
   shinyjs::reset("ELEFAN_K_Range_to")
   shinyjs::reset("ELEFAN_K_Range_by")

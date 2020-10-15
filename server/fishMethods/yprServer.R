@@ -12,7 +12,9 @@ yprModule <- function(input, output, session) {
         shinyjs::disable("go_YPR")
         showModal(modalDialog(
           title = "Error",
-          if(!is.null(contents$checkDec)){
+          if(!is.null(contents$checkDelim)){
+          if(contents$checkDelim=="not ok"){"Please ensure that your .csv file delimiter is a comma ','"}  
+          }else if(!is.null(contents$checkDec)){
             if(contents$checkDec=="not point"){"Please ensure your separate decimals using points ‘.’ or you don't have non numeric value"
             }else if(contents$checkName=="colname error"){
               text<-"Please ensure your columns names exactly match the guidelines, i.e."
