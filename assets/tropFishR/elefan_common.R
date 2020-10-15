@@ -6,13 +6,16 @@ formatTimestamp <- function(ts) {
 
 validateElefanInputFile <- function(file) {
   contents <- read.csv(file)
+  delimiter<-if(ncol(contents)!=1){"ok"}else{"not ok"}
   decimal<-if(length(setdiff(names(contents),names(contents)[sapply(contents, is.numeric)]))==0){"point"}else{"not point"}
   a<-as.vector(colnames(contents))
   #print(head(a,1))
-  if (decimal!="point") {
-    return (list(check_dec=decimal,check_name=NULL,contents=NULL))
+  if(delimiter!="ok") {
+    return (list(checkDelim=delimiter,check_dec=NULL,check_name=NULL,contents=NULL))
+  } else  if (decimal!="point") {
+    return (list(checkDelim=NULL,check_dec=decimal,check_name=NULL,contents=NULL))
   } else  if (head(a,1) != 'midLength') {
-    return (list(check_dec=decimal,check_name="colname error",contents=NULL))
+    return (list(checkDelim=NULL,check_dec=decimal,check_name="colname error",contents=NULL))
     
   } else {
     for (row in 2:length(a)) {
@@ -22,11 +25,11 @@ validateElefanInputFile <- function(file) {
       }
       d <- formatTimestamp(parse_date_time(x, c('ymd', 'dmy', 'mdy')))
       if (is.na(d)) {
-        return (list(check_dec=decimal,check_name=NULL,contents=contents))
+        return (list(checkDelim=NULL,check_dec=decimal,check_name=NULL,contents=contents))
       }
     }
   }
-  return (list(check_dec=decimal,check_name=NULL,contents=contents))
+  return (list(checkDelim=NULL,check_dec=decimal,check_name=NULL,contents=contents))
 }
 
 read_elefan_csv <- function(csvFile, format="") {
@@ -49,10 +52,11 @@ read_elefan_csv <- function(csvFile, format="") {
   }
   
   a <- validateElefanInputFile(csvFile)$contents
+  checkDelim<-validateElefanInputFile(csvFile)$checkDelim
   check_dec<-validateElefanInputFile(csvFile)$check_dec
   check_name<-validateElefanInputFile(csvFile)$check_name
   if (is.null(a)) {
-    return (list(checkDec=check_dec,checkName=check_name,catch=a))
+    return (list(checkDelim=checkDelim,checkDec=check_dec,checkName=check_name,catch=a))
   }
   
   dataSet <- list()

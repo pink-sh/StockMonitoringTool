@@ -18,7 +18,9 @@ elefanModule <- function(input, output, session) {
       shinyjs::disable("go")
       showModal(modalDialog(
         title = "Error",
-        if(!is.null(contents$checkDec)){
+        if(!is.null(contents$checkDelim)){
+          if(contents$checkDelim=="not ok"){"Please ensure that your .csv file delimiter is a comma ','"  }
+        }else if(!is.null(contents$checkDec)){
         if(contents$checkDec=="not point"){"Please ensure your separate decimals using points ‘.’ or you don't have non numeric value"
         }else if(contents$checkName=="colname error"){"Please ensure your first column name is : 'midLength'"
         } else{"Input file seems invalid"}},
@@ -31,7 +33,7 @@ elefanModule <- function(input, output, session) {
         shinyjs::disable("go")
         showModal(modalDialog(
           title = "Error",
-          "Please ensure that your dates are input in chronological order from left to right.",
+          "Please ensure that your dates are input in chronological order from left to right. If dates are in the right order select the date format coresponding to your file.",
           easyClose = TRUE,
           footer = NULL
         ))

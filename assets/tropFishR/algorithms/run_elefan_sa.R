@@ -1,7 +1,9 @@
 library(TropFishR)
 
 #run_elefan_sa <- function(x, binSize=NULL,  #binsize option
-run_elefan_sa <- function(x, binSize=4,
+run_elefan_sa <- function(x, 
+                          binSize=4,
+                          #binsize=NULL,
                           seasonalised = FALSE,
                           init_par = NULL, #list(Linf = 50, K = 0.5, t_anchor = 0.5, C = 0.5, ts = 0.5),
                           low_par = NULL, #list(Linf = 1, K = 0.01, t_anchor = 0, C = 0, ts = 0),
@@ -24,8 +26,8 @@ run_elefan_sa <- function(x, binSize=4,
     
     # adjust bin size
     
-    #synLFQ7a <- lfqModify(x, bin_size = binSize)
-    #synLFQ7a <- lfqModify(lfqRestructure(x), bin_size = binSize) #binsize option
+    #synLFQ7a <- lfqModify(x, bin_size = binsize)
+    #synLFQ7a <- lfqModify(lfqRestructure(x), bin_size = binsize) #binsize option
     synLFQ7a <- x
 
     # plot raw and restructured LFQ data
