@@ -68,10 +68,10 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   #data <- data[ , !(names(data) %in% drops)]
   data <- data[keeps]
   
-  dimnames(data)[2][[1]]<-gsub("[[:punct:]]", "_", dimnames(data)[2][[1]])
+  #dimnames(data)[2][[1]]<-gsub("[[:punct:]]", "_", dimnames(data)[2][[1]])
   dimnames(data)[2][[1]]<-tolower(gsub(" ", "_", dimnames(data)[2][[1]]))
-  dffile<-paste("/tmp/cmsy_data_",Sys.time(),".csv",sep="")
-  dffile<-gsub(":", "_", dffile)
+  dffile<-paste(tempdir(),"/","cmsy_data_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".csv",sep="")
+  #dffile<-gsub(":", "_", dffile)
   dffile<-gsub(" ", "_", dffile)
   flog.info("Avant ecriture: %s",dffile)
     write.csv(data,file=dffile, quote = FALSE, eol = "\n", row.names = FALSE,  fileEncoding = "UTF-8")
@@ -79,8 +79,8 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   #LOAD THE TEMPLATE#    
   #templateFile="/home/enrico/Work/BlueBridge/Cmsy/cmsyForDlmToolsTemplate.xml";
   #PREPARE THE REQUEST FILE BY ALTERING THE TEMPLATE#    
-  sentfile=paste("/tmp/cmsy_req_",Sys.time(),".xml",sep="")
-  sentfile<-gsub(":", "_", sentfile)
+  sentfile=paste(tempdir(),"/","cmsy_req_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".xml",sep="")
+  #sentfile<-gsub(":", "_", sentfile)
   sentfile<-gsub(" ", "_", sentfile)
   print(paste0("Input XML File: ", templateFile))
   filexml<-readChar(templateFile, file.info(templateFile)$size)
