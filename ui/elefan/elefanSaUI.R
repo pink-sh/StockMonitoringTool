@@ -40,7 +40,7 @@ tabElefanSa <- function(id) {
             box(
               numericInput(ns("ELEFAN_SA_SA_time"), "Maximum running time in seconds:", 60, min = 0, max = 10000, step=1),
               numericInput(ns("ELEFAN_SA_SA_temp"), "Initial value for temperature:", 100000, min = 1, max = 10000000, step=100),
-              numericInput(ns("ELEFAN_SA_MA"), "Number indicating over how many length classes the moving average should be performed (must be a odd number):", 5, min = 1, max = 101, step=2),
+              numericInput(ns("ELEFAN_SA_MA"), "Number indicating over how many length classes the moving average (MA) should be performed (must be a odd number):", 5, min = 1, max = 101, step=2),
               numericInput(ns("ELEFAN_SA_agemax"), "Maximum age of species:", 1, min = 0, max = 100, step=1),
               numericInput(ns("ELEFAN_SA_PLUS_GROUP"), "Plus group", 0, min = 0, max = 100000, step=1),
               checkboxInput(ns("ELEFAN_SA_addl.sqrt"), "Additional squareroot transformation of positive values according to Brey et al. (1988)", FALSE)

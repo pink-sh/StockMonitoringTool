@@ -98,13 +98,12 @@ elefanModule <- function(input, output, session) {
       if ('error' %in% names(res)) {
         showModal(modalDialog(
           title = "Error",
-          if(!is.null(res$error)){if (!is.null(grep("MA must be an odd integer",res$error))) {
+      if (!is.null(grep("reached elapsed time limit",res$error))){
+        HTML(sprintf("Maximum computation time (%s) has been exceeded. Please restart the Stock Monitoring Tool and try again.", td))
+        }else if(!is.null(res$error)){if (!is.null(grep("MA must be an odd integer",res$error))) {
             HTML(sprintf("Please length of classes indicate for the moving average must be a odd number.<hr/> <b>%s</b>",res$error))
           }else if (!is.null(grep("POSIXlt",res$error))) {
             HTML(sprintf("Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>",res$error))
-            
-       }else  if (!is.null(grep("reached elapsed time limit",res$error))){
-         HTML(sprintf("Maximum computation time (%s) has been exceeded. Please restart the Stock Monitoring Tool and try again.", td))
        }else{res$error}},
           easyClose = TRUE,
           footer = NULL
