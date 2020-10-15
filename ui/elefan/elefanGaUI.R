@@ -32,15 +32,15 @@ tabElefanGa <- function(id) {
                 checkboxInput(ns("ELEFAN_GA_seasonalised"), "Seasonalised", FALSE),
                 numericInput(ns("ELEFAN_GA_binSize"), "Bin size:", 4, min = 1, max = 100, step=1),
                 numericInput(ns("ELEFAN_GA_popSize"), "Population size:", 50, min = 0, max = 10000, step=1),
-                numericInput(ns("ELEFAN_GA_maxiter"), "Maximum number of iterations to run before the GA search is halted:", 10, min = 1, max = 1000, step=1),
-                numericInput(ns("ELEFAN_GA_run"), "Number of consecutive generations without any improvement in the best fitness value before the GA is stopped:", 100, min = 1, max = 1000, step=1),
+                numericInput(ns("ELEFAN_GA_maxiter"), "Maximum number of iterations to run before the GA search is halted (note this affects the run time):", 10, min = 1, max = 1000, step=1),
+                numericInput(ns("ELEFAN_GA_run"), "Number of consecutive generations without any improvement in the best fitness value before the GA is stopped (maxiter; note that this affects the run time):", 100, min = 1, max = 1000, step=1),
                 checkboxInput(ns("ELEFAN_GA_addl.sqrt"), "Additional squareroot transformation of positive values according to Brey et al. (1988)", FALSE)
               ),
               box(
                 numericInput(ns("ELEFAN_GA_pmutation"), "Probability of mutation in a parent chromosome. Usually mutation occurs with a small probability:", 0.1, min = 0.1, max = 1, step=0.1),
                 numericInput(ns("ELEFAN_GA_pcrossover"), "Probability of crossover between pairs of chromosomes. Typically this is a large value:", 0.8, min = 0.1, max = 1, step=0.1),
                 numericInput(ns("ELEFAN_GA_elitism"), "Number of best fitness individuals to survive at each generation:", 5, min = 0, max = 100, step=1),
-                numericInput(ns("ELEFAN_GA_MA"), "Number indicating over how many length classes the moving average should be performed (must be a odd number):", 5, min = 1, max = 101, step=2),
+                numericInput(ns("ELEFAN_GA_MA"), "Number indicating over how many length classes the moving average (MA) should be performed (must be a odd number):", 5, min = 1, max = 101, step=2),
                 numericInput(ns("ELEFAN_GA_PLUS_GROUP"), "Plus group", 0, min = 0, max = 100000, step=1)
               )
             ),
