@@ -136,20 +136,26 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   }
   filexml<-gsub("#COMMENT#", "comments", filexml)
   
+  filetime = format(Sys.time(), "%Y-%m-%dT%H_%M_%S")
+  
+  
   #WRITE THE MODIFIED XML TEMPLATE DOCUMENT LOCALLY#
   filehandle <- file(sentfile,"w+")
   write(filexml, file = sentfile,append = FALSE, sep = "")
+  write(filexml, file = paste0(filetime, "_in.xml"),append = FALSE, sep = "")
   #write(filexml, file = "sentfile.xml",append = FALSE, sep = "")
   close(filehandle)
   
   #CHEAK THE REQUEST
   flog.info("XML ready to send : %s",filexml)
   print(filexml)
+  
   #SEND THE REQUEST#  
   flog.info("Sending CMSY/POST request to: %s", wps_uri)
   print(wps_uri)
   
   out <- POST(url = wps_uri, config=c(authenticate(username, token, type = "basic")),body = upload_file(sentfile, type="text/xml"),encode = c("multipart"), handle = NULL, timeout(10))
+  
   flog.info("Got from CMSY: %s", out)
   print(out)
   #CHECK IF THE PROCESS HAS ALREADY FINISHED#
@@ -198,10 +204,14 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
     closeAllConnections()
     file.remove(dffile)
     file.remove(sentfile)
+    outstring<-content(out1, "text", encoding = "UTF-8")
+    write(outstring, file = paste0(filetime, "_out.xml"),append = FALSE, sep = "")
     return (cmsyParseXml(out1))
   }
-  
+
   if (stop_condition_fail) {
+    outstring<-content(out1, "text", encoding = "UTF-8")
+    write(outstring, file = paste0(filetime, "_out.xml"),append = FALSE, sep = "")
     stop("WPS call failed.")
   }
   

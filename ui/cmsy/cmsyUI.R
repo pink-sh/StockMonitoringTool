@@ -30,8 +30,8 @@ tabCmsy <- function(id) {
                 class = "collapsed-box",
                 collapsed = T,
                 box(
-                  numericInput(ns("minOfYear"), "Earliest year of the catch series (minOfYear)", 2005, min = 1900, max = 2030, step=1),
-                  numericInput(ns("maxOfYear"), "Latest year of the catch series (maxOfYear)", 2016, min = 1900, max = 2030, step=1),
+                  numericInput(ns("minOfYear"), "Earliest year of the catch series (minOfYear)", 1998, min = 1900, max = 2030, step=1),
+                  numericInput(ns("maxOfYear"), "Latest year of the catch series (maxOfYear)", 2015, min = 1900, max = 2030, step=1),
                   selectInput(ns("resiliance"), "Resilience, or intrinsic growth rate (r) as qualitative information (Use information from FishBase or SeaLifeBase)", choices=c("Very low", "Low", "Medium", "High"), selected="Medium"),
                   textInput(ns("r.low"), "Lowest resilience (both the high and low range of this parameter must be set by the user, otherwise, the range is calculated automatically from Resilience)", "NA"),
                   #numericInput(ns("r.low"), "Lowest resilience (automatically calculated if not set)", "NA", min = 10^-5, max = NA, step=NA),
@@ -52,8 +52,8 @@ tabCmsy <- function(id) {
                   textInput(ns("q.end"), "Prior for q value at the end of a stable catch-biomass period of minimum 5 years", "NA")
                 ),
                 box(
-                  numericInput(ns("startYear"), "Start year to process the catch series from", 2005, min = 1900, max = 2030, step=1),
-                  numericInput(ns("endYear"), "End year to process the catch series up to", 2016, min = 1900, max = 2030, step=1),
+                  numericInput(ns("startYear"), "Start year to process the catch series from", 1998, min = 1900, max = 2030, step=1),
+                  numericInput(ns("endYear"), "End year to process the catch series up to", 2015, min = 1900, max = 2030, step=1),
                   textInput(ns("blim"), p("Biomass biological limit (", withMathJax("\\(B_{lim}\\)"), ")"), "NA"),
                   textInput(ns("bpa"), p("Biomass precautionary value (",withMathJax("\\(B_{pa}\\)") , ")"), "NA"),
                   textInput(ns("bmsy"), p("Biomass maximum sustainable yield (", withMathJax("\\(B_{MSY}\\)"), ")"), "NA"),
@@ -144,6 +144,7 @@ resetCmsyInputValues <- function() {
   shinyjs::reset("msyBTrigger")
   shinyjs::reset("m")
   shinyjs::reset("force.cmsy")
+  #careful removeUI conflict with event
   removeUI(selector="#stockSelectorContainerInner")
   shinyjs::disable("go_cmsy")
   clearResults("box_cmsy_results")

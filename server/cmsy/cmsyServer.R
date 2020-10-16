@@ -26,7 +26,9 @@ cmsyModule <- function(input, output, session) {
     contents <- basicValidation(contents)
     if (is.null(contents)) {
       return (NULL)
-    }
+    }else{print("First calculate")
+      calculateAndUpdateYear(contents,sort(unique(contents$Stock))[1])
+      }
     return (contents)
   })
   
@@ -70,26 +72,27 @@ cmsyModule <- function(input, output, session) {
     }
   })
   
-  observeEvent(input$stock, {
+  calculateAndUpdateYear<-function(contents,stock) {
     
-    if (is.null(fileContents$data)) {
+    if (is.null(contents)) {
+      "Test"
       return(NULL)
     }
     
     maxYear <- 0
     minYear <- 0
     i<-0
-    for (line in rownames(fileContents$data)) {
-      if (fileContents$data[line, "Stock"] == input$stock) {
+    for (line in rownames(contents)) {
+      if (contents[line, "Stock"] == stock) {
         if (i == 0) {
-          maxYear <- fileContents$data[line, "yr"]
-          minYear <- fileContents$data[line, "yr"]
+          maxYear <- contents[line, "yr"]
+          minYear <- contents[line, "yr"]
         } else {
-          if (maxYear < fileContents$data[line, "yr"]) {
-            maxYear <- fileContents$data[line, "yr"]
+          if (maxYear < contents[line, "yr"]) {
+            maxYear <- contents[line, "yr"]
           }
-          if (minYear > fileContents$data[line, "yr"]) {
-            minYear <- fileContents$data[line, "yr"]
+          if (minYear > contents[line, "yr"]) {
+            minYear <- contents[line, "yr"]
           }
         }
         i <- i + 1
@@ -104,13 +107,14 @@ cmsyModule <- function(input, output, session) {
     
     if (minYear < 1960) {
       updateSliderInput(session,"stb",value=c(0.5,0.9))
-      #updateTextInput(session, "stb.low", value=0.5)
-      #updateTextInput(session, "stb.hi", value=0.9)
     } else {
       updateSliderInput(session,"stb",value=c(0.2,0.6))
-      #updateTextInput(session, "stb.low", value=0.2)
-      #updateTextInput(session, "stb.hi", value=0.6)
     }
+  }
+  
+  observeEvent(input$stock, {
+    print("calculate")
+    calculateAndUpdateYear(fileContents$data,input$stock)
   })
   
   observeEvent(input$go_cmsy, {
@@ -193,7 +197,7 @@ cmsyModule <- function(input, output, session) {
             #fileAnalisysChart <- tempfile(fileext=".jpeg")
             fileAnalisysChart <- paste(tempdir(),"/","cmsy_fileAnalisysChart",".jpeg",sep="")
             print(fileAnalisysChart)
-            download.file(row$url, fileAnalisysChart)
+            downloadFile(row$url, fileAnalisysChart)
             cmsy$method$analisysChart <- fileAnalisysChart
             cmsy$method$analisysChartUrl <- row$url
           }
@@ -201,7 +205,7 @@ cmsyModule <- function(input, output, session) {
             #fileManagementChart <- tempfile(fileext=".jpeg")
             fileManagementChart <-paste(tempdir(),"/","cmsy_fileManagementChart",".jpeg",sep="")
             print(fileManagementChart)
-            download.file(row$url, fileManagementChart)
+            downloadFile(row$url, fileManagementChart)
             cmsy$method$managementChart <- fileManagementChart
             cmsy$method$managementChartUrl <- row$url
           }
