@@ -19,11 +19,11 @@ Panel A shows in black the time series of catches and in blue the three-years mo
 
 "}`
 ```{r echo=FALSE, out.width='100%'}
-knitr::include_graphics(c(params$cmsy$method$analisysChart))
+knitr::include_graphics( if(Sys.info()[["sysname"]] == "Windows") {paste(gsub("\\\\", "/", params$cmsy$method$analisysChart)) } else { paste(params$cmsy$method$analisysChart)} )
 ```
 
 ```{r echo=FALSE, out.width='100%'}
-knitr::include_graphics(c(params$cmsy$method$managementChart))
+knitr::include_graphics( if(Sys.info()[["sysname"]] == "Windows") {paste(gsub("\\\\", "/", params$cmsy$method$managementChart)) } else { paste(params$cmsy$method$managementChart) } )
 ```
 
 ******
