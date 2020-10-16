@@ -95,6 +95,8 @@ cmsyModule <- function(input, output, session) {
         i <- i + 1
       }
     }
+    print(minYear)
+    print(maxYear)
     updateTextInput(session, "minOfYear", value=as.integer(minYear))
     updateTextInput(session, "maxOfYear", value=as.integer(maxYear))
     updateTextInput(session, "startYear", value=as.integer(minYear))
@@ -188,13 +190,17 @@ cmsyModule <- function(input, output, session) {
             cmsy$method$text <- contents
           }
           if (row$description == "analysis_charts") {
-            fileAnalisysChart <- tempfile(fileext=".jpg")
+            #fileAnalisysChart <- tempfile(fileext=".jpeg")
+            fileAnalisysChart <- paste(tempdir(),"/","cmsy_fileAnalisysChart",".jpeg",sep="")
+            print(fileAnalisysChart)
             download.file(row$url, fileAnalisysChart)
             cmsy$method$analisysChart <- fileAnalisysChart
             cmsy$method$analisysChartUrl <- row$url
           }
           if (row$description == "management_charts") {
-            fileManagementChart <- tempfile(fileext=".jpg")
+            #fileManagementChart <- tempfile(fileext=".jpeg")
+            fileManagementChart <-paste(tempdir(),"/","cmsy_fileManagementChart",".jpeg",sep="")
+            print(fileManagementChart)
             download.file(row$url, fileManagementChart)
             cmsy$method$managementChart <- fileManagementChart
             cmsy$method$managementChartUrl <- row$url

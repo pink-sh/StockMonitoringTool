@@ -37,7 +37,7 @@ RUN R -e "install.packages('XML_3.99-0.3.tar.gz', repos = NULL, type = 'source')
 # install dependencies of the Stock monitoring tool app
 #RUN R -e "install.packages(c('shiny', 'rmarkdown','shinyjs', 'shinythemes', 'shinydashboard', 'RCurl', 'devtools', 'ggplot2', 'rfishbase', 'shinyBS', 'lubridate', #'waiter', 'pracma', 'googleVis', 'stringr','R.utils'), repos='https://cloud.r-project.org/')"
 
-RUN R -e "install.packages(c('devtools'), repos='https://cloud.r-project.org/')"
+RUN R -e "install.packages(c('devtools'), repos='https://cran.r-project.org/')"
 RUN R -e "devtools::install_version('shiny', version='1.5.0', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('rmarkdown', version='2.3', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('shinyjs', version='1.1', repos = 'http://cran.r-project.org')"

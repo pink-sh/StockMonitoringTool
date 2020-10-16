@@ -87,12 +87,13 @@ createCmsyPDFReport <- function(file, cmsy, input) {
   
   
   if (!is.null(cmsy$method$analisysChartUrl)) {
-    fileAnalisysChart <- tempfile(fileext=".jpg")
+    fileAnalisysChart <- paste(tempdir(),"/","cmsy_fileAnalisysChart",".jpeg",sep="")
     download.file(cmsy$method$analisysChartUrl, fileAnalisysChart)
     cmsy$method$analisysChart <- fileAnalisysChart
   }
   if (!is.null(cmsy$method$analisysChartUrl)) {
-    fileManagementChart <- tempfile(fileext=".jpg")
+    fileManagementChart <-paste(tempdir(),"/","cmsy_fileManagementChart",".jpeg",sep="")
+    #fileManagementChart <- tempfile(fileext=".jpg")
     download.file(cmsy$method$managementChartUrl, fileManagementChart)
     cmsy$method$managementChart <- fileManagementChart
   }
