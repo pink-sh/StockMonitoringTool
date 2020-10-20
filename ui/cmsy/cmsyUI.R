@@ -30,9 +30,9 @@ tabCmsy <- function(id) {
                 class = "collapsed-box",
                 collapsed = T,
                 box(
-                  numericInput(ns("minOfYear"), "Earliest year of the catch series (minOfYear)", 1998, min = 1900, max = 2030, step=1),
-                  numericInput(ns("maxOfYear"), "Latest year of the catch series (maxOfYear)", 2015, min = 1900, max = 2030, step=1),
-                  selectInput(ns("resiliance"), "Resilience, or intrinsic growth rate (r) as qualitative information (Use information from FishBase or SeaLifeBase)", choices=c("Very low", "Low", "Medium", "High"), selected="Medium"),
+                  numericInput(ns("minOfYear"), p("Earliest year of the catch series (", withMathJax("\\(minOfYear\\)"), ")"), 1998, min = 1900, max = 2030, step=1),
+                  numericInput(ns("maxOfYear"), p("Latest year of the catch series (", withMathJax("\\(maxOfYear\\)"), ")"), 2015, min = 1900, max = 2030, step=1),
+                  selectInput(ns("resiliance"), p("Resilience, or intrinsic growth rate (", withMathJax("\\(r\\)"), ") as qualitative information (Use information from FishBase or SeaLifeBase)"), choices=c("Very low", "Low", "Medium", "High"), selected="Medium"),
                   textInput(ns("r.low"), "Lower limit of resilience (Both the high and low range of this parameter must be set by the user, otherwise, the range is calculated automatically from Resilience)", "NA"),
                   #numericInput(ns("r.low"), "Lowest resilience (automatically calculated if not set)", "NA", min = 10^-5, max = NA, step=NA),
                   textInput(ns("r.hi"), "Upper limit of resilience (Both the high and low range of this parameter must be set by the user, otherwise, the range is calculated automatically from Resilience)", "NA"),
@@ -40,7 +40,7 @@ tabCmsy <- function(id) {
                   #numericInput(ns("stb.low"), "**Starting depletion range: Lowest possible relative biomass at the beginning of the catch time series (automatically calculated if not set)", 0, min = 0, max = 10, step=0.1),
                   #numericInput(ns("stb.hi"), "**Starting depletion range: Highest possible relative biomass at the beginning of the catch time series (automatically calculated if not set)", 0, min = 0, max = 10, step=0.1),
                   sliderInput(ns("stb"), "**Starting depletion range: Lower and upper limits of relative biomass at the beginning of the catch time series (automatically calculated if not set)",min = 0, max = 10,step=0.1,value = c(0,0)),
-                  textInput(ns("int.yr"), "Intermediate year (int.yr automatically calculated if not set. Must be specified by user if intermediate biomass range is specified below)", "NA"),
+                  textInput(ns("int.yr"), p("Intermediate year (", withMathJax("\\(int.yr\\)"), " automatically calculated if not set. Must be specified by user if intermediate biomass range is specified below)"), "NA"),
                   textInput(ns("intb.low"), "Lower limit of relative biomass at the intermediate year of the catch time series (intermediate year, low range and high range must all be set by user; otherwise leave all three fields blank)", "NA"),
                   textInput(ns("intb.hi"), "Upper limit of relative biomass at the intermediate year of the catch time series (intermediate year, low range and high range must all be set by user; otherwise leave all three fields blank)", "NA"),
                   #numericInput(ns("endb.low"), "**Ending depletion range: Lowest possible relative biomass at the end of the catch time series (automatically calculated if not set)", 0.01, min = 0, max = 10, step=0.01),
@@ -48,8 +48,8 @@ tabCmsy <- function(id) {
                   sliderInput(ns("endb"), "**Ending depletion range: Lower and upper limits of relative biomass at the end of the catch time series (automatically calculated if not set)",min = 0, max = 10,step=0.1,value = c(0.01,0.4)),
                   
                   
-                  textInput(ns("q.start"), "Start year over which to calculate catchability (q) value at the beginning of a stable catch-biomass period (q.start automatically calculated if not set)", "NA"),
-                  textInput(ns("q.end"), "End year over which to calculate catchability (q) at the end of a stable catch-biomass period (q.end automatically calculated if not set)", "NA")
+                  textInput(ns("q.start"), p("Start year over which to calculate catchability (", withMathJax("\\(q\\)"), ") value at the beginning of a stable catch-biomass period (", withMathJax("\\(q.start\\)"), " automatically calculated if not set)"), "NA"),
+                  textInput(ns("q.end"), p("End year over which to calculate catchability (", withMathJax("\\(q\\)"), ") at the end of a stable catch-biomass period (", withMathJax("\\(q.end\\)"), " automatically calculated if not set)"), "NA")
                 ),
                 box(
                   numericInput(ns("startYear"), "Start year to process the catch series from", 1998, min = 1900, max = 2030, step=1),
@@ -66,9 +66,9 @@ tabCmsy <- function(id) {
                   textInput(ns("fpa"), p("Fishing mortality precautionary value (", withMathJax("\\(F_{pa}\\)"), ")"), "NA"),
                   textInput(ns("fofl"), p("Fishing mortality at overfishing level (", withMathJax("\\(F_{ofl}\\)"),")"), "NA"),
                   textInput(ns("last_f"), "Last known exploitation rate", "NA"),
-                  textInput(ns("msy"), "Maximum Sustainable Yield (MSY)", "NA"),
+                  textInput(ns("msy"), p("Maximum Sustainable Yield (", withMathJax("\\(MSY\\)"), ")"), "NA"),
                   textInput(ns("msyBTrigger"), p("Spawning Stock Biomass at MSY (", withMathJax("\\(SSB_{MSY}\\)"), ")"), "NA"),
-                  textInput(ns("m"), "**Natural mortality (M)", "NA"),
+                  textInput(ns("m"), p("**Natural mortality (", withMathJax("\\(M\\)"), ")"), "NA"),
                   p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M here."),
                   ##KK: it's not clear to me what the user input would be here if not "None". Suggest deleting (also for Comments.
                   #textInput("btype", "btype indicates if the catch file contains biomass, CPUE or no information associated with the catch time series", "None"),

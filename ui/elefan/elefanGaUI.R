@@ -29,18 +29,18 @@ tabElefanGa <- function(id) {
               class = "collapsed-box",
               collapsed = T,
               box(
-                checkboxInput(ns("ELEFAN_GA_seasonalised"), "Seasonalised : allows method to calculate the seasonal growth parameters, C and ts", FALSE),
+                checkboxInput(ns("ELEFAN_GA_seasonalised"), p("Seasonalised : allows method to calculate the seasonal growth parameters, ", withMathJax("\\(C\\)"), " and ", withMathJax("\\(t_{s}\\)")), FALSE),
                 numericInput(ns("ELEFAN_GA_binSize"), "Bin size : length interval over which the length frequency data are aggregated", 4, min = 1, max = 100, step=1),
                 numericInput(ns("ELEFAN_GA_popSize"), "Population size:", 50, min = 0, max = 10000, step=1),
                 numericInput(ns("ELEFAN_GA_maxiter"), "Maximum number of iterations to run before the GA search is halted (note this affects the run time):", 10, min = 1, max = 1000, step=1),
-                numericInput(ns("ELEFAN_GA_run"), "Number of consecutive generations without any improvement in the best fitness value before the GA is stopped (maxiter) (note that this affects the run time):", 100, min = 1, max = 1000, step=1),
+                numericInput(ns("ELEFAN_GA_run"), p("Number of consecutive generations without any improvement in the best fitness value before the GA is stopped (", withMathJax("\\(maxiter\\)"), ") (note that this affects the run time):"), 100, min = 1, max = 1000, step=1),
                 checkboxInput(ns("ELEFAN_GA_addl.sqrt"), "Additional squareroot transformation of positive values according to Brey et al. (1988), reduces the weighting of large individuals", FALSE)
               ),
               box(
                 numericInput(ns("ELEFAN_GA_pmutation"), "Probability of mutation in a parent chromosome. Usually mutation occurs with a small probability:", 0.1, min = 0.1, max = 1, step=0.1),
                 numericInput(ns("ELEFAN_GA_pcrossover"), "Probability of crossover between pairs of chromosomes. Typically this is a large value:", 0.8, min = 0.1, max = 1, step=0.1),
                 numericInput(ns("ELEFAN_GA_elitism"), "Number of best fitness individuals to survive at each generation:", 5, min = 0, max = 100, step=1),
-                numericInput(ns("ELEFAN_GA_MA"), "Number indicating over how many length classes the moving average should be performed  (MA) (must be an odd number):", 5, min = 1, max = 101, step=2),
+                numericInput(ns("ELEFAN_GA_MA"), p("Number indicating over how many length classes the moving average should be performed  (", withMathJax("\\(MA\\)"), ") (must be an odd number):"), 5, min = 1, max = 101, step=2),
                 numericInput(ns("ELEFAN_GA_PLUS_GROUP"), "Plus group: the largest length class with only a few individuals after which the method will pool together (important for cohort analysis later)", 0, min = 0, max = 100000, step=1)
               )
             ),
@@ -51,12 +51,12 @@ tabElefanGa <- function(id) {
               collapsed = T,
               box(
                 numericInput(ns("ELEFAN_GA_lowPar_Linf"), p("Asymptotic length/length infinity of the von Bertalanffy growth function (",withMathJax("\\(L_\\infty\\)"), "in cm):"), 119, min = 1, max = 1000, step=1),
-                numericInput(ns("ELEFAN_GA_lowPar_K"), "The growth coefficient (K) of the von Bertalanffy growth function", 0.01, min = 0, max = 1, step=0.01),
-                numericInput(ns("ELEFAN_GA_lowPar_t_anchor"), "Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (t_anchor)", 0, min = 0, max = 1, step=0.1)
+                numericInput(ns("ELEFAN_GA_lowPar_K"), p("The growth coefficient (", withMathJax("\\(K\\)"), ") of the von Bertalanffy growth function"), 0.01, min = 0, max = 1, step=0.01),
+                numericInput(ns("ELEFAN_GA_lowPar_t_anchor"), p("Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (", withMathJax("\\(t_{anchor}\\)"), ")"), 0, min = 0, max = 1, step=0.1)
               ),
               box(
-                numericInput(ns("ELEFAN_GA_lowPar_C"), "Amplitude of growth oscillation (C): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point.", 0, min = 0, max = 1, step=0.1),
-                numericInput(ns("ELEFAN_GA_lowPar_ts"), p("Summer point (", withMathJax("\\(t_s\\)"), "). Values between 0 and 1.   At the time of the year when the fraction, " , withMathJax("\\(t_s\\)"),", has elapsed, the growth rate is the highest."), 0, min = 0, max = 1, step=0.1)
+                numericInput(ns("ELEFAN_GA_lowPar_C"), p("Amplitude of growth oscillation (", withMathJax("\\(C\\)"), "): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point."), 0, min = 0, max = 1, step=0.1),
+                numericInput(ns("ELEFAN_GA_lowPar_ts"), p("Summer point (", withMathJax("\\(t_{s}\\)"), "). Values between 0 and 1. At the time of the year when the fraction, " , withMathJax("\\(t_{s}\\)"),", has elapsed, the growth rate is the highest."), 0, min = 0, max = 1, step=0.1)
               )
             ),
             box(title = "Upper Limits Of Parameter Ranges",
@@ -66,12 +66,12 @@ tabElefanGa <- function(id) {
               collapsed = T,
               box(
                 numericInput(ns("ELEFAN_GA_upPar_Linf"), p("Asymptotic length/length infinity of the von Bertalanffy growth function (",withMathJax("\\(L_\\infty\\)"), "in cm):"), 129, min = 1, max = 1000, step=1),
-                numericInput(ns("ELEFAN_GA_upPar_K"), "The growth coefficient (K) of the von Bertalanffy growth function", 1, min = 0, max = 1, step=0.01),
-                numericInput(ns("ELEFAN_GA_upPar_t_anchor"), "Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (t_anchor)", 1, min = 0, max = 1, step=0.1)
+                numericInput(ns("ELEFAN_GA_upPar_K"), p("The growth coefficient (", withMathJax("\\(K\\)"), ") of the von Bertalanffy growth function"), 1, min = 0, max = 1, step=0.01),
+                numericInput(ns("ELEFAN_GA_upPar_t_anchor"), p("Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (", withMathJax("\\(t_{anchor}\\)"), ")"), 1, min = 0, max = 1, step=0.1)
               ),
               box(
-                numericInput(ns("ELEFAN_GA_upPar_C"), "Amplitude of growth oscillation (C): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point.", 1, min = 0, max = 1, step=0.1),
-                numericInput(ns("ELEFAN_GA_upPar_ts"), p("Summer point (", withMathJax("\\(t_s\\)"), "). Values between 0 and 1.   At the time of the year when the fraction, " , withMathJax("\\(t_s\\)"),", has elapsed, the growth rate is the highest."), 1, min = 0, max = 1, step=0.1)
+                numericInput(ns("ELEFAN_GA_upPar_C"), p("Amplitude of growth oscillation (", withMathJax("\\(C\\)"), "): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point."), 1, min = 0, max = 1, step=0.1),
+                numericInput(ns("ELEFAN_GA_upPar_ts"), p("Summer point (", withMathJax("\\(t_{s}\\)"), "). Values between 0 and 1. At the time of the year when the fraction, " , withMathJax("\\(t_{s}\\)"),", has elapsed, the growth rate is the highest."), 1, min = 0, max = 1, step=0.1)
               )
             ),
             tags$div( disabled(actionButton(ns("go_ga"), "Run ELEFAN GA", class="topLevelInformationButton")),
