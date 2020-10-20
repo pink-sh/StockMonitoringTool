@@ -32,13 +32,14 @@ RUN apt-get update && apt-get upgrade -y
 #Install XML package from archive
 #Issue is that XML package from 2020-07 is referenced as depending on R >= 4.0
 #To temporarily solve that we use the previous XML package version from archive
-RUN wget https://cran.r-project.org/src/contrib/Archive/XML/XML_3.99-0.3.tar.gz
+#RUN wget https://cran.r-project.org/src/contrib/Archive/XML/XML_3.99-0.3.tar.gz
 
-RUN R -e "install.packages('XML_3.99-0.3.tar.gz', repos = NULL, type = 'source')"
+#RUN R -e "install.packages('XML_3.99-0.3.tar.gz', repos = NULL, type = 'source')"
 # install dependencies of the Stock monitoring tool app
 #RUN R -e "install.packages(c('shiny', 'rmarkdown','shinyjs', 'shinythemes', 'shinydashboard', 'RCurl', 'devtools', 'ggplot2', 'rfishbase', 'shinyBS', 'lubridate', #'waiter', 'pracma', 'googleVis', 'stringr','R.utils'), repos='https://cloud.r-project.org/')"
 
 RUN R -e "install.packages(c('devtools'), repos='https://cran.r-project.org/')"
+RUN R -e "devtools::install_version('XML', version='3.99-0.3', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('shiny', version='1.5.0', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('rmarkdown', version='2.3', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('shinyjs', version='1.1', repos = 'http://cran.r-project.org')"
@@ -80,4 +81,4 @@ ENV SMT_LOG=session.log
 
 RUN apt-get install -y curl
 CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools',port=3838,host='0.0.0.0')"]
-#CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools')"]
+#CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools')
