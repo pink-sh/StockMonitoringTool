@@ -23,57 +23,57 @@ tabElefanSa <- function(id) {
               #selectInput(ns("elefanSaDateFormat"), "Choose CSV date format", choices = c("Year Month Day" = "ymd", "Year Day Month" = "ydm", "Day Month Year" = "dmy", "Month Day Year" = "mdy" ))            
               )
           ),
-          box(title = "Optional Parameters",
+          box(title = "Optional Parameters Initial Values",
             width = NULL,
             collapsible = T, 
             class = "collapsed-box",
             collapsed = T,
             box(
-              checkboxInput(ns("ELEFAN_SA_seasonalised"), "Seasonalised", FALSE),
-             # numericInput(ns("ELEFAN_SA_binSize"), "Bin size:", 4, min = 1, max = 100, step=1),
-              numericInput(ns("ELEFAN_SA_initPar_Linf"), p("Length infinity (",withMathJax("\\(L_\\infty\\)"), "in cm):"), 119, min = 1, max = 1000, step=1),
-              numericInput(ns("ELEFAN_SA_initPar_K"), "Curving coefficient (K):", 0.5, min = 0, max = 1, step=0.1),
-              numericInput(ns("ELEFAN_SA_initPar_t_anchor"), "Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month (t_anchor):", 0.5, min = 0, max = 1, step=0.01),
+              checkboxInput(ns("ELEFAN_SA_seasonalised"), "Seasonalised : allows method to calculate the seasonal growth parameters, C and ts", FALSE),
+             # numericInput(ns("ELEFAN_SA_binSize"), "Bin size : length interval over which the length frequency data are aggregated", 4, min = 1, max = 100, step=1),
+              numericInput(ns("ELEFAN_SA_initPar_Linf"), p("Asymptotic length/length infinity (",withMathJax("\\(L_\\infty\\)"), "in cm) of the von Bertalanffy growth function:"), 119, min = 1, max = 1000, step=1),
+              numericInput(ns("ELEFAN_SA_initPar_K"), "Growth coefficient (K) of the von Bertalanffy growth function", 0.5, min = 0, max = 1, step=0.1),
+              numericInput(ns("ELEFAN_SA_initPar_t_anchor"), "Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (t_anchor)", 0.5, min = 0, max = 1, step=0.01),
               numericInput(ns("ELEFAN_SA_initPar_C"), "Amplitude of growth oscillation (C):", 0.5, min = 0, max = 1, step=0.1),
-              numericInput(ns("ELEFAN_SA_initPar_ts"), p("Summer point (", withMathJax("\\(t_s\\)"), "):"), 0.5, min = 0, max = 1, step=0.1)
+              numericInput(ns("ELEFAN_SA_initPar_ts"), p("Summer point (", withMathJax("\\(t_s\\)"), "). Values between 0 and 1.   At the time of the year when the fraction, " , withMathJax("\\(t_s\\)"),", has elapsed, the growth rate is the highest."), 0.5, min = 0, max = 1, step=0.1)
               ),
             box(
-              numericInput(ns("ELEFAN_SA_SA_time"), "Maximum running time in seconds:", 60, min = 0, max = 10000, step=1),
-              numericInput(ns("ELEFAN_SA_SA_temp"), "Initial value for temperature:", 100000, min = 1, max = 10000000, step=100),
-              numericInput(ns("ELEFAN_SA_MA"), "Number indicating over how many length classes the moving average (MA) should be performed (must be a odd number):", 5, min = 1, max = 101, step=2),
-              numericInput(ns("ELEFAN_SA_agemax"), "Maximum age of species:", 1, min = 0, max = 100, step=1),
-              numericInput(ns("ELEFAN_SA_PLUS_GROUP"), "Plus group", 0, min = 0, max = 100000, step=1),
-              checkboxInput(ns("ELEFAN_SA_addl.sqrt"), "Additional squareroot transformation of positive values according to Brey et al. (1988)", FALSE)
+              numericInput(ns("ELEFAN_SA_SA_time"), "Maximum running time in seconds (will impact the run time of the method):", 60, min = 0, max = 10000, step=1),
+              numericInput(ns("ELEFAN_SA_SA_temp"), "Initial value for 'temperature' (will impact the run time of the method):", 100000, min = 1, max = 10000000, step=100),
+              numericInput(ns("ELEFAN_SA_MA"), "Number indicating over how many length classes the moving average (MA) should be performed (must be an odd number):", 5, min = 1, max = 101, step=2),
+              numericInput(ns("ELEFAN_SA_agemax"), "Maximum age of species (if not specified, estimated from Linf):", 1, min = 0, max = 100, step=1),
+              numericInput(ns("ELEFAN_SA_PLUS_GROUP"), "Plus group: the largest length class with only a few individuals after which the method will pool together (important for cohort analysis later)", 0, min = 0, max = 100000, step=1),
+              checkboxInput(ns("ELEFAN_SA_addl.sqrt"), "Additional squareroot transformation of positive values according to Brey et al. (1988), reduces the weighting of large individuals", FALSE)
             )
           ),
-          box(title = "Low Par Parameters",
+          box(title = "Lower Limits Of Parameters Ranges",
             width = NULL,
             collapsible = T, 
             class = "collapsed-box",
             collapsed = T,
             box(
-              numericInput(ns("ELEFAN_SA_lowPar_Linf"), p("Length infinity (",withMathJax("\\(L_\\infty\\)"), "in cm):"), 119, min = 1, max = 1000, step=1),
-              numericInput(ns("ELEFAN_SA_lowPar_K"), "Curving coefficient (K):", 0.01, min = 0, max = 1, step=0.01),
-              numericInput(ns("ELEFAN_SA_lowPar_t_anchor"), "Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month (t_anchor):", 0, min = 0, max = 1, step=0.1)
+              numericInput(ns("ELEFAN_SA_lowPar_Linf"), p("Asymptotic length/length infinity (",withMathJax("\\(L_\\infty\\)"), "in cm) of the von Bertalanffy growth function:"), 119, min = 1, max = 1000, step=1),
+              numericInput(ns("ELEFAN_SA_lowPar_K"), "Growth coefficient (K) of the von Bertalanffy growth function", 0.01, min = 0, max = 1, step=0.01),
+              numericInput(ns("ELEFAN_SA_lowPar_t_anchor"), "Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (t_anchor)", 0, min = 0, max = 1, step=0.1)
             ),
             box(
-              numericInput(ns("ELEFAN_SA_lowPar_C"), "Amplitude of growth oscillation (C):", 0, min = 0, max = 1, step=0.1),
-              numericInput(ns("ELEFAN_SA_lowPar_ts"), p("Summer point (", withMathJax("\\(t_s\\)"), "):"), 0, min = 0, max = 1, step=0.1)
+              numericInput(ns("ELEFAN_SA_lowPar_C"), "Amplitude of growth oscillation (C): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point.", 0, min = 0, max = 1, step=0.1),
+              numericInput(ns("ELEFAN_SA_lowPar_ts"), p("Summer point (", withMathJax("\\(t_s\\)"), "). Values between 0 and 1.   At the time of the year when the fraction, " , withMathJax("\\(t_s\\)"),", has elapsed, the growth rate is the highest."), 0, min = 0, max = 1, step=0.1)
             )
           ),
-          box(title = "Up Par Parameters",
+          box(title = "Upper Limits Of Parameters Ranges",
             width = NULL,
             collapsible = T, 
             class = "collapsed-box",
             collapsed = T,
           box(
-            numericInput(ns("ELEFAN_SA_upPar_Linf"), p("Length infinity (",withMathJax("\\(L_\\infty\\)"), "in cm):"), 129, min = 1, max = 1000, step=1),
-            numericInput(ns("ELEFAN_SA_upPar_K"), "Curving coefficient (K):", 1, min = 0, max = 1, step=0.01),
-            numericInput(ns("ELEFAN_SA_upPar_t_anchor"), "Time point anchoring growth curves in year-length coordinate system, corrsponds to peak spawning month (t_anchor):", 1, min = 0, max = 1, step=0.1)
+            numericInput(ns("ELEFAN_SA_upPar_Linf"), p("Asymptotic length/length infinity (",withMathJax("\\(L_\\infty\\)"), "in cm) of the von Bertalanffy growth function:"), 129, min = 1, max = 1000, step=1),
+            numericInput(ns("ELEFAN_SA_upPar_K"), "Growth coefficient (K) of the von Bertalanffy growth function", 1, min = 0, max = 1, step=0.01),
+            numericInput(ns("ELEFAN_SA_upPar_t_anchor"), "Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (t_anchor)", 1, min = 0, max = 1, step=0.1)
           ),
           box(
-            numericInput(ns("ELEFAN_SA_upPar_C"), "Amplitude of growth oscillation (C):", 1, min = 0, max = 1, step=0.1),
-            numericInput(ns("ELEFAN_SA_upPar_ts"), p("Summer point (", withMathJax("\\(t_s\\)"), "):"), 1, min = 0, max = 1, step=0.1)
+            numericInput(ns("ELEFAN_SA_upPar_C"), "Amplitude of growth oscillation (C): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point.", 1, min = 0, max = 1, step=0.1),
+            numericInput(ns("ELEFAN_SA_upPar_ts"), p("Summer point (", withMathJax("\\(t_s\\)"), "). Values between 0 and 1.   At the time of the year when the fraction, " , withMathJax("\\(t_s\\)"),", has elapsed, the growth rate is the highest."), 1, min = 0, max = 1, step=0.1)
           )
         ),
         tags$div( disabled(actionButton(ns("go_sa"), "Run ELEFAN SA", class="topLevelInformationButton")),

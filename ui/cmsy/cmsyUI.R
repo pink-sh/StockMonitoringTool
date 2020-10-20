@@ -33,23 +33,23 @@ tabCmsy <- function(id) {
                   numericInput(ns("minOfYear"), "Earliest year of the catch series (minOfYear)", 1998, min = 1900, max = 2030, step=1),
                   numericInput(ns("maxOfYear"), "Latest year of the catch series (maxOfYear)", 2015, min = 1900, max = 2030, step=1),
                   selectInput(ns("resiliance"), "Resilience, or intrinsic growth rate (r) as qualitative information (Use information from FishBase or SeaLifeBase)", choices=c("Very low", "Low", "Medium", "High"), selected="Medium"),
-                  textInput(ns("r.low"), "Lowest resilience (both the high and low range of this parameter must be set by the user, otherwise, the range is calculated automatically from Resilience)", "NA"),
+                  textInput(ns("r.low"), "Lower limit of resilience (Both the high and low range of this parameter must be set by the user, otherwise, the range is calculated automatically from Resilience)", "NA"),
                   #numericInput(ns("r.low"), "Lowest resilience (automatically calculated if not set)", "NA", min = 10^-5, max = NA, step=NA),
-                  textInput(ns("r.hi"), "Highest resilience (both the high and low range of this parameter must be set by the user, otherwise, the range is calculated automatically from Resilience)", "NA"),
+                  textInput(ns("r.hi"), "Upper limit of resilience (Both the high and low range of this parameter must be set by the user, otherwise, the range is calculated automatically from Resilience)", "NA"),
                   p("**The user should take care when setting the prior estimates for depletion at the beginning and end of the time series. Depletion levels are assumptions about the initial and current state of the stock, and they have a strong influence on the results of CMSY, so careful evaluation of these parameters is recommended. These parameters are determined in CMSY using the relationship between current catch and maximum catch."),
                   #numericInput(ns("stb.low"), "**Starting depletion range: Lowest possible relative biomass at the beginning of the catch time series (automatically calculated if not set)", 0, min = 0, max = 10, step=0.1),
                   #numericInput(ns("stb.hi"), "**Starting depletion range: Highest possible relative biomass at the beginning of the catch time series (automatically calculated if not set)", 0, min = 0, max = 10, step=0.1),
-                  sliderInput(ns("stb"), "**Starting depletion range: Lowest and highest possible relative biomass at the beginning of the catch time series (automatically calculated if not set)",min = 0, max = 10,step=0.1,value = c(0,0)),
+                  sliderInput(ns("stb"), "**Starting depletion range: Lower and upper limits of relative biomass at the beginning of the catch time series (automatically calculated if not set)",min = 0, max = 10,step=0.1,value = c(0,0)),
                   textInput(ns("int.yr"), "Intermediate year (int.yr automatically calculated if not set. Must be specified by user if intermediate biomass range is specified below)", "NA"),
-                  textInput(ns("intb.low"), "Lowest possible relative biomass at the intermediate year of the catch time series (the intermediate year, low range and high range must all be set by user; otherwise they will be automatically calculated)", "NA"),
-                  textInput(ns("intb.hi"), "Highest possible relative biomass at the intermediate year of the catch time series (the intermediate year, low range and high range must all be set by user; otherwise they will be automatically calculated)", "NA"),
+                  textInput(ns("intb.low"), "Lower limit of relative biomass at the intermediate year of the catch time series (intermediate year, low range and high range must all be set by user; otherwise leave all three fields blank)", "NA"),
+                  textInput(ns("intb.hi"), "Upper limit of relative biomass at the intermediate year of the catch time series (intermediate year, low range and high range must all be set by user; otherwise leave all three fields blank)", "NA"),
                   #numericInput(ns("endb.low"), "**Ending depletion range: Lowest possible relative biomass at the end of the catch time series (automatically calculated if not set)", 0.01, min = 0, max = 10, step=0.01),
                   #numericInput(ns("endb.hi"), "**Ending depletion range: Highest possible relative biomass at the end of the catch time series (automatically calculated if not set)", 0.4, min = 0, max = 10, step=0.1),
-                  sliderInput(ns("endb"), "**Ending depletion range: Lowest and highest possible relative biomass at the end of the catch time series (automatically calculated if not set)",min = 0, max = 10,step=0.1,value = c(0.01,0.4)),
+                  sliderInput(ns("endb"), "**Ending depletion range: Lower and upper limits of relative biomass at the end of the catch time series (automatically calculated if not set)",min = 0, max = 10,step=0.1,value = c(0.01,0.4)),
                   
                   
-                  textInput(ns("q.start"), "Prior for catchability (q) value at the beginning of a stable catch-biomass period of minimum 5 years", "NA"),
-                  textInput(ns("q.end"), "Prior for q value at the end of a stable catch-biomass period of minimum 5 years", "NA")
+                  textInput(ns("q.start"), "Start year over which to calculate catchability (q) value at the beginning of a stable catch-biomass period (q.start automatically calculated if not set)", "NA"),
+                  textInput(ns("q.end"), "End year over which to calculate catchability (q) at the end of a stable catch-biomass period (q.end automatically calculated if not set)", "NA")
                 ),
                 box(
                   numericInput(ns("startYear"), "Start year to process the catch series from", 1998, min = 1900, max = 2030, step=1),

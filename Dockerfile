@@ -1,4 +1,4 @@
-FROM openanalytics/r-base:3.6.1
+FROM rocker/r-ver:3.6.3
 
 MAINTAINER Enrico Anello "enrico.anello@fao.org"
 
@@ -13,7 +13,8 @@ RUN apt-get update && apt-get install -y \
     libxt-dev \
     libssl-dev \
     libssh2-1-dev \
-    libssl1.0.0 \
+    #libssl1.0.0 \
+    libjpeg-dev \
     default-jre \
     default-jdk \
     libxml2 \
@@ -22,7 +23,7 @@ RUN apt-get update && apt-get install -y \
     texlive-latex-base \
     texlive-fonts-recommended \
     texlive-formats-extra \
-    libv8-3.14.5 \
+    #libv8-3.14.5 \
     libv8-dev
 
 
@@ -57,10 +58,11 @@ RUN R -e "devtools::install_version('fishmethods', version='1.11.1', repos = 'ht
 RUN R -e "devtools::install_version('V8', version='3.2.0', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('DT', version='0.14', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('futile.logger', version='1.4.3', repos = 'http://cran.r-project.org')"
-RUN R -e "devtools::install_version('TropFishR', version='1.6.2', repos = 'http://cran.r-project.org')"
-
+#RUN R -e "devtools::install_version('TropFishR', version='1.6.2', repos = 'http://cran.r-project.org')"
+RUN R -e "install.packages(c('TropFishR'), repos='https://cran.r-project.org/')"
+RUN R -e "install.packages(c('nloptr'), repos='https://cran.r-project.org/')"
 RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
-RUN R -e "devtools::install_github('jyypma/nloptr')"
+#RUN R -e "devtools::install_github('jyypma/nloptr')"
 
 #RUN R -e "install.packages(c('fishmethods'), repos='https://cloud.r-project.org/')"
 #RUN R -e "install.packages(c('V8'), repos='https://cloud.r-project.org/')"
