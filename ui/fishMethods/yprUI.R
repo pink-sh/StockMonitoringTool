@@ -25,7 +25,7 @@ tabYpr <- function(id) {
           class = "collapsed-box",
           collapsed = T,
           box(
-            numericInput(ns("YPR_M"), "Single natural mortality (M) rate if M is assumed constant over all ages", 0.2, min = 0, max = 10, step=0.1),
+            numericInput(ns("YPR_M"), p("Single natural mortality (", withMathJax("\\(M\\)"), ") rate if M is assumed constant over all ages"), 0.2, min = 0, max = 10, step=0.1),
             checkboxInput(ns("YPR_Plus"), "Plus -  logical value indicating whether the last age is a plus-group", TRUE),
             numericInput(ns("YPR_oldest"), "if plus is checked, a numeric value indicating the oldest age in the plus group", 100, min = 0, max = 1000, step=1)
           ),
@@ -66,8 +66,10 @@ tabYpr <- function(id) {
 
 resetYPRInputValues <- function() {
   shinyjs::reset("fileYpr")
+  shinyjs::reset("YPR_M")
   shinyjs::reset("YPR_Plus")
   shinyjs::reset("YPR_oldest")
+  shinyjs::reset("YPR_maxF")
   shinyjs::reset("YPR_incrF")
   shinyjs::disable("go_YPR")
   clearResults("box_ypr_results")

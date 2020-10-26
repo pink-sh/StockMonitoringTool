@@ -37,8 +37,13 @@ cmsyParseXml <- function (xml) {
 
 #runCmsy <- function (region,subregion,stock,group,name,englishName,scientificName,source,minOfYear,maxOfYear,startYear,endYear,flim,fpa,blim,bpa,bmsy,fmsy,msy,msyBTrigger,b40,m,fofl,last_f,resiliance,r.low,r.hi,stb.low,stb.hi,int.yr,intb.low,intb.hi,endb.low,endb.hi,q.start,q.end,btype,force.cmsy,comments, username, token, inputCsvFile, templateFile)  {
 runCmsy <- function (region,subregion,stock,group,name,englishName,scientificName,source,minOfYear,maxOfYear,startYear,endYear,flim,fpa,blim,bpa,bmsy,fmsy,msy,msyBTrigger,b40,m,fofl,last_f,resiliance,r.low,r.hi,stb.low,stb.hi,int.yr,intb.low,intb.hi,endb.low,endb.hi,q.start,q.end,btype,force.cmsy,comments, token, inputCsvFile, templateFile)  {
-  wps_uri = "http://dataminer.garr.d4science.org/wps/WebProcessingService" #http://dataminer-cloud1.d4science.org:80/wps/WebProcessingService" #"http://dataminer-bigdata.d4science.org:80/wps/WebProcessingService"
-
+  #wps_uri = "http://dataminer.garr.d4science.org/wps/WebProcessingService" #http://dataminer-cloud1.d4science.org:80/wps/WebProcessingService" #"http://dataminer-bigdata.d4science.org:80/wps/WebProcessingService"
+  icproxy = XML::xmlParse(content(GET("https://registry.d4science.org/icproxy/gcube/service//ServiceEndpoint/DataAnalysis/DataMiner?gcube-scope=/d4science.research-infrastructures.eu/D4Research/SDG-Indicator14.4.1"), "text"))
+  wps_uri = xpathSApply(icproxy, "//AccessPoint/Interface/Endpoint", xmlValue)[1]
+  
+  flog.info("WPS url select : %s",wps_uri)
+  print(wps_uri)
+  
   username <- "test"
   #token <- "5b0f903a-3cb1-4424-a2bd-2700c9f1d4ed"
   wpsClient <- paste0(getwd(),"/assets/cmsy/WPS4D4Science.r")
@@ -63,17 +68,19 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   #data <- data[ , !(names(data) %in% drops)]
   data <- data[keeps]
   
-  dimnames(data)[2][[1]]<-gsub("[[:punct:]]", "_", dimnames(data)[2][[1]])
+  #dimnames(data)[2][[1]]<-gsub("[[:punct:]]", "_", dimnames(data)[2][[1]])
   dimnames(data)[2][[1]]<-tolower(gsub(" ", "_", dimnames(data)[2][[1]]))
-  dffile<-paste("/tmp/cmsy_data_",Sys.time(),".csv",sep="")
-  dffile<-gsub(":", "_", dffile)
+  dffile<-paste(tempdir(),"/","cmsy_data_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".csv",sep="")
+  #dffile<-gsub(":", "_", dffile)
   dffile<-gsub(" ", "_", dffile)
-  write.csv(data,file=dffile, quote = FALSE, eol = "\n", row.names = FALSE,  fileEncoding = "UTF-8")
+  flog.info("Avant ecriture: %s",dffile)
+    write.csv(data,file=dffile, quote = FALSE, eol = "\n", row.names = FALSE,  fileEncoding = "UTF-8")
+  flog.info("Apres ecriture")
   #LOAD THE TEMPLATE#    
   #templateFile="/home/enrico/Work/BlueBridge/Cmsy/cmsyForDlmToolsTemplate.xml";
   #PREPARE THE REQUEST FILE BY ALTERING THE TEMPLATE#    
-  sentfile=paste("/tmp/cmsy_req_",Sys.time(),".xml",sep="")
-  sentfile<-gsub(":", "_", sentfile)
+  sentfile=paste(tempdir(),"/","cmsy_req_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".xml",sep="")
+  #sentfile<-gsub(":", "_", sentfile)
   sentfile<-gsub(" ", "_", sentfile)
   print(paste0("Input XML File: ", templateFile))
   filexml<-readChar(templateFile, file.info(templateFile)$size)
@@ -129,17 +136,28 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   }
   filexml<-gsub("#COMMENT#", "comments", filexml)
   
+  filetime = format(Sys.time(), "%Y-%m-%dT%H_%M_%S")
+  
+  
   #WRITE THE MODIFIED XML TEMPLATE DOCUMENT LOCALLY#
   filehandle <- file(sentfile,"w+")
   write(filexml, file = sentfile,append = FALSE, sep = "")
+  write(filexml, file = paste0(filetime, "_in.xml"),append = FALSE, sep = "")
   #write(filexml, file = "sentfile.xml",append = FALSE, sep = "")
   close(filehandle)
   
+  #CHEAK THE REQUEST
+  flog.info("XML ready to send : %s",filexml)
+  print(filexml)
+  
   #SEND THE REQUEST#  
   flog.info("Sending CMSY/POST request to: %s", wps_uri)
+  print(wps_uri)
+  
   out <- POST(url = wps_uri, config=c(authenticate(username, token, type = "basic")),body = upload_file(sentfile, type="text/xml"),encode = c("multipart"), handle = NULL, timeout(10))
+  
   flog.info("Got from CMSY: %s", out)
-
+  print(out)
   #CHECK IF THE PROCESS HAS ALREADY FINISHED#
   stop_condition_success<-grepl("Process successful",as.character(out))
   stop_condition_fail<-grepl("Exception",as.character(out))
@@ -186,10 +204,14 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
     closeAllConnections()
     file.remove(dffile)
     file.remove(sentfile)
+    outstring<-content(out1, "text", encoding = "UTF-8")
+    write(outstring, file = paste0(filetime, "_out.xml"),append = FALSE, sep = "")
     return (cmsyParseXml(out1))
   }
-  
+
   if (stop_condition_fail) {
+    outstring<-content(out1, "text", encoding = "UTF-8")
+    write(outstring, file = paste0(filetime, "_out.xml"),append = FALSE, sep = "")
     stop("WPS call failed.")
   }
   

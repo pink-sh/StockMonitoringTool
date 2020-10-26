@@ -19,6 +19,7 @@ library(ggplot2)
 library(rfishbase)
 library(waiter)
 library(futile.logger)
+library(R.utils)
 
 ##### Dependencies
 source("ui/menu.R")
@@ -73,6 +74,8 @@ set.seed(1)
 d <- data(package = "TropFishR")
 parallel <- FALSE
 fishingMortality <- "NA"
+username <- NULL
+token <- NULL
 
 sidebar <- dashboardSidebar(uiOutput("sidebar"))
 
@@ -94,7 +97,7 @@ ui <- tagList(
       ),
       class="loadingCustom"),
     useShinyjs(),
-    extendShinyjs(text = jscode),
+    extendShinyjs(text = jscode, functions =  c("showBox", "removeBox", "disableAllButtons", "enableAllButtons", "showComputing", "hideComputing")),
     tags$head(
       tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
     ),
@@ -204,26 +207,26 @@ server <- function(input, output, session) {
     if (!is.null(query[[gcubeTokenQueryParam]])) {
       session$userData$sessionToken(query[[gcubeTokenQueryParam]])
     }
-  })
+  #})
   
-  observe({
+  #observe({
     if (!is.null(session$userData$sessionToken())) {
       flog.info("Session token is: %s", session$userData$sessionToken())
       session$userData$sessionUsername(getVREUsername(apiUrl, session$userData$sessionToken()))
     } else {
       flog.info("Session token is: %s", "NULL")
     }
-  })
+  #})
   
-  observe({
+  #observe({
     if (!is.null(session$userData$sessionMode())) {
       flog.info("Session mode is: %s", session$userData$sessionMode())
     } else {
       flog.info("Session mode is: %s", "NULL")
     }
-  })
+ # })
   
-  observe({
+  #observe({
     if (!is.null(session$userData$sessionUsername())) {
       flog.info("Session username is: %s", session$userData$sessionUsername())
       session$userData$sessionMode("GCUBE")

@@ -7,28 +7,42 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 > Electronic LEngth Frequency ANalysis with genetic algorithm used for estimating growth parameters
 
 ## Raw LFQ data
+
+Length frequency data visualised in terms of catches.
+
 ```{r echo=FALSE}
 plot(elefan_ga$results$plot1, Fname = "catch", date.axis = "modern")
 ```
 
 ## Recontructed LFQ data
+
+Restructured data with bin sizes and the number of bins over which the moving average is calculated as defined in the optional parameters.
+
 ```{r echo=FALSE}
 plot(elefan_ga$results$plot2, Fname = "rcounts", date.axis = "modern")
 ```
 
 ## Results of the computation
 
+Graphical fit of growth curves plotted through the length frequency data.
+
 ```{r echo=FALSE}
 plot(elefan_ga$results$data)
 ```
 
 ## Thompson and Bell model with changes in F
+
+Results of the Thompson and Bell model: Curves of yield and biomass per recruit. The black dot represents yield and biomass under current fishing pressure. The yellow and red dashed lines represent fishing mortality for maximum sustainable yield (Fmsy) and fishing mortality to fish the stock at 50% of the virgin biomass (F0.5).
+
 ```{r echo=FALSE}
 plot(elefan_ga$results$plot3, mark = TRUE)
 mtext("(a)", side = 3, at = -1, line = 0.6)
 ```
 
 ## Thompson and Bell model with changes in F and Lc
+
+Exploration of impact of different exploitation rates and Lc values on the relative yield per recruit.
+
 ```{r echo=FALSE}
 plot(elefan_ga$results$plot4, type = "Isopleth", xaxis1 = "FM", mark = TRUE, contour = 6)
 mtext("(b)", side = 3, at = -0.1, line = 0.6)
@@ -72,7 +86,7 @@ knitr::kable(df2, digits = 2, align=rep('c', 5))
 ******
 ## Input parameters  
 Input File: `r input$fileGa$name`  
-Seasonalized: `r if(input$ELEFAN_GA_seasonalised){"TRUE"}else{"FALSE"}`  
+Seasonalized: `r if(!is.null(input$ELEFAN_GA_seasonalised)){if(input$ELEFAN_GA_seasonalised){"TRUE"}else{"FALSE"}}else{"FALSE"}`  
   
 **Low Par**  
 Linf: `r input$ELEFAN_GA_lowPar_Linf`  
@@ -96,7 +110,7 @@ P Mutation: `r input$ELEFAN_GA_pmutation`
 P Crossover: `r input$ELEFAN_GA_pcrossover`  
 Elitism: `r input$ELEFAN_GA_elitism`  
 MA: `r input$ELEFAN_GA_MA`  
-sqrt: `r if(input$ELEFAN_GA_addl.sqrt){"TRUE"}else{"FALSE"}`  
+sqrt: `r if(!is.null(input$ELEFAN_GA_addl.sqrt)){if(input$ELEFAN_GA_addl.sqrt){"TRUE"}else{"FALSE"}}else{"FALSE"}`  
 Plus group: `r input$ELEFAN_GA_PLUS_GROUP`  
 
 ******

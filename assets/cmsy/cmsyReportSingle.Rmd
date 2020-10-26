@@ -4,18 +4,26 @@ output: pdf_document
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
-`r if(!is.null(params$cmsy$method)){"#Cmsy method report"}`
+`r if(!is.null(params$cmsy$method)){"#Cmsy method report
+
+The upper left panel shows catches relative to the estimate of MSY, with indication of 95% confidence limits in grey. The upper right panel shows the development of relative total biomass (B/Bmsy), with the grey area indicating uncertainty. The lower left graph shows relative exploitation (F/Fmsy), with Fmsy corrected for reduced recruitment below 0.5 Bmsy. The lower-right panel shows the trajectory of relative stock size (B/Bmsy) over relative exploitation (F/Fmsy).
+
+"}`
 
 ```{r echo=FALSE, out.width='100%'}
 cat(params$cmsy$method$textRaw, sep = '\n')
 ```
-`r if(!is.null(params$cmsy$method)){"##Output Graphs"}`
+`r if(!is.null(params$cmsy$method)){"##Output Graphs
+
+Panel A shows in black the time series of catches and in blue the three-years moving average with indication of highest and lowest catch, as used in the estimation of prior biomass by the default rules. Panel B shows the explored r-k log space and in dark grey the r-k pairs which were found by the CMSY model to be compatible with the catches and the prior information. Panel C shows the most probable r-k pair and its approximate 95% confidence limits in blue. Panel D shows in blue the biomass trajectory estimated by CMSY. Dotted lines indicate the 2.5th and 97.5th percentiles. Vertical blue lines indicate the prior biomass ranges. Panel E shows in blue the harvest rate from CMSY. Panel F shows the Schaefer equilibrium curve of catch/MSY relative to B/k, here indented at B/k < 0.25 to account for reduced recruitment at low stock sizes. The blue dots are scaled by CMSY estimates.
+
+"}`
 ```{r echo=FALSE, out.width='100%'}
-knitr::include_graphics(c(params$cmsy$method$analisysChart))
+knitr::include_graphics( if(Sys.info()[["sysname"]] == "Windows") {paste(gsub("\\\\", "/", params$cmsy$method$analisysChart)) } else { paste(params$cmsy$method$analisysChart)} )
 ```
 
 ```{r echo=FALSE, out.width='100%'}
-knitr::include_graphics(c(params$cmsy$method$managementChart))
+knitr::include_graphics( if(Sys.info()[["sysname"]] == "Windows") {paste(gsub("\\\\", "/", params$cmsy$method$managementChart)) } else { paste(params$cmsy$method$managementChart) } )
 ```
 
 ******
@@ -42,13 +50,13 @@ Last F: `r input$last_f`
 Resiliance: `r input$resiliance`  
 r low: `r input$r.low`  
 r hi: `r input$r.hi`  
-stb low: `r input$stb.low`  
-stb hi: `r input$stb.hi`  
+stb low: `r min(input$stb)`  
+stb hi: `r max(input$stb)`  
 int year: `r input$int.yr`  
 intb low: `r input$intb.low`  
 intb hi: `r input$intb.hi`  
-endb low: `r input$endb.low`  
-endb hi: `r input$endb.hi`  
+endb low: `r min(input$endb)`  
+endb hi: `r max(input$endb)`  
 q start: `r input$q.start`  
 q end:: `r input$q.end`  
 btype: `r input$btype`  

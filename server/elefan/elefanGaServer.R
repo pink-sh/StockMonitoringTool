@@ -14,20 +14,35 @@ elefanGaModule <- function(input, output, session) {
     }
     contents <- read_elefan_csv(input$fileGa$datapath, input$elefanGaDateFormat)
     print(input$fileGa)
-    if (is.null(contents)) {
+    if (is.null(contents$catch)) {
       shinyjs::disable("go_ga")
       showModal(modalDialog(
         title = "Error",
-        "Input file seems invalid",
+        if(!is.null(contents$checkDelim)){
+          if(contents$checkDelim=="not ok"){"Please ensure that your .csv file delimiter is a comma ','"  }
+        }else if(!is.null(contents$checkDec)){
+          if(contents$checkDec=="not point"){"Please ensure your separate decimals using points ‘.’ or you don't have non numeric value"
+          }else if(contents$checkName=="colname error"){"Please ensure your first column name is : 'midLength'"
+          } else{"Input file seems invalid"}},
         easyClose = TRUE,
         footer = NULL
       ))
       return (NULL)
     } else {
+      if(is.Date(contents$dates)&&is.unsorted(contents$dates)){
+      shinyjs::disable("go")
+      showModal(modalDialog(
+        title = "Error",
+        "Please ensure that your dates are input in chronological order from left to right.  If dates are in the right order select the date format coresponding to your file.",
+        easyClose = TRUE,
+        footer = NULL
+      ))
+      return(NULL)
+    } else {
       shinyjs::enable("go_ga")
       return (contents)  
     }
-    
+    }
   })
   
   observeEvent(input$fileGa, {
@@ -46,9 +61,9 @@ elefanGaModule <- function(input, output, session) {
     js$disableAllButtons()
     result = tryCatch({
 
-      ds <- lfqModify(lfqRestructure(inputElefanGaData$data), bin_size = 4)
+      ds <- lfqModify(lfqRestructure(inputElefanGaData$data), bin_size = input$ELEFAN_GA_binSize)
       flog.info("Starting Elegan GA computation")
-      res <- run_elefan_ga(ds,binSize =  4, seasonalised = input$ELEFAN_GA_seasonalised, 
+      res <- run_elefan_ga(ds,binSize =  input$ELEFAN_GA_binSize, seasonalised = input$ELEFAN_GA_seasonalised, 
                            low_par = list(Linf = input$ELEFAN_GA_lowPar_Linf, K = input$ELEFAN_GA_lowPar_K, t_anchor = input$ELEFAN_GA_lowPar_t_anchor, C = input$ELEFAN_GA_lowPar_C, ts = input$ELEFAN_GA_lowPar_ts),
                            up_par = list(Linf = input$ELEFAN_GA_upPar_Linf, K = input$ELEFAN_GA_upPar_K, t_anchor = input$ELEFAN_GA_upPar_t_anchor, C = input$ELEFAN_GA_upPar_C, ts = input$ELEFAN_GA_upPar_ts),
                            popSize = input$ELEFAN_GA_popSize, maxiter = input$ELEFAN_GA_maxiter, run = input$ELEFAN_GA_run, pmutation = input$ELEFAN_GA_pmutation, pcrossover = input$ELEFAN_GA_pcrossover,
@@ -59,10 +74,21 @@ elefanGaModule <- function(input, output, session) {
       if ('error' %in% names(res)) {
         showModal(modalDialog(
           title = "Error",
-          res$error,
+          if(!is.null(res$error)){if (!is.null(grep("MA must be an odd integer",res$error))) {
+            HTML(sprintf("Please length of classes indicate for the moving average must be a odd number.<hr/> <b>%s</b>",res$error))
+          }else if(grep("POSIXlt",res$error)==1) {
+            HTML(sprintf("Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>",res$error)) 
+          }else{res$error}},
           easyClose = TRUE,
           footer = NULL
         ))
+      # } else if(is.unsorted(contents$dates, na.rm = FALSE, strictly = FALSE)){
+      #   showModal(modalDialog(
+      #     title = "Error",
+      #     HTML(sprintf("Please ensure that your dates are input in chronological order from left to right.")), 
+      #     easyClose = TRUE,
+      #     footer = NULL
+      #   ))
       } else {
         js$showBox("box_elefan_ga_results")
         elefan_ga$results <- res
@@ -70,7 +96,7 @@ elefanGaModule <- function(input, output, session) {
         
         if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
           flog.info("Uploading Elefan GA report to i-Marine workspace")
-          reportFileName <- paste("/tmp/","ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+          reportFileName <- paste(tempdir(),"/","ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createElefanGaPDFReport(reportFileName,elefan_ga,input)
           elefanGaUploadVreResult$res <- FALSE
           

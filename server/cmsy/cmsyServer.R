@@ -7,11 +7,15 @@ cmsyModule <- function(input, output, session) {
   filePath <- reactiveValues()
   
   basicValidation <- function (a) {
-    if (is.null(colnames(a[1])) || is.na(colnames(a[1]))) return (FALSE)
-    if (tolower(colnames(a[1])) == 'stock') return(TRUE)
-    return (FALSE)
+    #if (is.null(colnames(a[1])) || is.na(colnames(a[1]))) return (FALSE)
+    #if (tolower(colnames(a[1])) == 'stock') return(TRUE)
+    validInputColumns<-c("stock","yr","ct","bt")
+    if(ncol(a)==1){return ("delimiter error")
+    } else if (length(setdiff(tolower(names(a[1:4])),validInputColumns))!=0) {return ("colname error")
+    } else if (!is.numeric(a$ct)) {return ("not point")
+    } else if ((max(as.numeric(a$yr))-min(as.numeric(a$yr)))<15) {return("under 15")
+    } else {return(a)}
   }
-  
   cmsyFileData <- reactive({
     inFileCmsy <- input$fileCmsy
     if (is.null(inFileCmsy)) {
@@ -19,11 +23,12 @@ cmsyModule <- function(input, output, session) {
       return (NULL)
     }
     contents <- read.csv(inFileCmsy$datapath)
-    
-    if (!basicValidation(contents)) {
-      
+    contents <- basicValidation(contents)
+    if (is.null(contents)) {
       return (NULL)
-    }
+    }else{print("First calculate")
+      calculateAndUpdateYear(contents,sort(unique(contents$Stock))[1])
+      }
     return (contents)
   })
   
@@ -31,12 +36,25 @@ cmsyModule <- function(input, output, session) {
   observeEvent(input$fileCmsy, {
     filePath$datapath <- input$fileCmsy$datapath
     contents <- cmsyFileData()
-    if (is.null(contents)) {
+    if (!is.data.frame(contents)) {
       shinyjs::disable("go_cmsy")
       removeUI(selector="#stockSelectorContainerInner")
       showModal(modalDialog(
         title = "Error",
-        "Input file seems invalid",
+        if(is.null(contents)){"Input file seems invalid"
+          }else if(contents=="delimiter error"){"Please ensure that your .csv file delimiter is a comma ','" 
+          }else if(contents=="not point"){"Please ensure your separate decimals using points ‘.’ or you don't have non numeric value"
+          }else if(contents=="colname error"){
+            text<-"Please ensure your columns names exactly match the guidelines, i.e."
+            text<-paste0(text, "<ul>")
+            text <- paste0(text, "<li>Stock</li>")
+            text <- paste0(text, "<li>yr</li>")
+            text <- paste0(text, "<li>ct</li>")
+            text <- paste0(text, "<li>bt</li>")
+            text <- paste0(text, "</ul>")
+            HTML(text)
+          }else if(contents=="under 15"){"Catch time series must be at least 15 years"
+          } else{"Input file seems invalid"},
         easyClose = TRUE,
         footer = NULL
       ))
@@ -54,43 +72,49 @@ cmsyModule <- function(input, output, session) {
     }
   })
   
-  observeEvent(input$stock, {
+  calculateAndUpdateYear<-function(contents,stock) {
     
-    if (is.null(fileContents$data)) {
+    if (is.null(contents)) {
+      "Test"
       return(NULL)
     }
     
     maxYear <- 0
     minYear <- 0
     i<-0
-    for (line in rownames(fileContents$data)) {
-      if (fileContents$data[line, "Stock"] == input$stock) {
+    for (line in rownames(contents)) {
+      if (contents[line, "Stock"] == stock) {
         if (i == 0) {
-          maxYear <- fileContents$data[line, "yr"]
-          minYear <- fileContents$data[line, "yr"]
+          maxYear <- contents[line, "yr"]
+          minYear <- contents[line, "yr"]
         } else {
-          if (maxYear < fileContents$data[line, "yr"]) {
-            maxYear <- fileContents$data[line, "yr"]
+          if (maxYear < contents[line, "yr"]) {
+            maxYear <- contents[line, "yr"]
           }
-          if (minYear > fileContents$data[line, "yr"]) {
-            minYear <- fileContents$data[line, "yr"]
+          if (minYear > contents[line, "yr"]) {
+            minYear <- contents[line, "yr"]
           }
         }
         i <- i + 1
       }
     }
+    print(minYear)
+    print(maxYear)
     updateTextInput(session, "minOfYear", value=as.integer(minYear))
     updateTextInput(session, "maxOfYear", value=as.integer(maxYear))
     updateTextInput(session, "startYear", value=as.integer(minYear))
     updateTextInput(session, "endYear", value=as.integer(maxYear)-1)
     
     if (minYear < 1960) {
-      updateTextInput(session, "stb.low", value=0.5)
-      updateTextInput(session, "stb.hi", value=0.9)
+      updateSliderInput(session,"stb",value=c(0.5,0.9))
     } else {
-      updateTextInput(session, "stb.low", value=0.2)
-      updateTextInput(session, "stb.hi", value=0.6)
+      updateSliderInput(session,"stb",value=c(0.2,0.6))
     }
+  }
+  
+  observeEvent(input$stock, {
+    print("calculate")
+    calculateAndUpdateYear(fileContents$data,input$stock)
   })
   
   observeEvent(input$go_cmsy, {
@@ -151,7 +175,8 @@ cmsyModule <- function(input, output, session) {
         cmsy$fast <- list()
         js$disableAllButtons()
         flog.info("Starting CMSY computation")
-        ret <- runCmsy(region_,toString(sub_region_),input$stock,toString(group_),toString(name_),toString(en_name_),toString(scientific_name_),"-",input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,input$stb.low,input$stb.hi,input$int.yr,input$intb.low,input$intb.hi,input$endb.low,input$endb.hi,input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, filePath$datapath, templateFileDlmTools)
+      # ret <- runCmsy(region_,toString(sub_region_),input$stock,toString(group_),toString(name_),toString(en_name_),toString(scientific_name_),"-",input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,input$stb.low,input$stb.hi,input$int.yr,input$intb.low,input$intb.hi,input$endb.low,input$endb.hi,input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, filePath$datapath, templateFileDlmTools)
+        ret <- runCmsy(region_,toString(sub_region_),input$stock,toString(group_),toString(name_),toString(en_name_),toString(scientific_name_),"-",input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,min(input$stb),max(input$stb),input$int.yr,input$intb.low,input$intb.hi,min(input$endb),max(input$endb),input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, filePath$datapath, templateFileDlmTools)
         js$enableAllButtons()
         js$hideComputing()
         js$showBox("box_cmsy_results")
@@ -169,14 +194,18 @@ cmsyModule <- function(input, output, session) {
             cmsy$method$text <- contents
           }
           if (row$description == "analysis_charts") {
-            fileAnalisysChart <- tempfile(fileext=".jpg")
-            download.file(row$url, fileAnalisysChart)
+            #fileAnalisysChart <- tempfile(fileext=".jpeg")
+            fileAnalisysChart <- paste(tempdir(),"/","cmsy_fileAnalisysChart",".jpeg",sep="")
+            print(fileAnalisysChart)
+            downloadFile(row$url, fileAnalisysChart)
             cmsy$method$analisysChart <- fileAnalisysChart
             cmsy$method$analisysChartUrl <- row$url
           }
           if (row$description == "management_charts") {
-            fileManagementChart <- tempfile(fileext=".jpg")
-            download.file(row$url, fileManagementChart)
+            #fileManagementChart <- tempfile(fileext=".jpeg")
+            fileManagementChart <-paste(tempdir(),"/","cmsy_fileManagementChart",".jpeg",sep="")
+            print(fileManagementChart)
+            downloadFile(row$url, fileManagementChart)
             cmsy$method$managementChart <- fileManagementChart
             cmsy$method$managementChartUrl <- row$url
           }
@@ -187,7 +216,7 @@ cmsyModule <- function(input, output, session) {
         
         if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
           flog.info("Uploading CMSY report to i-Marine workspace")
-          reportFileName <- paste("/tmp/","CMSY_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+          reportFileName <- paste(tempdir(),"/","CMSY_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createCmsyPDFReport(reportFileName, cmsy, input)
           cmsyUploadVreResult$res <- FALSE
           

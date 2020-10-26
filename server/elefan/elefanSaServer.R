@@ -13,20 +13,36 @@ elefanSaModule <- function(input, output, session) {
       return(NA)
     }
     contents <- read_elefan_csv(input$fileSa$datapath, input$elefanSaDateFormat)
-    if (is.null(contents)) {
+    print(input$fileSa)
+    if (is.null(contents$catch)) {
       shinyjs::disable("go_sa")
       showModal(modalDialog(
         title = "Error",
-        "Input file seems invalid",
+        if(!is.null(contents$checkDelim)){
+          if(contents$checkDelim=="not ok"){"Please ensure that your .csv file delimiter is a comma ','"  }
+        }else if(!is.null(contents$checkDec)){
+          if(contents$checkDec=="not point"){"Please ensure your separate decimals using points ‘.’ or you don't have non numeric value"
+          }else if(contents$checkName=="colname error"){"Please ensure your first column name is : 'midLength'"
+          } else{"Input file seems invalid"}},
         easyClose = TRUE,
         footer = NULL
       ))
       return (NULL)
     } else {
+      if(is.Date(contents$dates)&&is.unsorted(contents$dates)){
+      shinyjs::disable("go")
+      showModal(modalDialog(
+        title = "Error",
+        "Please ensure that your dates are input in chronological order from left to right.  If dates are in the right order select the date format coresponding to your file.",
+        easyClose = TRUE,
+        footer = NULL
+      ))
+      return(NULL)
+    } else {
       shinyjs::enable("go_sa")
       return (contents)  
     }
-    
+    }
   })
   
   observeEvent(input$fileSa, {
@@ -48,8 +64,13 @@ elefanSaModule <- function(input, output, session) {
     #ds2 <- lfqModify(get('synLFQ7', asNamespace('TropFishR')), bin_size = 4)
     result = tryCatch({ 
       flog.info("Starting Elegan SA computation")
-      res <- run_elefan_sa(inputElefanSaData$data,binSize =  4, seasonalised = input$ELEFAN_SA_seasonalised, 
-                           init_par = list(Linf = input$ELEFAN_SA_initPar_Linf, K = input$ELEFAN_SA_initPar_K, t_anchor = input$ELEFAN_SA_initPar_t_anchor),
+     # print(do.call(data.frame,list(Linf_init = as.numeric(input$ELEFAN_SA_initPar_Linf), K = as.numeric(input$ELEFAN_SA_initPar_K), t_anchor = as.numeric(input$ELEFAN_SA_initPar_t_anchor), C = as.numeric(input$ELEFAN_SA_initPar_C), ts = as.numeric(input$ELEFAN_SA_initPar_ts))))
+      #print(do.call(data.frame,list(Linf_low = as.numeric(input$ELEFAN_SA_lowPar_Linf), K = as.numeric(input$ELEFAN_SA_lowPar_K), t_anchor = as.numeric(input$ELEFAN_SA_lowPar_t_anchor), C = as.numeric(input$ELEFAN_SA_lowPar_C), ts = as.numeric(input$ELEFAN_SA_lowPar_ts))))
+      #print(list(Linf_up = as.numeric(input$ELEFAN_SA_upPar_Linf), K = as.numeric(input$ELEFAN_SA_upPar_K), t_anchor = as.numeric(input$ELEFAN_SA_upPar_t_anchor), C = as.numeric(input$ELEFAN_SA_upPar_C), ts = as.numeric(input$ELEFAN_SA_upPar_ts)))
+      
+      #res <- run_elefan_sa(inputElefanSaData$data,binsize = input$ELEFAN_SA_binSize, seasonalised = input$ELEFAN_SA_seasonalised,
+      res <- run_elefan_sa(inputElefanSaData$data,binSize = 4, seasonalised = input$ELEFAN_SA_seasonalised, 
+                           init_par = list(Linf = as.numeric(input$ELEFAN_SA_initPar_Linf), K = as.numeric(input$ELEFAN_SA_initPar_K), t_anchor = as.numeric(input$ELEFAN_SA_initPar_t_anchor), C = as.numeric(input$ELEFAN_SA_initPar_C), ts = as.numeric(input$ELEFAN_SA_initPar_ts)),
                            low_par = list(Linf = as.numeric(input$ELEFAN_SA_lowPar_Linf), K = as.numeric(input$ELEFAN_SA_lowPar_K), t_anchor = as.numeric(input$ELEFAN_SA_lowPar_t_anchor), C = as.numeric(input$ELEFAN_SA_lowPar_C), ts = as.numeric(input$ELEFAN_SA_lowPar_ts)),
                            up_par = list(Linf = as.numeric(input$ELEFAN_SA_upPar_Linf), K = as.numeric(input$ELEFAN_SA_upPar_K), t_anchor = as.numeric(input$ELEFAN_SA_upPar_t_anchor), C = as.numeric(input$ELEFAN_SA_upPar_C), ts = as.numeric(input$ELEFAN_SA_upPar_ts)),
                            SA_time = input$ELEFAN_SA_SA_time, SA_temp = input$ELEFAN_SA_SA_temp, MA = input$ELEFAN_SA_MA, addl.sqrt = input$ELEFAN_SA_addl.sqrt,
@@ -59,10 +80,21 @@ elefanSaModule <- function(input, output, session) {
       if ('error' %in% names(res)) {
         showModal(modalDialog(
           title = "Error",
-          res$error,
+          if(!is.null(res$error)){if (!is.null(grep("MA must be an odd integer",res$error))) {
+            HTML(sprintf("Please length of classes indicate for the moving average must be a odd number.<hr/> <b>%s</b>",res$error))
+          }else if(grep("POSIXlt",res$error)==1) {
+            HTML(sprintf("Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>",res$error)) 
+          }else{res$error}},
           easyClose = TRUE,
           footer = NULL
         ))
+      # } else if(is.unsorted(contents$dates, na.rm = FALSE, strictly = FALSE)){
+      #   showModal(modalDialog(
+      #     title = "Error",
+      #     HTML(sprintf("Please ensure that your dates are input in chronological order from left to right.")), 
+      #     easyClose = TRUE,
+      #     footer = NULL
+      #   ))
       } else {
         js$showBox("box_elefan_sa_results")
         elefan_sa$results <- res
@@ -70,11 +102,12 @@ elefanSaModule <- function(input, output, session) {
         
         if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
           flog.info("Uploading Elefan SA report to i-Marine workspace")
-          reportFileName <- paste("/tmp/","ElefanSA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+          reportFileName <- paste(tempdir(),"/","ElefanSA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createElefanSaPDFReport(reportFileName,elefan_sa, input)
           elefanSaUploadVreResult$res <- FALSE
           
           basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
+         
           tryCatch({
             uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
             elefanSaUploadVreResult$res <- TRUE

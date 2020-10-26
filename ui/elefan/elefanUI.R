@@ -20,7 +20,8 @@ tabElefan <- function(id) {
           ),
           box(
             selectInput(ns("elefanDateFormat"), "Choose CSV date format", choices = c("Automatic guess" = "auto", "Year Month Day" = "ymd", "Year Day Month" = "ydm", "Day Month Year" = "dmy", "Month Day Year" = "mdy" ))
-          )
+            #selectInput(ns("elefanDateFormat"), "Choose CSV date format", choices = c("Year Month Day" = "ymd", "Year Day Month" = "ydm", "Day Month Year" = "dmy", "Month Day Year" = "mdy" ))
+            )
       ),
       box(title = "Optional Parameters",
         width = NULL,
@@ -28,21 +29,22 @@ tabElefan <- function(id) {
         class = "collapsed-box",
         collapsed = T,
         box(
-          numericInput(ns("ELEFAN_Linf_fix"), p("\\(L_\\infty\\)", ": if used the K-Scan method is applied with a fixed ", withMathJax("\\(L_\\infty\\)")," value (i.e. varying K only):"), NA, min = 1, max = 1000, step=1),
-          numericInput(ns("ELEFAN_Linf_range_from"), p(withMathJax("\\(L_\\infty\\)"), "sequence from:"), NULL, min = 1, max = 1000, step=1),
-          numericInput(ns("ELEFAN_Linf_range_to"), p(withMathJax("\\(L_\\infty\\)"), "sequence to:"), NULL, min = 1, max = 1000, step=1),
-          numericInput(ns("ELEFAN_Linf_range_by"), p(withMathJax("\\(L_\\infty\\)"), "increment sequence by:"), 1, min = 1, max = 1000, step=1),
-          numericInput(ns("ELEFAN_C"), "Growth oscillation amplitude (C)", 0, min = 0, max = 100, step=1),
-          numericInput(ns("ELEFAN_ts"), p("Onset of the first oscillation relative to summer point (", withMathJax("\\(t_s\\)"), "):"), 0, min = 0, max = 100, step=1),
-          numericInput(ns("ELEFAN_MA"), "Number indicating over how many length classes the moving average should be performed:", 5, min = 0, max = 100, step=1)
+          numericInput(ns("ELEFAN_Linf_fix"), p("Asymptotic length/length infinity ( ", withMathJax("\\(L_\\infty\\)"), " in cm). If ", withMathJax("\\(L_\\infty\\)")," is defined here, then the K-Scan method is applied with a fixed ", withMathJax("\\(L_\\infty\\)")," value (i.e. varying K only):"), NA, min = 1, max = 1000, step=1),
+          numericInput(ns("ELEFAN_Linf_range_from"), p("Lower limit of ",withMathJax("\\(L_\\infty\\)"), "sequence range of potential ",withMathJax("\\(L_\\infty\\)")," values (in cm). Default is the last length class minus 5 cm. (size of ", withMathJax("\\(L_\\infty\\)"),"  range can impact method run time)"), NULL, min = 1, max = 1000, step=1),
+          numericInput(ns("ELEFAN_Linf_range_to"), p("Upper limit of ",withMathJax("\\(L_\\infty\\)"), " sequence range (in cm).  Default is the last length class plus 5 cm."), NULL, min = 1, max = 1000, step=1),
+          numericInput(ns("ELEFAN_Linf_range_by"), p("Increment (in cm) of the ",withMathJax("\\(L_\\infty\\)"), " sequence range"), 1, min = 1, max = 1000, step=1),
+          numericInput(ns("ELEFAN_C"), p("Amplitude of growth oscillation (", withMathJax("\\(C\\)"),"): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point."), 0, min = 0, max = 100, step=1),
+          numericInput(ns("ELEFAN_ts"), p("Summer point ", withMathJax("\\(t_s\\)"),". Values between 0 and 1. At the time of the year when the fraction, ", withMathJax("\\(t_{s}\\)"), ", has elapsed, the growth rate is the highest."), 0, min = 0, max = 100, step=1),
+          numericInput(ns("ELEFAN_MA"), p("Number indicating over how many length classes the moving average (", withMathJax("\\(MA\\)"),") should be performed (must be an odd number):"), 5, min = 1, max = 101, step=2)
         ),
         box(
-          numericInput(ns("ELEFAN_K_Range_from"), "K sequence from:", NULL, min = 1, max = 1000, step=1),
-          numericInput(ns("ELEFAN_K_Range_to"), "K sequence to:", NULL, min = 1, max = 1000, step=1),
-          numericInput(ns("ELEFAN_K_Range_by"), "K increment sequence by:", 1, min = 1, max = 1000, step=1),
-          checkboxInput(ns("ELEFAN_addl.sqrt"), "Additional squareroot transformation of positive values according to Brey et al. (1988)", FALSE),
-          numericInput(ns("ELEFAN_agemax"), "Maximum age of species:", NULL, min = 0, max = 100, step=1),
-          numericInput(ns("ELEFAN_PLUS_GROUP"), "Plus group", 0, min = 0, max = 100000, step=1),
+         # numericInput(ns("ELEFAN_binSize"), "Bin size : length interval over which the length frequency data are aggregated", 4, min = 1, max = 1000, step=1),
+          numericInput(ns("ELEFAN_K_Range_from"), p("Lower limit of the sequence range of the growth coefficient (", withMathJax("\\(K\\)"),") of the von Bertalanffy growth function (size of K  range can impact method run time)"), NULL, min = 1, max = 1000, step=1),
+          numericInput(ns("ELEFAN_K_Range_to"), p("Upper limit of the sequence range of the growth coefficient (", withMathJax("\\(K\\)"),") of the von Bertalanffy growth function"), NULL, min = 1, max = 1000, step=1),
+          numericInput(ns("ELEFAN_K_Range_by"), p("Increment of the ", withMathJax("\\(K\\)")," sequence range"), 1, min = 1, max = 1000, step=1),
+          checkboxInput(ns("ELEFAN_addl.sqrt"), "Additional squareroot transformation of positive values according to Brey et al. (1988), reduces the weighting of large individuals", FALSE),
+          numericInput(ns("ELEFAN_agemax"), p("Maximum age of species (if not specified, estimated from ", withMathJax("\\(t_s\\)"),"):"), 1, min = 0, max = 100, step=1),
+          numericInput(ns("ELEFAN_PLUS_GROUP"), "Plus group: the largest length class with only a few individuals after which the method will pool together (important for cohort analysis later)", 0, min = 0, max = 100000, step=1),
           checkboxInput(ns("ELEFAN_contour"), "If checked in combination with response surface analysis, contour lines are displayed rather than the score as text in each field of the score plot", FALSE)
         )
       ),
@@ -63,15 +65,18 @@ tabElefan <- function(id) {
       fluidRow(
         box(
           htmlOutput(ns("titlePlot1_elefan")),
+          "Length frequency data visualised in terms of catches.",
           plotOutput(ns("plot_1"))
         ),
           box(
             htmlOutput(ns("titlePlot2_elefan")),
+            "Restructured data with bin sizes and the number of bins over which the moving average is calculated as defined in the optional parameters.",
             plotOutput(ns("plot_2"))
           )
         ),
         fluidRow (
-          box(plotOutput(ns("plot_5"))),
+          box("Graphical fit of growth curves plotted through the length frequency data.",
+            plotOutput(ns("plot_5"))),
             box(
               htmlOutput(ns("rnMax")),
               htmlOutput(ns("par")),
@@ -84,10 +89,12 @@ tabElefan <- function(id) {
           fluidRow (
             box(
               htmlOutput(ns("titlePlot3_elefan")),
+              "Results of the Thompson and Bell model: Curves of yield and biomass per recruit. The black dot represents yield and biomass under current fishing pressure. The yellow and red dashed lines represent fishing mortality for maximum sustainable yield (Fmsy) and fishing mortality to fish the stock at 50% of the virgin biomass (F0.5).",
               plotOutput(ns("plot_3"))
             ),
             box(
               htmlOutput(ns("titlePlot4_elefan")),
+              "Exploration of impact of different exploitation rates and Lc values on the relative yield per recruit.",
               plotOutput(ns("plot_4"))
             )
           )
@@ -106,6 +113,7 @@ resetElefanInputValues <- function() {
   shinyjs::reset("ELEFAN_C")
   shinyjs::reset("ELEFAN_ts")
   shinyjs::reset("ELEFAN_MA")
+ # shinyjs::reset("ELEFAN_binSize")
   shinyjs::reset("ELEFAN_K_Range_from")
   shinyjs::reset("ELEFAN_K_Range_to")
   shinyjs::reset("ELEFAN_K_Range_by")

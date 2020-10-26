@@ -3,8 +3,8 @@ getDataConsiderationTextForCmsy <- function() {
   text <- paste0(text, "Mandatory fields to run CMSY are")
   text <- paste0(text, "<ul>")
   text <- paste0(text, "<li>Stock (fish stock name)</li>")
-  text <- paste0(text, "<li>Yr (year of the catch)</li>")
-  text <- paste0(text, "<li>Ct (catch)</li>")
+  text <- paste0(text, "<li>yr (year of the catch)</li>")
+  text <- paste0(text, "<li>ct (catch)</li>")
   text <- paste0(text, "<li>bt (biomass estimates, if available; otherwise input “NA”)</li>")
   text <- paste0(text, "</ul>")
   text <- paste0(text, "<br/>")
@@ -25,7 +25,8 @@ getDataConsiderationTextForElefan <- function() {
   text <- paste0(text, "</ul>")
   text <- paste0(text, "<b>If you are creating your own dataset:</b>")
   text <- paste0(text, "<ul>")
-  text <- paste0(text, "<li>", "Sampling time column names should be dates in one of the formats:<br/><ul><li>YYYY-MM-DD</li><li>YYYY/MM/DD</li></ul>", "</li>")
+  text <- paste0(text, "<li>Upon uploading your data file, please select the date format used in your data file under <b>'Choose CSV date format'</b>, e.g. DD/MM/YYYY format would select 'Day Month Year'.</li>")
+  text <- paste0(text, "<li>Ensure that your dates are input in chronological order.</li>")
   text <- paste0(text, "<li>", "Ensure that your length-frequency data is representative of the full population. (If this is not so, then estimates of fishing mortality will be biased.)", "</li>")
   text <- paste0(text, "<li>", "Ensure that all age groups were sampled.", "</li>")
   text <- paste0(text, "<li>", "Ensure that the sample was from a range of areas where different life histories might live. (e.g., if juveniles occupy nearshore habitat and adults are offshore)", "</li>")
@@ -39,7 +40,11 @@ getDataConsiderationTextForElefan <- function() {
 }
 
 getErrorMessage <- function(forWhat) {
-  return (paste0("Ops! unfortunately something went wrong running the ",forWhat," method<br/>Don't give up and try again in a few minutes.<hr/> <b>%s</b>"))
+  if(forWhat=="CMSY"){
+    return (paste0("Ops! Unfortunately the ",forWhat, " method experienced a problem with the server.<br/>Don't give up and try again in a few minutes or refresh your Stock Monitoring Tool instance.<hr/> <b>%s</b>"))
+  }else{
+    return (paste0("Ops! unfortunately something went wrong running the ",forWhat," method<br/>Don't give up and try again in a few minutes.<hr/> <b>%s</b>"))
+  } 
 }
 
 fishMethodsDataConsiderationText <- function() {
