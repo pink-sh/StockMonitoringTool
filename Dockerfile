@@ -81,4 +81,4 @@ ENV SMT_LOG=session.log
 
 RUN apt-get install -y curl
 #CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools',port=3838,host='0.0.0.0')"]
-CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools')
+CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools')"]
