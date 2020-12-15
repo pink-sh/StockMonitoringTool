@@ -33,15 +33,15 @@ tabElefan <- function(id) {
           numericInput(ns("ELEFAN_Linf_range_from"), p("Lower limit of ",withMathJax("\\(L_\\infty\\)"), "sequence range of potential ",withMathJax("\\(L_\\infty\\)")," values (in cm). Default is the last length class minus 5 cm. (size of ", withMathJax("\\(L_\\infty\\)"),"  range can impact method run time)"), NULL, min = 1, max = 1000, step=1),
           numericInput(ns("ELEFAN_Linf_range_to"), p("Upper limit of ",withMathJax("\\(L_\\infty\\)"), " sequence range (in cm).  Default is the last length class plus 5 cm."), NULL, min = 1, max = 1000, step=1),
           numericInput(ns("ELEFAN_Linf_range_by"), p("Increment (in cm) of the ",withMathJax("\\(L_\\infty\\)"), " sequence range"), 1, min = 1, max = 1000, step=1),
-          numericInput(ns("ELEFAN_C"), "Amplitude of growth oscillation (C): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point.", 0, min = 0, max = 100, step=1),
-          numericInput(ns("ELEFAN_ts"), p("Summer point ", withMathJax("\\(t_s\\)"),". Values between 0 and 1.   At the time of the year when the fraction, ", withMathJax("\\(t_s\\)"), ", has elapsed, the growth rate is the highest."), 0, min = 0, max = 100, step=1),
-          numericInput(ns("ELEFAN_MA"), "Number indicating over how many length classes the moving average (MA) should be performed (must be an odd number):", 5, min = 1, max = 101, step=2)
+          numericInput(ns("ELEFAN_C"), p("Amplitude of growth oscillation (", withMathJax("\\(C\\)"),"): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point."), 0, min = 0, max = 100, step=1),
+          numericInput(ns("ELEFAN_ts"), p("Summer point ", withMathJax("\\(t_s\\)"),". Values between 0 and 1. At the time of the year when the fraction, ", withMathJax("\\(t_{s}\\)"), ", has elapsed, the growth rate is the highest."), 0, min = 0, max = 100, step=1),
+          numericInput(ns("ELEFAN_MA"), p("Number indicating over how many length classes the moving average (", withMathJax("\\(MA\\)"),") should be performed (must be an odd number):"), 5, min = 1, max = 101, step=2)
         ),
         box(
          # numericInput(ns("ELEFAN_binSize"), "Bin size : length interval over which the length frequency data are aggregated", 4, min = 1, max = 1000, step=1),
-          numericInput(ns("ELEFAN_K_Range_from"), "Lower limit of the sequence range of the growth coefficient (K) of the von Bertalanffy growth function (size of K  range can impact method run time)", NULL, min = 1, max = 1000, step=1),
-          numericInput(ns("ELEFAN_K_Range_to"), "Upper limit of the sequence range of the growth coefficient (K) of the von Bertalanffy growth function", NULL, min = 1, max = 1000, step=1),
-          numericInput(ns("ELEFAN_K_Range_by"), "Increment of the K sequence range", 1, min = 1, max = 1000, step=1),
+          numericInput(ns("ELEFAN_K_Range_from"), p("Lower limit of the sequence range of the growth coefficient (", withMathJax("\\(K\\)"),") of the von Bertalanffy growth function (size of K  range can impact method run time)"), NULL, min = 1, max = 1000, step=1),
+          numericInput(ns("ELEFAN_K_Range_to"), p("Upper limit of the sequence range of the growth coefficient (", withMathJax("\\(K\\)"),") of the von Bertalanffy growth function"), NULL, min = 1, max = 1000, step=1),
+          numericInput(ns("ELEFAN_K_Range_by"), p("Increment of the ", withMathJax("\\(K\\)")," sequence range"), 1, min = 1, max = 1000, step=1),
           checkboxInput(ns("ELEFAN_addl.sqrt"), "Additional squareroot transformation of positive values according to Brey et al. (1988), reduces the weighting of large individuals", FALSE),
           numericInput(ns("ELEFAN_agemax"), p("Maximum age of species (if not specified, estimated from ", withMathJax("\\(t_s\\)"),"):"), 1, min = 0, max = 100, step=1),
           numericInput(ns("ELEFAN_PLUS_GROUP"), "Plus group: the largest length class with only a few individuals after which the method will pool together (important for cohort analysis later)", 0, min = 0, max = 100000, step=1),

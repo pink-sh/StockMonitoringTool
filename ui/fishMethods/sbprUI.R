@@ -25,7 +25,7 @@ tabSbpr <- function(id) {
           class = "collapsed-box",
           collapsed = T,
           box(
-            numericInput(ns("SBPR_M"), "Single natural mortality (M) rate if M is assumed constant over all ages:", 0.2, min = 0, max = 10, step=0.1),
+            numericInput(ns("SBPR_M"), p("Single natural mortality (", withMathJax("\\(M\\)"), ") rate if M is assumed constant over all ages:"), 0.2, min = 0, max = 10, step=0.1),
             numericInput(ns("SBPR_pM"), "Proportion of natural mortality that occurs before spawning:", 0.1667, min = 0, max = 10, step=0.0001),
             numericInput(ns("SBPR_maxF"), "Maximum value of F range over which SBPR will be calculated:", 2, min = 0, max = 100, step=1)
           ),
