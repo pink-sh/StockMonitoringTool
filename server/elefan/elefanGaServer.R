@@ -1,5 +1,5 @@
 elefanGaModule <- function(input, output, session) {
-  
+  ns<-session$ns
   elefan_ga <- reactiveValues()
   elefanGaUploadVreResult <- reactiveValues()
   
@@ -44,6 +44,24 @@ elefanGaModule <- function(input, output, session) {
     }
     }
   })
+  
+  output$ELEFAN_GA_SeasonLowPar<-renderUI(
+    if(input$ELEFAN_GA_seasonalised){
+      box(
+        numericInput(ns("ELEFAN_GA_lowPar_C"), p("Amplitude of growth oscillation (", withMathJax("\\(C\\)"), "): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point."), 0, min = 0, max = 1, step=0.1),
+        numericInput(ns("ELEFAN_GA_lowPar_ts"), p("Summer point (", withMathJax("\\(t_{s}\\)"), "). Values between 0 and 1. At the time of the year when the fraction, " , withMathJax("\\(t_{s}\\)"),", has elapsed, the growth rate is the highest."), 0, min = 0, max = 1, step=0.1)
+      )
+    }else{NULL}
+  )
+  
+  output$ELEFAN_GA_SeasonUpPar<-renderUI(
+    if(input$ELEFAN_GA_seasonalised){  
+      box(
+        numericInput(ns("ELEFAN_GA_upPar_C"), p("Amplitude of growth oscillation (", withMathJax("\\(C\\)"), "): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point."), 1, min = 0, max = 1, step=0.1),
+        numericInput(ns("ELEFAN_GA_upPar_ts"), p("Summer point (", withMathJax("\\(t_{s}\\)"), "). Values between 0 and 1. At the time of the year when the fraction, " , withMathJax("\\(t_{s}\\)"),", has elapsed, the growth rate is the highest."), 1, min = 0, max = 1, step=0.1)
+      )
+    }else{NULL}
+  )
   
   observeEvent(input$fileGa, {
     fileGaState$upload <- 'uploaded'

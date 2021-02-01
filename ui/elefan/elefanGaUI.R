@@ -54,10 +54,7 @@ tabElefanGa <- function(id) {
                 numericInput(ns("ELEFAN_GA_lowPar_K"), p("The growth coefficient (", withMathJax("\\(K\\)"), ") of the von Bertalanffy growth function"), 0.01, min = 0, max = 10, step=0.01),
                 numericInput(ns("ELEFAN_GA_lowPar_t_anchor"), p("Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (", withMathJax("\\(t_{anchor}\\)"), ")"), 0, min = 0, max = 1, step=0.01)
               ),
-              box(
-                numericInput(ns("ELEFAN_GA_lowPar_C"), p("Amplitude of growth oscillation (", withMathJax("\\(C\\)"), "): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point."), 0, min = 0, max = 1, step=0.1),
-                numericInput(ns("ELEFAN_GA_lowPar_ts"), p("Summer point (", withMathJax("\\(t_{s}\\)"), "). Values between 0 and 1. At the time of the year when the fraction, " , withMathJax("\\(t_{s}\\)"),", has elapsed, the growth rate is the highest."), 0, min = 0, max = 1, step=0.1)
-              )
+              uiOutput(ns("ELEFAN_GA_SeasonLowPar"))
             ),
             box(title = "Upper Limits Of Parameter Ranges",
               width = NULL,
@@ -69,10 +66,7 @@ tabElefanGa <- function(id) {
                 numericInput(ns("ELEFAN_GA_upPar_K"), p("The growth coefficient (", withMathJax("\\(K\\)"), ") of the von Bertalanffy growth function"), 1, min = 0, max = 10, step=0.01),
                 numericInput(ns("ELEFAN_GA_upPar_t_anchor"), p("Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (", withMathJax("\\(t_{anchor}\\)"), ")"), 1, min = 0, max = 1, step=0.01)
               ),
-              box(
-                numericInput(ns("ELEFAN_GA_upPar_C"), p("Amplitude of growth oscillation (", withMathJax("\\(C\\)"), "): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point."), 1, min = 0, max = 1, step=0.1),
-                numericInput(ns("ELEFAN_GA_upPar_ts"), p("Summer point (", withMathJax("\\(t_{s}\\)"), "). Values between 0 and 1. At the time of the year when the fraction, " , withMathJax("\\(t_{s}\\)"),", has elapsed, the growth rate is the highest."), 1, min = 0, max = 1, step=0.1)
-              )
+              uiOutput(ns("ELEFAN_GA_SeasonUpPar"))
             ),
             tags$div( disabled(actionButton(ns("go_ga"), "Run ELEFAN GA", class="topLevelInformationButton")),
                   actionButton(ns("reset_ga"), "Reset", class="topLevelInformationButton"), style="margin-left: 15px;"),
