@@ -51,7 +51,7 @@ tabElefanGa <- function(id) {
               collapsed = T,
               box(
                 numericInput(ns("ELEFAN_GA_lowPar_Linf"), p("Asymptotic length/length infinity of the von Bertalanffy growth function (",withMathJax("\\(L_\\infty\\)"), "in cm):"), 119, min = 1, max = 1000, step=1),
-                numericInput(ns("ELEFAN_GA_lowPar_K"), p("The growth coefficient (", withMathJax("\\(K\\)"), ") of the von Bertalanffy growth function"), 0.01, min = 0, max = 1, step=0.01),
+                numericInput(ns("ELEFAN_GA_lowPar_K"), p("The growth coefficient (", withMathJax("\\(K\\)"), ") of the von Bertalanffy growth function"), 0.01, min = 0, max = 10, step=0.01),
                 numericInput(ns("ELEFAN_GA_lowPar_t_anchor"), p("Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (", withMathJax("\\(t_{anchor}\\)"), ")"), 0, min = 0, max = 1, step=0.01)
               ),
               box(
@@ -66,7 +66,7 @@ tabElefanGa <- function(id) {
               collapsed = T,
               box(
                 numericInput(ns("ELEFAN_GA_upPar_Linf"), p("Asymptotic length/length infinity of the von Bertalanffy growth function (",withMathJax("\\(L_\\infty\\)"), "in cm):"), 129, min = 1, max = 1000, step=1),
-                numericInput(ns("ELEFAN_GA_upPar_K"), p("The growth coefficient (", withMathJax("\\(K\\)"), ") of the von Bertalanffy growth function"), 1, min = 0, max = 1, step=0.01),
+                numericInput(ns("ELEFAN_GA_upPar_K"), p("The growth coefficient (", withMathJax("\\(K\\)"), ") of the von Bertalanffy growth function"), 1, min = 0, max = 10, step=0.01),
                 numericInput(ns("ELEFAN_GA_upPar_t_anchor"), p("Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (", withMathJax("\\(t_{anchor}\\)"), ")"), 1, min = 0, max = 1, step=0.01)
               ),
               box(
