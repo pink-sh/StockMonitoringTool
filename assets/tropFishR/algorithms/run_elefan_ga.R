@@ -37,7 +37,7 @@ run_elefan_ga <- function(
     
     # plot raw and restructured LFQ data
     
-    lfqbin <- lfqRestructure(synLFQ7a, MA = 5, addl.sqrt = TRUE)
+    lfqbin <- lfqRestructure(synLFQ7a, MA = MA, addl.sqrt = TRUE)
 
     opar <- par(mfrow = c(2,1), mar = c(2,5,2,3), oma = c(2,0,0,0))
     
