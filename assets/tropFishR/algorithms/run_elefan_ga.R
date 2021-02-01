@@ -33,11 +33,11 @@ run_elefan_ga <- function(
     
     # adjust bin size
     
-    synLFQ7a <- lfqModify(lfqRestructure(x), bin_size = binSize)
+    smt_lfqa <- lfqModify(lfqRestructure(x), bin_size = binSize)
     
     # plot raw and restructured LFQ data
     
-    lfqbin <- lfqRestructure(synLFQ7a, MA = MA, addl.sqrt = addl.sqrt)
+    lfqbin <- lfqRestructure(smt_lfqa, MA = MA, addl.sqrt = addl.sqrt)
 
     opar <- par(mfrow = c(2,1), mar = c(2,5,2,3), oma = c(2,0,0,0))
     
@@ -53,9 +53,9 @@ run_elefan_ga <- function(
     
     
     # run ELEFAN with genetic algorithm
-    res_GA <- ELEFAN_GA(synLFQ7a, MA = MA, seasonalised = seasonalised, maxiter = maxiter, addl.sqrt = addl.sqrt,low_par=low_par,up_par=up_par,monitor=FALSE)
+    res_GA <- ELEFAN_GA(smt_lfqa, MA = MA, seasonalised = seasonalised, maxiter = maxiter, addl.sqrt = addl.sqrt,low_par=low_par,up_par=up_par,monitor=FALSE)
     
-    #  res_GA <- ELEFAN_GA(synLFQ7a, MA = 5, seasonalised = TRUE, maxiter = 10, addl.sqrt = TRUE,
+    #  res_GA <- ELEFAN_GA(smt_lfqa, MA = 5, seasonalised = TRUE, maxiter = 10, addl.sqrt = TRUE,
     #                      
     #                      low_par = list(Linf = 119, K = 0.01, t_anchor = 0, C = 0, ts = 0),
     #                      
@@ -74,25 +74,25 @@ run_elefan_ga <- function(
     
     #plot(lfqbin, Fname = "rcounts",date.axis = "modern", ylim=c(0,130))
     
-    lt <- lfqFitCurves(synLFQ7a, par = list(Linf=123, K=0.2, t_anchor=0.25, C=0.3, ts=0),
+    lt <- lfqFitCurves(smt_lfqa, par = list(Linf=123, K=0.2, t_anchor=0.25, C=0.3, ts=0),
                        
                        draw = TRUE, col = "grey", lty = 1, lwd=1.5)
     
-    # lt <- lfqFitCurves(synLFQ7, par = res_RSA$par,
+    # lt <- lfqFitCurves(smt_lfq, par = res_RSA$par,
     
     #                    draw = TRUE, col = "goldenrod1", lty = 1, lwd=1.5)
     
-    lt <- lfqFitCurves(synLFQ7a, par = res_GA$par,
+    lt <- lfqFitCurves(smt_lfqa, par = res_GA$par,
                        
                        draw = TRUE, col = "blue", lty = 1, lwd=1.5)
     
-    lt <- lfqFitCurves(synLFQ7a, par = res_GA$par,
+    lt <- lfqFitCurves(smt_lfqa, par = res_GA$par,
                        
                        draw = TRUE, col = "lightblue", lty = 1, lwd=1.5)
     
     # assign estimates to the data list
     
-    synLFQ7a <- c(synLFQ7a, res_GA$par)
+    smt_lfqa <- c(smt_lfqa, res_GA$par)
     
     
     
@@ -112,7 +112,7 @@ run_elefan_ga <- function(
     
     Ms <- M_empirical(Linf = res_GA$par$Linf, K_l = res_GA$par$K, method = "Then_growth")
     
-    synLFQ7a$M <- as.numeric(Ms)
+    smt_lfqa$M <- as.numeric(Ms)
     
     # show results
     
@@ -121,29 +121,29 @@ run_elefan_ga <- function(
     #> [1] "M = 0.217"
     
     # summarise catch matrix into vector
-    synLFQ7b <- lfqModify(lfqRestructure(synLFQ7a), vectorise_catch = TRUE)
+    smt_lfqb <- lfqModify(lfqRestructure(smt_lfqa), vectorise_catch = TRUE)
     # assign estimates to the data list
     catch_columns <- NA
     
-    if (length(synLFQ7b$dates) > 1) {
-      catch_columns <- length(synLFQ7b$dates) - 1
+    if (length(smt_lfqb$dates) > 1) {
+      catch_columns <- length(smt_lfqb$dates) - 1
     }
     
-    if (!exists("synLFQ7b$C")) {
-      synLFQ7b$C <- 0
+    if (!exists("smt_lfqb$C")) {
+      smt_lfqb$C <- 0
     }
-    if (!exists("synLFQ7b$ts")) {
-      synLFQ7b$ts <- 0
+    if (!exists("smt_lfqb$ts")) {
+      smt_lfqb$ts <- 0
     }
     
-    res_cc <- catchCurve(synLFQ7b, reg_int = NULL, calc_ogive = TRUE, catch_columns = catch_columns, plot=FALSE, auto = TRUE)
-    #res_cc <- catchCurve(synLFQ7b)
-    synLFQ7b$Z <- res_cc$Z
-    #############synLFQ7b$Z <- 0.4
+    res_cc <- catchCurve(smt_lfqb, reg_int = NULL, calc_ogive = TRUE, catch_columns = catch_columns, plot=FALSE, auto = TRUE)
+    #res_cc <- catchCurve(smt_lfqb)
+    smt_lfqb$Z <- res_cc$Z
+    #############smt_lfqb$Z <- 0.4
     
-    synLFQ7b$FM <- as.numeric(synLFQ7b$Z - synLFQ7b$M)
+    smt_lfqb$FM <- as.numeric(smt_lfqb$Z - smt_lfqb$M)
     
-    synLFQ7b$E <- synLFQ7b$FM/synLFQ7b$Z
+    smt_lfqb$E <- smt_lfqb$FM/smt_lfqb$Z
     
     #> [1] "Z = 0.4"
     
@@ -158,27 +158,27 @@ run_elefan_ga <- function(
     # add plus group which is smaller than Linf
     calculated_plus_group <- plus_group
     if (plus_group == 0) {
-      calculated_plus_group <- max(synLFQ7b$midLengths)
-      for (x in synLFQ7b$midLengths) {
-        if ((max(synLFQ7b$midLengths) / 2) < x) {
+      calculated_plus_group <- max(smt_lfqb$midLengths)
+      for (x in smt_lfqb$midLengths) {
+        if ((max(smt_lfqb$midLengths) / 2) < x) {
           calculated_plus_group <- x
           break
         }
       }
     }
-    synLFQ7c <- lfqModify(synLFQ7b, plus_group = calculated_plus_group)
+    smt_lfqc <- lfqModify(smt_lfqb, plus_group = calculated_plus_group)
     # assign length-weight parameters to the data list
     
-    synLFQ7c$a <- 0.015
+    smt_lfqc$a <- 0.015
     
-    synLFQ7c$b <- 3
+    smt_lfqc$b <- 3
     
     # run CA
     catch_columns <- NA
-    if (length(synLFQ7c$dates) > 1) {
-      catch_columns <- length(synLFQ7c$dates) - 1
+    if (length(smt_lfqc$dates) > 1) {
+      catch_columns <- length(smt_lfqc$dates) - 1
     }
-    vpa_res <- VPA(param = synLFQ7c, terminalF = synLFQ7c$FM,
+    vpa_res <- VPA(param = smt_lfqc, terminalF = smt_lfqc$FM,
                    
                    analysis_type = "CA",
                    
@@ -198,7 +198,7 @@ run_elefan_ga <- function(
     
     # assign F per length class to the data list
     
-    synLFQ7c$FM <- vpa_res$FM_calc
+    smt_lfqc$FM <- vpa_res$FM_calc
     
     
     
@@ -206,23 +206,23 @@ run_elefan_ga <- function(
     
     # Thompson and Bell model with changes in F
     
-    TB1 <- predict_mod(synLFQ7c, type = "ThompBell",
+    TB1 <- predict_mod(smt_lfqc, type = "ThompBell",
                        
                        FM_change = seq(0,1.5,0.05),  stock_size_1 = 1,
                        
-                       curr.E = synLFQ7c$E, plot = FALSE, hide.progressbar = TRUE)
+                       curr.E = smt_lfqc$E, plot = FALSE, hide.progressbar = TRUE)
     
     
     
     # Thompson and Bell model with changes in F and Lc
     
-    TB2 <- predict_mod(synLFQ7c, type = "ThompBell",
+    TB2 <- predict_mod(smt_lfqc, type = "ThompBell",
                        
                        FM_change = seq(0,1.5,0.1), Lc_change = seq(25,50,0.1),
                        
                        stock_size_1 = 1,
                        
-                       curr.E = synLFQ7c$E, curr.Lc = res_cc$L50,
+                       curr.E = smt_lfqc$E, curr.Lc = res_cc$L50,
                        
                        s_list = list(selecType = "trawl_ogive",
                                      
