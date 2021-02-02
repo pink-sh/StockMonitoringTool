@@ -89,18 +89,18 @@ Input File: `r input$fileGa$name`
 Seasonalized: `r if(!is.null(input$ELEFAN_GA_seasonalised)){if(input$ELEFAN_GA_seasonalised){"TRUE"}else{"FALSE"}}else{"FALSE"}`  
   
 **Low Par**  
-Linf: `r input$ELEFAN_GA_lowPar_Linf`  
-K: `r input$ELEFAN_GA_lowPar_K`  
-t anchor: `r input$ELEFAN_GA_lowPar_t_anchor`  
-C: `r input$ELEFAN_GA_lowPar_C`  
-TS: `r input$ELEFAN_GA_lowPar_ts`  
+Linf: `r min(input$ELEFAN_GA_lowPar_Linf)`  
+K: `r min(input$ELEFAN_GA_lowPar_K)`  
+t anchor: `r min(input$ELEFAN_GA_lowPar_t_anchor)`  
+C: `r min(input$ELEFAN_GA_lowPar_C)`  
+TS: `r min(input$ELEFAN_GA_lowPar_ts)`  
   
 **Up Par**  
-Linf: `r input$ELEFAN_GA_upPar_Linf`  
-K: `r input$ELEFAN_GA_upPar_K`  
-t anchor: `r input$ELEFAN_GA_upPar_t_anchor`  
-C: `r input$ELEFAN_GA_upPar_C`  
-TS: `r input$ELEFAN_GA_upPar_ts`
+Linf: `r max(input$ELEFAN_GA_upPar_Linf)`  
+K: `r max(input$ELEFAN_GA_upPar_K)`  
+t anchor: `r max(input$ELEFAN_GA_upPar_t_anchor)`  
+C: `r max(input$ELEFAN_GA_upPar_C)`  
+TS: `r max(input$ELEFAN_GA_upPar_ts)`
   
 **Optional Parameters**  
 Population size: `r input$ELEFAN_GA_popSize`  

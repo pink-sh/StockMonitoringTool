@@ -47,11 +47,10 @@ elefanGaModule <- function(input, output, session) {
   
   observe({
     if(!input$ELEFAN_GA_seasonalised){
-      js$removeBox("box_elefan_ga_seasonLowPar")
-      js$removeBox("box_elefan_ga_seasonUpPar")
+      js$removeBox2("box_elefan_ga_seasonPar")
     }else{
-      js$showBox("box_elefan_ga_seasonLowPar")
-      js$showBox("box_elefan_ga_seasonUpPar")}
+      js$showBox2("box_elefan_ga_seasonPar")
+    }
   })
   
   observeEvent(input$fileGa, {
@@ -73,8 +72,8 @@ elefanGaModule <- function(input, output, session) {
       ds <- lfqModify(lfqRestructure(inputElefanGaData$data), bin_size = input$ELEFAN_GA_binSize)
       flog.info("Starting Elegan GA computation")
       res <- run_elefan_ga(ds,binSize =  input$ELEFAN_GA_binSize, seasonalised = input$ELEFAN_GA_seasonalised, 
-                           low_par = list(Linf = input$ELEFAN_GA_lowPar_Linf, K = input$ELEFAN_GA_lowPar_K, t_anchor = input$ELEFAN_GA_lowPar_t_anchor, C = input$ELEFAN_GA_lowPar_C, ts = input$ELEFAN_GA_lowPar_ts),
-                           up_par = list(Linf = input$ELEFAN_GA_upPar_Linf, K = input$ELEFAN_GA_upPar_K, t_anchor = input$ELEFAN_GA_upPar_t_anchor, C = input$ELEFAN_GA_upPar_C, ts = input$ELEFAN_GA_upPar_ts),
+                           low_par = list(Linf = min(input$ELEFAN_GA_Linf), K = min(input$ELEFAN_GA_K), t_anchor = min(input$ELEFAN_GA_t_anchor), C = min(input$ELEFAN_GA_C), ts = min(input$ELEFAN_GA_ts)),
+                           up_par = list(Linf = max(input$ELEFAN_GA_Linf), K = max(input$ELEFAN_GA_K), t_anchor = max(input$ELEFAN_GA_t_anchor), C = max(input$ELEFAN_GA_C), ts = max(input$ELEFAN_GA_ts)),
                            popSize = input$ELEFAN_GA_popSize, maxiter = input$ELEFAN_GA_maxiter, run = input$ELEFAN_GA_run, pmutation = input$ELEFAN_GA_pmutation, pcrossover = input$ELEFAN_GA_pcrossover,
                            elitism = input$ELEFAN_GA_elitism, MA = input$ELEFAN_GA_MA, addl.sqrt = input$ELEFAN_GA_addl.sqrt, plus_group = input$ELEFAN_GA_PLUS_GROUP)
       

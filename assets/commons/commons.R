@@ -22,6 +22,12 @@ $('#' + boxid).parent('div').css('visibility','visible');
 shinyjs.removeBox = function(boxid) {
 $('#' + boxid).parent('div').css('visibility','hidden');
 }
+shinyjs.showBox2 = function(boxid) {
+$('#' + boxid).parent('div').css('display','block');
+}
+shinyjs.removeBox2 = function(boxid) {
+$('#' + boxid).parent('div').css('display','none');
+}
 shinyjs.disableAllButtons = function() {
 $('.action-button').attr('disabled', true);
 }

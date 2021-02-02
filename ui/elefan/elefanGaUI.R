@@ -44,34 +44,19 @@ tabElefanGa <- function(id) {
                 numericInput(ns("ELEFAN_GA_PLUS_GROUP"), "Plus group: the largest length class with only a few individuals after which the method will pool together (important for cohort analysis later)", 0, min = 0, max = 100000, step=1)
               )
             ),
-            box(title = "Lower Limits Of Parameter Ranges",
+            box(title = "Parameter Ranges",
               width = NULL,
               collapsible = T, 
               class = "collapsed-box",
               collapsed = T,
               box(
-                numericInput(ns("ELEFAN_GA_lowPar_Linf"), p("Asymptotic length/length infinity of the von Bertalanffy growth function (",withMathJax("\\(L_\\infty\\)"), "in cm):"), 119, min = 1, max = 1000, step=1),
-                numericInput(ns("ELEFAN_GA_lowPar_K"), p("The growth coefficient (", withMathJax("\\(K\\)"), ") of the von Bertalanffy growth function"), 0.01, min = 0, max = 10, step=0.01),
-                numericInput(ns("ELEFAN_GA_lowPar_t_anchor"), p("Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (", withMathJax("\\(t_{anchor}\\)"), ")"), 0, min = 0, max = 1, step=0.01)
+                sliderInput(ns("ELEFAN_GA_Linf"), p("Asymptotic length/length infinity of the von Bertalanffy growth function (",withMathJax("\\(L_\\infty\\)"), "in cm):"), value=c(119,129), min = 1, max = 1000, step=1),
+                sliderInput(ns("ELEFAN_GA_K"), p("The growth coefficient (", withMathJax("\\(K\\)"), ") of the von Bertalanffy growth function"), value=c(0.01,1), min = 0, max = 10, step=0.01),
+                sliderInput(ns("ELEFAN_GA_t_anchor"), p("Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (", withMathJax("\\(t_{anchor}\\)"), ")"), 0, min = 0, max = 1, step=0.01)
               ),
-               box(id="box_elefan_ga_seasonLowPar",
-                 numericInput(ns("ELEFAN_GA_lowPar_C"), p("Amplitude of growth oscillation (", withMathJax("\\(C\\)"), "): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point."), 0, min = 0, max = 1, step=0.1),
-                 numericInput(ns("ELEFAN_GA_lowPar_ts"), p("Summer point (", withMathJax("\\(t_{s}\\)"), "). Values between 0 and 1. At the time of the year when the fraction, " , withMathJax("\\(t_{s}\\)"),", has elapsed, the growth rate is the highest."), 0, min = 0, max = 1, step=0.1)
-               )
-            ),
-            box(title = "Upper Limits Of Parameter Ranges",
-              width = NULL,
-              collapsible = T, 
-              class = "collapsed-box",
-              collapsed = T,
-              box(
-                numericInput(ns("ELEFAN_GA_upPar_Linf"), p("Asymptotic length/length infinity of the von Bertalanffy growth function (",withMathJax("\\(L_\\infty\\)"), "in cm):"), 129, min = 1, max = 1000, step=1),
-                numericInput(ns("ELEFAN_GA_upPar_K"), p("The growth coefficient (", withMathJax("\\(K\\)"), ") of the von Bertalanffy growth function"), 1, min = 0, max = 10, step=0.01),
-                numericInput(ns("ELEFAN_GA_upPar_t_anchor"), p("Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (", withMathJax("\\(t_{anchor}\\)"), ")"), 1, min = 0, max = 1, step=0.01)
-              ),
-               box(id = "box_elefan_ga_seasonUpPar",
-                 numericInput(ns("ELEFAN_GA_upPar_C"), p("Amplitude of growth oscillation (", withMathJax("\\(C\\)"), "): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point."), 1, min = 0, max = 1, step=0.1),
-                 numericInput(ns("ELEFAN_GA_upPar_ts"), p("Summer point (", withMathJax("\\(t_{s}\\)"), "). Values between 0 and 1. At the time of the year when the fraction, " , withMathJax("\\(t_{s}\\)"),", has elapsed, the growth rate is the highest."), 1, min = 0, max = 1, step=0.1)
+               box(id="box_elefan_ga_seasonPar",
+                 sliderInput(ns("ELEFAN_GA_C"), p("Amplitude of growth oscillation (", withMathJax("\\(C\\)"), "): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point."), value=c(0,1), min = 0, max = 1, step=0.1),
+                 sliderInput(ns("ELEFAN_GA_ts"), p("Summer point (", withMathJax("\\(t_{s}\\)"), "). Values between 0 and 1. At the time of the year when the fraction, " , withMathJax("\\(t_{s}\\)"),", has elapsed, the growth rate is the highest."), value=c(0,1), min = 0, max = 1, step=0.1)
                )
             ),
             tags$div( disabled(actionButton(ns("go_ga"), "Run ELEFAN GA", class="topLevelInformationButton")),
@@ -142,16 +127,12 @@ resetElefanGaInputValues <- function() {
   shinyjs::reset("ELEFAN_GA_elitism")
   shinyjs::reset("ELEFAN_GA_MA")
   shinyjs::reset("ELEFAN_GA_PLUS_GROUP")
-  shinyjs::reset("ELEFAN_GA_lowPar_Linf")
-  shinyjs::reset("ELEFAN_GA_lowPar_K")
-  shinyjs::reset("ELEFAN_GA_lowPar_t_anchor")
-  shinyjs::reset("ELEFAN_GA_lowPar_C")
-  shinyjs::reset("ELEFAN_GA_lowPar_ts")
-  shinyjs::reset("ELEFAN_GA_upPar_Linf")
-  shinyjs::reset("ELEFAN_GA_upPar_K")
-  shinyjs::reset("ELEFAN_GA_upPar_t_anchor")
-  shinyjs::reset("ELEFAN_GA_upPar_C")
-  shinyjs::reset("ELEFAN_GA_upPar_ts")
+  shinyjs::reset("ELEFAN_GA_Linf")
+  shinyjs::reset("ELEFAN_GA_K")
+  shinyjs::reset("ELEFAN_GA_t_anchor")
+  shinyjs::reset("ELEFAN_GA_C")
+  shinyjs::reset("ELEFAN_GA_ts")
+
   shinyjs::disable("go_ga")
   clearResults("box_elefan_ga_results")
   shinyjs::reset("elefanGaDateFormat")
