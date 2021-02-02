@@ -51,10 +51,12 @@ read_elefan_csv <- function(csvFile, format="") {
     order <- c('ymd', 'ydm', 'dmy', 'mdy')
   }
   
-  a <- validateElefanInputFile(csvFile)$contents
-  checkDelim<-validateElefanInputFile(csvFile)$checkDelim
-  check_dec<-validateElefanInputFile(csvFile)$check_dec
-  check_name<-validateElefanInputFile(csvFile)$check_name
+  tmp<-validateElefanInputFile(csvFile)
+  a <- tmp$contents
+  checkDelim<-tmp$checkDelim
+  check_dec<-tmp$check_dec
+  check_name<-tmp$check_name
+  
   if (is.null(a)) {
     return (list(checkDelim=checkDelim,checkDec=check_dec,checkName=check_name,catch=a))
   }
