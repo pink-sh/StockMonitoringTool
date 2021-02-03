@@ -9,7 +9,7 @@ tabBasicVonBertalannfy <- function(id) {
         fluidRow(
           box( id="box_vonbertalannfy_in",
             sliderInput(ns("amax"), "Age classes:", 
-              min=1, max=100, value=50),    
+              min=0, max=100, value=50, step=0.25),    
             sliderInput(ns("Linf"), withMathJax("$$L_\\infty:$$"), 
               min=1, max=1000, value=100),
             sliderInput(ns("k"), "k:", 
