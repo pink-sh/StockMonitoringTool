@@ -1,7 +1,7 @@
 #
-# This is the StockMonitoringTools Shiny web application. You can run the application by clicking
+# This is the StockMonitoringTool Shiny web application. You can run the application by clicking
 # the 'Run App' button above.
-# The StockMonitoringTools shiny application will support the FAO - SDG 14.4.1 E-learning course
+# The StockMonitoringTool shiny application will support the FAO - SDG 14.4.1 E-learning course
 # 
 # Author: Enrico Anello <enrico.anello@fao.org> <enrico.anello@gmail.com>
 #
@@ -83,7 +83,7 @@ ui <- tagList(
   use_waiter(include_js = FALSE),
   waiter_show_on_load(app_load_spinner("Initializing R session. This process may take a while...")),
   dashboardPage(
-  dashboardHeader(title = 'Stock Monitoring Tools'),
+  dashboardHeader(title = 'Stock Monitoring Tool'),
   sidebar,
   dashboardBody(
     tags$div(

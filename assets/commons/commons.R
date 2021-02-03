@@ -4,8 +4,8 @@ library(pracma)
 
 ########## CONSTANTS ##########
 
-uploadFolderName <- "StockMonitoringTools"
-uploadFolderDescription <- "SDG 14.4.1 VRE Stock Monitoring Tools results"
+uploadFolderName <- "StockMonitoringTool"
+uploadFolderDescription <- "SDG 14.4.1 VRE Stock Monitoring Tool results"
 VREUploadText <- "The report has been uploaded to your VRE workspace"
 gcubeTokenQueryParam <- "gcube-token"
 apiUrl <- "https://api.d4science.org/rest/2/people/profile?gcube-token="

@@ -1,7 +1,7 @@
 ########################### ALL LABELS ###########################
 output$homeInfo <- renderText({
   session$userData$page("home")
-  text <- "<h3>Stock Monitoring Tools for limited data</h3>"
+  text <- "<h3>Stock Monitoring Tool for limited data</h3>"
   text <- paste0(text, "<p>")
   text <- paste0(text, "On the left hand side you can choose between <b>CMSY</b>, <b>ELEFAN</b> and <b>YPR</b>/<b>SBPR</b> methods.")
   text <- paste0(text, "</p>")
@@ -51,8 +51,8 @@ output$homeInfo <- renderText({
   text <- paste0(text, "To build and run the application issue the following commands")
   text <- paste0(text, "<ul>")
   text <- paste0(text, "<li>sudo wget https://raw.githubusercontent.com/pink-sh/StockMonitoringTool/master/Dockerfile</li>")
-  text <- paste0(text, "<li>sudo docker build -t stock_monitoring_tools . </li>")
-  text <- paste0(text, "<li>sudo docker run -p 3839:3838 stock_monitoring_tools</li>")
+  text <- paste0(text, "<li>sudo docker build -t stock_monitoring_tool . </li>")
+  text <- paste0(text, "<li>sudo docker run -p 3839:3838 stock_monitoring_tool</li>")
   text <- paste0(text, "</ul>")
   text <- paste0(text, "And then point your browser to http://localhost:3839")
   text <- paste0(text, "</p>")
