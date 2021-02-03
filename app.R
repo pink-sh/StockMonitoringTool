@@ -26,8 +26,8 @@ source("ui/menu.R")
 source("ui/cmsy/cmsyUI.R")
 source("ui/elefan/commonUI.R")
 source("ui/elefan/elefanGaUI.R")
-source("ui/elefan/elefanSaUI.R")
-source("ui/elefan/elefanUI.R")
+# source("ui/elefan/elefanSaUI.R")
+# source("ui/elefan/elefanUI.R")
 source("ui/fishMethods/commonUI.R")
 source("ui/fishMethods/sbprUI.R")
 source("ui/fishMethods/yprUI.R")
@@ -38,8 +38,8 @@ source("ui/support/SeasonalVonBertalannfyUI.R")
 source("server/common.R")
 source("server/cmsy/cmsyServer.R")
 source("server/elefan/elefanGaServer.R")
-source("server/elefan/elefanSaServer.R")
-source("server/elefan/elefanServer.R")
+# source("server/elefan/elefanSaServer.R")
+# source("server/elefan/elefanServer.R")
 source("server/fishMethods/sbprServer.R")
 source("server/fishMethods/yprServer.R")
 source("server/support/BasicSchaeferServer.R")
@@ -48,8 +48,8 @@ source("server/support/SeasonalVonBertalannfyServer.R")
 source("server/support/NaturalMortalityServer.R")
 source("assets/tropFishR/elefan_common.R")
 source("assets/tropFishR/algorithms/run_elefan_ga.R")
-source("assets/tropFishR/algorithms/run_elefan_sa.R")
-source("assets/tropFishR/algorithms/run_elefan.R")
+# source("assets/tropFishR/algorithms/run_elefan_sa.R")
+# source("assets/tropFishR/algorithms/run_elefan.R")
 source("assets/cmsy/CmsyFunction.R")
 source("assets/fishmethods/methods.R")
 source("assets/support/shaefer.R")
@@ -115,8 +115,8 @@ ui <- tagList(
       tabFishMethodsSampleDataset,
       tabCmsy("cmsyModule"),
       tabElefanGa("elefanGaModule"),
-      tabElefanSa("elefanSaModule"),
-      tabElefan("elefanModule"),
+      # tabElefanSa("elefanSaModule"),
+      # tabElefan("elefanModule"),
       tabSbpr("sbprModule"),
       tabYpr("yprModule"),
       tabBasicSchaefer("basicShaeferModule"),
@@ -173,8 +173,8 @@ server <- function(input, output, session) {
              'cmsy-sample'= {isolate({updateTabItems(session, "smt-tabs", "cmsySampleDataset")})},
              'elefan-intro' = {isolate({updateTabItems(session, "smt-tabs", "ElefanIntro")})},
              'elefan-ga' = {isolate({updateTabItems(session, "smt-tabs", "ElefanGaWidget")})},
-             'elefan-sa' = {isolate({updateTabItems(session, "smt-tabs", "ElefanSaWidget")})},
-             'elefan' = {isolate({updateTabItems(session, "smt-tabs", "ElefanWidget")})},
+             # 'elefan-sa' = {isolate({updateTabItems(session, "smt-tabs", "ElefanSaWidget")})},
+             # 'elefan' = {isolate({updateTabItems(session, "smt-tabs", "ElefanWidget")})},
              'elefan-sample' = {isolate({updateTabItems(session, "smt-tabs", "ElefanSampleDataset")})},
              'fishmethods-intro' = {isolate({updateTabItems(session, "smt-tabs", "FishMethodsIntro")})},
              'sbpr' = {isolate({updateTabItems(session, "smt-tabs", "SBPRWidget")})},
@@ -239,8 +239,8 @@ server <- function(input, output, session) {
   
   session$userData$cmsy <- reactiveValues()
 
-  session$userData$elefan_sa <- reactiveValues()
-  session$userData$elefan <- reactiveValues()
+  # session$userData$elefan_sa <- reactiveValues()
+  # session$userData$elefan <- reactiveValues()
   session$userData$sbprExec <- reactiveValues()
   session$userData$yprExec <- reactiveValues()
   session$userData$fishingMortality <- reactiveValues()
@@ -250,16 +250,16 @@ server <- function(input, output, session) {
   session$userData$fishingMortality$Fcurr <- NA
   
   session$userData$cmsyUploadVreResult <- reactiveValues()
-  
-  session$userData$elefanSaUploadVreResult <- reactiveValues()
-  session$userData$elefanUploadVreResult <- reactiveValues()
+  session$userData$elefanGaUploadVreResult <- reactiveValues()
+  # session$userData$elefanSaUploadVreResult <- reactiveValues()
+  # session$userData$elefanUploadVreResult <- reactiveValues()
   session$userData$sbprUploadVreResult <- reactiveValues()
   session$userData$yprUploadVreResult <- reactiveValues()
   
   callModule(cmsyModule, "cmsyModule")
   callModule(elefanGaModule, "elefanGaModule")
-  callModule(elefanSaModule, "elefanSaModule")
-  callModule(elefanModule, "elefanModule")
+  # callModule(elefanSaModule, "elefanSaModule")
+  # callModule(elefanModule, "elefanModule")
   callModule(sbprModule, "sbprModule")
   callModule(yprModule, "yprModule")
   callModule(basicShaeferModule, "basicShaeferModule")

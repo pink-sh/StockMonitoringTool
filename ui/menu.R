@@ -7,8 +7,8 @@ menuCmsy <- menuItem("CMSY",
 menuElefan <- menuItem("Elefan by TropFishR",
          menuSubItem("Introduction", tabName = "ElefanIntro"),
          menuSubItem("Elefan GA", tabName = "ElefanGaWidget"),
-         menuSubItem("Elefan SA", tabName = "ElefanSaWidget"),
-         menuSubItem("Elefan", tabName = "ElefanWidget"),
+         # menuSubItem("Elefan SA", tabName = "ElefanSaWidget"),
+         # menuSubItem("Elefan", tabName = "ElefanWidget"),
          menuSubItem("Elefan Sample Dataset", tabName = "ElefanSampleDataset")
 )
 menuFishMethods <- menuItem("Fish Methods",
