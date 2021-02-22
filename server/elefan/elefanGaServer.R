@@ -45,13 +45,13 @@ elefanGaModule <- function(input, output, session) {
     }
   })
 
-  observe({
-    if(!input$ELEFAN_GA_seasonalised){
-      js$removeBox("box_elefan_ga_seasonPar")
-    }else{
-      js$showBox("box_elefan_ga_seasonPar")
-    }
-  })
+  ## observe({
+  ##   if(!input$ELEFAN_GA_seasonalised){
+  ##     js$removeBox2("box_elefan_ga_seasonPar")
+  ##   }else{
+  ##     js$showBox2("box_elefan_ga_seasonPar")
+  ##   }
+  ## })
 
   observeEvent(input$fileGa, {
     fileGaState$upload <- 'uploaded'
@@ -286,7 +286,7 @@ elefanGaModule <- function(input, output, session) {
 
   output$elefanGaTitle <- renderText({
     session$userData$page("elefan-ga")
-    text <- "<span><h3><b>Elefan GA (Genetic Algorithm)</b></h3></span>"
+    text <- "<span><h3><b>Length-based stock assessment with TropFishR</b></h3></span>"
     text
   })
 }

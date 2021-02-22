@@ -5,7 +5,7 @@ menuCmsy <- menuItem("CMSY",
          menuSubItem("CMSY Sample Dataset", tabName = "cmsySampleDataset"), id="cmsy-main"
 )
 menuElefan <- menuItem("Elefan by TropFishR",
-         menuSubItem("Introduction", tabName = "ElefanIntro"),
+         menuSubItem("Information", tabName = "ElefanIntro"),
          menuSubItem("Elefan GA", tabName = "ElefanGaWidget"),
          # menuSubItem("Elefan SA", tabName = "ElefanSaWidget"),
          # menuSubItem("Elefan", tabName = "ElefanWidget"),
