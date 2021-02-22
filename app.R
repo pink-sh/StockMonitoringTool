@@ -2,9 +2,13 @@
 # This is the StockMonitoringTool Shiny web application. You can run the application by clicking
 # the 'Run App' button above.
 # The StockMonitoringTool shiny application will support the FAO - SDG 14.4.1 E-learning course
-# 
+#
 # Author: Enrico Anello <enrico.anello@fao.org> <enrico.anello@gmail.com>
 #
+
+## remotes::install_github("ropensci/rfishbase", ref = "3.0.1")
+## install.packages(c("pracma","googleVis"))
+## install.packages(c("lubridate","XML"))
 
 library(shiny)
 library(shinyBS)
@@ -80,7 +84,7 @@ token <- NULL
 sidebar <- dashboardSidebar(uiOutput("sidebar"))
 
 ui <- tagList(
-  use_waiter(include_js = FALSE),
+  use_waiter(),
   waiter_show_on_load(app_load_spinner("Initializing R session. This process may take a while...")),
   dashboardPage(
   dashboardHeader(title = 'Stock Monitoring Tool'),
@@ -131,15 +135,15 @@ ui <- tagList(
 
 server <- function(input, output, session) {
   flog.threshold(DEBUG)
-  
+
   flog.appender(appender.file(fileLog))
-  
+
   session$allowReconnect("force")
   waiter_hide()
   onStop(function() {
     flog.warn("Lost connection to R server")
   })
-  
+
   output$sidebar <- renderUI({
     dashboardSidebar(
       sidebarMenu(id="smt-tabs",
@@ -151,9 +155,9 @@ server <- function(input, output, session) {
       )
     )
   })
-  
+
   session$userData$page <- reactiveVal(NULL)
-  
+
   ### Render the page set as last visited in session or by page= query param
   observe({
     currentPage <- NA
@@ -195,12 +199,12 @@ server <- function(input, output, session) {
   session$userData$sessionToken <- reactiveVal(NULL)
   session$userData$sessionUsername <- reactiveVal(NULL)
   session$userData$sessionMode <- reactiveVal(NULL)
-  
+
   ## Hide any overlay when session starts
   observe({
     js$hideComputing()
   })
-  
+
   ##Guessing run mode
   observe({
     query <- parseQueryString(session$clientData$url_search)
@@ -208,7 +212,7 @@ server <- function(input, output, session) {
       session$userData$sessionToken(query[[gcubeTokenQueryParam]])
     }
   #})
-  
+
   #observe({
     if (!is.null(session$userData$sessionToken())) {
       flog.info("Session token is: %s", session$userData$sessionToken())
@@ -217,7 +221,7 @@ server <- function(input, output, session) {
       flog.info("Session token is: %s", "NULL")
     }
   #})
-  
+
   #observe({
     if (!is.null(session$userData$sessionMode())) {
       flog.info("Session mode is: %s", session$userData$sessionMode())
@@ -225,7 +229,7 @@ server <- function(input, output, session) {
       flog.info("Session mode is: %s", "NULL")
     }
  # })
-  
+
   #observe({
     if (!is.null(session$userData$sessionUsername())) {
       flog.info("Session username is: %s", session$userData$sessionUsername())
@@ -236,7 +240,7 @@ server <- function(input, output, session) {
       flog.info("Session username is: %s", "NULL")
     }
   })
-  
+
   session$userData$cmsy <- reactiveValues()
 
   # session$userData$elefan_sa <- reactiveValues()
@@ -244,18 +248,18 @@ server <- function(input, output, session) {
   session$userData$sbprExec <- reactiveValues()
   session$userData$yprExec <- reactiveValues()
   session$userData$fishingMortality <- reactiveValues()
-  
+
   session$userData$fishingMortality$FcurrGA <- NA
   session$userData$fishingMortality$FcurrSA <- NA
   session$userData$fishingMortality$Fcurr <- NA
-  
+
   session$userData$cmsyUploadVreResult <- reactiveValues()
   session$userData$elefanGaUploadVreResult <- reactiveValues()
   # session$userData$elefanSaUploadVreResult <- reactiveValues()
   # session$userData$elefanUploadVreResult <- reactiveValues()
   session$userData$sbprUploadVreResult <- reactiveValues()
   session$userData$yprUploadVreResult <- reactiveValues()
-  
+
   callModule(cmsyModule, "cmsyModule")
   callModule(elefanGaModule, "elefanGaModule")
   # callModule(elefanSaModule, "elefanSaModule")
@@ -266,12 +270,12 @@ server <- function(input, output, session) {
   callModule(vonBertalannfyModule, "vonBertalannfyModule")
   callModule(seasonalVonBertalannfyModule, "seasonalVonBertalannfyModule")
   callModule(naturalMortalityModule, "naturalMortalityModule")
-  
-  
+
+
   source("server/labels.R", local=TRUE)
-  
-  
+
+
 }
 
-# Run the application 
+# Run the application
 shinyApp(ui = ui, server = server)
