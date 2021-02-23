@@ -45,13 +45,13 @@ elefanGaModule <- function(input, output, session) {
     }
   })
 
-  ## observe({
-  ##   if(!input$ELEFAN_GA_seasonalised){
-  ##     js$removeBox2("box_elefan_ga_seasonPar")
-  ##   }else{
-  ##     js$showBox2("box_elefan_ga_seasonPar")
-  ##   }
-  ## })
+  observe({
+    if(!input$ELEFAN_GA_seasonalised){
+      js$removeBox2("box_elefan_ga_seasonPar")
+    }else{
+      js$showBox2("box_elefan_ga_seasonPar")
+    }
+  })
 
   observeEvent(input$fileGa, {
     fileGaState$upload <- 'uploaded'
