@@ -26,6 +26,8 @@ tabElefanGa <- function(id) {
                 box(title = "Data upload",
                     width = NULL,
                     collapsible = T,
+                    status = "primary",
+                    solidHeader = TRUE,
                     class = "collapsed-box",
                     box(
                         fileInput(ns("fileGa"), "Choose Input CSV File",
@@ -49,9 +51,11 @@ tabElefanGa <- function(id) {
                 box(title = "Settings",
                     width = NULL,
                     collapsible = T,
+                    status = "primary",
+                    solidHeader = TRUE,
                     class = "collapsed-box",
                     collapsed = T,
-                    box(title = "Data",
+                    box(title = "Length frequency data",
                         width = NULL,
                         collapsible = T,
                         class = "collapsed-box",
@@ -64,7 +68,7 @@ tabElefanGa <- function(id) {
                             numericInput(ns("ELEFAN_GA_PLUS_GROUP"), "Plus group: the largest length class with only a few individuals after which the method will pool together (important for cohort analysis later)", 0, min = 0, max = 100000, step=1),  ## HERE: change to yes no, if yes pick from length classes
                             checkboxInput(ns("ELEFAN_GA_addl.sqrt"), "Additional squareroot transformation of positive values according to Brey et al. (1988), reduces the weighting of large individuals", FALSE)
                         )),
-                    box(title = "ELEFAN",
+                    box(title = "Growth parameters",
                         width = NULL,
                         collapsible = T,
                         class = "collapsed-box",
@@ -85,7 +89,7 @@ tabElefanGa <- function(id) {
                                 numericInput(ns("ELEFAN_GA_pcrossover"), "Probability of crossover between pairs of chromosomes. Typically this is a large value:", 0.8, min = 0.1, max = 1, step=0.1),
                                 numericInput(ns("ELEFAN_GA_elitism"), "Number of best fitness individuals to survive at each generation:", 5, min = 0, max = 100, step=1)
                             )),
-                        box(title = "Search space",
+                        box(title = "Parameter search space",
                             width = NULL,
                             collapsible = F,
                             ##                      class = "collapsed-box",
@@ -100,7 +104,7 @@ tabElefanGa <- function(id) {
                                 sliderInput(ns("ELEFAN_GA_ts"), p("Summer point (", withMathJax("\\(t_{s}\\)"), "). Values between 0 and 1. At the time of the year when the fraction, " , withMathJax("\\(t_{s}\\)"),", has elapsed, the growth rate is the highest."), value=c(0,1), min = 0, max = 1, step=0.1)
                                 )
                             )),
-                    box(title = "Mortality analysis",
+                    box(title = "Mortality rates",
                         width = NULL,
                         collapsible = T,
                         class = "collapsed-box",
@@ -109,7 +113,7 @@ tabElefanGa <- function(id) {
                             checkboxInput(ns("mort"), p("Seasonalised : allows method to calculate the seasonal growth parameters, ", withMathJax("\\(C\\)"), " and ", withMathJax("\\(t_{s}\\)")), FALSE)
 
                         )),
-                    box(title = "Yield per recruit analysis",
+                    box(title = "Stock status",
                         width = NULL,
                         collapsible = T,
                         class = "collapsed-box",
@@ -126,30 +130,28 @@ tabElefanGa <- function(id) {
                 ## Action buttons
                 ## -------------------------------
                 hr(),
+
                 box(title = "Analysis",
                     width = NULL,
-                    collapsible = T,
+                    collapsible = F,
+                    status = "primary",
+                    solidHeader = TRUE,
                     class = "collapsed-box",
-                    collapsed = T,
+                    collapsed = F,
 
+                    br(),br(),
                     tags$div(
-                             ## column(
-                            disabled(actionButton(ns("go_ga"),
-                                                  "Run Analysis",
-                                                  class="topLevelInformationButton")
-                                     ),
-                            ## width=1),
-                            ## column(
-                            actionButton(ns("reset_ga"),
-                                         "Reset",
-                                         class="topLevelInformationButton"),
-                            ## width=1),
-                            style = "margin-left: 40%;"
-                        ## tags$head(tags$style(".col-sm-1 {width: 50%; margin: 0px;}
-                        ##   #go_ga, #reset_ga {margin: 0 auto; width: 100%; text-align: center}"))
-                        ##                             style="margin-left: 15px;"
-                    )
+                             disabled(actionButton(ns("go_ga"),
+                                                   "Run Analysis",
+                                                   class="topLevelInformationButton")
+                                      ),
+                             actionButton(ns("reset_ga"),
+                                          "Reset",
+                                          class="topLevelInformationButton"),
+                             style = "margin-left: 40%;"
+                         ),
 
+                    br(),br()
 
                     ),
 
@@ -163,6 +165,8 @@ tabElefanGa <- function(id) {
                 box(title = "Results",
                     width = NULL,
                     collapsible = T,
+                    status = "primary",
+                    solidHeader = TRUE,
                     class = "collapsed-box",
                     collapsed = T,
 
@@ -170,15 +174,15 @@ tabElefanGa <- function(id) {
                     box(id = "box_data_results",
                         title = "Length frequency data",
                         width = NULL,
-                        collapsible = T,
+                        collapsible = F,
                         class = "collapsed-box",
-                        collapsed = T,
+                        collapsed = F,
                         tags$style(type="text/css",
                                    ".recalculating {opacity: 1.0;}"),
-                    ## box( width= NULL, id = "box_data_results",
-                    ##     title = "Length frequency data",
-                    ##     tags$style(type="text/css",
-                    ##                ".recalculating {opacity: 1.0;}"),
+                        ## box( width= NULL, id = "box_data_results",
+                        ##     title = "Length frequency data",
+                        ##     tags$style(type="text/css",
+                        ##                ".recalculating {opacity: 1.0;}"),
                         fluidRow(
                             box(
                                 htmlOutput(ns("titlePlot1_elefan_ga")),
@@ -195,10 +199,10 @@ tabElefanGa <- function(id) {
 
                     hr(),
                     box( width= NULL, id = "box_elefan_ga_results",
-                        collapsible = T,
+                        collapsible = F,
                         class = "collapsed-box",
-                        collapsed = T,
-                        title = "ELEFAN",
+                        collapsed = F,
+                        title = "Growth parameters",
                         tags$style(type="text/css",
                                    ".recalculating {opacity: 1.0;}"
                                    ),
@@ -213,19 +217,19 @@ tabElefanGa <- function(id) {
                         ),
                     hr(),
                     box( width= NULL, id = "box_mort_results",
-                        collapsible = T,
+                        collapsible = F,
                         class = "collapsed-box",
-                        collapsed = T,
-                        title = "Mortality analysis",
+                        collapsed = F,
+                        title = "Mortality rates",
                         tags$style(type="text/css",
                                    ".recalculating {opacity: 1.0;}")
                         ),
                     hr(),
                     box( width= NULL, id = "box_ypr_results",
-                        collapsible = T,
+                        collapsible = F,
                         class = "collapsed-box",
-                        collapsed = T,
-                        title = "Yield-per-recruit analysis",
+                        collapsed = F,
+                        title = "Stock status",
                         tags$style(type="text/css",
                                    ".recalculating {opacity: 1.0;}"),
                         fluidRow (
@@ -249,24 +253,28 @@ tabElefanGa <- function(id) {
                         )
                     ),
 
-            ## Report
-            ## -------------------------------
-            hr(),
-            box(title = "Report",
-                id = "box_report",
-                width = NULL,
-                collapsible = T,
-                class = "collapsed-box",
-                collapsed = T,
-                tags$style(type="text/css",
-                           ".recalculating {opacity: 1.0;}"),
-                fluidRow(
-                    box(
-                        uiOutput(ns("downloadReport_ga")),
-                        uiOutput(ns("ElefanGaVREUpload"))
+                ## Report
+                ## -------------------------------
+                hr(),
+                box(title = "Report",
+                    id = "box_report",
+                    width = NULL,
+                    collapsible = F,
+                    status = "primary",
+                    solidHeader = TRUE,
+                    class = "collapsed-box",
+                    collapsed = F,
+                    tags$style(type="text/css",
+                               ".recalculating {opacity: 1.0;}"),
+                    br(),br(),
+                    tags$div(
+                             uiOutput(ns("downloadReport_ga")),
+                             uiOutput(ns("ElefanGaVREUpload")),
+                             style = "margin-left: 45%;"
+                         ),
+
+                    br(),br()
                     )
-                )
-                )
             )
             )
 

@@ -4,12 +4,12 @@ menuCmsy <- menuItem("CMSY",
          menuSubItem("CMSY Method", tabName = "cmsyWidget"),
          menuSubItem("CMSY Sample Dataset", tabName = "cmsySampleDataset"), id="cmsy-main"
 )
-menuElefan <- menuItem("Elefan by TropFishR",
+menuElefan <- menuItem("Length-based methods",
          menuSubItem("Information", tabName = "ElefanIntro"),
-         menuSubItem("Elefan GA", tabName = "ElefanGaWidget"),
+         menuSubItem("TropFishR", tabName = "ElefanGaWidget"),
          # menuSubItem("Elefan SA", tabName = "ElefanSaWidget"),
          # menuSubItem("Elefan", tabName = "ElefanWidget"),
-         menuSubItem("Elefan Sample Dataset", tabName = "ElefanSampleDataset")
+         menuSubItem("Sample Datasets", tabName = "ElefanSampleDataset")
 )
 menuFishMethods <- menuItem("Fish Methods",
          menuSubItem("Introduction", tabName = "FishMethodsIntro"),
