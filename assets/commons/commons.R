@@ -40,6 +40,14 @@ $('.loadingCustom').css('visibility','visible');
 shinyjs.hideComputing = function() {
 $('.loadingCustom').css('visibility','hidden');
 }
+shinyjs.expandBox = function(boxid) {
+if (document.getElementById(boxid).parentElement.className.includes('collapsed-box')) {
+$('#' + boxid).closest('.box').find('[data-widget=collapse]').click();
+}};
+shinyjs.collapseBox = function(boxid) {
+if (!document.getElementById(boxid).parentElement.className.includes('collapsed-box')) {
+$('#' + boxid).closest('.box').find('[data-widget=collapse]').click();
+}}
 "
 ##### END COMMON JAVASCRIPT CODE #####
 
@@ -69,7 +77,7 @@ getVREUsername <- function(url, token) {
   url_ <- paste0(url, token)
   response <-  GET(url_)
   response$status
-  if (response$status == 200) { 
+  if (response$status == 200) {
     call <- fromJSON(content(response, as = "text"), flatten = TRUE)
     return (call$result$username)
   } else {
@@ -90,8 +98,8 @@ buildUrl <- function(session, path) {
 createCmsyPDFReport <- function(file, cmsy, input) {
   tempReport <- file.path(tempdir(), "cmsyReportSingle.Rmd")
   file.copy("assets/cmsy/cmsyReportSingle.Rmd", tempReport, overwrite = TRUE)
-  
-  
+
+
   if (!is.null(cmsy$method$analisysChartUrl)) {
     fileAnalisysChart <- paste(tempdir(),"/","cmsy_fileAnalisysChart",".jpeg",sep="")
     downloadFile(cmsy$method$analisysChartUrl, fileAnalisysChart)
@@ -103,10 +111,10 @@ createCmsyPDFReport <- function(file, cmsy, input) {
     downloadFile(cmsy$method$managementChartUrl, fileManagementChart)
     cmsy$method$managementChart <- fileManagementChart
   }
-  
+
   # Set up parameters to pass to Rmd document
   params <- list(cmsy = cmsy, inputParams = input)
-  
+
   # Knit the document, passing in the `params` list, and eval it in a
   # child of the global environment (this isolates the code in the document
   # from the code in this app).
@@ -153,11 +161,11 @@ createYprPDFReport <- function(file, yprExec, input) {
 
 fileFolderExistsInPath <- function(path, entity) {
   folders <- listWS(path)
-  
+
   if (!endsWith(path,"/")) {
     path<-paste0(path,"/")
   }
-  
+
   hasEntity <- FALSE
   fullPath <- paste0(path,entity)
   for (e in folders) {
@@ -166,7 +174,7 @@ fileFolderExistsInPath <- function(path, entity) {
     }
   }
   return (hasEntity)
-} 
+}
 
 uploadToIMarineFolder <- function(file, baseFolder, folderName) {
   tryCatch({
@@ -174,12 +182,12 @@ uploadToIMarineFolder <- function(file, baseFolder, folderName) {
       flog.info("Creating folder [%s] in i-Marine workspace path: %s", folderName, baseFolder)
       createFolderWs(
         baseFolder,
-        folderName, 
+        folderName,
         uploadFolderDescription)
     }
     flog.info("Trying to upload %s to i-Marine workspace folder %s", file, paste0(baseFolder, uploadFolderName, "/"))
     uploadWS(
-      path = paste0(baseFolder, folderName, "/"), 
+      path = paste0(baseFolder, folderName, "/"),
       file = file,
       overwrite = TRUE
     )
