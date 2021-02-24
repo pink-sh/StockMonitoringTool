@@ -1,292 +1,342 @@
 elefanGaModule <- function(input, output, session) {
-  ns<-session$ns
-  elefan_ga <- reactiveValues()
-  elefanGaUploadVreResult <- reactiveValues()
 
-  inputElefanGaData <- reactiveValues()
-  fileGaState <- reactiveValues(
-    upload = NULL
-  )
+    ns<-session$ns
+    elefan_ga <- reactiveValues()
+    elefanGaUploadVreResult <- reactiveValues()
 
-  elefanGaFileData <- reactive({
-    if (is.null(input$fileGa) || is.null(fileGaState$upload)) {
-      return(NA)
-    }
-    contents <- read_elefan_csv(input$fileGa$datapath, input$elefanGaDateFormat)
-    print(input$fileGa)
-    if (is.null(contents$catch)) {
-      shinyjs::disable("go_ga")
-      showModal(modalDialog(
-        title = "Error",
-        if(!is.null(contents$checkDelim)){
-          if(contents$checkDelim=="not ok"){"Please ensure that your .csv file delimiter is a comma ','"  }
-        }else if(!is.null(contents$checkDec)){
-          if(contents$checkDec=="not point"){"Please ensure your separate decimals using points ‘.’ or you don't have non numeric value"
-          }else if(contents$checkName=="colname error"){"Please ensure your first column name is : 'midLength'"
-          } else{"Input file seems invalid"}},
-        easyClose = TRUE,
-        footer = NULL
-      ))
-      return (NULL)
-    } else {
-      if(is.Date(contents$dates)&&is.unsorted(contents$dates)){
-      shinyjs::disable("go")
-      showModal(modalDialog(
-        title = "Error",
-        "Please ensure that your dates are input in chronological order from left to right.  If dates are in the right order select the date format coresponding to your file.",
-        easyClose = TRUE,
-        footer = NULL
-      ))
-      return(NULL)
-    } else {
-      shinyjs::enable("go_ga")
-      return (contents)
-    }
-    }
-  })
+    inputElefanGaData <- reactiveValues(
+    )
+    fileGaState <- reactiveValues(
+        upload = NULL
+    )
 
-  observe({
-    if(!input$ELEFAN_GA_seasonalised){
-      js$removeBox2("box_elefan_ga_seasonPar")
-    }else{
-      js$showBox2("box_elefan_ga_seasonPar")
-    }
-  })
-
-  observeEvent(input$fileGa, {
-    fileGaState$upload <- 'uploaded'
-    inputElefanGaData$data <- elefanGaFileData()
-  })
-
-  observeEvent(input$elefanGaDateFormat, {
-    inputElefanGaData$data <- elefanGaFileData()
-  })
-
-  observeEvent(input$go_ga, {
-
-    js$showComputing()
-    js$removeBox("box_elefan_ga_results")
-    js$disableAllButtons()
-    result = tryCatch({
-
-      ds <- lfqModify(lfqRestructure(inputElefanGaData$data), bin_size = input$ELEFAN_GA_binSize)
-      flog.info("Starting Elegan GA computation")
-      res <- run_elefan_ga(ds,binSize =  input$ELEFAN_GA_binSize, seasonalised = input$ELEFAN_GA_seasonalised,
-                           low_par = list(Linf = min(input$ELEFAN_GA_Linf), K = min(input$ELEFAN_GA_K), t_anchor = min(input$ELEFAN_GA_t_anchor), C = min(input$ELEFAN_GA_C), ts = min(input$ELEFAN_GA_ts)),
-                           up_par = list(Linf = max(input$ELEFAN_GA_Linf), K = max(input$ELEFAN_GA_K), t_anchor = max(input$ELEFAN_GA_t_anchor), C = max(input$ELEFAN_GA_C), ts = max(input$ELEFAN_GA_ts)),
-                           popSize = input$ELEFAN_GA_popSize, maxiter = input$ELEFAN_GA_maxiter, run = input$ELEFAN_GA_run, pmutation = input$ELEFAN_GA_pmutation, pcrossover = input$ELEFAN_GA_pcrossover,
-                           elitism = input$ELEFAN_GA_elitism, MA = input$ELEFAN_GA_MA, addl.sqrt = input$ELEFAN_GA_addl.sqrt, plus_group = input$ELEFAN_GA_PLUS_GROUP)
-
-      js$hideComputing()
-      js$enableAllButtons()
-      if ('error' %in% names(res)) {
-        showModal(modalDialog(
-          title = "Error",
-          if(!is.null(res$error)){if (!is.null(grep("MA must be an odd integer",res$error))) {
-            HTML(sprintf("Please length of classes indicate for the moving average must be a odd number.<hr/> <b>%s</b>",res$error))
-          }else if(grep("POSIXlt",res$error)==1) {
-            HTML(sprintf("Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>",res$error))
-          }else{res$error}},
-          easyClose = TRUE,
-          footer = NULL
-        ))
-      # } else if(is.unsorted(contents$dates, na.rm = FALSE, strictly = FALSE)){
-      #   showModal(modalDialog(
-      #     title = "Error",
-      #     HTML(sprintf("Please ensure that your dates are input in chronological order from left to right.")),
-      #     easyClose = TRUE,
-      #     footer = NULL
-      #   ))
-      } else {
-        js$showBox("box_elefan_ga_results")
-        elefan_ga$results <- res
-        session$userData$fishingMortality$FcurrGA <- round(elefan_ga$results$plot3$currents[4]$curr.F, 2)
-
-        if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
-          flog.info("Uploading Elefan GA report to i-Marine workspace")
-          reportFileName <- paste(tempdir(),"/","ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
-          createElefanGaPDFReport(reportFileName,elefan_ga,input)
-          elefanGaUploadVreResult$res <- FALSE
-
-          basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
-
-          tryCatch({
-            uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
-            elefanGaUploadVreResult$res <- TRUE
-          }, error = function(err) {
-            flog.error("Error uploading Elefan GA report to the i-Marine Workspace: %s", err)
-            elefanGaUploadVreResult$res <- FALSE
-          }, finally = {})
+    elefanGaFileData <- reactive({
+        if (is.null(input$fileGa) || is.null(fileGaState$upload)) {
+            return(NA)
         }
-      }
-    }, error = function(err) {
-      flog.error("Error in Elefan GA: %s ",err)
-      showModal(modalDialog(
-        title = "Error",
-        HTML(sprintf(getErrorMessage("ELEFAN GA"), err)),
-        easyClose = TRUE,
-        footer = NULL
-      ))
-      return(NULL)
-    },
-    finally = {
-      js$hideComputing()
-      js$enableAllButtons()
+        contents <- read_elefan_csv(input$fileGa$datapath, input$elefanGaDateFormat)
+        print(input$fileGa)
+        if (is.null(contents$catch)) {
+            shinyjs::disable("go_ga")
+            showModal(modalDialog(
+                title = "Error",
+                if(!is.null(contents$checkDelim)){
+                    if(contents$checkDelim=="not ok"){"Please ensure that your .csv file delimiter is a comma ','"  }
+                }else if(!is.null(contents$checkDec)){
+                    if(contents$checkDec=="not point"){"Please ensure your separate decimals using points ‘.’ or you don't have non numeric value"
+                    }else if(contents$checkName=="colname error"){"Please ensure your first column name is : 'midLength'"
+                    } else{"Input file seems invalid"}},
+                easyClose = TRUE,
+                footer = NULL
+            ))
+            return (NULL)
+        } else {
+            if(is.Date(contents$dates)&&is.unsorted(contents$dates)){
+                shinyjs::disable("go_ga")
+                showModal(modalDialog(
+                    title = "Error",
+                    "Please ensure that your dates are input in chronological order from left to right.  If dates are in the right order select the date format coresponding to your file.",
+                    easyClose = TRUE,
+                    footer = NULL
+                ))
+                return(NULL)
+            } else {
+                shinyjs::enable("go_ga")
+                return (contents)
+            }
+        }
     })
 
-  })
 
-  observeEvent(input$reset_ga, {
-    fileGaState$upload <- NULL
-    resetElefanGaInputValues()
-  })
-
-  output$plot_ga_1 <- renderPlot({
-    if ('results' %in% names(elefan_ga)) {
-      plot(elefan_ga$results$plot1, Fname = "catch", date.axis = "modern")
-    }
-  })
-  output$plot_ga_2 <- renderPlot({
-    if ('results' %in% names(elefan_ga)) {
-      plot(elefan_ga$results$plot2, Fname = "rcounts", date.axis = "modern")
-    }
-  })
-  output$plot_ga_3 <- renderPlot({
-    if ('results' %in% names(elefan_ga)) {
-      plot(elefan_ga$results$plot3, mark = TRUE)
-      mtext("(a)", side = 3, at = -1, line = 0.6)
-    }
-  })
-  output$plot_ga_4 <- renderPlot({
-    if ('results' %in% names(elefan_ga)) {
-      plot(elefan_ga$results$plot4, type = "Isopleth", xaxis1 = "FM", mark = TRUE, contour = 6)
-      mtext("(b)", side = 3, at = -0.1, line = 0.6)
-    }
-  })
-  output$plot_ga_5 <- renderPlot({
-    if ('results' %in% names(elefan_ga)) {
-      plot(elefan_ga$results$data)
-    }
-  })
-  output$par_ga <- renderText({
-    if ("results" %in% names(elefan_ga)) {
-      title <- "<hr>"
-      title <- paste0(title, "<strong>Length infinity (", withMathJax("\\(L_\\infty\\)"), "in cm):</strong>&nbsp;", round(elefan_ga$results$data$par$Linf, 2))
-      title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Curving coefficient (K):</strong>&nbsp;", round(elefan_ga$results$data$par$K, 2))
-      title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month (t_anchor):</strong>&nbsp;", round(elefan_ga$results$data$par$t_anchor, 2))
-      title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Amplitude of growth oscillation (NOTE: only if 'Seasonalized' is checked; C):</strong>&nbsp;", ifelse(is.na(elefan_ga$results$data$par$C), NA, round(elefan_ga$results$data$par$C, 2)))
-      title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Winter point of oscillation (</strong>&nbsp;", withMathJax("\\(t_w\\)") , "<strong>)</strong>&nbsp;")
-      title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Summer point of oscillation (NOTE: only if 'Seasonalized' is checked; ", withMathJax("\\(ts\\)"),"=", withMathJax("\\(t_w\\)"), "- 0.5):</strong>&nbsp;", ifelse(is.na(elefan_ga$results$data$par$ts), NA, round(elefan_ga$results$data$par$ts, 2)))
-      title <- paste0(title, "<br/>")
-      title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", ifelse(is.na(elefan_ga$results$data$par$phiL), "--", round(elefan_ga$results$data$par$phiL, 2)))
-      title <- paste0(title, "<br/>")
-      title <- paste0(title, "<br>")
-      title
-    } else {  "" }
-  })
-  output$downloadReport_ga <- renderUI({
-    if ("results" %in% names(elefan_ga)) {
-      downloadButton(session$ns('createElefanGAReport'), 'Download Report')
-    }
-  })
-  output$ElefanGaVREUpload <- renderText(
-    {
-      text <- ""
-      if ("results" %in% names(elefan_ga)) {
-        if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode() == "GCUBE") {
-          if (isTRUE(elefanGaUploadVreResult$res)) {
-            text <- paste0(text, VREUploadText)
-          }
+    observe({
+        if(!input$ELEFAN_GA_seasonalised){
+            js$removeBox2("box_elefan_ga_seasonPar")
+        }else{
+            js$showBox2("box_elefan_ga_seasonPar")
         }
-      }
-      text
-    }
-  )
-  output$createElefanGAReport <- downloadHandler(
-    filename = paste("ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
-    content = function(file) {
-      createElefanGaPDFReport(file, elefan_ga, input)
-    }
-  )
-  output$tbl1_ga <- renderTable({
-    if ('results' %in% names(elefan_ga)) {
-      elefan_ga$results$plot3$df_Es
-    }
-  },
-  include.rownames=TRUE)
-  output$tbl2_ga <- renderTable({
-    if ('results' %in% names(elefan_ga)) {
-      CURR_GA<-elefan_ga$results$plot3$currents
-      CURR_GA<-CURR_GA[,-7]
-      names(CURR_GA)<-c("Length-at-1st-capture (Lc)", "Age-at-1st-capture (tc)", "Effort","Fishing mortality", "Catch", "Yield", "Biomass")
-      CURR_GA
-    }
-  },
-  include.rownames=TRUE)
+    })
 
-  output$title_tbl1_ga <- renderText({
-    if ('results' %in% names(elefan_ga)) {
-      txt <- "<p class=\"pheader_elefan\">Biological reference levels:</p>"
-      txt
-    }
-  })
-  output$title_tbl2_ga <- renderText({
-    if ('results' %in% names(elefan_ga)) {
-      txt <- "<p class=\"pheader_elefan\">Current levels:</p>"
-      txt
-    }
-  })
-  output$titlePlot1_elefan_ga <- renderText({
-    if ('results' %in% names(elefan_ga)) {
-      txt <- "<p class=\"pheader_elefan\">Raw LFQ data</p>"
-      txt
-    }
-  })
-  output$titlePlot2_elefan_ga <- renderText({
-    if ('results' %in% names(elefan_ga)) {
-      txt <- "<p class=\"pheader_elefan\">Restructured LFQ data</p>"
-      txt
-    }
-  })
-  output$titlePlot3_elefan_ga <- renderText({
-    if ('results' %in% names(elefan_ga)) {
-      txt <- "<p class=\"pheader_elefan\">Thompson and Bell model with changes in F</p>"
-      txt
-    }
-  })
-  output$titlePlot4_elefan_ga <- renderText({
-    if ('results' %in% names(elefan_ga)) {
-      txt <- "<p class=\"pheader_elefan\">Thompson and Bell model with changes in F and Lc</p>"
-      txt
-    }
-  })
-  output$titleResultsOfTheComputation_elefan_ga <- renderText({
-    if ('results' %in% names(elefan_ga)) {
-      txt <- "<h2>Results of the ELEFAN_GA computation</h2>"
-      txt
-    }
-  })
+    observeEvent(input$fileGa, {
+        fileGaState$upload <- 'uploaded'
+        inputElefanGaData$data <- elefanGaFileData()
+    })
 
-  output$elefanGADataConsiderationsText <- renderText({
-    text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getDataConsiderationTextForElefan())
-    text
-  })
+    observeEvent(input$elefanGaDateFormat, {
+        inputElefanGaData$data <- elefanGaFileData()
+    })
 
-  output$rnMax_ga <- renderText({
-    if ("results" %in% names(elefan_ga)) {
-      title <- paste0("<strong>Highest value of fitness function:</strong>&nbsp;", round(elefan_ga$results$data$Rn_max, 3))
-      title
-    } else {  "" }
-  })
+    observeEvent(input$go_ga, {
 
-  output$elefanGaTitle <- renderText({
-    session$userData$page("elefan-ga")
-    text <- "<span><h3><b>Length-based stock assessment with TropFishR</b></h3></span>"
-    text
-  })
+        js$showComputing()
+        ##        js$removeBox("box_elefan_ga_results")  ## REMOVE:
+        ##        js$collapseBox("box_results")  ## REMOVE:
+        js$disableAllButtons()
+        shinyjs::disable("go_ga")
+        shinyjs::disable("reset_ga")
+        result = tryCatch({
+
+            ds <- try(lfqModify(lfqRestructure(inputElefanGaData$data), bin_size = input$ELEFAN_GA_binSize),
+                      silent = TRUE)
+
+            ## catch error caused by binsize
+            if (inherits(ds,"try-error")) {
+                showModal(modalDialog(
+                    title = "Error",
+
+                    if (!is.null(grep("specified bin_size is smaller than",ds))) {
+                        HTML(sprintf(psate0("The specified bin size is smaller than the resolution in uploaded data! Please set bin size equal to ",
+                                            min(diff(inputElefanGaData$data$midLengths)),
+                                            " or higher and run again.<hr/> <b>%s</b>"),
+                                     ds))
+                    }else res$error,
+                    easyClose = TRUE,
+                    footer = NULL
+                ))
+            }
+
+            flog.info("Starting Elegan GA computation")
+            res <- run_elefan_ga(ds,
+                                 binSize =  input$ELEFAN_GA_binSize,
+                                 seasonalised = input$ELEFAN_GA_seasonalised,
+                                 low_par = list(Linf = min(input$ELEFAN_GA_Linf), K = min(input$ELEFAN_GA_K),
+                                                t_anchor = min(input$ELEFAN_GA_t_anchor), C = min(input$ELEFAN_GA_C),
+                                                ts = min(input$ELEFAN_GA_ts)),
+                                 up_par = list(Linf = max(input$ELEFAN_GA_Linf), K = max(input$ELEFAN_GA_K),
+                                               t_anchor = max(input$ELEFAN_GA_t_anchor), C = max(input$ELEFAN_GA_C),
+                                               ts = max(input$ELEFAN_GA_ts)),
+                                 popSize = input$ELEFAN_GA_popSize, maxiter = input$ELEFAN_GA_maxiter,
+                                 run = input$ELEFAN_GA_run, pmutation = input$ELEFAN_GA_pmutation,
+                                 pcrossover = input$ELEFAN_GA_pcrossover,
+                                 elitism = input$ELEFAN_GA_elitism,
+                                 MA = input$ELEFAN_GA_MA,
+                                 addl.sqrt = input$ELEFAN_GA_addl.sqrt,
+                                 plus_group = input$ELEFAN_GA_PLUS_GROUP)
+
+            js$hideComputing()
+            js$enableAllButtons()
+
+
+            if ('error' %in% names(res)) {
+                showModal(modalDialog(
+                    title = "Error",
+
+                    if(!is.null(res$error)){
+                        if (!is.null(grep("MA must be an odd integer",res$error))) {
+                            HTML(sprintf("Incorrect moving average (MA) value! Please provide an odd integer (e.g. 3,5,7) and run again.<hr/> <b>%s</b>",
+                                         res$error))
+                        }else if (!is.null(grep("specified bin_size is smaller than",res$error))) {
+                            HTML(sprintf(paste0("The specified bin size is smaller than the resolution in uploaded data! Please set bin size equal to ",min(diff(inputElefanGaData$data$midLengths))," or higher and run again.<hr/> <b>%s</b>"),
+                                         res$error))
+                        }else if(grep("POSIXlt",res$error)==1) {
+                            HTML(sprintf("The date could not be recognized! Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>", res$error))
+                        }else{
+                            res$error
+                        }},
+                    easyClose = TRUE,
+                    footer = NULL
+                ))
+                                        # } else if(is.unsorted(contents$dates, na.rm = FALSE, strictly = FALSE)){
+                                        #   showModal(modalDialog(
+                                        #     title = "Error",
+                                        #     HTML(sprintf("Please ensure that your dates are input in chronological order from left to right.")),
+                                        #     easyClose = TRUE,
+                                        #     footer = NULL
+                                        #   ))
+            } else {
+                ##          js$showBox("box_elefan_ga_results")
+                ##          js$collapseBox("box_datupload")
+                ##          js$collapseBox("box_settings")
+                js$expandBox("box_results")
+                elefan_ga$results <- res
+                session$userData$fishingMortality$FcurrGA <- round(elefan_ga$results$plot3$currents[4]$curr.F, 2)
+
+                if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
+                    flog.info("Uploading Elefan GA report to i-Marine workspace")
+                    reportFileName <- paste(tempdir(),"/","ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+                    createElefanGaPDFReport(reportFileName,elefan_ga,input)
+                    elefanGaUploadVreResult$res <- FALSE
+
+                    basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
+
+                    tryCatch({
+                        uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
+                        elefanGaUploadVreResult$res <- TRUE
+                    }, error = function(err) {
+                        flog.error("Error uploading Elefan GA report to the i-Marine Workspace: %s", err)
+                        elefanGaUploadVreResult$res <- FALSE
+                    }, finally = {})
+                }
+            }
+        }, error = function(err) {
+            flog.error("Error in Elefan GA: %s ",err)
+            showModal(modalDialog(
+                title = "Error",
+                HTML(sprintf(getErrorMessage("ELEFAN GA"), err)),
+                easyClose = TRUE,
+                footer = NULL
+            ))
+            return(NULL)
+        },
+        finally = {
+            js$hideComputing()
+            js$enableAllButtons()
+        })
+
+    })
+
+    observeEvent(input$reset_ga, {
+        fileGaState$upload <- NULL
+        resetElefanGaInputValues()
+    })
+
+    output$plot_ga_1 <- renderPlot({
+        if ('results' %in% names(elefan_ga)) {
+            plot(elefan_ga$results$plot1, Fname = "catch", date.axis = "modern")
+        }
+    })
+    output$plot_ga_2 <- renderPlot({
+        if ('results' %in% names(elefan_ga)) {
+            plot(elefan_ga$results$plot2, Fname = "rcounts", date.axis = "modern")
+        }
+    })
+    output$plot_ga_3 <- renderPlot({
+        if ('results' %in% names(elefan_ga)) {
+            plot(elefan_ga$results$plot3, mark = TRUE)
+            mtext("(a)", side = 3, at = -1, line = 0.6)
+        }
+    })
+    output$plot_ga_4 <- renderPlot({
+        if ('results' %in% names(elefan_ga)) {
+            plot(elefan_ga$results$plot4, type = "Isopleth", xaxis1 = "FM", mark = TRUE, contour = 6)
+            mtext("(b)", side = 3, at = -0.1, line = 0.6)
+        }
+    })
+    output$plot_ga_5 <- renderPlot({
+        if ('results' %in% names(elefan_ga)) {
+            plot(elefan_ga$results$data)
+        }
+    })
+    output$par_ga <- renderText({
+        if ("results" %in% names(elefan_ga)) {
+            title <- "<hr>"
+            title <- paste0(title, "<strong>Length infinity (", withMathJax("\\(L_\\infty\\)"), "in cm):</strong>&nbsp;", round(elefan_ga$results$data$par$Linf, 2))
+            title <- paste0(title, "<br/>")
+            title <- paste0(title, "<strong>Curving coefficient (K):</strong>&nbsp;", round(elefan_ga$results$data$par$K, 2))
+            title <- paste0(title, "<br/>")
+            title <- paste0(title, "<strong>Time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month (t_anchor):</strong>&nbsp;", round(elefan_ga$results$data$par$t_anchor, 2))
+            title <- paste0(title, "<br/>")
+            title <- paste0(title, "<strong>Amplitude of growth oscillation (NOTE: only if 'Seasonalized' is checked; C):</strong>&nbsp;", ifelse(is.na(elefan_ga$results$data$par$C), NA, round(elefan_ga$results$data$par$C, 2)))
+            title <- paste0(title, "<br/>")
+            title <- paste0(title, "<strong>Winter point of oscillation (</strong>&nbsp;", withMathJax("\\(t_w\\)") , "<strong>)</strong>&nbsp;")
+            title <- paste0(title, "<br/>")
+            title <- paste0(title, "<strong>Summer point of oscillation (NOTE: only if 'Seasonalized' is checked; ", withMathJax("\\(ts\\)"),"=", withMathJax("\\(t_w\\)"), "- 0.5):</strong>&nbsp;", ifelse(is.na(elefan_ga$results$data$par$ts), NA, round(elefan_ga$results$data$par$ts, 2)))
+            title <- paste0(title, "<br/>")
+            title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", ifelse(is.na(elefan_ga$results$data$par$phiL), "--", round(elefan_ga$results$data$par$phiL, 2)))
+            title <- paste0(title, "<br/>")
+            title <- paste0(title, "<br>")
+            title
+        } else {  "" }
+    })
+    output$downloadReport_ga <- renderUI({
+        if ("results" %in% names(elefan_ga)) {
+            downloadButton(session$ns('createElefanGAReport'), 'Download Report')
+        }
+    })
+    output$ElefanGaVREUpload <- renderText(
+    {
+        text <- ""
+        if ("results" %in% names(elefan_ga)) {
+            if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode() == "GCUBE") {
+                if (isTRUE(elefanGaUploadVreResult$res)) {
+                    text <- paste0(text, VREUploadText)
+                }
+            }
+        }
+        text
+    }
+    )
+    output$createElefanGAReport <- downloadHandler(
+        filename = paste("ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
+        content = function(file) {
+            createElefanGaPDFReport(file, elefan_ga, input)
+        }
+    )
+    output$tbl1_ga <- renderTable({
+        if ('results' %in% names(elefan_ga)) {
+            elefan_ga$results$plot3$df_Es
+        }
+    },
+    include.rownames=TRUE)
+    output$tbl2_ga <- renderTable({
+        if ('results' %in% names(elefan_ga)) {
+            CURR_GA<-elefan_ga$results$plot3$currents
+            CURR_GA<-CURR_GA[,-7]
+            names(CURR_GA)<-c("Length-at-1st-capture (Lc)", "Age-at-1st-capture (tc)", "Effort","Fishing mortality", "Catch", "Yield", "Biomass")
+            CURR_GA
+        }
+    },
+    include.rownames=TRUE)
+
+    output$title_tbl1_ga <- renderText({
+        if ('results' %in% names(elefan_ga)) {
+            txt <- "<p class=\"pheader_elefan\">Biological reference levels:</p>"
+            txt
+        }
+    })
+    output$title_tbl2_ga <- renderText({
+        if ('results' %in% names(elefan_ga)) {
+            txt <- "<p class=\"pheader_elefan\">Current levels:</p>"
+            txt
+        }
+    })
+    output$titlePlot1_elefan_ga <- renderText({
+        if ('results' %in% names(elefan_ga)) {
+            txt <- "<p class=\"pheader_elefan\">Raw LFQ data</p>"
+            txt
+        }
+    })
+    output$titlePlot2_elefan_ga <- renderText({
+        if ('results' %in% names(elefan_ga)) {
+            txt <- "<p class=\"pheader_elefan\">Restructured LFQ data</p>"
+            txt
+        }
+    })
+    output$titlePlot3_elefan_ga <- renderText({
+        if ('results' %in% names(elefan_ga)) {
+            txt <- "<p class=\"pheader_elefan\">Thompson and Bell model with changes in F</p>"
+            txt
+        }
+    })
+    output$titlePlot4_elefan_ga <- renderText({
+        if ('results' %in% names(elefan_ga)) {
+            txt <- "<p class=\"pheader_elefan\">Thompson and Bell model with changes in F and Lc</p>"
+            txt
+        }
+    })
+    output$titleResultsOfTheComputation_elefan_ga <- renderText({
+        if ('results' %in% names(elefan_ga)) {
+            txt <- "<h2>Results of the ELEFAN_GA computation</h2>"
+            txt
+        }
+    })
+
+    output$elefanGADataConsiderationsText <- renderText({
+        text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getDataConsiderationTextForElefan())
+        text
+    })
+
+    output$rnMax_ga <- renderText({
+        if ("results" %in% names(elefan_ga)) {
+            title <- paste0("<strong>Highest value of fitness function:</strong>&nbsp;", round(elefan_ga$results$data$Rn_max, 3))
+            title
+        } else {  "" }
+    })
+
+    output$elefanGaTitle <- renderText({
+        session$userData$page("elefan-ga")
+        text <- "<span><h3><b>Length-based stock assessment with TropFishR</b></h3></span>"
+        text
+    })
+
+
 }
