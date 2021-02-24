@@ -10,8 +10,7 @@ tabElefanGa <- function(id) {
 
             fluidRow(
 
-
-                ## Further information tabs
+                ## Information tabs
                 ## -------------------------------
                 hr(),
                 bsModal("modalExampleGA", "ELEFAN_GA Data Considerations",
@@ -19,16 +18,41 @@ tabElefanGa <- function(id) {
                         size = "large",
                         htmlOutput(ns("elefanGADataConsiderationsText"))),
 
+                bsModal("info_binsize", "Bin size", ns("infoBS"),
+                        size = "large",
+                        "Bin size corresponds to the length interval over which the length frequency data are aggregated, for example 2cm."),
+
+                bsModal("info_ma", "Moving average (MA)", ns("infoMA"),
+                        size = "large",
+                        p("Number indicating over how many length classes the moving average should be performed  (", withMathJax("\\(MA\\)"), ") (must be an odd number):")),
+
+
+                bsModal("info_pg", "Plus group", ns("infoPG"),
+                        size = "large",
+                        "Plus group: the largest length class with only a few individuals after which the method will pool together (important for cohort analysis later)"),
+
+
+                bsModal("info_at", "Additional squareroot transformation", ns("infoAT"),
+                        size = "large",
+                        "Additional squareroot transformation? of positive values according to Brey et al. (1988), reduces the weighting of large individuals"),
+
+
+                bsModal("info_linf", withMathJax("\\(L_\\infty\\)"), ns("infolinf"),
+                        size = "large",
+                        p("Asymptotic length/length infinity of the von Bertalanffy growth function (",withMathJax("\\(L_\\infty\\)"), "in cm):")),
+
+
 
                 ## Input - Data upload
                 ## -------------------------------
 
-                box(title = "Data upload",
+                box(id = "box_datupload",
+                    title = "Data upload",
                     width = NULL,
                     collapsible = T,
-                    status = "primary",
                     solidHeader = TRUE,
                     class = "collapsed-box",
+
                     box(
                         fileInput(ns("fileGa"), "Choose Input CSV File",
                                   accept = c(
@@ -38,8 +62,19 @@ tabElefanGa <- function(id) {
                                   )
                     ),
                     box(
-                        selectInput(ns("elefanGaDateFormat"), "Choose CSV date format", choices = c("Automatic guess" = "auto", "Year Month Day" = "ymd", "Year Day Month" = "ydm", "Day Month Year" = "dmy", "Month Day Year" = "mdy" ))
-                                        #selectInput(ns("elefanGaDateFormat"), "Choose CSV date format", choices = c("Year Month Day" = "ymd", "Year Day Month" = "ydm", "Day Month Year" = "dmy", "Month Day Year" = "mdy" ))
+                        selectInput(ns("elefanGaDateFormat"),
+                                    "Choose CSV date format",
+                                    choices = c("Automatic guess" = "auto",
+                                                "Year Month Day" = "ymd",
+                                                "Year Day Month" = "ydm",
+                                                "Day Month Year" = "dmy",
+                                                "Month Day Year" = "mdy" ))
+                        ## selectInput(ns("elefanGaDateFormat"),
+                        ##             "Choose CSV date format",
+                        ##             choices = c("Year Month Day" = "ymd",
+                        ##                         "Year Day Month" = "ydm",
+                        ##                         "Day Month Year" = "dmy",
+                        ##                         "Month Day Year" = "mdy" ))
                     )
                     ),
 
@@ -48,81 +83,103 @@ tabElefanGa <- function(id) {
                 ## Input - Settings
                 ## -------------------------------
                 hr(),
-                box(title = "Settings",
+
+                tabBox(
+                    title = "Settings",
                     width = NULL,
-                    collapsible = T,
-                    status = "primary",
-                    solidHeader = TRUE,
-                    class = "collapsed-box",
-                    collapsed = T,
-                    box(title = "Length frequency data",
-                        width = NULL,
-                        collapsible = T,
-                        class = "collapsed-box",
-                        collapsed = T,
-                        box(
-                            numericInput(ns("ELEFAN_GA_binSize"), "Bin size : length interval over which the length frequency data are aggregated", 4, min = 0.5, max = 100, step=0.5), ## HERE: change default!
-                            numericInput(ns("ELEFAN_GA_MA"), p("Number indicating over how many length classes the moving average should be performed  (", withMathJax("\\(MA\\)"), ") (must be an odd number):"), 5, min = 3, max = 101, step=2)
-                        ),
-                        box(
-                            numericInput(ns("ELEFAN_GA_PLUS_GROUP"), "Plus group: the largest length class with only a few individuals after which the method will pool together (important for cohort analysis later)", 0, min = 0, max = 100000, step=1),  ## HERE: change to yes no, if yes pick from length classes
-                            checkboxInput(ns("ELEFAN_GA_addl.sqrt"), "Additional squareroot transformation of positive values according to Brey et al. (1988), reduces the weighting of large individuals", FALSE)
-                        )),
-                    box(title = "Growth parameters",
-                        width = NULL,
-                        collapsible = T,
-                        class = "collapsed-box",
-                        collapsed = T,
-                        box(title = "Settings for optimisation procedure",
-                            width = NULL,
-                            collapsible = F,
-                            ##                      class = "collapsed-box",
-                            collapsed = F,
-                            box(
-                                checkboxInput(ns("ELEFAN_GA_seasonalised"), p("Seasonalised : allows method to calculate the seasonal growth parameters, ", withMathJax("\\(C\\)"), " and ", withMathJax("\\(t_{s}\\)")), FALSE),
-                                numericInput(ns("ELEFAN_GA_popSize"), "Population size:", 50, min = 0, max = 10000, step=1),
-                                numericInput(ns("ELEFAN_GA_maxiter"), "Maximum number of iterations to run before the GA search is halted (note this affects the run time):", 10, min = 1, max = 1000, step=1),
-                                numericInput(ns("ELEFAN_GA_run"), p("Number of consecutive generations without any improvement in the best fitness value before the GA is stopped (", withMathJax("\\(maxiter\\)"), ") (note that this affects the run time):"), 100, min = 1, max = 1000, step=1)
-                            ),
-                            box(
-                                numericInput(ns("ELEFAN_GA_pmutation"), "Probability of mutation in a parent chromosome. Usually mutation occurs with a small probability:", 0.1, min = 0.1, max = 1, step=0.1),
-                                numericInput(ns("ELEFAN_GA_pcrossover"), "Probability of crossover between pairs of chromosomes. Typically this is a large value:", 0.8, min = 0.1, max = 1, step=0.1),
-                                numericInput(ns("ELEFAN_GA_elitism"), "Number of best fitness individuals to survive at each generation:", 5, min = 0, max = 100, step=1)
-                            )),
-                        box(title = "Parameter search space",
-                            width = NULL,
-                            collapsible = F,
-                            ##                      class = "collapsed-box",
-                            collapsed = F,
-                            box(
-                                sliderInput(ns("ELEFAN_GA_Linf"), p("Asymptotic length/length infinity of the von Bertalanffy growth function (",withMathJax("\\(L_\\infty\\)"), "in cm):"), value=c(119,129), min = 1, max = 1000, step=1),
-                                sliderInput(ns("ELEFAN_GA_K"), p("The growth coefficient (", withMathJax("\\(K\\)"), ") of the von Bertalanffy growth function"), value=c(0.01,1), min = 0, max = 10, step=0.01),
-                                sliderInput(ns("ELEFAN_GA_t_anchor"), p("Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (", withMathJax("\\(t_{anchor}\\)"), ")"), 0, min = 0, max = 1, step=0.01)
-                            ),
-                            box(id="box_elefan_ga_seasonPar",
-                                sliderInput(ns("ELEFAN_GA_C"), p("Amplitude of growth oscillation (", withMathJax("\\(C\\)"), "): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point."), value=c(0,1), min = 0, max = 1, step=0.1),
-                                sliderInput(ns("ELEFAN_GA_ts"), p("Summer point (", withMathJax("\\(t_{s}\\)"), "). Values between 0 and 1. At the time of the year when the fraction, " , withMathJax("\\(t_{s}\\)"),", has elapsed, the growth rate is the highest."), value=c(0,1), min = 0, max = 1, step=0.1)
-                                )
-                            )),
-                    box(title = "Mortality rates",
-                        width = NULL,
-                        collapsible = T,
-                        class = "collapsed-box",
-                        collapsed = T,
-                        box(
-                            checkboxInput(ns("mort"), p("Seasonalised : allows method to calculate the seasonal growth parameters, ", withMathJax("\\(C\\)"), " and ", withMathJax("\\(t_{s}\\)")), FALSE)
+                    height = "1200px",
+                    side="left",
+                    selected = "Length data",
+                                        # The id lets us use input$tabset1 on the server to find the current tab
+                    id = "settings",
 
-                        )),
-                    box(title = "Stock status",
-                        width = NULL,
-                        collapsible = T,
-                        class = "collapsed-box",
-                        collapsed = T,
-                        box(
-                            checkboxInput(ns("ypr"), p("Seasonalised : allows method to calculate the seasonal growth parameters, ", withMathJax("\\(C\\)"), " and ", withMathJax("\\(t_{s}\\)")), FALSE)
+                    tabPanel("Length data",
 
-                        ))
-                    ),
+                             box(
+
+                                 numericInput(ns("ELEFAN_GA_binSize"),
+                                              p("Bin size",
+                                                actionButton(ns("infoBS"),
+                                                             tags$i(class = "fas fa-info",
+                                                                    style="font-size: 12px"),
+                                                             class="topLevelInformationButton")),
+                                              2, min = 0.5, max = 100, step=0.5),
+                                 numericInput(ns("ELEFAN_GA_MA"),
+                                              p("Moving Average (MA)",
+                                                actionButton(ns("infoMA"),
+                                                             tags$i(class = "fas fa-info",
+                                                                    style="font-size: 12px"),
+                                                             class="topLevelInformationButton")),
+                                              5, min = 3, max = 101, step=2)
+                             ),
+                             box(
+                                 numericInput(ns("ELEFAN_GA_PLUS_GROUP"),
+                                              p("Plus group",
+                                                actionButton(ns("infoPG"),
+                                                             tags$i(class = "fas fa-info",
+                                                                    style="font-size: 12px"),
+                                                             class="topLevelInformationButton")),
+                                              0, min = 0, max = 100000, step=1),  ## HERE: change to yes no, if yes pick from length classes
+                                 checkboxInput(ns("ELEFAN_GA_addl.sqrt"),
+                                               p("Additional squareroot transformation?",
+                                                actionButton(ns("infoAT"),
+                                                             tags$i(class = "fas fa-info",
+                                                                    style="font-size: 12px"),
+                                                             class="topLevelInformationButton")),
+                                 FALSE)
+                             )
+                             ),
+
+
+
+                    tabPanel("Growth parameters",
+
+                             box(title = "Parameter search space",
+                                 width = 12,
+                                 box(
+                                     sliderInput(ns("ELEFAN_GA_Linf"),
+                                                 p(withMathJax("\\(L_\\infty\\)"),
+                                                actionButton(ns("infolinf"),
+                                                             tags$i(class = "fas fa-info",
+                                                                    style="font-size: 12px"),
+                                                             class="topLevelInformationButton")),
+                                                value=c(119,129), min = 1, max = 1000, step=1),
+                                     sliderInput(ns("ELEFAN_GA_K"),
+                                                 p("The growth coefficient (", withMathJax("\\(K\\)"), ") of the von Bertalanffy growth function"),
+                                                 value=c(0.01,1), min = 0, max = 10, step=0.01),
+                                     sliderInput(ns("ELEFAN_GA_t_anchor"), p("Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (", withMathJax("\\(t_{anchor}\\)"), ")"), 0, min = 0, max = 1, step=0.01)
+                                 ),
+                                 box(
+                                     checkboxInput(ns("ELEFAN_GA_seasonalised"), p("Seasonalised : allows method to calculate the seasonal growth parameters, ", withMathJax("\\(C\\)"), " and ", withMathJax("\\(t_{s}\\)")), FALSE)
+                                 ),
+                                 box(id="box_elefan_ga_seasonPar",
+                                     sliderInput(ns("ELEFAN_GA_C"), p("Amplitude of growth oscillation (", withMathJax("\\(C\\)"), "): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point."), value=c(0,1), min = 0, max = 1, step=0.1),
+                                     sliderInput(ns("ELEFAN_GA_ts"), p("Summer point (", withMathJax("\\(t_{s}\\)"), "). Values between 0 and 1. At the time of the year when the fraction, " , withMathJax("\\(t_{s}\\)"),", has elapsed, the growth rate is the highest."), value=c(0,1), min = 0, max = 1, step=0.1)
+                                     )
+                                 ),
+                             box(title = "Settings for optimisation procedure",
+                                 width = 12,
+                                 box(
+                                     numericInput(ns("ELEFAN_GA_popSize"), "Population size:", 50, min = 0, max = 10000, step=1),
+                                     numericInput(ns("ELEFAN_GA_maxiter"), "Maximum number of iterations to run before the GA search is halted (note this affects the run time):", 10, min = 1, max = 1000, step=1),
+                                     numericInput(ns("ELEFAN_GA_run"), p("Number of consecutive generations without any improvement in the best fitness value before the GA is stopped (", withMathJax("\\(maxiter\\)"), ") (note that this affects the run time):"), 100, min = 1, max = 1000, step=1)
+                                 ),
+                                 box(
+                                     numericInput(ns("ELEFAN_GA_pmutation"), "Probability of mutation in a parent chromosome. Usually mutation occurs with a small probability:", 0.1, min = 0.1, max = 1, step=0.1),
+                                     numericInput(ns("ELEFAN_GA_pcrossover"), "Probability of crossover between pairs of chromosomes. Typically this is a large value:", 0.8, min = 0.1, max = 1, step=0.1),
+                                     numericInput(ns("ELEFAN_GA_elitism"), "Number of best fitness individuals to survive at each generation:", 5, min = 0, max = 100, step=1)
+                                 ))
+                             ),
+
+                    tabPanel("Mortality rates"
+
+                             ),
+
+                    tabPanel("Stock status"
+
+                             )
+
+                ),
 
 
 
@@ -134,7 +191,6 @@ tabElefanGa <- function(id) {
                 box(title = "Analysis",
                     width = NULL,
                     collapsible = F,
-                    status = "primary",
                     solidHeader = TRUE,
                     class = "collapsed-box",
                     collapsed = F,
@@ -162,10 +218,10 @@ tabElefanGa <- function(id) {
                 ## Results
                 ## -------------------------------
                 hr(),
-                box(title = "Results",
+                box(id = "box_results",
+                    title = "Results",
                     width = NULL,
                     collapsible = T,
-                    status = "primary",
                     solidHeader = TRUE,
                     class = "collapsed-box",
                     collapsed = T,
@@ -260,7 +316,6 @@ tabElefanGa <- function(id) {
                     id = "box_report",
                     width = NULL,
                     collapsible = F,
-                    status = "primary",
                     solidHeader = TRUE,
                     class = "collapsed-box",
                     collapsed = F,
