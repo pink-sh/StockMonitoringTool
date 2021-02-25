@@ -361,6 +361,13 @@ elefanGaModule <- function(input, output, session) {
         text
     })
 
+    output$methodConsiderationsText <- renderText({
+        text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getDataConsiderationTextForElefan())
+        text
+    })
+
+
+
     output$rnMax_ga <- renderText({
         if ("results" %in% names(elefan_ga)) {
             title <- paste0("<strong>Highest value of fitness function:</strong>&nbsp;", round(elefan_ga$results$data$Rn_max, 3))

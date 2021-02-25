@@ -6,16 +6,31 @@ tabElefanGa <- function(id) {
 
             htmlOutput("tropFishRLibVersion1", class="subTitle"),
 
-            actionButton(ns("elefanGADataConsiderations"), "Data Considerations", class="topLevelInformationButton"),
+            fluidRow(
+                div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                    actionButton(ns("elefanGADataConsiderations"), "Data Considerations",
+                                 class="topLevelInformationButton")
+                    ),
+                div(style = "display: inline-block; vertical-align:center; margin-left: 5px;",
+                    actionButton(ns("methodConsiderations"), "Method Considerations",
+                                 class="topLevelInformationButton")
+                    )
+            ),
+
 
             fluidRow(
 
                 ## Information tabs
                 ## -------------------------------
-                bsModal("modalExampleGA", "ELEFAN_GA Data Considerations",
+                bsModal("modalExampleGA", "Data Considerations",
                         ns("elefanGADataConsiderations"),
                         size = "large",
                         htmlOutput(ns("elefanGADataConsiderationsText"))),
+
+                bsModal("modalMethod", "Method Considerations",
+                        ns("methodConsiderations"),
+                        size = "large",
+                        htmlOutput(ns("methodConsiderationsText"))),
 
                 bsModal("info_yearsel", "Selected years", ns("infoYearSel"),
                         size = "large",
@@ -132,10 +147,18 @@ tabElefanGa <- function(id) {
                 ## -------------------------------
                 br(),
 
+                box(id = "box_settings",
+                    title = "Settings",
+                    width = NULL,
+                    collapsible = T,
+                    solidHeader = TRUE,
+                    class = "collapsed-box",
+                    collapsed = TRUE,
+
                 tabBox(
                     title = "Settings",
                     width = NULL,
-                    height = "550px",
+                    height = "600px",
                     side="left",
                     selected = "Length data",
                                         # The id lets us use input$tabset1 on the server to find the current tab
@@ -461,6 +484,7 @@ tabElefanGa <- function(id) {
                                  )
                              )
                              )
+                    )
                 ),
 
 
