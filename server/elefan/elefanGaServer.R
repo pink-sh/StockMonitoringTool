@@ -65,6 +65,36 @@ elefanGaModule <- function(input, output, session) {
         inputElefanGaData$data <- elefanGaFileData()
     })
 
+
+    ## UIs
+    ## ----------------------------
+
+    output$ELEFAN_years_selected_out <- renderUI({
+        allyears <- try(format(inputElefanGaData$data$dates,"%Y"),silent=TRUE)
+        if(inherits(allyears,"try-error")) allyears = NULL
+        selectInput(ns("ELEFAN_years_selected"), "",
+                    choices = allyears, selected = allyears,
+                    multiple = TRUE,
+                    width = "30%")
+    })
+
+    output$ELEFAN_binSize_out <- renderUI({
+        binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
+        maxL <- try(round(max(inputElefanGaData$data$midLengths)/4),silent=TRUE)
+        if(inherits(binSize,"try-error")){
+            binSize <- 2
+            maxL <- 10
+        }
+        numericInput(ns("ELEFAN_GA_binSize"), "",
+                     binSize, min = binSize, max = maxL, step=0.5,
+                     width ='30%')
+    })
+
+
+
+
+
+
     observeEvent(input$go_ga, {
 
         js$showComputing()
@@ -75,7 +105,13 @@ elefanGaModule <- function(input, output, session) {
         shinyjs::disable("reset_ga")
         result = tryCatch({
 
-            ds <- try(lfqModify(lfqRestructure(inputElefanGaData$data), bin_size = input$ELEFAN_GA_binSize),
+            print(input$ELEFAN_years_selected)
+
+            ## inputElefanGaData$data$dates
+
+            ds <- try(lfqModify(lfqRestructure(inputElefanGaData$data),
+                                bin_size = input$ELEFAN_GA_binSize,
+                                aggregate = input$ELEFAN_agg),
                       silent = TRUE)
 
             ## catch error caused by binsize
