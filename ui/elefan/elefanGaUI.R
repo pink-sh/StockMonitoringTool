@@ -22,12 +22,12 @@ tabElefanGa <- function(id) {
 
                 ## Information tabs
                 ## -------------------------------
-                bsModal("modalExampleGA", "Data Considerations",
+                bsModal("modalExampleGA", "Data Considerations - TropFishR",
                         ns("elefanGADataConsiderations"),
                         size = "large",
                         htmlOutput(ns("elefanGADataConsiderationsText"))),
 
-                bsModal("modalMethod", "Method Considerations",
+                bsModal("modalMethod", "Method Considerations - TropFishR",
                         ns("methodConsiderations"),
                         size = "large",
                         htmlOutput(ns("methodConsiderationsText"))),
@@ -150,13 +150,12 @@ tabElefanGa <- function(id) {
                 box(id = "box_settings",
                     title = "Settings",
                     width = NULL,
-                    collapsible = T,
+                    collapsible = FALSE, ## careful: if made collapsible the renderUi does not update! see: https://github.com/rstudio/shinydashboard/issues/234
                     solidHeader = TRUE,
                     class = "collapsed-box",
-                    collapsed = TRUE,
 
                 tabBox(
-                    title = "Settings",
+                    title = "",
                     width = NULL,
                     height = "600px",
                     side="left",

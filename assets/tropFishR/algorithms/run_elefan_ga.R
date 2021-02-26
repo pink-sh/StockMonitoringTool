@@ -74,6 +74,7 @@ run_elefan_ga <- function(
 
     #plot(lfqbin, Fname = "rcounts",date.axis = "modern", ylim=c(0,130))
 
+    ## HERE: remove
     lt <- lfqFitCurves(smt_lfqa, par = list(Linf=123, K=0.2, t_anchor=0.25, C=0.3, ts=0),
 
                        draw = TRUE, col = "grey", lty = 1, lwd=1.5)
@@ -82,10 +83,12 @@ run_elefan_ga <- function(
 
     #                    draw = TRUE, col = "goldenrod1", lty = 1, lwd=1.5)
 
+    ## HERE: remove
     lt <- lfqFitCurves(smt_lfqa, par = res_GA$par,
 
                        draw = TRUE, col = "blue", lty = 1, lwd=1.5)
 
+    ## HERE: only one used
     lt <- lfqFitCurves(smt_lfqa, par = res_GA$par,
 
                        draw = TRUE, col = "lightblue", lty = 1, lwd=1.5)
@@ -109,7 +112,7 @@ run_elefan_ga <- function(
 
 
     # estimation of M
-
+    ## HERE: make method user input?
     Ms <- M_empirical(Linf = res_GA$par$Linf, K_l = res_GA$par$K, method = "Then_growth")
 
     smt_lfqa$M <- as.numeric(Ms)
@@ -120,6 +123,7 @@ run_elefan_ga <- function(
 
     #> [1] "M = 0.217"
 
+    ## HERE: potential much user input: select year of multiple years, plus group?
     # summarise catch matrix into vector
     smt_lfqb <- lfqModify(lfqRestructure(smt_lfqa), vectorise_catch = TRUE)
     # assign estimates to the data list
