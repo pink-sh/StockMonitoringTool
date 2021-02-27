@@ -38,7 +38,7 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_agg", "Data aggregation", ns("infoAGG"),
                         size = "large",
-                        "Choose the temporal resolution of aggregated length data. Options are month, quarter, and year. Quarter and year are more meaningful for slow-growing species and if uploaded data covers at least one year or several years, respectively."),
+                        "Choose the temporal resolution of aggregated length data. Options are 'none', 'month', 'quarter', and 'year'. Quarter and year are more meaningful for slow-growing species and if uploaded data covers at least one year or several years, respectively."),
 
                 bsModal("info_binsize", "Bin size", ns("infoBS"),
                         size = "large",
@@ -50,11 +50,11 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_pg", "Plus group", ns("infoPG"),
                         size = "large",
-                        "Plus group: the largest length class with only a few individuals after which the method will pool together (important for cohort analysis later)."),
+                        "Allows to lump together all catches larger than given size (so called 'plus group'). Note: This can greatly affect the estimation of ",withMathJax("\\(L_\\infty\\)")," with ELEFAN. Default '0' implies that no plus group is used."),
 
                 bsModal("info_at", "Additional squareroot transformation", ns("infoAT"),
                         size = "large",
-                        "Additional squareroot transformation? of positive values according to Brey et al. (1988), reduces the weighting of large individuals."),
+                        "Additional squareroot transformation according to Brey et al. (1988) reduces the weighting of large individuals."),
 
                 bsModal("info_linf", withMathJax("\\(L_\\infty\\)"), ns("infolinf"),
                         size = "large",
@@ -93,19 +93,25 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_MaxRuns", "Maximum number of runs", ns("infoMaxRuns"),
                         size = "large",
-                        p("Number of consecutive generations without any improvement in the best fitness value before the GA is stopped (", withMathJax("\\(maxiter\\)"), ") (note that this affects the run time).")),
+                        p("Number of consecutive generations without any improvement in the best fitness value before the GA is stopped (note that this affects the run time).")),
 
                 bsModal("info_pmut", "Probability of mutation", ns("infoPmut"),
                         size = "large",
-                        "Probability of mutation in a parent chromosome. Usually mutation occurs with a small probability."),
+                        "Probability of mutation in a parent chromosome. Usually mutation occurs with a small probability and by default is set to 0.2."),
 
                 bsModal("info_pcross", "Probability of crossover", ns("infoPcross"),
                         size = "large",
-                        "Probability of crossover between pairs of chromosomes. Typically this is a large value."),
+                        "Probability of crossover between pairs of chromosomes. Typically this is a large value and by default is set to 0.8."),
 
                 bsModal("info_elite", "Degree of elitism", ns("infoElite"),
                         size = "large",
-                        "Number of best fitness individuals to survive at each generation."),
+                        "Number of best fitness individuals to survive at each generation. By default the top 5% individuals will survive at each iteration."),
+
+
+                bsModal("info_yearselcc", "Selected years", ns("infoYearSelCC"),
+                        size = "large",
+                        "Select all or a range of years covered by uploaded data set for the estimation of total and fishing mortality using the catch curve. If multiple years are selected the total and fishing mortality rates correspond to the average rates of selected years."),
+
 
                 ## bsModal("info_XX", "XX", ns("infoXX"),
                 ##         size = "large",),
@@ -154,337 +160,369 @@ tabElefanGa <- function(id) {
                     solidHeader = TRUE,
                     class = "collapsed-box",
 
-                tabBox(
-                    title = "",
-                    width = NULL,
-                    height = "600px",
-                    side="left",
-                    selected = "Length data",
+                    tabBox(
+                        title = "",
+                        width = NULL,
+                        height = "680px",
+                        side="left",
+                        selected = "Length data",
                                         # The id lets us use input$tabset1 on the server to find the current tab
-                    id = "settings",
+                        id = "settings",
 
-                    tabPanel("Length data",
+                        tabPanel("Length data",
 
-                             box(title = "Data aggregation",
+                                 box(width = 5,
 
-                                 fluidRow(
-                                     div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                         HTML("<b>Select years for analysis</b>")
-                                         ),
-                                     div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
-                                         actionButton(ns("infoYearSel"),
-                                                      tags$i(class = "fas fa-info",
-                                                             style="font-size: 12px"),
-                                                      ## size = "extra-small",
-##                                                      style='padding:1px; font-size:70%',
-                                                      class="topLevelInformationButton")
-                                         )
+                                     fluidRow(
+                                         div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                                             HTML("<b>Select years for analysis</b>")
+                                             ),
+                                         div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                                             actionButton(ns("infoYearSel"),
+                                                          tags$i(class = "fas fa-info",
+                                                                 style="font-size: 12px"),
+                                                          ## size = "extra-small",
+                                                          ##                                                      style='padding:1px; font-size:70%',
+                                                          class="topLevelInformationButton")
+                                             )
 
-                                 ),
-                                 div(style = "margin-top:-3px",
-                                     uiOutput(ns("ELEFAN_years_selected_out"))
                                      ),
-
-
-
-                                 selectInput(ns("ELEFAN_agg"),
-                                              p("Aggregate data by",
-                                                actionButton(ns("infoAGG"),
-                                                             tags$i(class = "fas fa-info",
-                                                                    style="font-size: 12px"),
-                                                             class="topLevelInformationButton")),
-                                             choices = c("Choose one"="",
-                                                         c("month","quarter","year")),
-                                             selected = "month",
-                                             width ='30%'),
-
-                                 fluidRow(
-                                     div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                         HTML("<b>Bin Size</b>")
+                                     div(style = "margin-top:-3px",
+                                         uiOutput(ns("ELEFAN_years_selected_out"))
                                          ),
-                                     div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
-                                         actionButton(ns("infoBS"),
-                                                      tags$i(class = "fas fa-info",
-                                                             style="font-size: 12px"),
-                                                      ## size = "extra-small",
-##                                                      style='padding:1px; font-size:70%',
-                                                      class="topLevelInformationButton")
-                                         )
 
-                                 ),
-                                 div(style = "margin-top:-3px",
-                                     uiOutput(ns("ELEFAN_binSize_out")),
+
+
+                                     selectInput(ns("ELEFAN_agg"),
+                                                 p("Aggregate data by",
+                                                   actionButton(ns("infoAGG"),
+                                                                tags$i(class = "fas fa-info",
+                                                                       style="font-size: 12px"),
+                                                                class="topLevelInformationButton")),
+                                                 choices = c("Choose one"="",
+                                                             c("none","month","quarter","year")),
+                                                 selected = "none",
+                                                 width ='50%'),
+
+                                     fluidRow(
+                                         div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                                             HTML("<b>Bin Size</b>")
+                                             ),
+                                         div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                                             actionButton(ns("infoBS"),
+                                                          tags$i(class = "fas fa-info",
+                                                                 style="font-size: 12px"),
+                                                          ## size = "extra-small",
+                                                          ##                                                      style='padding:1px; font-size:70%',
+                                                          class="topLevelInformationButton")
+                                             )
+
                                      ),
+                                     div(style = "margin-top:-3px",
+                                         uiOutput(ns("ELEFAN_binSize_out")),
+                                         ),
 
 
 
-                                 numericInput(ns("ELEFAN_GA_PLUS_GROUP"),
-                                              p("Plus group",
-                                                actionButton(ns("infoPG"),
-                                                             tags$i(class = "fas fa-info",
-                                                                    style="font-size: 12px"),
-                                                             class="topLevelInformationButton")),
-                                              0, min = 0, max = 100000, step=1,
-                                              width ='30%')
-                                 ),
+                                     numericInput(ns("ELEFAN_GA_PLUS_GROUP"),
+                                                  p("Plus group",
+                                                    actionButton(ns("infoPG"),
+                                                                 tags$i(class = "fas fa-info",
+                                                                        style="font-size: 12px"),
+                                                                 class="topLevelInformationButton")),
+                                                  0, min = 0, max = 100000, step=1,
+                                                  width ='50%'),
 
-                             box(title = "Data restructuring",
+                                     numericInput(ns("ELEFAN_GA_MA"),
+                                                  p("Moving Average (MA)",
+                                                    actionButton(ns("infoMA"),
+                                                                 tags$i(class = "fas fa-info",
+                                                                        style="font-size: 12px"),
+                                                                 class="topLevelInformationButton")),
+                                                  5, min = 3, max = 101, step=2,
+                                                  width ='50%'),
 
-                                 numericInput(ns("ELEFAN_GA_MA"),
-                                              p("Moving Average (MA)",
-                                                actionButton(ns("infoMA"),
-                                                             tags$i(class = "fas fa-info",
-                                                                    style="font-size: 12px"),
-                                                             class="topLevelInformationButton")),
-                                              5, min = 3, max = 101, step=2,
-                                              width ='30%'),
+                                     br(),
 
-                                 br(),
-
-                                 checkboxInput(ns("ELEFAN_GA_addl.sqrt"),
-                                               p("Additional squareroot transformation?",
-                                                 actionButton(ns("infoAT"),
-                                                              tags$i(class = "fas fa-info",
-                                                                     style="font-size: 12px"),
-                                                              class="topLevelInformationButton")),
-                                               FALSE)
-                                 )
-                             ),
-
-
-
-                    tabPanel("Growth parameters",
-
-                             box(title = "Search space for growth parameters",
-                                 width = 12,
-                                 box(
-                                     sliderInput(ns("ELEFAN_GA_Linf"),
-                                                 p(withMathJax("\\(L_\\infty\\)"),
-                                                   actionButton(ns("infolinf"),
-                                                                tags$i(class = "fas fa-info",
-                                                                       style="font-size: 12px"),
-                                                                class="topLevelInformationButton")),
-                                                 value=c(119,129), min = 1, max = 1000, step=1),
-                                     sliderInput(ns("ELEFAN_GA_K"),
-                                                 p(withMathJax("\\(K\\)"),
-                                                   actionButton(ns("infok"),
-                                                                tags$i(class = "fas fa-info",
-                                                                       style="font-size: 12px"),
-                                                                class="topLevelInformationButton")),
-                                                 value=c(0.01,1), min = 0, max = 10, step=0.01),
-                                     sliderInput(ns("ELEFAN_GA_t_anchor"),
-                                                 p(withMathJax("\\(t_{anchor}\\)"),
-                                                   actionButton(ns("infotanchor"),
-                                                                tags$i(class = "fas fa-info",
-                                                                       style="font-size: 12px"),
-                                                                class="topLevelInformationButton")),
-                                                 0, min = 0, max = 1, step=0.01)
-                                 ),
-                                 box(
-                                     checkboxInput(ns("ELEFAN_GA_seasonalised"),
-                                                   p("Seasonal model?",
-                                                     actionButton(ns("infoSeaonal"),
+                                     checkboxInput(ns("ELEFAN_GA_addlsqrt"),
+                                                   p("Additional squareroot transformation?",
+                                                     actionButton(ns("infoAT"),
                                                                   tags$i(class = "fas fa-info",
                                                                          style="font-size: 12px"),
                                                                   class="topLevelInformationButton")),
                                                    FALSE)
                                  ),
-                                 box(id="box_elefan_ga_seasonPar",
-                                     sliderInput(ns("ELEFAN_GA_C"),
-                                                 p(withMathJax("\\(C\\)"),
-                                                   actionButton(ns("infoC"),
-                                                                tags$i(class = "fas fa-info",
-                                                                       style="font-size: 12px"),
-                                                                class="topLevelInformationButton")),
-                                                 value=c(0,1), min = 0, max = 1, step=0.1),
-                                     sliderInput(ns("ELEFAN_GA_ts"),
-                                                 p(withMathJax("\\(t_{s}\\)"),
-                                                   actionButton(ns("infots"),
-                                                                tags$i(class = "fas fa-info",
-                                                                       style="font-size: 12px"),
-                                                                class="topLevelInformationButton")),
-                                                 value=c(0,1), min = 0, max = 1, step=0.1)
+                                 box(id = "box_exploPlots",
+                                     width = 7,
+                                     tags$div(
+                                              plotOutput(ns("plot_explo1"), width = "90%",
+                                                         height = "280px"),
+                                              div(style = "margin-top:-10px; margin-left: 10px",
+                                                  htmlOutput(ns("title_explo1"))
+                                                  ),
+                                              plotOutput(ns("plot_explo2"), width = "90%",
+                                                         height = "280px"),
+                                              div(style = "margin-top:-10px; margin-left: 10px",
+                                                  htmlOutput(ns("title_explo2"))
+                                                  ),
+                                              style = "margin-left: 10%;"
+                                          )
                                      )
-                                 )
-                             ),
-
-                    tabPanel("ELEFAN optimisation",
-
-                             box(title = "Settings for ELEFAN optimisation procedure",
-                                 width = 12,
-                                 box(
-                                     numericInput(ns("ELEFAN_GA_popSize"),
-                                                  p("Population size:",
-                                                    actionButton(ns("infoPopSize"),
-                                                                 tags$i(class = "fas fa-info",
-                                                                        style="font-size: 12px"),
-                                                                 class="topLevelInformationButton")),
-                                                  50, min = 0, max = 10000, step=1),
-                                     numericInput(ns("ELEFAN_GA_maxiter"),
-                                                  p("Maximum number of generations",
-                                                    actionButton(ns("infoMaxIter"),
-                                                                 tags$i(class = "fas fa-info",
-                                                                        style="font-size: 12px"),
-                                                                 class="topLevelInformationButton")),
-                                                  10, min = 1, max = 1000, step=1),
-                                     numericInput(ns("ELEFAN_GA_run"),
-                                                  p("Number of generations without improvment",
-                                                    actionButton(ns("infoMaxRuns"),
-                                                                 tags$i(class = "fas fa-info",
-                                                                        style="font-size: 12px"),
-                                                                 class="topLevelInformationButton")),
-                                                  100, min = 1, max = 1000, step=1)
                                  ),
-                                 box(
-                                     numericInput(ns("ELEFAN_GA_pmutation"),
-                                                  p("Probability of mutation",
-                                                    actionButton(ns("infoPmut"),
+
+
+
+                        tabPanel("Growth parameters",
+
+                                 box(title = "Search space for growth parameters",
+                                     width = 12,
+                                     box(
+                                         fluidRow(
+                                             div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                                                 HTML(paste0("<b>",withMathJax("\\(L_\\infty\\)"),"</b>"))
+                                                 ),
+                                             div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                                                 actionButton(ns("infolinf"),
+                                                              tags$i(class = "fas fa-info",
+                                                                     style="font-size: 12px"),
+                                                              class="topLevelInformationButton")
+                                                 )
+
+                                         ),
+                                         div(style = "margin-top:-3px",
+                                             uiOutput(ns("ELEFAN_GA_Linf_out")),
+                                             ),
+                                         sliderInput(ns("ELEFAN_GA_K"),
+                                                     p(withMathJax("\\(K\\)"),
+                                                       actionButton(ns("infok"),
+                                                                    tags$i(class = "fas fa-info",
+                                                                           style="font-size: 12px"),
+                                                                    class="topLevelInformationButton")),
+                                                     value=c(0.05,1), min = 0, max = 10, step=0.01),
+                                         sliderInput(ns("ELEFAN_GA_t_anchor"),
+                                                     p(withMathJax("\\(t_{anchor}\\)"),
+                                                       actionButton(ns("infotanchor"),
+                                                                    tags$i(class = "fas fa-info",
+                                                                           style="font-size: 12px"),
+                                                                    class="topLevelInformationButton")),
+                                                     value=c(0,1), min = 0, max = 1, step=0.01)
+                                     ),
+                                     box(
+                                         checkboxInput(ns("ELEFAN_GA_seasonalised"),
+                                                       p("Seasonal model?",
+                                                         actionButton(ns("infoSeaonal"),
+                                                                      tags$i(class = "fas fa-info",
+                                                                             style="font-size: 12px"),
+                                                                      class="topLevelInformationButton")),
+                                                       FALSE)
+                                     ),
+                                     box(id="box_elefan_ga_seasonPar",
+                                         sliderInput(ns("ELEFAN_GA_C"),
+                                                     p(withMathJax("\\(C\\)"),
+                                                       actionButton(ns("infoC"),
+                                                                    tags$i(class = "fas fa-info",
+                                                                           style="font-size: 12px"),
+                                                                    class="topLevelInformationButton")),
+                                                     value=c(0,1), min = 0, max = 1, step=0.01),
+                                         sliderInput(ns("ELEFAN_GA_ts"),
+                                                     p(withMathJax("\\(t_{s}\\)"),
+                                                       actionButton(ns("infots"),
+                                                                    tags$i(class = "fas fa-info",
+                                                                           style="font-size: 12px"),
+                                                                    class="topLevelInformationButton")),
+                                                     value=c(0,1), min = 0, max = 1, step=0.01)
+                                         )
+                                     )
+                                 ),
+
+                        tabPanel("ELEFAN optimisation",
+
+                                 box(title = "Settings for ELEFAN optimisation procedure",
+                                     width = 12,
+                                     box(
+                                         numericInput(ns("ELEFAN_GA_popSize"),
+                                                      p("Population size:",
+                                                        actionButton(ns("infoPopSize"),
+                                                                     tags$i(class = "fas fa-info",
+                                                                            style="font-size: 12px"),
+                                                                     class="topLevelInformationButton")),
+                                                      100, min = 50, max = 1e3, step=1,
+                                                      width = "30%"),
+                                         numericInput(ns("ELEFAN_GA_maxiter"),
+                                                      p("Maximum number of generations",
+                                                        actionButton(ns("infoMaxIter"),
+                                                                     tags$i(class = "fas fa-info",
+                                                                            style="font-size: 12px"),
+                                                                     class="topLevelInformationButton")),
+                                                      50, min = 20, max = 1e3, step=1,
+                                                      width = "30%"),
+                                         numericInput(ns("ELEFAN_GA_run"),
+                                                      p("Number of generations without improvment",
+                                                        actionButton(ns("infoMaxRuns"),
+                                                                     tags$i(class = "fas fa-info",
+                                                                            style="font-size: 12px"),
+                                                                     class="topLevelInformationButton")),
+                                                      20, min = 10, max = 1e3, step=1,
+                                                      width = "30%")
+                                     ),
+                                     box(
+                                         numericInput(ns("ELEFAN_GA_pmutation"),
+                                                      p("Probability of mutation",
+                                                        actionButton(ns("infoPmut"),
+                                                                     tags$i(class = "fas fa-info",
+                                                                            style="font-size: 12px"),
+                                                                     class="topLevelInformationButton")),
+                                                      0.2, min = 0.1, max = 1, step=0.1,
+                                                      width = "30%"),
+                                         numericInput(ns("ELEFAN_GA_pcrossover"),
+                                                      p("Probability of crossover",
+                                                        actionButton(ns("infoPcross"),
+                                                                     tags$i(class = "fas fa-info",
+                                                                            style="font-size: 12px"),
+                                                                     class="topLevelInformationButton")),
+                                                      0.8, min = 0.1, max = 1, step=0.1,
+                                                      width = "30%"),
+                                         numericInput(ns("ELEFAN_GA_elitism"),
+                                                      p("Degree of elitism",
+                                                        actionButton(ns("infoElite"),
+                                                                     tags$i(class = "fas fa-info",
+                                                                            style="font-size: 12px"),
+                                                                     class="topLevelInformationButton")),
+                                                      5, min = 1, max = 1e2, step=1,
+                                                      width = "30%")
+                                     ))
+                                 ),
+
+                        tabPanel("Mortality rates",
+                                 box(title = "Natural mortality",
+                                     selectInput(ns("natM"),
+                                                 "Method:",
+                                                 choices = c("Then_growth",
+                                                             "Pauly_Linf",
+                                                             "Then_tmax"),
+                                                 selected = "Then_growth",
+                                                 width ='50%'),
+
+                                     box(id="box_natM_pauly",
+                                         width="100%",
+                                         ## slider for temperature
+                                         sliderInput(ns("temp"),
+                                                     label = "Average ambient sea surface temperature:",
+                                                     min = 0,
+                                                     max = 40,
+                                                     step = 0.5,
+                                                     value = 20),
+                                         br(),
+                                         ## schooling correction in Pauly's formula?
+                                         checkboxInput(ns("schooling"),
+                                                       label = "Correction for schooling in fish?",
+                                                       value = FALSE)
+                                         ),
+                                     box(id="box_natM_then_tmax",
+                                         width="100%",
+                                         ## tmax for Then_tmax
+                                         numericInput(ns("tmax"),
+                                                      label = "Maximum age",
+                                                      min = 0,
+                                                      max = 200,
+                                                      value = 10, width = '30%')
+                                         )
+                                     ),
+                                 box(title = "Catch curve",
+                                     numericInput(ns("ELEFAN_GA_binSize2"),
+                                                  p("Bin size for catch curve",
+                                                    actionButton(ns("infoBS"),
                                                                  tags$i(class = "fas fa-info",
                                                                         style="font-size: 12px"),
                                                                  class="topLevelInformationButton")),
-                                                  0.1, min = 0.1, max = 1, step=0.1),
-                                     numericInput(ns("ELEFAN_GA_pcrossover"),
-                                                  p("Probability of crossover",
-                                                    actionButton(ns("infoPcross"),
-                                                                 tags$i(class = "fas fa-info",
-                                                                        style="font-size: 12px"),
-                                                                 class="topLevelInformationButton")),
-                                                  0.8, min = 0.1, max = 1, step=0.1),
-                                     numericInput(ns("ELEFAN_GA_elitism"),
-                                                  p("Degree of elitism",
-                                                    actionButton(ns("infoElite"),
-                                                                 tags$i(class = "fas fa-info",
-                                                                        style="font-size: 12px"),
-                                                                 class="topLevelInformationButton")),
-                                                  5, min = 0, max = 100, step=1)
-                                 ))
-                             ),
+                                                  2, min = 0.5, max = 100, step=0.5,
+                                                  width = "30%"),
 
-                    tabPanel("Natural mortality formula",
-                             box(
-                                 selectInput(inputId = "natM",
-                                             "Method:",
-                                             choices = c("Then_growth",
-                                                         "Pauly_Linf",
-                                                         "Then_tmax"),
-                                             selected = "Then_growth",
-                                             width ='70%'),
-
-                                 ## schooling correction in Pauly's formula?
-                                 checkboxInput(inputId = "schooling",
-                                               label = "Correction for schooling in fish?",
-                                               value = FALSE)
-
-                             ),
-                             box(
-                                 ## slider for temperature
-                                 sliderInput(inputId = "temp",
-                                             label = "Average ambient sea surface temperature:",
-                                             min = 0,
-                                             max = 40,
-                                             step = 0.5,
-                                             value = 20),
-
-
-                                 ## tmax for Then_tmax
-                                 numericInput(inputId = "tmax",
-                                              label = "Maximum age",
-                                              min = 0,
-                                              max = 200,
-                                              value = 10, width = '20%')
-                             )
-                             ),
-
-                    tabPanel("Catch curve",
-                             box(
-                                 numericInput(ns("ELEFAN_GA_binSize2"),
-                                              p("Bin size for catch curve",
-                                                actionButton(ns("infoBS"),
-                                                             tags$i(class = "fas fa-info",
-                                                                    style="font-size: 12px"),
-                                                             class="topLevelInformationButton")),
-                                              2, min = 0.5, max = 100, step=0.5)
-                             )
-                             ),
-
-                    tabPanel("Yield per recruit model",
-                             box(
-
-                                 numericInput(ns("ELEFAN_GA_binSize3"),
-                                              p("Bin size for catch curve",
-                                                actionButton(ns("infoBS"),
-                                                             tags$i(class = "fas fa-info",
-                                                                    style="font-size: 12px"),
-                                                             class="topLevelInformationButton")),
-                                              2, min = 0.5, max = 100, step=0.5),
-
-                                 wellPanel(
                                      fluidRow(
-                                         ## a
-                                         column(6,
-                                                numericInput(inputId="LWa", label=" Constant  (a) ",
-                                                             value = 0.001)),
-                                         ## b
-                                         column(6,
-                                                numericInput(inputId="LWb", label="Exponent (b) ",
-                                                             value = 3)))
-                                 )
+                                         div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                                             HTML("<b>Select years for catch curve</b>")
+                                             ),
+                                         div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                                             actionButton(ns("infoYearSelCC"),
+                                                          tags$i(class = "fas fa-info",
+                                                                 style="font-size: 12px"),
+                                                          class="topLevelInformationButton")
+                                             )
 
-                             ),
-                             box(
-                                 fluidRow(
-                                     ## L50
-                                     column(6,
-                                            uiOutput("l50")),
-                                     ## wqs
-                                     column(6,
-                                            uiOutput("wqs"))),
+                                     ),
+                                     div(style = "margin-top:-3px",
+                                         uiOutput(ns("ELEFAN_years_selected_cc_out"))
+                                         )
+                                     )
+                                 ),
 
-                                 sliderInput(
-                                     inputId = "fmChangeAbs",
-                                     label = "Fishing mortality (absolute)",
-                                     dragRange = TRUE,
-                                     value = range(0, 10),
-                                     min = 0, max = 20,
-                                     step = 1
+                        tabPanel("Yield per recruit model",
+                                 box(
+
+                                     wellPanel(
+                                         fluidRow(
+                                             ## a
+                                             column(6,
+                                                    numericInput(ns("LWa"),
+                                                                 label=" Constant  (a) ",
+                                                                 value = 0.001)),
+                                             ## b
+                                             column(6,
+                                                    numericInput(ns("LWb"),
+                                                                 label="Exponent (b) ",
+                                                                 value = 3)))
+                                     )
 
                                  ),
-                                 uiOutput("lcChange"),
-
-                                 wellPanel(
+                                 box(
                                      fluidRow(
-                                         ## length out of fm vector
+                                         ## L50
                                          column(6,
-                                                numericInput(
-                                                    inputId = "fmLengthOut",
-                                                    label = "Fishing mortality",
-                                                    value = 50,
-                                                    min = 0
-                                                )),
-                                         ## length out of lc vector
-                                         column(6, numericInput(
-                                                       inputId = "lcLengthOut",
-                                                       label = "Selectivity (L50)",
-                                                       value = 50,
-                                                       min = 0
-                                                   )))
-                                 ),
+                                                uiOutput("l50")),
+                                         ## wqs
+                                         column(6,
+                                                uiOutput("wqs"))),
 
-                                 "Yield and biomass is returned relative to following stock size in numbers.",
-                                 br(),
-                                 br(),
-                                 ## stock size
-                                 numericInput(
-                                     inputId = "stockSize",
-                                     label = "Stock size",
-                                     value = 1,
-                                     min = 1,
-                                     width = '30%'
+                                     sliderInput(ns("fmchangeRange"),
+                                         label = "Fishing mortality (absolute)",
+                                         dragRange = TRUE,
+                                         value = range(0, 10),
+                                         min = 0, max = 20,
+                                         step = 1
+
+                                     ),
+
+                                     wellPanel(
+                                         fluidRow(
+                                             ## length out of fm vector
+                                             column(6,
+                                                    numericInput(ns("fmLengthOut"),
+                                                        label = "Fishing mortality",
+                                                        value = 100,
+                                                        min = 0
+                                                    )),
+                                             ## length out of lc vector
+                                             column(6, numericInput(ns("lcLengthOut"),
+                                                           label = "Selectivity (L50)",
+                                                           value = 100,
+                                                           min = 0
+                                                       )))
+                                     ),
+
+                                     "Yield and biomass is returned relative to following stock size in numbers.",
+                                     br(),
+                                     br(),
+                                     ## stock size
+                                     numericInput(ns("stockSize"),
+                                                  label = "Stock size",
+                                                  value = 1,
+                                                  min = 1,
+                                                  width = '30%'
+                                                  )
                                  )
-                             )
-                             )
+                                 )
                     )
-                ),
+                    ),
 
 
 
@@ -544,16 +582,16 @@ tabElefanGa <- function(id) {
                         ##     tags$style(type="text/css",
                         ##                ".recalculating {opacity: 1.0;}"),
                         fluidRow(
-                            box(
-                                htmlOutput(ns("titlePlot1_elefan_ga")),
-                                "Length frequency data visualised in terms of catches.",
-                                plotOutput(ns("plot_ga_1"))
-                            ),
-                            box(
-                                htmlOutput(ns("titlePlot2_elefan_ga")),
-                                "Restructured data with bin sizes and the number of bins over which the moving average is calculated as defined in the optional parameters.",
-                                plotOutput(ns("plot_ga_2"))
-                            )
+                            ## box(
+                            ##     htmlOutput(ns("titlePlot1_elefan_ga")),
+                            ##     "Length frequency data visualised in terms of catches.",
+                            ##     plotOutput(ns("plot_ga_1"))
+                            ## ),
+                            ## box(
+                            ##     htmlOutput(ns("titlePlot2_elefan_ga")),
+                            ##     "Restructured data with bin sizes and the number of bins over which the moving average is calculated as defined in the optional parameters.",
+                            ##     plotOutput(ns("plot_ga_2"))
+                            ## )
                         )
                         ),
 
@@ -637,28 +675,4 @@ tabElefanGa <- function(id) {
             )
 
 
-}
-
-resetElefanGaInputValues <- function() {
-    shinyjs::reset("fileGa")
-    shinyjs::reset("ELEFAN_GA_seasonalised")
-    shinyjs::reset("ELEFAN_GA_binSize")
-    shinyjs::reset("ELEFAN_GA_popSize")
-    shinyjs::reset("ELEFAN_GA_maxiter")
-    shinyjs::reset("ELEFAN_GA_run")
-    shinyjs::reset("ELEFAN_GA_addl.sqrt")
-    shinyjs::reset("ELEFAN_GA_pmutation")
-    shinyjs::reset("ELEFAN_GA_pcrossover")
-    shinyjs::reset("ELEFAN_GA_elitism")
-    shinyjs::reset("ELEFAN_GA_MA")
-    shinyjs::reset("ELEFAN_GA_PLUS_GROUP")
-    shinyjs::reset("ELEFAN_GA_Linf")
-    shinyjs::reset("ELEFAN_GA_K")
-    shinyjs::reset("ELEFAN_GA_t_anchor")
-    shinyjs::reset("ELEFAN_GA_C")
-    shinyjs::reset("ELEFAN_GA_ts")
-
-    shinyjs::disable("go_ga")
-    clearResults("box_elefan_ga_results")
-    shinyjs::reset("elefanGaDateFormat")
 }
