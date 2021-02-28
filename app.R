@@ -6,9 +6,10 @@
 # Author: Enrico Anello <enrico.anello@fao.org> <enrico.anello@gmail.com>
 #
 
+## Note that rfishbase v3.0.1 has to be installed for R<4.0.0:
 ## remotes::install_github("ropensci/rfishbase", ref = "3.0.1")
-## install.packages(c("pracma","googleVis"))
-## install.packages(c("lubridate","XML"))
+## Additional packages needed but no dependencies:
+## install.packages(c("pracma","googleVis","lubridate","XML"))
 
 library(shiny)
 library(shinyBS)

@@ -8,11 +8,18 @@ tabElefanGa <- function(id) {
 
             fluidRow(
                 div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                    actionButton(ns("elefanGADataConsiderations"), "Data Considerations",
+                    "More information about "
+                    ),
+                div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                    actionButton(ns("elefanGADataConsiderations"), "Data",
                                  class="topLevelInformationButton")
                     ),
                 div(style = "display: inline-block; vertical-align:center; margin-left: 5px;",
-                    actionButton(ns("methodConsiderations"), "Method Considerations",
+                    actionButton(ns("methodConsiderations"), "Methods",
+                                 class="topLevelInformationButton")
+                    ),
+                div(style = "display: inline-block; vertical-align:center; margin-left: 5px;",
+                    actionButton(ns("resultConsiderations"), "Results",
                                  class="topLevelInformationButton")
                     )
             ),
@@ -27,10 +34,30 @@ tabElefanGa <- function(id) {
                         size = "large",
                         htmlOutput(ns("elefanGADataConsiderationsText"))),
 
-                bsModal("modalMethod", "Method Considerations - TropFishR",
+                bsModal("modalExampleGA2", "Data Considerations - TropFishR",
+                        ns("dataConsiderations2"),
+                        size = "large",
+                        htmlOutput(ns("elefanGADataConsiderationsText2"))),
+
+                bsModal("modalMethod", "Methodological Considerations - TropFishR",
                         ns("methodConsiderations"),
                         size = "large",
                         htmlOutput(ns("methodConsiderationsText"))),
+
+                bsModal("modalMethod2", "Methodological Considerations - TropFishR",
+                        ns("methodConsiderations2"),
+                        size = "large",
+                        htmlOutput(ns("methodConsiderationsText2"))),
+
+                bsModal("modalResults", "Results Considerations - TropFishR",
+                        ns("resultConsiderations"),
+                        size = "large",
+                        htmlOutput(ns("resultConsiderationsText"))),
+
+                bsModal("modalResults2", "Results Considerations - TropFishR",
+                        ns("resultConsiderations2"),
+                        size = "large",
+                        htmlOutput(ns("resultConsiderationsText2"))),
 
                 bsModal("info_yearsel", "Selected years", ns("infoYearSel"),
                         size = "large",
@@ -38,7 +65,7 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_agg", "Data aggregation", ns("infoAGG"),
                         size = "large",
-                        "Choose the temporal resolution of aggregated length data. Options are 'none', 'month', 'quarter', and 'year'. Quarter and year are more meaningful for slow-growing species and if uploaded data covers at least one year or several years, respectively."),
+                        "Define whether the aggregation of the dataset should be kept ('none'), or if the dataset should be (re-)aggregate by 'month', 'quarter', and 'year'. If 'month' is chosen, the data is assigned to the middle of respective sampling times (i.e. 15. day of each month). The options 'quarter' and 'year' can be helpful if the dataset spans several years as it decreases computation time."),
 
                 bsModal("info_binsize", "Bin size", ns("infoBS"),
                         size = "large",
@@ -58,7 +85,7 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_linf", withMathJax("\\(L_\\infty\\)"), ns("infolinf"),
                         size = "large",
-                        p("Asymptotic length/length infinity of the von Bertalanffy growth function (",withMathJax("\\(L_\\infty\\)"), "in cm).")),
+                        p(withMathJax("\\(L_\\infty\\)")," defines the asymptotic length of the von Bertalanffy growth (VBG) function. The default range is dependent on uploaded dataset and defined as +/- 20% around the guesstimate of ",withMathJax("\\(L_\\infty = L_\\max/0.95\\)"),".")),
 
                 bsModal("info_k", withMathJax("\\(K\\)"), ns("infok"),
                         size = "large",
@@ -112,18 +139,38 @@ tabElefanGa <- function(id) {
                 ##         size = "large",
                 ##         "Select all or a range of years covered by uploaded data set for the estimation of total and fishing mortality using the catch curve. If multiple years are selected the total and fishing mortality rates correspond to the average rates of selected years."),
 
+                bsModal("info_pred", "Prediction range", ns("infoPred"),
+                        size = "large",
+                        "F range and Length at 50% selectivity range"),
+
+                bsModal("info_lengthweight", "Length-weight relationship", ns("infoLengthWeight"),
+                        size = "large",
+                        "Test"
+                        ),
 
                 bsModal("info_adjdata", "Adjust data (stock status)", ns("infoAdjData"),
                         size = "large",
                         "Test"),
 
-                bsModal("info_pred", "Prediction range", ns("infoPred"),
+                bsModal("info_mat", "Maturity", ns("infoMat"),
                         size = "large",
-                        "F range and Length at 50% selectivity range"),
+                        "Maturity"
+                        ),
 
+                bsModal("info_select", "Selectivity", ns("infoSelect"),
+                        size = "large",
+                        "Test"
+                        ),
 
-                ## bsModal("info_XX", "XX", ns("infoXX"),
-                ##         size = "large",),
+                bsModal("info_natm", "Natural mortality", ns("infoNatM"),
+                        size = "large",
+                        "Test"
+                        ),
+
+                bsModal("info_assessment", "Check & Assessment & Reset & Report", ns("infoAssessment"),
+                        size = "large",
+                        HTML("<p>It is recommended to run a quick check by pressing <b>'Run Check'</b> before running the main assessment. While the main assessment can take up to a few minutes dependent on the settings of the ELEFAN optimation routine and the sample size of the dataset, the check is performed in a matter of a few seconds and can already identify issues regarding the data or settings. The check does not produce and results (figures or tables), but a notification in the lower right corner of the screen will inform you whether the check was successful. <br> <br> <b>'Run Assessment'</b> performs the main assessment and should yield plenty figures and tables in the result section upon successful completion. A progress bar in the lower right corner will inform you about the computation progress of ELEFAN first and then YPR. <br> <br> <b>'Reset'</b> removes all results, the uploaded dataset, and resets all settings to default values. <br> <br> After successful completion of the main assessment, an additional button <b>'Download Report'</b> allows you to download a pdf document with all results.</p>"
+                        )),
 
 
 
@@ -131,9 +178,13 @@ tabElefanGa <- function(id) {
                 ## -------------------------------
 
                 box(id = "box_datupload",
-                    title = "Data upload",
+                    title = p("Data Upload",
+                              actionButton(ns("dataConsiderations2"),
+                                           tags$i(class = "fas fa-info",
+                                                  style="font-size: 12px"),
+                                           class="topLevelInformationButton")),
                     width = NULL,
-                    collapsible = T,
+                    collapsible = FALSE,
                     solidHeader = TRUE,
                     class = "collapsed-box",
 
@@ -163,7 +214,11 @@ tabElefanGa <- function(id) {
                 br(),
 
                 box(id = "box_settings",
-                    title = "Settings",
+                    title = p("Assessment Settings",
+                              actionButton(ns("methodConsiderations2"),
+                                           tags$i(class = "fas fa-info",
+                                                  style="font-size: 12px"),
+                                           class="topLevelInformationButton")),
                     width = NULL,
                     collapsible = FALSE, ## careful: if made collapsible the renderUi does not update! see: https://github.com/rstudio/shinydashboard/issues/234
                     solidHeader = TRUE,
@@ -411,7 +466,12 @@ tabElefanGa <- function(id) {
 
                                      box(
                                          title = p(HTML(paste0("Length-weight relationship (",
-                                                               withMathJax("\\(W = a \ L \ e^{b}\\)"),")"))),
+                                                               withMathJax("\\(W = a \ L \ e^{b}\\)"),")")),
+                                                   actionButton(ns("infoLengthWeight"),
+                                                                tags$i(class = "fas fa-info",
+                                                                       style="font-size: 12px"),
+                                                                class="topLevelInformationButton")),
+
                                          br(),
                                          width = 4,
                                          height = "200px",
@@ -419,17 +479,23 @@ tabElefanGa <- function(id) {
                                              column(6,
                                                     numericInput(ns("LWa"),
                                                                  label=" Constant  (a) ",
-                                                                 value = 0.001,
+                                                                 value = 0.01,
+                                                                 step = 0.01,
                                                                  width = "60%")),
                                              column(6,
                                                     numericInput(ns("LWb"),
                                                                  label="Exponent (b) ",
                                                                  value = 3,
+                                                                 step = 0.1,
                                                                  width = "60%"))
                                          )
                                      ),
 
-                                     box(title = "Natural mortality",
+                                     box(title = p("Natural mortality",
+                                                   actionButton(ns("infoNatM"),
+                                                                tags$i(class = "fas fa-info",
+                                                                       style="font-size: 12px"),
+                                                                class="topLevelInformationButton")),
                                          width = 4,
                                          height = "200px",
                                          br(),
@@ -448,9 +514,10 @@ tabElefanGa <- function(id) {
                                                         fluidRow(
                                                             column(7,
                                                                    numericInput(ns("temp"),
-                                                                               label = "Average ambient sea surface temperature",
-                                                                               min = 0,
-                                                                               value = 20)
+                                                                                label = "Average ambient sea surface temperature",
+                                                                                min = 0,
+                                                                                step = 0.5,
+                                                                                value = 20)
                                                                    ),
                                                             column(5,
                                                                    div(style="margin-top:15px;",
@@ -468,17 +535,18 @@ tabElefanGa <- function(id) {
                                                                      min = 0,
                                                                      max = 200,
                                                                      value = 20,
+                                                                     step = 1,
                                                                      width = '30%'),
                                                         )
                                                     )
                                          )
                                          ),
 
-                                      box(title = p("Adjust length data",
-                                                  actionButton(ns("infoAdjData"),
-                                                               tags$i(class = "fas fa-info",
-                                                                      style="font-size: 12px"),
-                                                               class="topLevelInformationButton")),
+                                     box(title = p("Adjust length data",
+                                                   actionButton(ns("infoAdjData"),
+                                                                tags$i(class = "fas fa-info",
+                                                                       style="font-size: 12px"),
+                                                                class="topLevelInformationButton")),
                                          width = 4,
                                          height = "200px",
                                          br(),
@@ -488,7 +556,7 @@ tabElefanGa <- function(id) {
                                                         div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
                                                             HTML("<b>Bin Size (stock status)</b>")
                                                             ),
-                                                    ),
+                                                        ),
                                                     div(style = "margin-top:-3px",
                                                         uiOutput(ns("ELEFAN_binSize2_out")),
                                                         ),
@@ -499,7 +567,7 @@ tabElefanGa <- function(id) {
                                                         div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
                                                             HTML("<b>Select years (stock status)</b>")
                                                             ),
-                                                    ),
+                                                        ),
                                                     div(style = "margin-top:-3px",
                                                         uiOutput(ns("ELEFAN_years_selected_cc_out"))
                                                         )
@@ -511,7 +579,11 @@ tabElefanGa <- function(id) {
                                  ),
 
                                  fluidRow(
-                                    box(title = "Maturity",
+                                     box(title = p("Maturity",
+                                                   actionButton(ns("infoMat"),
+                                                                tags$i(class = "fas fa-info",
+                                                                       style="font-size: 12px"),
+                                                                class="topLevelInformationButton")),
                                          width = 4,
                                          height = "200px",
                                          br(),
@@ -520,27 +592,29 @@ tabElefanGa <- function(id) {
                                                     numericInput(ns("Lm50"),
                                                                  label="Lm50",
                                                                  value = 0,
+                                                                 step = 1,
                                                                  width = "60%")),
                                              column(6,
                                                     numericInput(ns("Lm75"),
                                                                  label="Lm75",
                                                                  value = 0,
+                                                                 step = 1,
                                                                  width = "60%"))
                                          )
                                          ),
 
-                                     box(title = "Selectivity",
+                                     box(title = p("Selectivity",
+                                                   actionButton(ns("infoSelect"),
+                                                                tags$i(class = "fas fa-info",
+                                                                       style="font-size: 12px"),
+                                                                class="topLevelInformationButton")),
                                          width=8,
                                          height = "200px",
                                          br(),
                                          fluidRow(
                                              column(4,
                                                     selectInput(ns("select"),
-                                                                p("Selectivity",
-                                                                  actionButton(ns("infoSelect"),
-                                                                               tags$i(class = "fas fa-info",
-                                                                                      style="font-size: 12px"),
-                                                                               class="topLevelInformationButton")),
+                                                                "Selectivity",
                                                                 choices = c("Estimate",
                                                                             "Define L50 & L75",
                                                                             "Define L50 & (L75-L25)"),
@@ -556,7 +630,8 @@ tabElefanGa <- function(id) {
                                                                                     tags$i(class = "fas fa-info",
                                                                                            style="font-size: 12px"),
                                                                                     class="topLevelInformationButton")),
-                                                                     value = NA, width = "80%")
+                                                                     value = 0, min = 0, step = 1,
+                                                                     width = "80%")
                                                     )
                                                     ),
                                              column(4,
@@ -568,7 +643,8 @@ tabElefanGa <- function(id) {
                                                                                     tags$i(class = "fas fa-info",
                                                                                            style="font-size: 12px"),
                                                                                     class="topLevelInformationButton")),
-                                                                     value = NA, width = "80%")
+                                                                     value = 0, min = 0, step = 1,
+                                                                     width = "80%")
                                                     ),
                                                     div(
                                                         id ="ui_wqs",
@@ -578,7 +654,8 @@ tabElefanGa <- function(id) {
                                                                                     tags$i(class = "fas fa-info",
                                                                                            style="font-size: 12px"),
                                                                                     class="topLevelInformationButton")),
-                                                                     value = NA, width = "80%")
+                                                                     value = 0, min = 0, step = 1,
+                                                                     width = "80%")
                                                     )
                                                     )
                                          ),
@@ -587,10 +664,10 @@ tabElefanGa <- function(id) {
                                  ),
 
                                  box(title = p("Prediction range",
-                                                  actionButton(ns("infoPred"),
-                                                               tags$i(class = "fas fa-info",
-                                                                      style="font-size: 12px"),
-                                                               class="topLevelInformationButton")),
+                                               actionButton(ns("infoPred"),
+                                                            tags$i(class = "fas fa-info",
+                                                                   style="font-size: 12px"),
+                                                            class="topLevelInformationButton")),
                                      width=12,
                                      height = "200px",
                                      br(),
@@ -598,13 +675,14 @@ tabElefanGa <- function(id) {
                                          column(1),
                                          column(1,
                                                 div(style = "margin-top:30px;",
-                                                "Fishing mortality")
+                                                    "Fishing mortality")
                                                 ),
                                          column(1,
                                                 numericInput(ns("fRangeSteps"),
                                                              label = "Steps",
                                                              value = 100,
-                                                             min = 1,
+                                                             min = 0,
+                                                             step = 1,
                                                              width = "100%"
                                                              )
                                                 ),
@@ -613,6 +691,7 @@ tabElefanGa <- function(id) {
                                                              label = "Min",
                                                              value = 0,
                                                              min = 0,
+                                                             step = 0.1,
                                                              width = "100%"
                                                              )
                                                 ),
@@ -621,6 +700,7 @@ tabElefanGa <- function(id) {
                                                              label = "Max",
                                                              value = 3,
                                                              min = 0,
+                                                             step = 0.1,
                                                              width = "100%"
                                                              )
                                                 ),
@@ -628,13 +708,14 @@ tabElefanGa <- function(id) {
                                          column(1),
                                          column(1,
                                                 div(style = "margin-top:20px;",
-                                                "Length at 50% selectivity (L50)")
+                                                    "Length at 50% selectivity (L50)")
                                                 ),
                                          column(1,
                                                 numericInput(ns("lcRangeSteps"),
                                                              label = "Steps",
                                                              value = 100,
-                                                             min = 1,
+                                                             min = 0,
+                                                             step = 1,
                                                              width = "100%"
                                                              )
                                                 ),
@@ -643,8 +724,9 @@ tabElefanGa <- function(id) {
                                                     id ="ui_lcMin",
                                                     numericInput(ns("lcRangeMin"),
                                                                  label = "Min",
-                                                                 value = 2,
+                                                                 value = 0,
                                                                  min = 0,
+                                                                 step = 1,
                                                                  width = "100%"
                                                                  )
                                                 )
@@ -654,8 +736,9 @@ tabElefanGa <- function(id) {
                                                     id ="ui_lcMax",
                                                     numericInput(ns("lcRangeMax"),
                                                                  label = "Max",
-                                                                 value = 10,
+                                                                 value = 0,
                                                                  min = 0,
+                                                                 step = 1,
                                                                  width = "100%"
                                                                  )
                                                 )
@@ -674,34 +757,42 @@ tabElefanGa <- function(id) {
                 ## -------------------------------
                 br(),
 
-                box(title = "Assessment & Report",
+                box(title = p("Run Assessment & Download Report",
+                              actionButton(ns("infoAssessment"),
+                                           tags$i(class = "fas fa-info",
+                                                  style="font-size: 12px"),
+                                           class="topLevelInformationButton")),
                     width = NULL,
-                    collapsible = F,
+                    collapsible = FALSE,
                     solidHeader = TRUE,
                     class = "collapsed-box",
-                    collapsed = F,
+                    collapsed = FALSe,
+
+                    br(),
 
                     fluidRow(
-                            column(4),
-                            column(1,
-                                   disabled(actionButton(ns("go_ga"),
-                                                         "Run Assessment",
-                                                         class="topLevelInformationButton")
-                                            )
-                                   ),
-                            column(1,
-                                   actionButton(ns("reset_ga"),
-                                                "Reset",
-                                                class="topLevelInformationButton")
-                                   ),
-                            column(1,
-                                   uiOutput(ns("downloadReport_ga"))
-                                   ),
-                            column(1,
-                                   uiOutput(ns("ElefanGaVREUpload"))
-                                   ),
-                            column(4)
-                    ),
+                        div(style = "display: inline-block; vertical-align:center; margin-left: 50px;",
+                            disabled(actionButton(ns("check_ga"),
+                                                  "Run Check",
+                                                  class="topLevelInformationButton"))
+                            ),
+                        div(style = "display: inline-block; vertical-align:center; margin-left: 20px;",
+                            disabled(actionButton(ns("go_ga"),
+                                                  "Run Assessment",
+                                                  class="topLevelInformationButton"))
+                            ),
+                        div(style = "display: inline-block; vertical-align:center; margin-left: 20px;",
+                            actionButton(ns("reset_ga"),
+                                         "Reset",
+                                         class="topLevelInformationButton")
+                            ),
+                        div(style = "display: inline-block; vertical-align:center; margin-left: 20px;",
+                            uiOutput(ns("downloadReport_ga"))
+                            ),
+                        div(style = "display: inline-block; vertical-align:center; margin-left: 20px;",
+                            uiOutput(ns("ElefanGaVREUpload"))
+                            ),
+                        ),
                     br(),br()
                     ),
 
@@ -712,7 +803,11 @@ tabElefanGa <- function(id) {
                 ## -------------------------------
                 br(),
                 box(id = "box_results",
-                    title = "Results",
+                    title = p("Assessment Results",
+                              actionButton(ns("resultConsiderations2"),
+                                           tags$i(class = "fas fa-info",
+                                                  style="font-size: 12px"),
+                                           class="topLevelInformationButton")),
                     width = NULL,
                     height = "2200px",
                     collapsible = FALSE,

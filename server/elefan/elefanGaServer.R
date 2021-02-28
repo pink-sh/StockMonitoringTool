@@ -29,6 +29,7 @@ elefanGaModule <- function(input, output, session) {
         print(input$fileGa)
         if (is.null(contents$catch)) {
             shinyjs::disable("go_ga")
+            shinyjs::disable("check_ga")
             showModal(modalDialog(
                 title = "Error",
                 if(!is.null(contents$checkDelim)){
@@ -44,6 +45,7 @@ elefanGaModule <- function(input, output, session) {
         } else {
             if(is.Date(contents$dates)&&is.unsorted(contents$dates)){
                 shinyjs::disable("go_ga")
+                shinyjs::disable("check_ga")
                 showModal(modalDialog(
                     title = "Error",
                     "Please ensure that your dates are input in chronological order from left to right.  If dates are in the right order select the date format coresponding to your file.",
@@ -53,6 +55,7 @@ elefanGaModule <- function(input, output, session) {
                 return(NULL)
             } else {
                 shinyjs::enable("go_ga")
+                shinyjs::enable("check_ga")
                 return (contents)
             }
         }
@@ -65,9 +68,22 @@ elefanGaModule <- function(input, output, session) {
         years <- input$ELEFAN_years_selected
         if(is.null(years)){
             shinyjs::disable("go_ga")
+            shinyjs::disable("check_ga")
             showModal(modalDialog(
                 title = "Error",
                 "No year selected for the analysis. Please select at least one year of uploaded data set.",
+                easyClose = TRUE,
+                footer = NULL
+            ))
+            return(NULL)
+        }
+        if(input$ELEFAN_agg == "year" &&
+           length(unique(format(inputElefanGaData$data$dates,"%Y"))) == 1){
+            shinyjs::disable("go_ga")
+            shinyjs::disable("check_ga")
+            showModal(modalDialog(
+                title = "Error",
+                "Aggregation 'year' can only be used when the dataset spans 2 or more years. Please use a finer temporal resolution (aggregation 'month' or 'quarter').",
                 easyClose = TRUE,
                 footer = NULL
             ))
@@ -95,42 +111,70 @@ elefanGaModule <- function(input, output, session) {
     })
 
     resetElefanGaInputValues <- function() {
+        ## resetting UIs
         shinyjs::reset("fileGa")
-        shinyjs::reset("ELEFAN_GA_seasonalised")
+        shinyjs::reset("elefanGaDateFormat")
+        shinyjs::reset("ELEFAN_years_selected")
+        shinyjs::reset("ELEFAN_agg")
         shinyjs::reset("ELEFAN_GA_binSize")
-        shinyjs::reset("ELEFAN_GA_popSize")
-        shinyjs::reset("ELEFAN_GA_maxiter")
-        shinyjs::reset("ELEFAN_GA_run")
-        shinyjs::reset("ELEFAN_GA_addl.sqrt")
-        shinyjs::reset("ELEFAN_GA_pmutation")
-        shinyjs::reset("ELEFAN_GA_pcrossover")
-        shinyjs::reset("ELEFAN_GA_elitism")
         shinyjs::reset("ELEFAN_GA_MA")
 ##        shinyjs::reset("ELEFAN_GA_PLUS_GROUP")
+        shinyjs::reset("ELEFAN_GA_addl.sqrt")
         shinyjs::reset("ELEFAN_GA_Linf")
         shinyjs::reset("ELEFAN_GA_K")
         shinyjs::reset("ELEFAN_GA_t_anchor")
+        shinyjs::reset("ELEFAN_GA_seasonalised")
         shinyjs::reset("ELEFAN_GA_C")
         shinyjs::reset("ELEFAN_GA_ts")
+        shinyjs::reset("ELEFAN_GA_popSize")
+        shinyjs::reset("ELEFAN_GA_maxiter")
+        shinyjs::reset("ELEFAN_GA_run")
+        shinyjs::reset("ELEFAN_GA_pmutation")
+        shinyjs::reset("ELEFAN_GA_pcrossover")
+        shinyjs::reset("ELEFAN_GA_elitism")
+        shinyjs::reset("LWa")
+        shinyjs::reset("LWb")
+        shinyjs::reset("natM")
+        shinyjs::reset("temp")
+        shinyjs::reset("schooling")
+        shinyjs::reset("tmax")
+        shinyjs::reset("ELEFAN_GA_binSize2")
+        shinyjs::reset("ELEFAN_years_selected_cc")
+        shinyjs::reset("Lm50")
+        shinyjs::reset("Lm75")
+        shinyjs::reset("select")
+        shinyjs::reset("l50_user")
+        shinyjs::reset("l75_user")
+        shinyjs::reset("wqs_user")
+        shinyjs::reset("fRangeSteps")
+        shinyjs::reset("fRangeMin")
+        shinyjs::reset("fRangeMax")
+        shinyjs::reset("lcRangeSteps")
+        shinyjs::reset("lcRangeMin")
+        shinyjs::reset("lcRangeMax")
 
+        ## disable buttons
         shinyjs::disable("go_ga")
-        ## clearResults("box_results")
-        ## clearResults("box_exploPlots")
-        shinyjs::reset("elefanGaDateFormat")
+        shinyjs::disable("check_ga")
 
+        ## resetting reactive values
         elefan_ga$dataExplo <- NULL
         elefan_ga$results <- NULL
         inputElefanGaData$data <- NULL
         fileGaState$upload <- NULL
+        ## elefanGaUploadVreResult ?
     }
 
 
     ## Input-dependent UIs
     ## ----------------------------
-
     output$ELEFAN_years_selected_out <- renderUI({
-        allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
-        if(inherits(allyears,"try-error")) allyears = NULL
+        if(is.null(inputElefanGaData$data)){
+            allyears <- NULL
+        }else{
+            allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
+            if(inherits(allyears,"try-error")) allyears <- NULL
+        }
         selectInput(ns("ELEFAN_years_selected"), "",
                     choices = allyears, selected = allyears,
                     multiple = TRUE,
@@ -138,11 +182,16 @@ elefanGaModule <- function(input, output, session) {
     })
 
     output$ELEFAN_binSize_out <- renderUI({
-        binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
-        maxL <- try(round(max(inputElefanGaData$data$midLengths)/4),silent=TRUE)
-        if(inherits(binSize,"try-error")){
+        if(is.null(inputElefanGaData$data)){
             binSize <- 2
             maxL <- 10
+        }else{
+            binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
+            maxL <- try(round(max(inputElefanGaData$data$midLengths)/4),silent=TRUE)
+            if(inherits(binSize,"try-error")){
+                binSize <- 2
+                maxL <- 10
+            }
         }
         inputElefanGaData[['binSize2']] <- binSize
         numericInput(ns("ELEFAN_GA_binSize"), "",
@@ -151,9 +200,13 @@ elefanGaModule <- function(input, output, session) {
     })
 
     output$ELEFAN_GA_Linf_out <- renderUI({
-        maxL <- try(round(max(inputElefanGaData$data$midLengths)/0.95),silent=TRUE)
-        if(inherits(maxL,"try-error")){
+        if(is.null(inputElefanGaData$data)){
             maxL <- 100
+        }else{
+            maxL <- try(round(max(inputElefanGaData$data$midLengths)/0.95),silent=TRUE)
+            if(inherits(maxL,"try-error")){
+                maxL <- 100
+            }
         }
         min <- 0.5 * maxL
         max <- 1.5 * maxL
@@ -163,12 +216,17 @@ elefanGaModule <- function(input, output, session) {
     })
 
     output$ELEFAN_binSize2_out <- renderUI({
-        binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
-        maxL <- try(round(max(inputElefanGaData$data$midLengths)/4),silent=TRUE)
-        binSize2 <- inputElefanGaData[['binSize2']]
-        if(inherits(binSize,"try-error")){
+        if(is.null(inputElefanGaData$data)){
             binSize2 <- binSize <- 2
             maxL <- 10
+        }else{
+            binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
+            maxL <- try(round(max(inputElefanGaData$data$midLengths)/4),silent=TRUE)
+            binSize2 <- inputElefanGaData[['binSize2']]
+            if(inherits(binSize,"try-error")){
+                binSize2 <- binSize <- 2
+                maxL <- 10
+            }
         }
         if(is.na(binSize2) || is.null(binSize2)) binSize2 <- binSize
         numericInput(ns("ELEFAN_GA_binSize2"), "",
@@ -177,8 +235,12 @@ elefanGaModule <- function(input, output, session) {
     })
 
     output$ELEFAN_years_selected_cc_out <- renderUI({
-        allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
-        if(inherits(allyears,"try-error")) allyears = NULL
+        if(is.null(inputElefanGaData$data)){
+            allyears <- NULL
+        }else{
+            allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
+            if(inherits(allyears,"try-error")) allyears <- NULL
+        }
         selectInput(ns("ELEFAN_years_selected_cc"), "",
                     choices = allyears, selected = allyears,
                     multiple = TRUE,
@@ -254,6 +316,122 @@ elefanGaModule <- function(input, output, session) {
 
     ## Action buttons
     ## ----------------------------
+
+        observeEvent(input$check_ga, {
+
+        js$showComputing()
+        js$disableAllButtons()
+
+        result = tryCatch({
+
+            ## needed because of renderUI in hidden tabs
+            if(is.null(input$ELEFAN_GA_Linf)){
+                linf <- c(0.8,1.2) * round(max(inputElefanGaData$data$midLengths)/0.95)
+            }else{
+                linf <- range(input$ELEFAN_GA_Linf)
+            }
+
+            if(is.null(input$yearsCC)){
+                yearsCC <- unique(format(inputElefanGaData$data$dates,"%Y"))
+            }else{
+                yearsCC <- input$ELEFAN_years_selected_cc
+            }
+
+
+            flog.info("Starting Elegan GA computation (check)")
+            res <- run_elefan_ga(x = inputElefanGaData$data,
+                                 binSize =  input$ELEFAN_GA_binSize,
+                                 seasonalised = input$ELEFAN_GA_seasonalised,
+                                 low_par = list(Linf = linf[1], K = min(input$ELEFAN_GA_K),
+                                                t_anchor = min(input$ELEFAN_GA_t_anchor),
+                                                C = min(input$ELEFAN_GA_C),
+                                                ts = min(input$ELEFAN_GA_ts)),
+                                 up_par = list(Linf = linf[2], K = max(input$ELEFAN_GA_K),
+                                               t_anchor = max(input$ELEFAN_GA_t_anchor),
+                                               C = max(input$ELEFAN_GA_C),
+                                               ts = max(input$ELEFAN_GA_ts)),
+                                 pmutation = input$ELEFAN_GA_pmutation,
+                                 pcrossover = input$ELEFAN_GA_pcrossover,
+                                 elitism = input$ELEFAN_GA_elitism,
+                                 MA = input$ELEFAN_GA_MA,
+                                 addl.sqrt = input$ELEFAN_GA_addlsqrt,
+##                                 plus_group = input$ELEFAN_GA_PLUS_GROUP,
+                                 years = input$ELEFAN_years_selected,
+                                 agg = input$ELEFAN_agg,
+                                 binSizeCC = inputElefanGaData[['binSize2']],
+                                 yearsCC = yearsCC,
+                                 LWa = input$LWa,
+                                 LWb = input$LWb,
+                                 natM_method = input$natM,
+                                 temp = input$temp,
+                                 cor_schooling = input$schooling,
+                                 tmax = input$tmax,
+                                 select_method = input$select,
+                                 l50_user = input$l50_user,
+                                 l75_user = input$l75_user,
+                                 wqs_user = input$wqs_user,
+                                 fRangeMin = input$fRangeMin,
+                                 fRangeMax = input$fRangeMax,
+                                 lcRangeMin = input$lcRangeMin,
+                                 lcRangeMax = input$lcRangeMax,
+                                 Lm50 = input$Lm50,
+                                 Lm75 = input$Lm75,
+                                 ## speed up for checking:
+                                 popSize = 10,
+                                 maxiter = 5,
+                                 run = 5,
+                                 fRangeSteps = 5,
+                                 lcRangeSteps = 5,
+                                 progressMessages = c("Checking ELEFAN","Checking YPR")
+                                 )
+
+            js$hideComputing()
+            js$enableAllButtons()
+
+
+            if ('error' %in% names(res)) {
+                showModal(modalDialog(
+                    title = "Error",
+
+                    if(!is.null(res$error)){
+                        if (!is.null(grep("MA must be an odd integer",res$error))) {
+                            HTML(sprintf("Incorrect moving average (MA) value! Please provide an odd integer (e.g. 3,5,7) and run again.<hr/> <b>%s</b>",
+                                         res$error))
+                        }else if (!is.null(grep("specified bin_size is smaller than",res$error))) {
+                            HTML(sprintf(paste0("The specified bin size is smaller than the resolution in uploaded data! Please set bin size equal to ",min(diff(inputElefanGaData$data$midLengths))," or higher and run again.<hr/> <b>%s</b>"),
+                                         res$error))
+                        }else if(grep("POSIXlt",res$error)==1) {
+                            HTML(sprintf("The date could not be recognized! Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>", res$error))
+                        }else{
+                            res$error
+                        }},
+                    easyClose = TRUE,
+                    footer = NULL
+                ))
+            }else{
+                showNotification(
+                    "No errors during check run, ready to run assessment!",
+                    type = "message",
+                    duration = 60,
+                    closeButton = TRUE
+                )
+            }
+        }, error = function(err) {
+            flog.error("Error in Elefan GA: %s ",err)
+            showModal(modalDialog(
+                title = "Error",
+                HTML(sprintf(getErrorMessage("ELEFAN GA"), err)),
+                easyClose = TRUE,
+                footer = NULL
+            ))
+            return(NULL)
+        },
+        finally = {
+            js$hideComputing()
+            js$enableAllButtons()
+        })
+        })
+
 
     observeEvent(input$go_ga, {
 
@@ -340,15 +518,7 @@ elefanGaModule <- function(input, output, session) {
                     easyClose = TRUE,
                     footer = NULL
                 ))
-                                        # } else if(is.unsorted(contents$dates, na.rm = FALSE, strictly = FALSE)){
-                                        #   showModal(modalDialog(
-                                        #     title = "Error",
-                                        #     HTML(sprintf("Please ensure that your dates are input in chronological order from left to right.")),
-                                        #     easyClose = TRUE,
-                                        #     footer = NULL
-                                        #   ))
             } else {
-                js$collapseBox("box_datupload")
                 elefan_ga$results <- res
                 session$userData$fishingMortality$FcurrGA <-
                     round(elefan_ga$results$resYPR1$currents[4]$curr.F, 2)
@@ -409,7 +579,7 @@ elefanGaModule <- function(input, output, session) {
     })
     output$title_explo1 <- renderText({
         req(inputElefanGaData$data, input$ELEFAN_years_selected)
-        txt <- "<p class=\"pheader_elefan\">Fig 1: Uploaded raw (A) and restructured (B) length-frequency data.</p>"
+        txt <- "<p class=\"pheader_elefan\">Figure 1: Uploaded raw (A) and restructured (B) length-frequency data. Blue and red colours corrspond to positive and negative values in the length classes, respectively.</p>"
         txt
     })
 
@@ -435,7 +605,7 @@ elefanGaModule <- function(input, output, session) {
     })
     output$title_growthCurves <- renderText({
         req(elefan_ga$results)
-        txt <- "<p class=\"pheader_elefan\">Fig 2: Uploaded raw (A) and restructured (B) length-frequency data with von Bertalanffy growth curves fitted by ELEFAN.</p>"
+        txt <- "<p class=\"pheader_elefan\">Figure 2: Uploaded raw (A) and restructured (B) length-frequency data with overlaid von Bertalanffy growth (VBG) curves fitted by ELEFAN with genetic algorithm.</p>"
         txt
     })
 
@@ -448,7 +618,7 @@ elefanGaModule <- function(input, output, session) {
     })
     output$title_elefanFit <- renderText({
         req(elefan_ga$results)
-        txt <- "<p class=\"pheader_elefan\">Fig 3: ELEFAN genetic algorithm search path.</p>"
+        txt <- "<p class=\"pheader_elefan\">Figure 3: Score graph of ELEFAN with genetic algorithm. Fitness value (y axis) corresponds here to the score value of ELEFAN (Rn) and in the lingo of genetic algorithm 'Generation' (x axis) refers to the iteration.</p>"
         txt
     })
 
@@ -469,7 +639,7 @@ elefanGaModule <- function(input, output, session) {
     })
     output$title_catchCurve <- renderText({
         req(elefan_ga$results)
-        txt <- "<p class=\"pheader_elefan\">Fig 4: Catch curve.</p>"
+        txt <- "<p class=\"pheader_elefan\">Figure 4: Catch against relative age. Blue characters correspond to points used in the regression analysis (blue line) of the catch curve for the estimation of total mortality (Z).</p>"
         txt
     })
 
@@ -500,7 +670,11 @@ elefanGaModule <- function(input, output, session) {
     })
     output$title_select <- renderText({
         req(elefan_ga$results)
-        txt <- "<p class=\"pheader_elefan\">Fig 5: Probability of capture at length.</p>"
+        if(input$select == "Estimate" || (input$l50_user == 0 && input$l75_user == 0) || (input$l50_user == 0 && input$wqs_user == 0)){
+            txt <- "<p class=\"pheader_elefan\">Figure 5: Estimated logistic gear selectivity as the probability of capture (y axis) at length (x axis).</p>"
+        }else{
+            txt <- "<p class=\"pheader_elefan\">Figure 5: Provided logistic gear selectivity as the probability of capture (y axis) at length (x axis).</p>"
+        }
         txt
     })
 
@@ -628,9 +802,9 @@ elefanGaModule <- function(input, output, session) {
     output$title_ypr <- renderText({
         req(elefan_ga$results)
         if(is.null(elefan_ga$results$Lm50) || is.null(elefan_ga$results$Lm75)){
-            txt <- "<p class=\"pheader_elefan\">Fig 6: Yield (A) and biomass (B) per recruit for a range of fishing mortality rates.</p>"
+            txt <- "<p class=\"pheader_elefan\">Figure 6: Yield per recruit (A) and biomass per recruit (B) for a range of fishing mortality rates (x axis). Grey segements indicate various reference points.</p>"
         }else{
-            txt <- "<p class=\"pheader_elefan\">Fig 6: Yield (A) and biomass (B) per recruit as well as spawning potential ratio (C) for a range of fishing mortality rates.</p>"
+            txt <- "<p class=\"pheader_elefan\">Figure 6: Yield per recruit (A) and biomass per recruit (B), as well as spawning potential ratio (C) for a range of fishing mortality rates (x axis). Grey segements indicate various reference points.</p>"
         }
         txt
     })
@@ -640,21 +814,25 @@ elefanGaModule <- function(input, output, session) {
     output$plot_ypr_iso <- renderPlot({
         req(elefan_ga$results)
         par(mfrow = c(2,1), mar = c(4,4,0,1), oma = c(2,0,1,0))
-        plot(elefan_ga$results$resYPR2, type = "Isopleth",
-             xaxis1 = "FM", mark = TRUE, contour = 6, xlab="")
+        plot_predict_mod(elefan_ga$results$resYPR2,
+                                     type = "Isopleth", xaxis1 = "FM",
+                                     mark = TRUE, contour = 6, xlab="",
+                         ylab1 = "")
+        mtext(expression(L[50]),2,2.5)
         legend("topleft",legend=as.expression(bquote(bold("A"))),
                x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg = "white")
-        plot(elefan_ga$results$resYPR2, type = "Isopleth",
-             xaxis1 = "FM", yaxis1 = "B_R", mark = TRUE,
-             contour = 6, xlab = "Fishing mortality")
+        plot_predict_mod(elefan_ga$results$resYPR2, type = "Isopleth",
+                                     xaxis1 = "FM", yaxis1 = "B_R", mark = TRUE,
+                                     contour = 6, xlab = "Fishing mortality",
+                         ylab1 = "")
+        mtext(expression(L[50]),2,2.5)
         legend("topleft",legend=as.expression(bquote(bold("B"))),
                x.intersp = -0.3, y.intersp = 0.3, cex=1.3,
                bg = "white")
-
     })
     output$title_ypr_iso <- renderText({
         req(elefan_ga$results)
-        txt <- "<p class=\"pheader_elefan\">Fig 7: Yield (A) and biomass (B) per reruit for a range fishing mortality rates and length at 50% selectivity (L50) values.</p>"
+        txt <- "<p class=\"pheader_elefan\">Figure 7: Yield (A) and biomass (B) per reruit for a range of fishing mortality rates and gear selectivity combinations. Colors indicate high (red) to low (blue) yield and biomass. Gear selectivity is defined by the length at 50% selectivity (L50). The black dot indicates current yield and biomass per recruit.</p>"
         txt
     })
 
@@ -672,7 +850,7 @@ elefanGaModule <- function(input, output, session) {
     })
     output$title_table_growth <- renderText({
         req(elefan_ga$results)
-        txt <- "<p class=\"pheader_elefan\">Table 1: Estimated growth parameters.</p>"
+        txt <- "<p class=\"pheader_elefan\">Table 1: Estimated von Bertlanffy growth parameters (Linf, K, ta), the growth performance coefficient phi', and the best score value (Rn).</p>"
         txt
     })
 
@@ -693,7 +871,11 @@ elefanGaModule <- function(input, output, session) {
     })
     output$title_table_mort <- renderText({
         req(elefan_ga$results)
-        txt <- "<p class=\"pheader_elefan\">Table 2: Estimated mortality rates and (estimated/provided) selectivity parameters.</p>"
+        if(input$select == "Estimate" || (input$l50_user == 0 && input$l75_user == 0) || (input$l50_user == 0 && input$wqs_user == 0)){
+            txt <- "<p class=\"pheader_elefan\">Table 2: Estimated mortality rates (Z, F, M), exploitation rate (E), and estimated selectivity parameters (L50, L75).</p>"
+        }else{
+            txt <- "<p class=\"pheader_elefan\">Table 2: Estimated mortality rates (Z, F, M), exploitation rate (E), and provided selectivity parameters (L50, L75).</p>"
+        }
         txt
     })
 
@@ -704,6 +886,12 @@ elefanGaModule <- function(input, output, session) {
         if(is.null(elefan_ga$results$Lm50) || is.null(elefan_ga$results$Lm75)){
             tmp <- elefan_ga$results$resYPR1$df_Es[1:3]
             names(tmp) <- c("Fmax","F0.1","F0.5")
+            showNotification(
+                "If you want to estimate SPR and SPR-based reference points, please provide maturity parameters.",
+                type = "message",
+                duration = 30,
+                closeButton = TRUE
+                             )
         }else{
             tmp <- elefan_ga$results$resYPR1$df_Es
             names(tmp) <- c("Fmax","F0.1","F0.5","F30","F35","F40")
@@ -712,7 +900,11 @@ elefanGaModule <- function(input, output, session) {
     })
     output$title_table_refs <- renderText({
         req(elefan_ga$results)
-        txt <- "<p class=\"pheader_elefan\">Table 3: Estimated reference points (SPR-based reference points only estimated if maturity parameters provided).</p>"
+        if(is.null(elefan_ga$results$Lm50) || is.null(elefan_ga$results$Lm75)){
+            txt <- "<p class=\"pheader_elefan\">Table 3: Estimated reference points (Fmax, F0.1, F0.5).</p>"
+        }else{
+            txt <- "<p class=\"pheader_elefan\">Table 3: Estimated reference points (Fmax, F0.1, F0.5) and SPR-based reference points (F30, F35, F40).</p>"
+        }
         txt
     })
 
@@ -736,7 +928,11 @@ elefanGaModule <- function(input, output, session) {
     })
     output$title_table_stockstatus <- renderText({
         req(elefan_ga$results)
-        txt <- "<p class=\"pheader_elefan\">Table 4: Estimated stock status (SPR-based stock status only estimated if maturity parameters provided).</p>"
+        if(is.null(elefan_ga$results$Lm50) || is.null(elefan_ga$results$Lm75)){
+            txt <- "<p class=\"pheader_elefan\">Table 4: Estimated stock status in terms of current fishing mortality (F) to reference points (Fmax, F0.1, F0.5).</p>"
+        }else{
+            txt <- "<p class=\"pheader_elefan\">Table 4: Estimated stock status in terms of current fishing mortality (F) to reference points (Fmax, F0.1, F0.5, F30, F35, F40) and current Spawning Potential Ratio (SPR).</p>"
+        }
         txt
     })
 
@@ -766,24 +962,12 @@ elefanGaModule <- function(input, output, session) {
         }
     )
 
-    output$tbl1_ga <- renderTable({
-        req(elefan_ga$results)
-        elefan_ga$results$resYPR1$df_Es
-    },
-    include.rownames=TRUE)
-
-    output$tbl2_ga <- renderTable({
-        req(elefan_ga$results)
-            CURR_GA<-elefan_ga$results$resYPR1$currents
-            CURR_GA<-CURR_GA[,-7]
-            names(CURR_GA)<-c("Length-at-1st-capture (Lc)", "Age-at-1st-capture (tc)", "Effort","Fishing mortality", "Catch", "Yield", "Biomass")
-            CURR_GA
-    },
-    include.rownames=TRUE)
-
-
 
     output$elefanGADataConsiderationsText <- renderText({
+        text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getDataConsiderationTextForElefan())
+        text
+    })
+    output$elefanGADataConsiderationsText2 <- renderText({
         text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getDataConsiderationTextForElefan())
         text
     })
@@ -792,15 +976,20 @@ elefanGaModule <- function(input, output, session) {
         text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getMethodConsiderationTextForElefan())
         text
     })
-
-
-
-    output$rnMax_ga <- renderText({
-        if(req(elefan_ga$results)){
-            title <- paste0("<strong>Highest value of fitness function:</strong>&nbsp;", round(elefan_ga$results$resGA$Rn_max, 3))
-            title
-        } else {  "" }
+    output$methodConsiderationsText2 <- renderText({
+        text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getMethodConsiderationTextForElefan())
+        text
     })
+
+    output$resultConsiderationsText <- renderText({
+        text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getResultConsiderationTextForElefan())
+        text
+    })
+    output$resultConsiderationsText2 <- renderText({
+        text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getResultConsiderationTextForElefan())
+        text
+    })
+
 
     output$elefanGaTitle <- renderText({
         session$userData$page("elefan-ga")

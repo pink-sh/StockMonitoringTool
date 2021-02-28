@@ -18,11 +18,11 @@ getDataConsiderationTextForCmsy <- function() {
 }
 
 getDataConsiderationTextForElefan <- function() {
-    text <- "<b>Required input data must include:</b>"
+    text <- "<b>Dataset must include:</b>"
     text <- paste0(text, "<ul>")
     text <- paste0(text,
                    "<li>A column indicating the length classes of measured individuals (first column of dataset).</li>")
-    text <- paste0(text, "<li>A row indicating the dates when idividuals were measured (first row of dataset).</li>")
+    text <- paste0(text, "<li>A row indicating the dates when individuals were measured (first row of dataset).</li>")
     text <- paste0(text,
                    "<li>The number of caught individuals per length class (rows) and per sampling date (columns).</li>")
     text <- paste0(text, "</ul>")
@@ -46,22 +46,26 @@ getDataConsiderationTextForElefan <- function() {
 
 
 getMethodConsiderationTextForElefan <- function() {
-    text <- "<b>Steps of length-based stock assessment routine:</b>"
+    text <- "<b>Subsequent steps of length-based stock assessment routine:</b>"
     text <- paste0(text, "<br>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<ul>")
-    text <- paste0(text,
-                   "<li><b>Estimating growth parameters</b> of the von Bertlanffy growth (VBG; Bertlanffy 1989) function using <b>ELEFAN</b> (Pauy 1980).</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Estimating natural mortality</b> rate using an <b>empirical formula</b>, such as the one suggested by Pauly (1980) or Then et al. (2015).</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Estimating total mortality</b> rate using the length-converted <b>catch curve</b> (Pauly 1980).</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Estimating stock status</b> in terms of F/Fmax, F/F0.1 and SPR by the <b>yield per recruit model (YPR)</b>.</li>")
-    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<ol>")
+    text <- paste0(text, "<li> ELEFAN: Estimation of growth parameters of the von Bertlanffy growth (VBG) function.</li>")
+    text <- paste0(text, "<li> Empirical formulae: Estimation of the natural mortality rate (M).</li>")
+    text <- paste0(text, "<li> Catch curve: Estimation of the total (Z) and fishing (F) mortality rate.</li>")
+    text <- paste0(text, "<li> Yield per recruit analysis (YPR): Estimation of reference points based on fishing ",
+                   "mortality and Spawning potential ratio (SPR), such as Fmax, F0.1, F35, as well as the stock status ",
+                   "(e.g. F/F0.1 or SPR).</li>")
+    text <- paste0(text, "</ol>")
     text <- paste0(text, "<br>")
     text <- paste0(text,
-                   "<p>These methods make specific assumptions about the data, the stock, or the fisheries targeting the stock. It is important to be aware of these assumptions and, thus, the limitations of the results.</p>")
+                   "<p>This length-based stock assessment routine was outlined in the Technical report ",
+                   '<a href="http://www.fao.org/documents/card/en/c/9bb12a06-2f05-5dcb-a6ca-2d6dd3080f65/"> "Introduction to Tropical Fish Stock Assessment" (FAO, 1998)</a>',
+                   ", and compiled into the R package ",
+                   '<a href="https://cran.r-project.org/web/packages/TropFishR"> TropFishR </a>',
+                   " by ", '<a href="https://doi.org/10.1111/2041-210X.12791"> Mildenberger et al. (2017)</a>',
+                   ". Above mentioned methods make specific assumptions about the data, the stock, or the ",
+                   "fisheries targeting the stock. It is important to be aware of these assumptions and, thus, the ",
+                   "limitations of the results.</p>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<b>Assumptions of TropFishR:</b>")
@@ -69,27 +73,24 @@ getMethodConsiderationTextForElefan <- function() {
     text <- paste0(text, "<br>")
     text <- paste0(text, "<ul>")
     text <- paste0(text, "<li><b>Representative length measurements:</b> ",
-                   "Dataset is representative of the length distribution in the catch. ",
-                   "This means that either the length of all individuals in the catch are measured or ",
-                   "an equal proportion of individuals of different length was measured (i.e. ",
-                   "proportion of measured larger individuals in not larger than proportion of measured smaller ",
-                   "individuals).",
-                   "</li>")
+                   "The routine assumes that the dataset is representative of the length distributions of the whole catch. ",
+                   "This means that either the length of all individuals in the catch were measured or ",
+                   "a randomised subsample of the catch was measured.", "</li>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<li><b>Gear/fleet selectivity:</b> ",
-                   "The analysis assumes sigmoidal selectivity as it is commonly assumed for trawl-like ",
+                   "The routine assumes sigmoidal selectivity as it is commonly assumed for 'trawl-like' ",
                    "fishing gear. While the selectivity of gillnets and hook-based methods might correspond ",
                    "to a bell-shaped curve, the combination of various mesh and hook sizes might lead to ",
                    "an overall 'trawl-like' fleet selectivity.",
                    "</li>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<li><b>Equilibrium conditions:</b> ",
-                   "The analysis assumes constant recruitment, fishing and natural mortality as well as somatic growth and maturation over time, i.e. within the year and over all years covered by the dataset.",
+                   "The routine assumes constant recruitment, fishing and natural mortality as well as somatic growth and maturation over time, i.e. within the year and over all years covered by the dataset.",
                    "</li>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<li><b>Density dependence:</b> ",
-                   "The analysis assumes density independent maturity and somatic growth. As the refernece points ",
-                   "are based on the 'per recruit' model, no assumptions are made about the stock recruitment ",
+                   "The routine assumes density independent maturity and somatic growth. All reference points ",
+                   "are based on the 'per recruit' model, thus no assumptions are made about the stock recruitment ",
                    "relationship.",
                    "</li>")
     text <- paste0(text, "<br>")
@@ -101,18 +102,18 @@ getMethodConsiderationTextForElefan <- function() {
     text <- paste0(text, "<br>")
     text <- paste0(text, "<li><b>Length-independent natural mortality:</b> ",
                    "The current implementation of SMT assumes that the natural mortality is equal for all length ",
-                   "classes.",
+                   "classes. (Note this assumption will be relaxed in the future.)",
                    "</li>")
     text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Somatic growth following VBG:</b> ",
-                   "The estimatoin of growth parameters with ELEFAN assumes logistic growth in length of individuals ",
-                   "following the von Bertlanffy growth (VBG) function. This is an often made assumption for the ",
+    text <- paste0(text, "<li><b>Somatic growth follows VBG:</b> ",
+                   "The estimation of growth parameters with ELEFAN assumes that the growth of individuals in length ",
+                   "follows the logistic von Bertlanffy growth (VBG) function. This is an often made assumption for the ",
                    "growth of fish, but might not reflect well the growth of species with an exoskeleton, ",
                    "such as crustaceans, nor the growth of early life stages of fish.",
                    "</li>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<li><b>Closed population:</b> ",
-                   "The catch curve and yield per recruit model assume that the stock (population) under study ",
+                   "The routine assumes that the stock (population) under study ",
                    "is closed, meaning that there is no immigration or emmigration taking place. Immi- and emi-",
                    "gration can both bias estimated mortality rates and stock status. Furthermore, fish migrations ",
                    "often vary for various life stages and might thus affect the representativeness of the length ",
@@ -122,6 +123,95 @@ getMethodConsiderationTextForElefan <- function() {
     return (text)
 }
 
+getResultConsiderationTextForElefan <- function() {
+    text <- "<b>Figures of length-based stock assessment routine:</b>"
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li><b>Figure 1</b> shows the length-frequency distributions per sampling time (x axis). ",
+                   "Panel A shows the raw data, while panel B shows the restructured data. This means after subtracting ",
+                   "the moving average (MA) of the count in each length class. The combination of bin size and MA critically ",
+                   "affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth ",
+                   "parameters by ELEFAN. A good bin size value reduces noise in the data by aggregation. A good MA value leads ",
+                   "to visually distinct peaks in particular among small length classes.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Figure 2</b> shows the same length frequency distributions as Figure 1 with overlaid growth curves estimated ",
+                   "by ELEFAN. This plot allows the visual inspection how well estimated curves connect the peaks (i.e. potential cohorts) ",
+                   "in the raw (A) and restructured (B) data set.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Figure 3 </b> shows the improvement of the ELEFAN fit in terms of the average and best ",
+                   "score value (fitness value) of the genetic algorithm ",
+                   "used in ELEFAN_GA over the number of iterations (generations). Ideally, the number of iterations (or generations) ",
+                   "is large enough, so that there are no large jumps visible during the last iterations of the best and average score value.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Figure 4</b> shows the logarithm of the catch per length interval against the relative age (x axis). ",
+                   "Highlighted characters were used in the regression analysis of the catch curve for the estimation of the total ",
+                   "mortality rate (Z), which ",
+                   "corresponds to the slope of the displayed regression line. The selection of points is automatic and based on a ",
+                   "list of expert recommendations.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Figure 5</b> shows the probability of capture as a measure of the selectivity used in the assessment.",
+                   "The curve is either based on provided selectivity parameters (L50 and L75 or selection width) or was estimated ",
+                   "by the catch curve. Displayed selection ogive is used for the yield per recruit analysis (YPR).",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Figure 6</b> shows the results of the yield per recruit model as yield and biomass per recruit ",
+                   "in panel A and B, respectively, against a range of fishing mortality rates (x axis). ",
+                   "Grey segments display estimated reference points. Fmax is defined as the fishing ",
+                   " mortality (F) leading to the maximum yield per recruit. F0.1 corresponds to F where the slope of the yield per ",
+                   "recruit curve is equal to 10% of the slope in the origin and poses a more conservative reference point than Fmax. ",
+                   "F0.5 corresponds to F where the biomass per recruit is equal to 50% of the biomass per recruit without fishing. ",
+                   "If the maturity parameters Lm50 and Lm75 are provided, an optional third panel (C) shows the Spawning Potential Ratio (SPR) ",
+                   "for a range of fishing mortality rates. Furthermore, the three reference points F30, F35, and F40 are shown, which ",
+                   "correspond to F that leads to a SPR of 30%, 35%, and 40% respectively.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Figure 7</b> shows the yield per recruit (A) and biomass per recruit (B) for various fishing mortality ",
+                   "rates (x axis) and gear selectivities (y axis). The color indicates high (red) to low (blue) yield and biomass for ",
+                   "the various combinations of F and L50 values. The black dot indicates current yield and biomass.",
+                   "</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<b>Tables of length-based stock assessment routine:</b>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li><b>Table 1</b> includes estimated von Bertlanffy growth parameters ",
+                   "(Linf, K, ta), the growth performance coefficient phi', and the best score value ",
+                   "(Rn).",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Table 2</b> lists estimated mortality rates (Z, F, M), exploitation ",
+                   "rate (E), and provided selectivity parameters (L50, L75).",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Table 3</b> includes estimated reference points (Fmax, F0.1, F0.5), ",
+                   "and SPR-based reference points (F30, F35, F40) if maturity parameters (Lm50 and ",
+                   "Lm75) are provided.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Table 4</b> presents estimated stock status in terms of current ",
+                   "fishing mortality (F) to reference points (Fmax, F0.1, F0.5). If maturity ",
+                   "parameters (Lm50 and Lm75) are provided, additional reference points (F30, F35, ",
+                   "F40) and current Spawning Potential Ratio (SPR) are included as well.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+    return (text)
+}
+
+
+
+
+
+
 getErrorMessage <- function(forWhat) {
     if(forWhat=="CMSY"){
         return (paste0("Ops! Unfortunately the ",forWhat, " method experienced a problem with the server.<br/>Don't give up and try again in a few minutes or refresh your Stock Monitoring Tool instance.<hr/> <b>%s</b>"))
@@ -129,6 +219,9 @@ getErrorMessage <- function(forWhat) {
         return (paste0("Ops! unfortunately something went wrong running the ",forWhat," method<br/>Don't give up and try again in a few minutes.<hr/> <b>%s</b>"))
     }
 }
+
+
+
 
 fishMethodsDataConsiderationText <- function() {
     text <- "<div>"

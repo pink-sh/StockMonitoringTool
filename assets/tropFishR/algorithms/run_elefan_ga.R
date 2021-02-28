@@ -6,6 +6,12 @@ shinyMonitor <- function(object, digits = getOption("digits")){
                        detail = paste0("Iteration: ", object@iter,"/",object@maxiter))
 }
 
+
+shinyMonitor2 <- function(amount, max, digits = getOption("digits")){
+    shiny::incProgress(amount = 1/max,
+                       detail = paste0("Iteration: ", amount,"/",max))
+}
+
 run_elefan_ga <- function(
                           x,
                           binSize = NULL,
@@ -49,6 +55,7 @@ run_elefan_ga <- function(
                           lcRangeMax = NA,
                           Lm50 = NA,
                           Lm75 = NA,
+                          progressMessages = c("Running ELEFAN","Running YPR"),
                           ...
                           ) {
     set.seed(1)
@@ -58,6 +65,32 @@ run_elefan_ga <- function(
     out <- tryCatch( {
 
         print(paste0("TropFishR version:", packageVersion("TropFishR")))
+
+
+        ##--------------------
+        ##  Checks
+        ##--------------------
+        if(length(progressMessages) != 2){
+            stop("2 progressMessages have to be provided")
+        }
+        if(is.numeric(Lm50) && is.numeric(Lm75) && Lm75 < Lm50){
+            stop("Lm50 has to be smaller than Lm75!")
+        }
+        if(is.numeric(l50_user) && is.numeric(l75_user) && l75_user < l50_user){
+            stop("L50 has to be smaller than L75!")
+        }
+        if(lcRangeSteps == 0){
+            stop("Steps for gear exploration (L50 range) have been set to 0 that is not possible. Please use a value larger than 0.")
+        }
+        if(lcRangeMin == lcRangeMax && lcRangeMin != 0){ ## if both 0 use default method to set range
+            stop("Then minimum and maximum of the L50 range are identical. That is not possible!")
+        }
+        if(fRangeSteps == 0){
+            stop("Steps for gear exploration (F range) have been set to 0 that is not possible. Please use a value larger than 0.")
+        }
+        if(fRangeMin == fRangeMax){
+            stop("Then minimum and maximum of the F range are identical. That is not possible!")
+        }
 
 
         ##--------------------
@@ -72,7 +105,7 @@ run_elefan_ga <- function(
         ##--------------------
         ##  ELEFAN
         ##--------------------
-        withProgress(message = "Running ELEFAN", value = 0, {
+        withProgress(message = progressMessages[1], value = 0, {
             resGA <- ELEFAN_GA_temp(lfq, MA = MA, seasonalised = seasonalised,
                                     maxiter = maxiter, addl.sqrt = addl.sqrt,
                                     low_par=low_par, up_par=up_par,
@@ -135,6 +168,16 @@ run_elefan_ga <- function(
         L75 <- resCC$L75
         returnResults[['resCC']] <- resCC
 
+        tmp <- c(Z, FM, E)
+        if(any(is.na(tmp)) || any(tmp < 0)){
+            stop("Mortality rates could not be estimated or are negative. The assessment routine cannot be continued. Please revise the settings for ELEFAN and catch curve and run again. (Another bin size for the catch curve might be worth a try.)")
+        }
+
+        tmp <- c(L50, L75)
+        if(is.na(l50_user) && (any(is.na(tmp)) || any(tmp < 0))){
+            stop("Selectvity parameters could not be estimated or are negative. The assessment routine cannot be continued. Please revise the settings for ELEFAN and catch curve and run again. (Another bin size for the catch curve might be worth a try.)")
+        }
+
 
         ##--------------------
         ##  YPR/SPR
@@ -166,7 +209,9 @@ run_elefan_ga <- function(
         if(fRangeMax < fRangeMin) error("Maximum value of F range must be larger than minimum value!")
         fchange <- seq(fRangeMin, fRangeMax, length.out = fRangeSteps)
 
-        if(select_method == "Estimate"){
+        ## if both lcMin and lcMax == 0 use default way
+        if(select_method == "Estimate" || (lcRangeMin == lcRangeMax && lcRangeMin == 0) ||
+           (l50_user == 0 && l75_user == 0) || (l50_user == 0 && wqs_user == 0)){
             lcchange <- seq(0.1*L50, max(2*L50, 0.99*Linf), length.out = lcRangeSteps)
         }else{
             if(lcRangeMax < lcRangeMin) error("Maximum value of L50 range must be larger than minimum value!")
@@ -188,13 +233,17 @@ run_elefan_ga <- function(
                                     hide.progressbar = TRUE)
 
         ## Thompson and Bell model with changes in F and Lc
-        resYPR2 <- predict_mod_temp(lfq2, type = "ThompBell",
-                                    FM_change = fchange,
-                                    Lc_change = lcchange,
-                                    stock_size_1 = 1,
-                                    curr.E = E, curr.Lc = L50,
-                                    s_list = slist,
-                                    plot = FALSE, hide.progressbar = TRUE)
+        withProgress(message = progressMessages[2], value = 0, {
+            resYPR2 <- predict_mod_temp(lfq2, type = "ThompBell",
+                                        FM_change = fchange,
+                                        Lc_change = lcchange,
+                                        stock_size_1 = 1,
+                                        curr.E = E, curr.Lc = L50,
+                                        s_list = slist,
+                                        plot = FALSE,
+                                        hide.progressbar = TRUE,
+                                        monitor = shinyMonitor2)
+        })
 
         returnResults[['resYPR1']] <- resYPR1
         returnResults[['resYPR2']] <- resYPR2
