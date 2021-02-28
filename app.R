@@ -52,6 +52,8 @@ source("server/support/SeasonalVonBertalannfyServer.R")
 source("server/support/NaturalMortalityServer.R")
 source("assets/tropFishR/elefan_common.R")
 source("assets/tropFishR/algorithms/run_elefan_ga.R")
+source("assets/tropFishR/algorithms/temp_elefan_ga.R")  ## temporarily needed until TropFishR updated
+source("assets/tropFishR/algorithms/temp_predict_mod.R")  ## temporarily needed until TropFishR updated
 # source("assets/tropFishR/algorithms/run_elefan_sa.R")
 # source("assets/tropFishR/algorithms/run_elefan.R")
 source("assets/cmsy/CmsyFunction.R")

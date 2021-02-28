@@ -2,6 +2,9 @@ elefanGaModule <- function(input, output, session) {
 
     ns <- session$ns
 
+    ## Definition of reactive values
+    ## ----------------------------
+
     elefan_ga <- reactiveValues(
         dataExplo = NULL,
         results = NULL
@@ -14,6 +17,9 @@ elefanGaModule <- function(input, output, session) {
     fileGaState <- reactiveValues(
         upload = NULL
     )
+
+    ## Definition of functions
+    ## ----------------------------
 
     elefanGaFileData <- reactive({
         if (is.null(input$fileGa) || is.null(fileGaState$upload)) {
@@ -100,7 +106,7 @@ elefanGaModule <- function(input, output, session) {
         shinyjs::reset("ELEFAN_GA_pcrossover")
         shinyjs::reset("ELEFAN_GA_elitism")
         shinyjs::reset("ELEFAN_GA_MA")
-        shinyjs::reset("ELEFAN_GA_PLUS_GROUP")
+##        shinyjs::reset("ELEFAN_GA_PLUS_GROUP")
         shinyjs::reset("ELEFAN_GA_Linf")
         shinyjs::reset("ELEFAN_GA_K")
         shinyjs::reset("ELEFAN_GA_t_anchor")
@@ -119,7 +125,7 @@ elefanGaModule <- function(input, output, session) {
     }
 
 
-    ## UIs
+    ## Input-dependent UIs
     ## ----------------------------
 
     output$ELEFAN_years_selected_out <- renderUI({
@@ -128,7 +134,7 @@ elefanGaModule <- function(input, output, session) {
         selectInput(ns("ELEFAN_years_selected"), "",
                     choices = allyears, selected = allyears,
                     multiple = TRUE,
-                    width = "50%")
+                    width = "100%")
     })
 
     output$ELEFAN_binSize_out <- renderUI({
@@ -138,9 +144,10 @@ elefanGaModule <- function(input, output, session) {
             binSize <- 2
             maxL <- 10
         }
+        inputElefanGaData[['binSize2']] <- binSize
         numericInput(ns("ELEFAN_GA_binSize"), "",
                      binSize, min = binSize, max = maxL, step=0.5,
-                     width ='50%')
+                     width ='100%')
     })
 
     output$ELEFAN_GA_Linf_out <- renderUI({
@@ -155,30 +162,32 @@ elefanGaModule <- function(input, output, session) {
                     value=sel, min = min, max = max, step=1)
     })
 
+    output$ELEFAN_binSize2_out <- renderUI({
+        binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
+        maxL <- try(round(max(inputElefanGaData$data$midLengths)/4),silent=TRUE)
+        binSize2 <- inputElefanGaData[['binSize2']]
+        if(inherits(binSize,"try-error")){
+            binSize2 <- binSize <- 2
+            maxL <- 10
+        }
+        if(is.na(binSize2) || is.null(binSize2)) binSize2 <- binSize
+        numericInput(ns("ELEFAN_GA_binSize2"), "",
+                     binSize, min = binSize2, max = maxL, step=0.5,
+                     width ='80%')
+    })
+
     output$ELEFAN_years_selected_cc_out <- renderUI({
         allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
         if(inherits(allyears,"try-error")) allyears = NULL
         selectInput(ns("ELEFAN_years_selected_cc"), "",
                     choices = allyears, selected = allyears,
                     multiple = TRUE,
-                    width = "30%")
+                    width = "80%")
     })
 
 
-
-    observe({
-        if(input$natM == "Then_growth"){
-            js$removeBox2("box_natM_pauly")
-            js$removeBox2("box_natM_then_tmax")
-        }else if(input$natM == "Then_tmax"){
-            js$showBox2("box_natM_then_tmax")
-            js$removeBox2("box_natM_pauly")
-        }else if(input$natM == "Pauly_Linf"){
-            js$showBox2("box_natM_pauly")
-            js$removeBox2("box_natM_then_tmax")
-        }
-    })
-
+    ## Interactive UIs & Reactive values
+    ## ----------------------------
 
     observe({
         if(!input$ELEFAN_GA_seasonalised){
@@ -188,6 +197,40 @@ elefanGaModule <- function(input, output, session) {
         }
     })
 
+    observe({
+        if(input$natM == "Then's growth formula"){
+            shinyjs::hide("ui_natM_pauly", asis = TRUE)
+            shinyjs::hide("ui_natM_then_tmax", asis = TRUE)
+        }else if(input$natM == "Then's max. age formula"){
+            shinyjs::show("ui_natM_then_tmax", asis = TRUE)
+            shinyjs::hide("ui_natM_pauly", asis = TRUE)
+        }else if(input$natM == "Pauly's growth & temp. formula"){
+            shinyjs::show("ui_natM_pauly", asis = TRUE)
+            shinyjs::hide("ui_natM_then_tmax", asis = TRUE)
+        }
+    })
+
+    observe({
+        if(input$select == "Estimate"){
+            shinyjs::hide("ui_l50", asis = TRUE)
+            shinyjs::hide("ui_l75", asis = TRUE)
+            shinyjs::hide("ui_wqs", asis = TRUE)
+            shinyjs::hide("ui_lcMin", asis=TRUE)
+            shinyjs::hide("ui_lcMax", asis=TRUE)
+        }else if(input$select == "Define L50 & L75"){
+            shinyjs::show("ui_l50", asis = TRUE)
+            shinyjs::hide("ui_wqs", asis = TRUE)
+            shinyjs::show("ui_l75", asis = TRUE)
+            shinyjs::show("ui_lcMin", asis=TRUE)
+            shinyjs::show("ui_lcMax", asis=TRUE)
+        }else if(input$select == "Define L50 & (L75-L25)"){
+            shinyjs::show("ui_l50", asis = TRUE)
+            shinyjs::hide("ui_l75", asis = TRUE)
+            shinyjs::show("ui_wqs", asis = TRUE)
+            shinyjs::show("ui_lcMin", asis=TRUE)
+            shinyjs::show("ui_lcMax", asis=TRUE)
+        }
+    })
 
     observeEvent(input$fileGa, {
         fileGaState$upload <- 'uploaded'
@@ -198,6 +241,19 @@ elefanGaModule <- function(input, output, session) {
         inputElefanGaData$data <- elefanGaFileData()
     })
 
+    observeEvent(input$ELEFAN_GA_binSize,{
+        inputElefanGaData[['binSize2']] <- input$ELEFAN_GA_binSize
+    })
+
+    observeEvent(input$ELEFAN_GA_binSize2,{
+        inputElefanGaData[['binSize2']] <- input$ELEFAN_GA_binSize2
+    })
+
+
+
+
+    ## Action buttons
+    ## ----------------------------
 
     observeEvent(input$go_ga, {
 
@@ -236,21 +292,29 @@ elefanGaModule <- function(input, output, session) {
                                  elitism = input$ELEFAN_GA_elitism,
                                  MA = input$ELEFAN_GA_MA,
                                  addl.sqrt = input$ELEFAN_GA_addlsqrt,
-                                 plus_group = input$ELEFAN_GA_PLUS_GROUP,
+##                                 plus_group = input$ELEFAN_GA_PLUS_GROUP,
                                  years = input$ELEFAN_years_selected,
                                  agg = input$ELEFAN_agg,
-                                 method_natM = input$natM,
-                                 schooling = input$schooling,
-                                 tmax = input$tmax,
-                                 temp = input$temp,
-                                 binSizeCC = input$ELEFAN_GA_binSize2,
+                                 binSizeCC = inputElefanGaData[['binSize2']],
                                  yearsCC = yearsCC,
                                  LWa = input$LWa,
                                  LWb = input$LWb,
-                                 stockSize = input$stockSize,
-                                 fmchangeRange = input$fmchangeRange,
-                                 fmLengthOut = input$fmLengthOut,
-                                 lcLengthOut = input$lcLengthOut
+                                 natM_method = input$natM,
+                                 temp = input$temp,
+                                 cor_schooling = input$schooling,
+                                 tmax = input$tmax,
+                                 select_method = input$select,
+                                 l50_user = input$l50_user,
+                                 l75_user = input$l75_user,
+                                 wqs_user = input$wqs_user,
+                                 fRangeSteps = input$fRangeSteps,
+                                 fRangeMin = input$fRangeMin,
+                                 fRangeMax = input$fRangeMax,
+                                 lcRangeSteps = input$lcRangeSteps,
+                                 lcRangeMin = input$lcRangeMin,
+                                 lcRangeMax = input$lcRangeMax,
+                                 Lm50 = input$Lm50,
+                                 Lm75 = input$Lm75
                                  )
 
             js$hideComputing()
@@ -284,9 +348,7 @@ elefanGaModule <- function(input, output, session) {
                                         #     footer = NULL
                                         #   ))
             } else {
-                ##          js$showBox("box_elefan_ga_results")
                 js$collapseBox("box_datupload")
-                js$expandBox("box_results")
                 elefan_ga$results <- res
                 session$userData$fishingMortality$FcurrGA <-
                     round(elefan_ga$results$resYPR1$currents[4]$curr.F, 2)
@@ -336,148 +398,390 @@ elefanGaModule <- function(input, output, session) {
     output$plot_explo1 <- renderPlot({
         req(inputElefanGaData$data, input$ELEFAN_years_selected)
         elefan_ga$dataExplo[['lfq']] <- elefanGaDataExplo1()
-        par(mar = c(4,4,1,2))
-        plot(elefan_ga$dataExplo$lfq, Fname = "catch", date.axis = "modern")
+        elefan_ga$dataExplo[['lfqbin']] <- elefanGaDataExplo2()
+        par(mfrow = c(2,1), mar = c(1,4,0,1), oma = c(3,1,1,0))
+        plot(elefan_ga$dataExplo$lfq, Fname = "catch", date.axis = "")
+        legend("topleft",legend=as.expression(bquote(bold("A"))),
+               x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg = "white")
+        plot(elefan_ga$dataExplo$lfqbin, Fname = "rcounts", date.axis = "modern")
+        legend("topleft",legend=as.expression(bquote(bold("B"))),
+               x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg = "white")
     })
     output$title_explo1 <- renderText({
         req(inputElefanGaData$data, input$ELEFAN_years_selected)
-        txt <- "<p class=\"pheader_elefan\">Fig 1: Length-frequency data.</p>"
-        txt
-    })
-    output$plot_explo2 <- renderPlot({
-        req(inputElefanGaData$data, elefan_ga$dataExplo$lfq, input$ELEFAN_years_selected)
-        elefan_ga$dataExplo[['lfqbin']] <- elefanGaDataExplo2()
-        par(mar = c(4,4,1,2))
-        plot(elefan_ga$dataExplo$lfqbin, Fname = "rcounts", date.axis = "modern")
-    })
-    output$title_explo2 <- renderText({
-        req(inputElefanGaData$data, elefan_ga$dataExplo$lfq, input$ELEFAN_years_selected)
-        txt <- "<p class=\"pheader_elefan\">Fig 2: Restructured length-frequency data.</p>"
+        txt <- "<p class=\"pheader_elefan\">Fig 1: Uploaded raw (A) and restructured (B) length-frequency data.</p>"
         txt
     })
 
 
-    ## Growth plots
+    ## Growth plot
     ## --------------------------
-    output$plot_ga_3 <- renderPlot({
+    output$plot_growthCurves <- renderPlot({
         req(elefan_ga$results)
-        plot(elefan_ga$results$resYPR1, mark = TRUE)
-##            mtext("(a)", side = 3, at = -1, line = 0.6)
-    })
-    output$plot_ga_4 <- renderPlot({
-        req(elefan_ga$results)
-        plot(elefan_ga$results$resYPR2, type = "Isopleth",
-             xaxis1 = "FM", mark = TRUE, contour = 6)
-##            mtext("(b)", side = 3, at = -0.1, line = 0.6)
+        par(mfrow = c(2,1), mar = c(1,4,0,1), oma = c(3,1,1,0))
+        plot(elefan_ga$dataExplo$lfqbin, Fname = "catch", date.axis = "")
+        lt <- lfqFitCurves(lfq = elefan_ga$dataExplo$lfqbin,
+                           par=as.list(elefan_ga$results$resGA$par),
+                           draw = TRUE, lty = 1, col = "dodgerblue2", lwd=2.5)
+        legend("topleft",legend=as.expression(bquote(bold("A"))),
+               x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg = "white")
+        plot(elefan_ga$dataExplo$lfqbin, Fname = "rcounts")
+        lt <- lfqFitCurves(lfq = elefan_ga$dataExplo$lfqbin,
+                           par=as.list(elefan_ga$results$resGA$par),
+                           draw = TRUE, lty = 1, col = "dodgerblue2", lwd=2.5)
+        legend("topleft",legend=as.expression(bquote(bold("B"))),
+               x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg= "white")
 
     })
-    output$plot_ga_5 <- renderPlot({
+    output$title_growthCurves <- renderText({
         req(elefan_ga$results)
-        plot(elefan_ga$results$resGA)
+        txt <- "<p class=\"pheader_elefan\">Fig 2: Uploaded raw (A) and restructured (B) length-frequency data with von Bertalanffy growth curves fitted by ELEFAN.</p>"
+        txt
     })
-    output$par_ga <- renderText({
-        if ("results" %in% names(elefan_ga)) {
-            title <- "<hr>"
-            title <- paste0(title, "<strong>Length infinity (", withMathJax("\\(L_\\infty\\)"), "in cm):</strong>&nbsp;", round(elefan_ga$results$resGA$par$Linf, 2))
-            title <- paste0(title, "<br/>")
-            title <- paste0(title, "<strong>Curving coefficient (K):</strong>&nbsp;", round(elefan_ga$results$resGA$par$K, 2))
-            title <- paste0(title, "<br/>")
-            title <- paste0(title, "<strong>Time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month (t_anchor):</strong>&nbsp;", round(elefan_ga$results$resGA$par$t_anchor, 2))
-            title <- paste0(title, "<br/>")
-            title <- paste0(title, "<strong>Amplitude of growth oscillation (NOTE: only if 'Seasonalized' is checked; C):</strong>&nbsp;", ifelse(is.na(elefan_ga$results$resGA$par$C), NA, round(elefan_ga$results$resGA$par$C, 2)))
-            title <- paste0(title, "<br/>")
-            title <- paste0(title, "<strong>Winter point of oscillation (</strong>&nbsp;", withMathJax("\\(t_w\\)") , "<strong>)</strong>&nbsp;")
-            title <- paste0(title, "<br/>")
-            title <- paste0(title, "<strong>Summer point of oscillation (NOTE: only if 'Seasonalized' is checked; ", withMathJax("\\(ts\\)"),"=", withMathJax("\\(t_w\\)"), "- 0.5):</strong>&nbsp;", ifelse(is.na(elefan_ga$results$resGA$par$ts), NA, round(elefan_ga$results$resGA$par$ts, 2)))
-            title <- paste0(title, "<br/>")
-            title <- paste0(title, "<strong>Growth performance index defined as phiL = log10(K) + 2 * log10(Linf):</strong>&nbsp;", ifelse(is.na(elefan_ga$results$resGA$par$phiL), "--", round(elefan_ga$results$resGA$par$phiL, 2)))
-            title <- paste0(title, "<br/>")
-            title <- paste0(title, "<br>")
-            title
-        } else {  "" }
+
+    ## ELEFAN fit plot
+    ## --------------------------
+    output$plot_elefanFit <- renderPlot({
+        req(elefan_ga$results)
+        par(mar=c(5,5,2,1))
+        GA::plot(elefan_ga$results$resGA$gafit)
     })
-    output$downloadReport_ga <- renderUI({
-        if ("results" %in% names(elefan_ga)) {
-            downloadButton(session$ns('createElefanGAReport'), 'Download Report')
+    output$title_elefanFit <- renderText({
+        req(elefan_ga$results)
+        txt <- "<p class=\"pheader_elefan\">Fig 3: ELEFAN genetic algorithm search path.</p>"
+        txt
+    })
+
+    ## Catch curve plot
+    ## --------------------------
+    output$plot_catchCurve <- renderPlot({
+        req(elefan_ga$results)
+        resCC <- elefan_ga$results$resCC
+        ind <- resCC$reg_int[1]:resCC$reg_int[2]
+        par(mar=c(5,5,2,1))
+        plot(resCC$t_midL[-ind], resCC$lnC_dt[-ind],
+             xlab = "Relative age [years]", ylab = "ln(C/dt)",
+             cex=1.4)
+        points(resCC$t_midL[ind], resCC$lnC_dt[ind],
+               col = "dodgerblue2", pch = 16, cex=1.4)
+        abline(resCC$linear_mod, lwd=2.5, col = "dodgerblue2")
+        box()
+    })
+    output$title_catchCurve <- renderText({
+        req(elefan_ga$results)
+        txt <- "<p class=\"pheader_elefan\">Fig 4: Catch curve.</p>"
+        txt
+    })
+
+    ## Selectivity plot
+    ## --------------------------
+    output$plot_select <- renderPlot({
+        req(elefan_ga$results)
+        L50 <- elefan_ga$results$L50
+        L75 <- elefan_ga$results$L75
+        slist <- list(selecType = "trawl_ogive",
+                      L50 = L50, L75 = L75)
+        lt <- seq(0, 1.5 * max(elefan_ga$results$lfqbin$midLengths), 0.01)
+        sest <- TropFishR::select_ogive(slist, Lt = lt)
+        par(mar=c(5,5,2,1))
+        plot(lt, sest, ty='n', lwd=2,
+             xlab = "Length", ylab = "Probability of capture")
+        tmp <- TropFishR::select_ogive(slist, Lt = L50)
+        segments(L50, -1, L50, tmp, lty = 2, lwd=1.5, col="grey60")
+        segments(-10, tmp, L50, tmp, lty = 2, lwd=1.5, col="grey60")
+        tmp <- TropFishR::select_ogive(slist, Lt = L75)
+        segments(L75, -1, L75, tmp, lty = 3, lwd=1.5, col="grey60")
+        segments(-10, tmp, L75, tmp, lty = 3, lwd=1.5, col="grey60")
+        lines(lt, sest, lwd=2.5, col="dodgerblue2")
+        legend("bottomright", legend = c("Selection ogive","L50","L75"),
+               lty = c(1,2,3), col=c("dodgerblue2","grey60","grey60"),
+               lwd=c(2,1.5,1.5))
+        box()
+    })
+    output$title_select <- renderText({
+        req(elefan_ga$results)
+        txt <- "<p class=\"pheader_elefan\">Fig 5: Probability of capture at length.</p>"
+        txt
+    })
+
+    ## YPR plot
+    ## --------------------------
+    output$plot_ypr <- renderPlot({
+        req(elefan_ga$results)
+
+        resYPR <- elefan_ga$results$resYPR1
+        refs <- as.numeric(resYPR$df_Es)
+
+        if(all(is.na(resYPR$SPR)) || is.null(elefan_ga$results$Lm50) || is.null(elefan_ga$results$Lm75)){
+
+            par(mfrow=c(2,1), mar=c(1,4,0,2), oma=c(4,1,1,0))
+            ## YPR
+            plot(resYPR$FM_change, resYPR$totY, ty='n',
+                 ylim = c(0,1.25) * range(resYPR$totY),
+                 xaxt = "n",
+                 xlab = "", ylab = "")
+            tmp <- resYPR$totY[which.min(abs(resYPR$FM_change-refs[1]))]
+            segments(refs[1], -10, refs[1], tmp,
+                     lty=2, lwd=1.5, col="grey60")
+            segments(-10, tmp, refs[1], tmp,
+                     lty=2, lwd=1.5, col="grey60")
+            tmp <- resYPR$totY[which.min(abs(resYPR$FM_change-refs[2]))]
+            segments(refs[2], -10, refs[2], tmp,
+                     lty=3, lwd=1.5, col="grey60")
+            segments(-10, tmp, refs[2], tmp,
+                     lty=3, lwd=1.5, col="grey60")
+            lines(resYPR$FM_change, resYPR$totY, lwd=2.5,
+                  col="dodgerblue2")
+            legend("topleft",legend=as.expression(bquote(bold("A"))),
+                   x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg= "white")
+            legend("topright",legend=c("Fmax","F0.1"), lty = c(2,3), cex=1.1, bg= "white")
+            mtext("Yield per recruit", 2, 3.5)
+            ## BPR
+            plot(resYPR$FM_change, resYPR$meanB, ty='n',
+                 ylim = c(0,1.1) * range(resYPR$meanB),
+                 xlab = "", ylab = "")
+            tmp <- resYPR$meanB[which.min(abs(resYPR$FM_change-refs[3]))]
+            segments(refs[3], -10, refs[3], tmp,
+                     lty=3, lwd=1.5, col="grey60")
+            segments(-10, tmp, refs[3], tmp,
+                     lty=3, lwd=1.5, col="grey60")
+            lines(resYPR$FM_change, resYPR$meanB, lwd=2.5,
+                  col="dodgerblue2")
+            legend("topleft",legend=as.expression(bquote(bold("B"))),
+                   x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg= "white")
+            legend("topright",legend=c("F0.5"), lty = c(2), cex=1.1, bg= "white")
+            mtext("Biomass per recruit", 2, 3.5)
+            mtext("Fishing mortality", 1, 3)
+            box()
+
+
+        }else{
+
+            par(mfrow=c(3,1), mar=c(1,4,0,2), oma=c(4,1,1,0))
+            ## YPR
+            plot(resYPR$FM_change, resYPR$totY, ty='n',
+                 ylim = c(0,1.25) * range(resYPR$totY),
+                 xaxt = "n",
+                 xlab = "", ylab = "")
+            tmp <- resYPR$totY[which.min(abs(resYPR$FM_change-refs[1]))]
+            segments(refs[1], -10, refs[1], tmp,
+                     lty=2, lwd=1.5, col="grey60")
+            segments(-10, tmp, refs[1], tmp,
+                     lty=2, lwd=1.5, col="grey60")
+            tmp <- resYPR$totY[which.min(abs(resYPR$FM_change-refs[2]))]
+            segments(refs[2], -10, refs[2], tmp,
+                     lty=3, lwd=1.5, col="grey60")
+            segments(-10, tmp, refs[2], tmp,
+                     lty=3, lwd=1.5, col="grey60")
+            lines(resYPR$FM_change, resYPR$totY, lwd=2.5,
+                  col="dodgerblue2")
+            legend("topleft",legend=as.expression(bquote(bold("A"))),
+                   x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg= "white")
+            legend("topright",legend=c("Fmax","F0.1"), lty = c(2,3), cex=1.1, bg= "white")
+            mtext("Yield per recruit", 2, 3.5)
+            ## BPR
+            plot(resYPR$FM_change, resYPR$meanB, ty='n',
+                 ylim = c(0,1.1) * range(resYPR$meanB),
+                 xaxt = "n",
+                 xlab = "", ylab = "")
+            tmp <- resYPR$meanB[which.min(abs(resYPR$FM_change-refs[3]))]
+            segments(refs[3], -10, refs[3], tmp,
+                     lty=2, lwd=1.5, col="grey60")
+            segments(-10, tmp, refs[3], tmp,
+                     lty=2, lwd=1.5, col="grey60")
+            lines(resYPR$FM_change, resYPR$meanB, lwd=2.5,
+                  col="dodgerblue2")
+            legend("topleft",legend=as.expression(bquote(bold("B"))),
+                   x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg= "white")
+            legend("topright",legend=c("F0.5"), lty = c(2), cex=1.1, bg= "white")
+            mtext("Biomass per recruit", 2, 3.5)
+            ## SPR
+            plot(resYPR$FM_change, resYPR$SPR, ty='n',
+                 ylim = c(0,1.1) * range(resYPR$SPR),
+                 xlab = "", ylab = "")
+            tmp <- resYPR$SPR[which.min(abs(resYPR$FM_change-refs[4]))]
+            segments(refs[4], -10, refs[4], tmp,
+                     lty=2, lwd=1.5, col="grey60")
+            segments(-10, tmp, refs[4], tmp,
+                     lty=2, lwd=1.5, col="grey60")
+            tmp <- resYPR$SPR[which.min(abs(resYPR$FM_change-refs[5]))]
+            segments(refs[5], -10, refs[5], tmp,
+                     lty=3, lwd=1.5, col="grey60")
+            segments(-10, tmp, refs[5], tmp,
+                     lty=3, lwd=1.5, col="grey60")
+            tmp <- resYPR$SPR[which.min(abs(resYPR$FM_change-refs[6]))]
+            segments(refs[6], -10, refs[6], tmp,
+                     lty=4, lwd=1.5, col="grey60")
+            segments(-10, tmp, refs[6], tmp,
+                     lty=4, lwd=1.5, col="grey60")
+            lines(resYPR$FM_change, resYPR$SPR, lwd=2.5,
+                  col="dodgerblue2")
+            legend("topleft",legend=as.expression(bquote(bold("C"))),
+                   x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg= "white")
+            legend("topright",legend=c("F30","F35","F40"),
+                   lty = c(2,3,4), cex=1.1, bg= "white")
+            mtext("Spawning potential ratio", 2, 3.5)
+            mtext("Fishing mortality", 1, 3)
+            box()
         }
     })
-    output$ElefanGaVREUpload <- renderText(
-    {
+    output$title_ypr <- renderText({
+        req(elefan_ga$results)
+        if(is.null(elefan_ga$results$Lm50) || is.null(elefan_ga$results$Lm75)){
+            txt <- "<p class=\"pheader_elefan\">Fig 6: Yield (A) and biomass (B) per recruit for a range of fishing mortality rates.</p>"
+        }else{
+            txt <- "<p class=\"pheader_elefan\">Fig 6: Yield (A) and biomass (B) per recruit as well as spawning potential ratio (C) for a range of fishing mortality rates.</p>"
+        }
+        txt
+    })
+
+    ## YPR-Isopleth plot
+    ## --------------------------
+    output$plot_ypr_iso <- renderPlot({
+        req(elefan_ga$results)
+        par(mfrow = c(2,1), mar = c(4,4,0,1), oma = c(2,0,1,0))
+        plot(elefan_ga$results$resYPR2, type = "Isopleth",
+             xaxis1 = "FM", mark = TRUE, contour = 6, xlab="")
+        legend("topleft",legend=as.expression(bquote(bold("A"))),
+               x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg = "white")
+        plot(elefan_ga$results$resYPR2, type = "Isopleth",
+             xaxis1 = "FM", yaxis1 = "B_R", mark = TRUE,
+             contour = 6, xlab = "Fishing mortality")
+        legend("topleft",legend=as.expression(bquote(bold("B"))),
+               x.intersp = -0.3, y.intersp = 0.3, cex=1.3,
+               bg = "white")
+
+    })
+    output$title_ypr_iso <- renderText({
+        req(elefan_ga$results)
+        txt <- "<p class=\"pheader_elefan\">Fig 7: Yield (A) and biomass (B) per reruit for a range fishing mortality rates and length at 50% selectivity (L50) values.</p>"
+        txt
+    })
+
+
+    ## Growth parameter table
+    ## --------------------------
+    output$table_growth <- renderTable({
+        req(elefan_ga$results)
+        tmp <- as.data.frame(c(elefan_ga$results$resGA$par,
+                               list(Rn_max = elefan_ga$results$resGA$Rn_max)))
+        names(tmp) <- replace(names(tmp), names(tmp)=="t_anchor", "ta")
+        names(tmp) <- replace(names(tmp), names(tmp)=="Rn_max", "Rn")
+        names(tmp) <- replace(names(tmp), names(tmp)=="phiL", "phi'")
+        tmp
+    })
+    output$title_table_growth <- renderText({
+        req(elefan_ga$results)
+        txt <- "<p class=\"pheader_elefan\">Table 1: Estimated growth parameters.</p>"
+        txt
+    })
+
+
+    ## Mortality rates
+    ## --------------------------
+    output$table_mort <- renderTable({
+        req(elefan_ga$results)
+        Z <- elefan_ga$results$resCC$Z
+        M <- elefan_ga$results$resM
+        FM <- Z - M
+        E <- FM / Z
+        tmp <- as.data.frame(t(as.matrix(c(Z, M, FM, E,
+                 elefan_ga$results$L50,
+                 elefan_ga$results$L75))))
+        names(tmp) <- c("Z","M","F","E","L50","L75")
+        tmp
+    })
+    output$title_table_mort <- renderText({
+        req(elefan_ga$results)
+        txt <- "<p class=\"pheader_elefan\">Table 2: Estimated mortality rates and (estimated/provided) selectivity parameters.</p>"
+        txt
+    })
+
+    ## Reference points
+    ## --------------------------
+    output$table_refs <- renderTable({
+        req(elefan_ga$results)
+        if(is.null(elefan_ga$results$Lm50) || is.null(elefan_ga$results$Lm75)){
+            tmp <- elefan_ga$results$resYPR1$df_Es[1:3]
+            names(tmp) <- c("Fmax","F0.1","F0.5")
+        }else{
+            tmp <- elefan_ga$results$resYPR1$df_Es
+            names(tmp) <- c("Fmax","F0.1","F0.5","F30","F35","F40")
+        }
+        tmp
+    })
+    output$title_table_refs <- renderText({
+        req(elefan_ga$results)
+        txt <- "<p class=\"pheader_elefan\">Table 3: Estimated reference points (SPR-based reference points only estimated if maturity parameters provided).</p>"
+        txt
+    })
+
+
+    ## Stock status table
+    ## --------------------------
+    output$table_stockstatus <- renderTable({
+        req(elefan_ga$results)
+        Z <- elefan_ga$results$resCC$Z
+        M <- elefan_ga$results$resM
+        FM <- Z - M
+        if(is.null(elefan_ga$results$Lm50) || is.null(elefan_ga$results$Lm75)){
+            tmp <- cbind(FM/elefan_ga$results$resYPR1$df_Es[1:3])
+            names(tmp) <- c("F/Fmax","F/F0.1","F/F0.5")
+        }else{
+            tmp <- cbind(FM/elefan_ga$results$resYPR1$df_Es,
+                         elefan_ga$results$resYPR1$currents$curr.SPR)
+            names(tmp) <- c("F/Fmax","F/F0.1","F/F0.5","F/F30","F/F35","F/F40","SPR")
+        }
+        tmp
+    })
+    output$title_table_stockstatus <- renderText({
+        req(elefan_ga$results)
+        txt <- "<p class=\"pheader_elefan\">Table 4: Estimated stock status (SPR-based stock status only estimated if maturity parameters provided).</p>"
+        txt
+    })
+
+
+
+    output$downloadReport_ga <- renderUI({
+        req(elefan_ga$results)
+        downloadButton(session$ns('createElefanGAReport'), 'Download Report')
+    })
+
+
+    output$ElefanGaVREUpload <- renderText({
         text <- ""
-        if ("results" %in% names(elefan_ga)) {
+        req(elefan_ga$results)
             if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode() == "GCUBE") {
                 if (isTRUE(elefanGaUploadVreResult$res)) {
                     text <- paste0(text, VREUploadText)
                 }
             }
-        }
         text
-    }
-    )
+    })
+
     output$createElefanGAReport <- downloadHandler(
         filename = paste("ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
         content = function(file) {
             createElefanGaPDFReport(file, elefan_ga, input)
         }
     )
+
     output$tbl1_ga <- renderTable({
-        if ('results' %in% names(elefan_ga)) {
-            elefan_ga$results$resYPR1$df_Es
-        }
+        req(elefan_ga$results)
+        elefan_ga$results$resYPR1$df_Es
     },
     include.rownames=TRUE)
+
     output$tbl2_ga <- renderTable({
-        if ('results' %in% names(elefan_ga)) {
+        req(elefan_ga$results)
             CURR_GA<-elefan_ga$results$resYPR1$currents
             CURR_GA<-CURR_GA[,-7]
             names(CURR_GA)<-c("Length-at-1st-capture (Lc)", "Age-at-1st-capture (tc)", "Effort","Fishing mortality", "Catch", "Yield", "Biomass")
             CURR_GA
-        }
     },
     include.rownames=TRUE)
 
-    output$title_tbl1_ga <- renderText({
-        if ('results' %in% names(elefan_ga)) {
-            txt <- "<p class=\"pheader_elefan\">Biological reference levels:</p>"
-            txt
-        }
-    })
-    output$title_tbl2_ga <- renderText({
-        if ('results' %in% names(elefan_ga)) {
-            txt <- "<p class=\"pheader_elefan\">Current levels:</p>"
-            txt
-        }
-    })
-    output$titlePlot1_elefan_ga <- renderText({
-        if ('results' %in% names(elefan_ga)) {
-            txt <- "<p class=\"pheader_elefan\">Raw LFQ data</p>"
-            txt
-        }
-    })
-    output$titlePlot2_elefan_ga <- renderText({
-        if ('results' %in% names(elefan_ga)) {
-            txt <- "<p class=\"pheader_elefan\">Restructured LFQ data</p>"
-            txt
-        }
-    })
-    output$titlePlot3_elefan_ga <- renderText({
-        if ('results' %in% names(elefan_ga)) {
-            txt <- "<p class=\"pheader_elefan\">Thompson and Bell model with changes in F</p>"
-            txt
-        }
-    })
-    output$titlePlot4_elefan_ga <- renderText({
-        if ('results' %in% names(elefan_ga)) {
-            txt <- "<p class=\"pheader_elefan\">Thompson and Bell model with changes in F and Lc</p>"
-            txt
-        }
-    })
-    output$titleResultsOfTheComputation_elefan_ga <- renderText({
-        if ('results' %in% names(elefan_ga)) {
-            txt <- "<h2>Results of the ELEFAN_GA computation</h2>"
-            txt
-        }
-    })
+
 
     output$elefanGADataConsiderationsText <- renderText({
         text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getDataConsiderationTextForElefan())
@@ -492,7 +796,7 @@ elefanGaModule <- function(input, output, session) {
 
 
     output$rnMax_ga <- renderText({
-        if ("results" %in% names(elefan_ga)) {
+        if(req(elefan_ga$results)){
             title <- paste0("<strong>Highest value of fitness function:</strong>&nbsp;", round(elefan_ga$results$resGA$Rn_max, 3))
             title
         } else {  "" }
