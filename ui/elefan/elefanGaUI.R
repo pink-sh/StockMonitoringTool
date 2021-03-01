@@ -245,8 +245,6 @@ tabElefanGa <- function(id) {
                                              actionButton(ns("infoYearSel"),
                                                           tags$i(class = "fas fa-info",
                                                                  style="font-size: 12px"),
-                                                          ## size = "extra-small",
-                                                          ##                                                      style='padding:1px; font-size:70%',
                                                           class="topLevelInformationButton")
                                              )
 
@@ -412,7 +410,7 @@ tabElefanGa <- function(id) {
                                                                  tags$i(class = "fas fa-info",
                                                                         style="font-size: 12px"),
                                                                  class="topLevelInformationButton")),
-                                                  30, min = 50, max = 1e3, step=1,  ## TODO: set to 100
+                                                  100, min = 50, max = 1e3, step=1,
                                                   width = "90%"),
                                      numericInput(ns("ELEFAN_GA_maxiter"),
                                                   p("Maximum number of generations",
@@ -420,7 +418,7 @@ tabElefanGa <- function(id) {
                                                                  tags$i(class = "fas fa-info",
                                                                         style="font-size: 12px"),
                                                                  class="topLevelInformationButton")),
-                                                  20, min = 20, max = 1e3, step=1,  ## TODO: set to 50
+                                                  50, min = 20, max = 1e3, step=1,
                                                   width = "90%"),
                                      numericInput(ns("ELEFAN_GA_run"),
                                                   p("Number of generations without improvment",
