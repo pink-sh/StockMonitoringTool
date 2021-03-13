@@ -157,9 +157,9 @@ tabElefanGa <- function(id) {
                         "Maturity"
                         ),
 
-                bsModal("info_select", "Selectivity", ns("infoSelect"),
+                bsModal("info_select", "Gear selectivity", ns("infoSelect"),
                         size = "large",
-                        "Test"
+                        HTML("<p>The specifics of how fish are caught by fisheries and thus the probability of capture for fish of various length classes are dependent on the fishing gear, which is referred to as gear selectivity. Find more information about fishing gear for example <a href=http://www.fao.org/3/X7788E/X7788E00.htm> here </a>. <br> TropFishR allows to estimate the gear selectivity by means of the catch curve ('Estimate', default).  Alternatively, the gear selectivity can be specified by the selectivity at 50% and 75% selectivity (L50 and L75, respectively) or by the length at 50% selectivity (L50) and the width of selection ogive (L75-L25). <br> <br> Note that estimated and specified selectivity corresponds to a logistic curve (trawl-like selectivity).</p>")
                         ),
 
                 bsModal("info_natm", "Natural mortality", ns("infoNatM"),
