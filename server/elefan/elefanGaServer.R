@@ -392,16 +392,17 @@ elefanGaModule <- function(input, output, session) {
             if ('error' %in% names(res)) {
                 showModal(modalDialog(
                     title = "Error",
-
                     if(!is.null(res$error)){
-                        if (!is.null(grep("MA must be an odd integer",res$error))) {
-                            HTML(sprintf("Incorrect moving average (MA) value! Please provide an odd integer (e.g. 3,5,7) and run again.<hr/> <b>%s</b>",
+                        if (length(grep("MA must be an odd integer",res$error)) != 0) {
+                            HTML(sprintf("Incorrect moving average (MA) value! Please provide an odd integer (e.g. 3, 5, 7) and run again.<hr/> <b>%s</b>",
                                          res$error))
-                        }else if (!is.null(grep("specified bin_size is smaller than",res$error))) {
+                        }else if (length(grep("specified bin_size is smaller than",res$error)) != 0) {
                             HTML(sprintf(paste0("The specified bin size is smaller than the resolution in uploaded data! Please set bin size equal to ",min(diff(inputElefanGaData$data$midLengths))," or higher and run again.<hr/> <b>%s</b>"),
                                          res$error))
-                        }else if(grep("POSIXlt",res$error)==1) {
+                        }else if(length(grep("POSIXlt",res$error)) != 0) {
                             HTML(sprintf("The date could not be recognized! Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>", res$error))
+                        }else if(length(grep("elitism cannot be larger that population",res$error)) != 0) {
+                            HTML(sprintf("Elitism cannot be larger than population size. Please adjust and run again.<hr/> <b>%s</b>", res$error))
                         }else{
                             res$error
                         }},
@@ -502,16 +503,17 @@ elefanGaModule <- function(input, output, session) {
             if ('error' %in% names(res)) {
                 showModal(modalDialog(
                     title = "Error",
-
                     if(!is.null(res$error)){
-                        if (!is.null(grep("MA must be an odd integer",res$error))) {
+                        if (length(grep("MA must be an odd integer",res$error)) != 0) {
                             HTML(sprintf("Incorrect moving average (MA) value! Please provide an odd integer (e.g. 3,5,7) and run again.<hr/> <b>%s</b>",
                                          res$error))
-                        }else if (!is.null(grep("specified bin_size is smaller than",res$error))) {
+                        }else if (length(grep("specified bin_size is smaller than",res$error)) != 0) {
                             HTML(sprintf(paste0("The specified bin size is smaller than the resolution in uploaded data! Please set bin size equal to ",min(diff(inputElefanGaData$data$midLengths))," or higher and run again.<hr/> <b>%s</b>"),
                                          res$error))
-                        }else if(grep("POSIXlt",res$error)==1) {
+                        }else if(length(grep("POSIXlt",res$error)) != 0) {
                             HTML(sprintf("The date could not be recognized! Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>", res$error))
+                        }else if(length(grep("elitism cannot be larger that population",res$error)) != 0) {
+                            HTML(sprintf("Elitism cannot be larger than population size. Please adjust and run again.<hr/> <b>%s</b>", res$error))
                         }else{
                             res$error
                         }},

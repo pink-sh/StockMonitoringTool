@@ -102,6 +102,7 @@ run_elefan_ga <- function(
         lfqbin <- lfqRestructure(lfq, MA = MA, addl.sqrt = addl.sqrt)
         returnResults[['lfqbin']] <- lfqbin
 
+
         ##--------------------
         ##  ELEFAN
         ##--------------------
