@@ -32,7 +32,7 @@ tabElefanGa <- function(id) {
 
                 ## Information tabs
                 ## -------------------------------
-                bsModal("modalExampleGA", "Data Considerations - TropFishR",
+                bsModal("modalExampleGA", "Data Loading and Formatting Considerations - TropFishR",
                         ns("elefanGADataConsiderations"),
                         size = "large",
                         htmlOutput(ns("elefanGADataConsiderationsText"))),
