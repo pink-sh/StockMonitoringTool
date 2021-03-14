@@ -137,7 +137,6 @@ footer = NULL
         shinyjs::reset("temp")
         shinyjs::reset("schooling")
         shinyjs::reset("tmax")
-        shinyjs::reset("ELEFAN_GA_binSize2")
         shinyjs::reset("ELEFAN_years_selected_cc")
         shinyjs::reset("Lm50")
         shinyjs::reset("Lm75")
@@ -192,7 +191,6 @@ footer = NULL
                 maxL <- 10
             }
         }
-        inputElefanGaData[['binSize2']] <- binSize
         numericInput(ns("ELEFAN_GA_binSize"), "",
                      binSize, min = binSize, max = maxL, step=0.5,
                      width ='100%')
@@ -214,25 +212,6 @@ footer = NULL
                     value=sel, min = min, max = max, step=1)
     })
 
-    output$ELEFAN_binSize2_out <- renderUI({
-        if(is.null(inputElefanGaData$data)){
-            binSize2 <- binSize <- 2
-            maxL <- 10
-        }else{
-            binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
-            maxL <- try(round(max(inputElefanGaData$data$midLengths)/4),silent=TRUE)
-            binSize2 <- inputElefanGaData[['binSize2']]
-            if(inherits(binSize,"try-error")){
-                binSize2 <- binSize <- 2
-                maxL <- 10
-            }
-        }
-        if(is.na(binSize2) || is.null(binSize2)) binSize2 <- binSize
-        numericInput(ns("ELEFAN_GA_binSize2"), "",
-                     binSize, min = binSize2, max = maxL, step=0.5,
-                     width ='80%')
-    })
-
     output$ELEFAN_years_selected_cc_out <- renderUI({
         if(is.null(inputElefanGaData$data)){
             allyears <- NULL
@@ -243,7 +222,7 @@ footer = NULL
         selectInput(ns("ELEFAN_years_selected_cc"), "",
                     choices = allyears, selected = allyears,
                     multiple = TRUE,
-                    width = "80%")
+                    width = "70%")
     })
 
 
@@ -302,14 +281,6 @@ footer = NULL
         inputElefanGaData$data <- elefanGaFileData()
     })
 
-    observeEvent(input$ELEFAN_GA_binSize,{
-        inputElefanGaData[['binSize2']] <- input$ELEFAN_GA_binSize
-    })
-
-    observeEvent(input$ELEFAN_GA_binSize2,{
-        inputElefanGaData[['binSize2']] <- input$ELEFAN_GA_binSize2
-    })
-
 
 
 
@@ -339,7 +310,7 @@ footer = NULL
 
             flog.info("Starting Elegan GA computation (check)")
             res <- run_elefan_ga(x = inputElefanGaData$data,
-                                 binSize =  input$ELEFAN_GA_binSize,
+                                 binSize = input$ELEFAN_GA_binSize,
                                  seasonalised = input$ELEFAN_GA_seasonalised,
                                  low_par = list(Linf = linf[1], K = min(input$ELEFAN_GA_K),
                                                 t_anchor = min(input$ELEFAN_GA_t_anchor),
@@ -357,7 +328,7 @@ footer = NULL
 ##                                 plus_group = input$ELEFAN_GA_PLUS_GROUP,
                                  years = input$ELEFAN_years_selected,
                                  agg = input$ELEFAN_agg,
-                                 binSizeCC = inputElefanGaData[['binSize2']],
+                                 binSizeCC = input$ELEFAN_GA_binSize,
                                  yearsCC = yearsCC,
                                  LWa = input$LWa,
                                  LWb = input$LWb,
@@ -473,7 +444,7 @@ footer = NULL
 ##                                 plus_group = input$ELEFAN_GA_PLUS_GROUP,
                                  years = input$ELEFAN_years_selected,
                                  agg = input$ELEFAN_agg,
-                                 binSizeCC = inputElefanGaData[['binSize2']],
+                                 binSizeCC = input$ELEFAN_GA_binSize,
                                  yearsCC = yearsCC,
                                  LWa = input$LWa,
                                  LWb = input$LWb,

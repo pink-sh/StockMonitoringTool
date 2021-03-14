@@ -498,18 +498,18 @@ tabElefanGa <- function(id) {
                                                                 tags$i(class = "fas fa-info",
                                                                        style="font-size: 12px"),
                                                                 class="topLevelInformationButton")),
-                                         width = 4,
+                                         width = 5,
                                          height = "200px",
                                          br(),
                                          fluidRow(
-                                             column(6,
+                                             column(5,
                                                     selectInput(ns("natM"),
                                                                 "Method:",
                                                                 choices = c("Then's growth formula",
                                                                             "Pauly's growth & temp. formula",
                                                                             "Then's max. age formula"),
                                                                 selected = "Then's growth formula",
-                                                                width ='100%')
+                                                                width ='90%')
                                                     ),
                                              column(6,
                                                     div(id ="ui_natM_pauly",
@@ -549,31 +549,20 @@ tabElefanGa <- function(id) {
                                                                 tags$i(class = "fas fa-info",
                                                                        style="font-size: 12px"),
                                                                 class="topLevelInformationButton")),
-                                         width = 4,
+                                         width = 3,
                                          height = "200px",
                                          br(),
                                          fluidRow(
-                                             column(6,
-                                                    fluidRow(
-                                                        div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                                            HTML("<b>Bin Size (stock status)</b>")
-                                                            ),
-                                                        ),
-                                                    div(style = "margin-top:-3px",
-                                                        uiOutput(ns("ELEFAN_binSize2_out")),
-                                                        ),
-
-                                                    ),
-                                             column(6,
-                                                    fluidRow(
-                                                        div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                                            HTML("<b>Select years (stock status)</b>")
-                                                            ),
-                                                        ),
-                                                    div(style = "margin-top:-3px",
-                                                        uiOutput(ns("ELEFAN_years_selected_cc_out"))
-                                                        )
-                                                    )
+                                             column(12,
+                                             fluidRow(
+                                                 div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                                                     HTML("<b>Select years (stock status)</b>")
+                                                     ),
+                                                 ),
+                                             div(style = "margin-top:-3px",
+                                                 uiOutput(ns("ELEFAN_years_selected_cc_out"))
+                                                 )
+                                                 )
                                          ),
                                          br(), br()
                                          )
