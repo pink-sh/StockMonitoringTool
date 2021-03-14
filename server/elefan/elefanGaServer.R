@@ -18,46 +18,45 @@ elefanGaModule <- function(input, output, session) {
         upload = NULL
     )
 
+
     ## Definition of functions
     ## ----------------------------
-
     elefanGaFileData <- reactive({
         if (is.null(input$fileGa) || is.null(fileGaState$upload)) {
             return(NA)
         }
-        contents <- read_elefan_csv(input$fileGa$datapath, input$elefanGaDateFormat)
+
+        dataset <- read_elefan_csv(input$fileGa$datapath, input$elefanGaDateFormat)
+        checks <- dataset$checks
+
         print(input$fileGa)
-        if (is.null(contents$catch)) {
+
+        if (is.null(dataset$lfq)) {
             shinyjs::disable("go_ga")
             shinyjs::disable("check_ga")
             showModal(modalDialog(
                 title = "Error",
-                if(!is.null(contents$checkDelim)){
-                    if(contents$checkDelim=="not ok"){"Please ensure that your .csv file delimiter is a comma ','"  }
-                }else if(!is.null(contents$checkDec)){
-                    if(contents$checkDec=="not point"){"Please ensure your separate decimals using points ‘.’ or you don't have non numeric value"
-                    }else if(contents$checkName=="colname error"){"Please ensure your first column name is : 'midLength'"
-                    } else{"Input file seems invalid"}},
-                easyClose = TRUE,
-                footer = NULL
-            ))
+                if(!checks$csv){
+                    "Something went wrong when reading in your data set. Did you select a CSV file (i.e. file with ending '.csv')? Click on the info icon for more information."
+                }else if(!checks$delimiter){
+                    "Something went wrong when reading in your data set. Please ensure that your CSV file delimiter is a comma ',' or semicolon ';'. Click on the info icon for more information."
+                }else if(!checks$lengths){
+                    "The column with length classes is not in the right format or not numeric. Please ensure that the first column of uploaded data set includes the length classes and is numeric. Furthermore, please make sure that the decimal separator is a dot '.', by selecting '.' when saving the csv file or by changing your language settings in your program (e.g. Excel). Click on the info icon for more information."
+                }else if(!checks$dates){
+                    "Does your data set include colums with the number of individuals per length class for a given sampling date? The name of these columns need to indicate the sampling date (e.g. '21.08.2020' or '2020-08-21'). The dates might start with the letter 'X' (e.g. 'X2020-08-21'). Click on the info icon for more information."
+                }else if(!checks$ncols){
+                    "Uploaded data set does not include enough numeric samples. Does your data set include at least two columns with numeric values representing the catches per length class for a given sampling date? Click on the info icon for more information."
+                }else{
+                    "There was an unexpected error when reading in your data set. Please double-check your data set and refer to the info button for more help. "
+                },
+easyClose = TRUE,
+footer = NULL
+))
             return (NULL)
         } else {
-            if(is.Date(contents$dates)&&is.unsorted(contents$dates)){
-                shinyjs::disable("go_ga")
-                shinyjs::disable("check_ga")
-                showModal(modalDialog(
-                    title = "Error",
-                    "Please ensure that your dates are input in chronological order from left to right.  If dates are in the right order select the date format coresponding to your file.",
-                    easyClose = TRUE,
-                    footer = NULL
-                ))
-                return(NULL)
-            } else {
-                shinyjs::enable("go_ga")
-                shinyjs::enable("check_ga")
-                return (contents)
-            }
+            shinyjs::enable("go_ga")
+            shinyjs::enable("check_ga")
+            return (dataset$lfq)
         }
     })
 
