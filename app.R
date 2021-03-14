@@ -101,7 +101,7 @@ ui <- tagList(
       tags$div(
         tags$img(src = 'loading-circle.gif', height="20px"),
         class="loadingCustomInner"
-      ),
+        ),
       class="loadingCustom"),
     useShinyjs(),
     extendShinyjs(text = jscode, functions =  c("showBox", "removeBox","showBox2", "removeBox2", "disableAllButtons", "enableAllButtons", "showComputing", "hideComputing", "expandBox","collapseBox")),

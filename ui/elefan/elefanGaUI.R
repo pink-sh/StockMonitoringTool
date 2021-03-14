@@ -141,7 +141,7 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_pred", "Prediction range", ns("infoPred"),
                         size = "large",
-                        "F range and Length at 50% selectivity range"),
+                        HTML("<p>The prediction range determines the fishing mortality rates and length at 50% selectivity (L50) values which are used in the yield per recruit model. The model estimates yield per recruit (YPR) and biomass per recruit (BPR) for each combination of fishing mortality and L50 value. Thus, the prediction ranges (F and L50) affect the axes of Figures 6 and 7. <br> The range for fishing mortality can be defined by the number of 'Steps' between the minimum ('Min') and maximum ('Max') mortality rate. <br> If the selectivity is estimated (default), only the number of 'Steps' can be changed for he L50 range. If the selectivity parameters are provided (e.g. L50 and L75), the minimum ('Min') and maximum ('Max') of the L50 range can be changed.</p>")),
 
                 bsModal("info_lengthweight", "Length-weight relationship", ns("infoLengthWeight"),
                         size = "large",
@@ -170,7 +170,7 @@ tabElefanGa <- function(id) {
                 bsModal("info_assessment", "Check & Assessment & Reset & Report", ns("infoAssessment"),
                         size = "large",
                         HTML("<p>It is recommended to run a quick check by pressing <b>'Run Check'</b> before running the main assessment. While the main assessment can take up to a few minutes dependent on the settings of the ELEFAN optimation routine and the sample size of the dataset, the check is performed in a matter of a few seconds and can already identify issues regarding the data or settings. The check does not produce results (figures or tables), but a notification in the lower right corner of the screen will inform you whether the check was successful. <br> <br> <b>'Run Assessment'</b> performs the main assessment and should yield plenty of figures and tables in the result section upon successful completion. A progress bar in the lower right corner will inform you about the computation progress of ELEFAN first and then YPR. <br> <br> <b>'Reset'</b> removes all results, the uploaded dataset, and resets all settings to default values. <br> <br> After successful completion of the main assessment, an additional button <b>'Download Report'</b> allows you to download a pdf document with all results.</p>"
-                        )),
+                             )),
 
 
 
@@ -592,13 +592,13 @@ tabElefanGa <- function(id) {
                                          fluidRow(
                                              column(6,
                                                     numericInput(ns("Lm50"),
-                                                                 label="Lm50",
+                                                                 label=p(withMathJax("\\(L_{m50}\\)")),
                                                                  value = 0,
                                                                  step = 1,
                                                                  width = "60%")),
                                              column(6,
                                                     numericInput(ns("Lm75"),
-                                                                 label="Lm75",
+                                                                 label=p(withMathJax("\\(L_{m75}\\)")),
                                                                  value = 0,
                                                                  step = 1,
                                                                  width = "60%"))
@@ -616,7 +616,7 @@ tabElefanGa <- function(id) {
                                          fluidRow(
                                              column(4,
                                                     selectInput(ns("select"),
-                                                                "Selectivity",
+                                                                p("Selectivity"),
                                                                 choices = c("Estimate",
                                                                             "Define L50 & L75",
                                                                             "Define L50 & (L75-L25)"),
@@ -627,11 +627,7 @@ tabElefanGa <- function(id) {
                                                     div(
                                                         id ="ui_l50",
                                                         numericInput(ns("l50_user"),
-                                                                     p(withMathJax("\\(L_{50}\\)")," (user defined)",
-                                                                       actionButton(ns("infoL50"),
-                                                                                    tags$i(class = "fas fa-info",
-                                                                                           style="font-size: 12px"),
-                                                                                    class="topLevelInformationButton")),
+                                                                     p(withMathJax("\\(L_{50}\\)")," (user defined)"),
                                                                      value = 0, min = 0, step = 1,
                                                                      width = "80%")
                                                     )
@@ -640,22 +636,14 @@ tabElefanGa <- function(id) {
                                                     div(
                                                         id ="ui_l75",
                                                         numericInput(ns("l75_user"),
-                                                                     p(withMathJax("\\(L_{75}\\)")," (user defined)",
-                                                                       actionButton(ns("infoL75"),
-                                                                                    tags$i(class = "fas fa-info",
-                                                                                           style="font-size: 12px"),
-                                                                                    class="topLevelInformationButton")),
+                                                                     p(withMathJax("\\(L_{75}\\)")," (user defined)"),
                                                                      value = 0, min = 0, step = 1,
                                                                      width = "80%")
                                                     ),
                                                     div(
                                                         id ="ui_wqs",
                                                         numericInput(ns("wqs_user"),
-                                                                     p("Width (",withMathJax("\\(L_{75}-L_{25}\\)"),"; user defined)",
-                                                                       actionButton(ns("infoWQS"),
-                                                                                    tags$i(class = "fas fa-info",
-                                                                                           style="font-size: 12px"),
-                                                                                    class="topLevelInformationButton")),
+                                                                     p("Width (",withMathJax("\\(L_{75}-L_{25}\\)"),"; user defined)"),
                                                                      value = 0, min = 0, step = 1,
                                                                      width = "80%")
                                                     )
@@ -674,9 +662,9 @@ tabElefanGa <- function(id) {
                                      height = "200px",
                                      br(),
                                      fluidRow(
-                                         column(1),
-                                         column(1,
-                                                div(style = "margin-top:30px;",
+##                                         column(1),
+                                         column(2,
+                                                div(style = "margin-top:32px; margin-left:100px;",
                                                     "Fishing mortality")
                                                 ),
                                          column(1,
@@ -707,10 +695,10 @@ tabElefanGa <- function(id) {
                                                              )
                                                 ),
                                          column(1),
-                                         column(1),
-                                         column(1,
-                                                div(style = "margin-top:20px;",
-                                                    "Length at 50% selectivity (L50)")
+##                                         column(1),
+                                         column(2,
+                                                div(style = "margin-top:32px; margin-left:20px;",
+                                                    p("Length at 50% selectivity (",withMathJax("\\(L_{50}\\)"),")"))
                                                 ),
                                          column(1,
                                                 numericInput(ns("lcRangeSteps"),
