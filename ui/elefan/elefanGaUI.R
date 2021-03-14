@@ -83,6 +83,10 @@ tabElefanGa <- function(id) {
                         size = "large",
                         "Additional squareroot transformation according to Brey et al. (1988) reduces the weighting of large individuals."),
 
+                bsModal("info_searchspace", "Search space for growth parameters", ns("info_searchSpace"),
+                        size = "large",
+                        HTML(paste0("<p>ELEFAN uses the genetic algorithm (GA) to find the set of growth parameters which fits best to the uploaded data set. In this tab, you can define the search space for each growth parameter. Note that the algorithm only searches within the defined parameter range. Thus, it is recommended to define the range rather wider than narrower. <br><br> By default, a reasonable range is defined for all parameters based on uploaded input data. </p>"))),
+
                 bsModal("info_linf", withMathJax("\\(L_\\infty\\)"), ns("infolinf"),
                         size = "large",
                         p(withMathJax("\\(L_\\infty\\)")," defines the asymptotic length of the von Bertalanffy growth (VBG) function. The default range is dependent on uploaded dataset and defined as +/- 20% around the guesstimate of ",withMathJax("\\(L_\\infty = L_\\max/0.95\\)"),".")),
@@ -336,7 +340,11 @@ tabElefanGa <- function(id) {
 
 
                         tabPanel("2. ELEFAN",
-                                 box(title = "Search space for growth parameters",
+                                 box(title = p("Search space for growth parameters",
+                              actionButton(ns("info_searchSpace"),
+                                           tags$i(class = "fas fa-info",
+                                                  style="font-size: 12px"),
+                                           class="topLevelInformationButton")),
                                      width = 9,
                                      box(width=6,
                                          fluidRow(
