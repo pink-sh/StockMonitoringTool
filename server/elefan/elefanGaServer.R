@@ -709,7 +709,9 @@ footer = NULL
                   col="dodgerblue2")
             legend("topleft",legend=as.expression(bquote(bold("A"))),
                    x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg= "white")
-            legend("topright",legend=c("Fmax","F0.1"), lty = c(2,3), cex=1.1, bg= "white")
+            legend("topright",legend=c("Fmax","F0.1"),
+                   title = "Reference points",
+                   lty = c(2,3), cex=1.1, bg= "white")
             mtext("Yield per recruit", 2, 3.5)
             ## BPR
             plot(resYPR$FM_change, resYPR$meanB, ty='n',
@@ -717,14 +719,15 @@ footer = NULL
                  xlab = "", ylab = "")
             tmp <- resYPR$meanB[which.min(abs(resYPR$FM_change-refs[3]))]
             segments(refs[3], -10, refs[3], tmp,
-                     lty=3, lwd=1.5, col="grey60")
+                     lty=2, lwd=1.5, col="grey60")
             segments(-10, tmp, refs[3], tmp,
-                     lty=3, lwd=1.5, col="grey60")
+                     lty=2, lwd=1.5, col="grey60")
             lines(resYPR$FM_change, resYPR$meanB, lwd=2.5,
                   col="dodgerblue2")
             legend("topleft",legend=as.expression(bquote(bold("B"))),
                    x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg= "white")
-            legend("topright",legend=c("F0.5"), lty = c(2), cex=1.1, bg= "white")
+            legend("topright",title = "Reference points",
+                   legend=c("F0.5"), lty = c(2), cex=1.1, bg= "white")
             mtext("Biomass per recruit", 2, 3.5)
             mtext("Fishing mortality", 1, 3)
             box()
@@ -752,7 +755,9 @@ footer = NULL
                   col="dodgerblue2")
             legend("topleft",legend=as.expression(bquote(bold("A"))),
                    x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg= "white")
-            legend("topright",legend=c("Fmax","F0.1"), lty = c(2,3), cex=1.1, bg= "white")
+            legend("topright",legend=c("Fmax","F0.1"),
+                   title = "Reference points",
+                   lty = c(2,3), cex=1.1, bg= "white")
             mtext("Yield per recruit", 2, 3.5)
             ## BPR
             plot(resYPR$FM_change, resYPR$meanB, ty='n',
@@ -768,7 +773,9 @@ footer = NULL
                   col="dodgerblue2")
             legend("topleft",legend=as.expression(bquote(bold("B"))),
                    x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg= "white")
-            legend("topright",legend=c("F0.5"), lty = c(2), cex=1.1, bg= "white")
+            legend("topright",legend=c("F0.5"),
+                   title = "Reference points",
+                   lty = c(2), cex=1.1, bg= "white")
             mtext("Biomass per recruit", 2, 3.5)
             ## SPR
             plot(resYPR$FM_change, resYPR$SPR, ty='n',
@@ -794,6 +801,7 @@ footer = NULL
             legend("topleft",legend=as.expression(bquote(bold("C"))),
                    x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg= "white")
             legend("topright",legend=c("F30","F35","F40"),
+                   title = "Reference points",
                    lty = c(2,3,4), cex=1.1, bg= "white")
             mtext("Spawning potential ratio", 2, 3.5)
             mtext("Fishing mortality", 1, 3)
