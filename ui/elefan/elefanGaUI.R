@@ -91,9 +91,9 @@ tabElefanGa <- function(id) {
                         size = "large",
                         p("The growth coefficient (", withMathJax("\\(K\\)"), ") of the von Bertalanffy growth function.")),
 
-                bsModal("info_tanchor", withMathJax("\\(t_{anchor}\\)"), ns("infotanchor"),
+                bsModal("info_tanchor", withMathJax("\\(t_{a}\\)"), ns("infotanchor"),
                         size = "large",
-                        p("Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (", withMathJax("\\(t_{anchor}\\)"), ")")),
+                        p("Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (", withMathJax("\\(t_{a}\\)"), "). Values between 0 and 1.")),
 
                 bsModal("info_season", "Seasonal model", ns("infoSeason"),
                         size = "large",
