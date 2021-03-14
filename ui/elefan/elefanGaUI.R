@@ -103,12 +103,11 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_C", withMathJax("\\(C\\)"), ns("infoC"),
                         size = "large",
-                        p("Amplitude of growth oscillation (", withMathJax("\\(C\\)"), "): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point.")),
+                        p("Amplitude of growth oscillation (", withMathJax("\\(C\\)"), "): The higher the value of C the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate;  if C = 1, the growth rate becomes zero at the winter point. Values between 0 and 1.")),
 
                 bsModal("info_ts", withMathJax("\\(t_\\s\\)"), ns("infots"),
                         size = "large",
-                        p("Summer point (", withMathJax("\\(t_{s}\\)"), "). Values between 0 and 1. At the time of the year when the fraction, " , withMathJax("\\(t_{s}\\)"),", has elapsed, the growth rate is the highest.")),
-
+                        p("Summer point (", withMathJax("\\(t_{s}\\)"), "). Values between 0 and 1. The time of the year when growth rate is highest, represented by the fraction of the calendar year, e.g. 0.25 corresponds to April 1st.")),
 
                 bsModal("info_popsize", "Population size", ns("infoPopSize"),
                         size = "large",
