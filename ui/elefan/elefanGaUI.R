@@ -61,19 +61,19 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_yearsel", "Selected years", ns("infoYearSel"),
                         size = "large",
-                        "Select all or a range of years covered by uploaded data set."),
+                        HTML("<p>Select all or a range of years in the uploaded data set to be included in the analysis. <br><br> In theory, the longer the period covered by the data set, the better. However, data sets covering a long period with monthly aggregated data, might lead to a long run time and make the assumption that the growth parameters did not change over this period. Choosing only the most recent years should be considered.</p>")),
 
                 bsModal("info_agg", "Data aggregation", ns("infoAGG"),
                         size = "large",
-                        "Define whether the aggregation of the dataset should be kept ('none'), or if the dataset should be (re-)aggregate by 'month', 'quarter', and 'year'. If 'month' is chosen, the data is assigned to the middle of respective sampling times (i.e. 15. day of each month). The options 'quarter' and 'year' can be helpful if the dataset spans several years as it decreases computation time."),
+                        HTML("<p>Define whether the aggregation of the dataset should be kept ('none', default), or if the dataset should be (re-)aggregate by 'month', 'quarter', and 'year'. <br><br> Note that if 'month' is chosen, the data is assigned to the middle of respective sampling times (i.e. 15. day of each month). <br><br> In theory, the longer the period covered by the data set, the better. However, data sets covering a long period with monthly aggregated data, might lead to a long run time and make the assumption that the growth parameters did not change over this period. Choosing only the most recent years or changing the aggregation 'quarter' and 'year' can be helpful to decrease computation time. <br><br> Note that a coarser aggregation reduces the information content of the data set. </p>")),
 
                 bsModal("info_binsize", "Bin size", ns("infoBS"),
                         size = "large",
-                        "Bin size corresponds to the length interval over which the length frequency data are aggregated, for example 2cm."),
+                        HTML("<p>Bin size corresponds to the length interval over which the length frequency data are aggregated, for example 2cm. <br><br> The combination of bin size and MA critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. A good bin size value reduces noise in the data by aggregation. </p>")),
 
                 bsModal("info_ma", "Moving average (MA)", ns("infoMA"),
                         size = "large",
-                        p("Number indicating over how many length classes the moving average should be performed  (", withMathJax("\\(MA\\)"), ") (must be an odd number).")),
+                        HTML(paste0("<p>Number indicating over how many length classes the moving average should be performed  (", withMathJax("\\(MA\\)"), ") (must be an odd number). <br><br>The combination of bin size and MA critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. A good MA value leads to visually distinct peaks in particular among small length classes and might correspond to the number of length classes (bins) potentially corrsponding to the youngest cohort.</p>"))),
 
                 bsModal("info_pg", "Plus group", ns("infoPG"),
                         size = "large",
@@ -238,7 +238,8 @@ tabElefanGa <- function(id) {
 
                         tabPanel("1. Data",
 
-                                 box(width = 3,
+                                 box(title = "Data settings",
+                                     width = 3,
 
                                      fluidRow(
                                          div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
@@ -319,7 +320,8 @@ tabElefanGa <- function(id) {
                                                                   class="topLevelInformationButton")),
                                                    FALSE)
                                      ),
-                                 box(id = "box_exploPlots",
+                                 box(title = "Data exploration",
+                                     id = "box_exploPlots",
                                      width = 9,
                                      tags$div(
                                               plotOutput(ns("plot_explo1"), width = "90%",
