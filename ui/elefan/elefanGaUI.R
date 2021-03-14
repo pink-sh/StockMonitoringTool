@@ -27,6 +27,7 @@ tabElefanGa <- function(id) {
 
             fluidRow(
 
+                ## Notifications in middle of screen (if decided to keep -> move to custom.css?)
                 tags$head(tags$style(HTML(".shiny-notification { position:fixed; top: calc(50%); left: calc(50%); width: 250px; height: 80px;}"))),
 
                 ## Information tabs
@@ -150,12 +151,17 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_lengthweight", "Length-weight relationship", ns("infoLengthWeight"),
                         size = "large",
-                        "Test"
+                        HTML(paste0("<p>The estimation of the yield and biomass per recruit requires information about the average weight per length class, which can be estimated with the length-weight relationship. A common assumption is the allometric relationship ",withMathJax("\\(W = a L^{b}\\)"),", with the constant a in ",
+                                    withMathJax("\\( g/cm^{b}\\)"), " and the unitless exponent ",
+                                    withMathJax("\\( b\\)"),". <br>Ideally, the parameters are estimated based on length and weight measurements of the stock under study. Alternatively, information about the length-weight relationship of the species under study can be found on FishBase. By default the parameters are set to ",
+                                    withMathJax("\\(a = 0.01 g/cm^{3}\\)")," and ",
+                                    withMathJax("\\(b = 3\\)"),".",
+                                    "</p>"))
                         ),
 
                 bsModal("info_adjdata", "Adjust data (stock status)", ns("infoAdjData"),
                         size = "large",
-                        "Test"),
+                        HTML(paste0("<p> Select the year(s) for the estimation of the stock status. The mortality rates and reference points estimated by the catch curve and yield per recruit model, respectively, corrspond to the year selected. If several years of the data set are selected, the values corrspond to the average values over all years selected. </p>"))),
 
                 bsModal("info_mat", "Maturity (optional)", ns("infoMat"),
                         size = "large",
@@ -169,7 +175,7 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_natm", "Natural mortality", ns("infoNatM"),
                         size = "large",
-                        "Test"
+                        HTML("<p>The natural mortality rate (M) is required to estimate the fishing mortality (F) from the total mortality (Z) estimated by the catch curve (F = Z - M). The natural mortality is estimated by an empirical formula based on estimated growth parameters. The options are: <br> - Then's growth formula (Then et al. 2015), <br> - Pauly's growth and temperature formula (Pauly et al. 1980), and <br> - Then's maximum age formula (Then et al. 2015); <br> While the first option does not require any additional information, the second requires the average annual sea surface temperature (SST) in grad Celsius and allows to correct for schooling fish (multiplication with 0.8) and third option requires an estimate of the maximum age of the fish. </p>")
                         ),
 
                 bsModal("info_assessment", "Check & Assessment & Reset & Report", ns("infoAssessment"),
@@ -475,7 +481,7 @@ tabElefanGa <- function(id) {
 
                                      box(
                                          title = p(HTML(paste0("Length-weight relationship (",
-                                                               withMathJax("\\(W = a \ L \ e^{b}\\)"),")")),
+                                                               withMathJax("\\(W = a \ L^{b}\\)"),")")),
                                                    actionButton(ns("infoLengthWeight"),
                                                                 tags$i(class = "fas fa-info",
                                                                        style="font-size: 12px"),
@@ -549,7 +555,7 @@ tabElefanGa <- function(id) {
                                                                      max = 200,
                                                                      value = 20,
                                                                      step = 1,
-                                                                     width = '30%'),
+                                                                     width = '40%'),
                                                         )
                                                     )
                                          )
