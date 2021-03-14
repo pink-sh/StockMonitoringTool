@@ -188,7 +188,7 @@ getResultConsiderationTextForElefan <- function() {
                    "</li>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<li><b>Table 2</b> lists estimated mortality rates (Z, F, M), exploitation ",
-                   "rate (E), and provided selectivity parameters (L50, L75).",
+                   "rate (E), and estimated/provided selectivity parameters (L50, L75).",
                    "</li>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<li><b>Table 3</b> includes estimated reference points (Fmax, F0.1, F0.5), ",

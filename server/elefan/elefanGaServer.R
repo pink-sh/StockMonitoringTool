@@ -673,7 +673,7 @@ footer = NULL
     })
     output$title_catchCurve <- renderText({
         req(elefan_ga$results)
-        txt <- "<p class=\"pheader_elefan\">Figure 4: Catch against relative age. Blue characters correspond to points used in the regression analysis (blue line) of the catch curve for the estimation of total mortality (Z).</p>"
+        txt <- "<p class=\"pheader_elefan\">Figure 4: Catch against relative age. Blue points correspond to points used in the regression analysis (blue line) of the catch curve for the estimation of total mortality (Z).</p>"
         txt
     })
 
