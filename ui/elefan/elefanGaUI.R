@@ -27,6 +27,8 @@ tabElefanGa <- function(id) {
 
             fluidRow(
 
+                tags$head(tags$style(HTML(".shiny-notification { position:fixed; top: calc(50%); left: calc(50%); width: 250px; height: 80px;}"))),
+
                 ## Information tabs
                 ## -------------------------------
                 bsModal("modalExampleGA", "Data Considerations - TropFishR",
