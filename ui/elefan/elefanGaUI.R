@@ -89,7 +89,7 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_k", withMathJax("\\(K\\)"), ns("infok"),
                         size = "large",
-                        p("The growth coefficient (", withMathJax("\\(K\\)"), ") of the von Bertalanffy growth function.")),
+                        HTML(paste0("<p>The growth coefficient (", withMathJax("\\(K\\)"), ") of the von Bertalanffy growth function determines the slope of the logistic growth curve: A low ",withMathJax("\\(K\\)")," defines a slow-growing species and a high K a fast growing species. <br><br>If no prior knowledge about this life-history parameter is available, it is recommended to define a wide search space from 0.01 to 2-4. If prior information is available, a narrrower range might be considered.</p>"))),
 
                 bsModal("info_tanchor", withMathJax("\\(t_{a}\\)"), ns("infotanchor"),
                         size = "large",
