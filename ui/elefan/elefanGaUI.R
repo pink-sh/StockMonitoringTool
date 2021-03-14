@@ -116,17 +116,21 @@ tabElefanGa <- function(id) {
                         size = "large",
                         p("Summer point (", withMathJax("\\(t_{s}\\)"), "). Values between 0 and 1. The time of the year when growth rate is highest, represented by the fraction of the calendar year, e.g. 0.25 corresponds to April 1st.")),
 
+                bsModal("info_ga", "ELEFAN's genetic algorithm", ns("info_GA"),
+                        size = "large",
+                        HTML(paste0("<p>Genetic algorithms (GAs) are stochastic search algorithms inspired by the basic principles of bi-ological evolution and natural selection.  GAs simulate the evolution of living organisms, wherethe fittest individuals dominate over the weaker ones, by mimicking the biological mechanisms ofevolution, such as selection, crossover and mutation.<br><br> Changing default parameter can have a substantial effect on the optimization process and, thus, on estimated growth parameters. Therefore, please apply caution when changing these parameters. In fact, it should only be considered to increase the values which comes at the expense of computation time however. For example, it is recommended to the maximum number of generations and number of generations without improvement in the case that the fitness plot (Fig. 3) indicated that the best fitness value is not stable yet over 50 generations.</p>"))),
+
                 bsModal("info_popsize", "Population size", ns("infoPopSize"),
                         size = "large",
-                        "Size of inital population for genetic algorithm. The larger the better, but at the expense of computation speed."),
+                        "Size of inital population for genetic algorithm. Common values are 50 or 100. Higher values might require a larger number of generations to find a stable optimum."),
 
                 bsModal("info_maxiter", "Maximum number of iterations", ns("infoMaxIter"),
                         size = "large",
-                        "Maximum number of iterations to run before the GA search is halted (note this affects the run time)."),
+                        "Maximum number of iterations to run before the GA search is halted. Note that this parameter might affect the run time significantly."),
 
                 bsModal("info_MaxRuns", "Maximum number of runs", ns("infoMaxRuns"),
                         size = "large",
-                        p("Number of consecutive generations without any improvement in the best fitness value before the GA is stopped (note that this affects the run time).")),
+                        p("Number of consecutive generations without any improvement in the best fitness value before the GA is stopped. Note that this parameter might affect the run time significantly.")),
 
                 bsModal("info_pmut", "Probability of mutation", ns("infoPmut"),
                         size = "large",
@@ -419,7 +423,11 @@ tabElefanGa <- function(id) {
                                          )
                                      ),
 
-                                 box(title = "ELEFAN's genetic algorithm:",
+                              box(title = p("ELEFAN's genetic algorithm",
+                              actionButton(ns("info_GA"),
+                                           tags$i(class = "fas fa-info",
+                                                  style="font-size: 12px"),
+                                           class="topLevelInformationButton")),
                                      width = 3,
                                      numericInput(ns("ELEFAN_GA_popSize"),
                                                   p("Population size:",
@@ -438,7 +446,7 @@ tabElefanGa <- function(id) {
                                                   50, min = 20, max = 1e3, step=1,
                                                   width = "90%"),
                                      numericInput(ns("ELEFAN_GA_run"),
-                                                  p("Number of generations without improvment",
+                                                  p("Number of generations without improvement",
                                                     actionButton(ns("infoMaxRuns"),
                                                                  tags$i(class = "fas fa-info",
                                                                         style="font-size: 12px"),
