@@ -917,7 +917,9 @@ elefanGaModule <- function(input, output, session) {
     })
     output$title_table_growth <- renderText({
         req(elefan_ga$results)
-        txt <- "<p class=\"pheader_elefan\">Table 1: Estimated von Bertlanffy growth parameters (Linf, K, ta), the growth performance coefficient phi', and the best score value (Rn).</p>"
+        txt <- paste0("<p class=\"pheader_elefan\">Table 1: Estimated von Bertlanffy growth parameters (",withMathJax("\\(L_\\infty, K, t_a\\)"),"), the growth performance coefficient ",
+        withMathJax("\\(phi' = \\log_{10} K + 2 \\log_{10} L_\\infty\\)"),
+        ", and the best score value (",withMathJax("\\(Rn\\)"),"). Phi' provides a metric that accounts for the correlation of ",withMathJax("\\(L_\\infty\\)")," and ",withMathJax("\\(K\\)")," to compare growth parameters among analyses or species. The Rn value allows comparison of the fit of estimated growth parameters to the data set for different MA values, growth paramater search spaces, or ELEFAN optimisation parameters (e.g. population size), but not for different data sets or bin sizes.</p>")
         txt
     })
 

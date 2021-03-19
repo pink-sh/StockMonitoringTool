@@ -127,29 +127,35 @@ getMethodConsiderationTextForElefan <- function() {
 }
 
 getResultConsiderationTextForElefan <- function() {
-    text <- "<b>Figures of length-based stock assessment routine:</b>"
+    text <- "<b>Data exploration:</b>"
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "Direct after the successful upload of your data set, <b>Figure 1</b> shows the length-frequency distributions per sampling time (x axis). Panel A shows the raw data, while panel B shows the restructured data. This means after subtracting the moving average (MA) of the count in each length class. The combination of bin size and MA critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. Blue shading indicates a high count per length bin (panel A) and a high positive value (panel B). Red shading indicates a negative value (only pane B). A good bin size value reduces noise in the data by aggregation. A good bin size value reduces noise in the data by aggregation and is defined before the MA value. A good MA value leads to visually distinct peaks in particular among small length classes.")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "After the successful stock assessment (click 'Run Assessment'), two figures and a table summarise the results of the estimation of growth parameters by ELEFAN with genetic algorithm (GA) and four figures and three tables summarise the stock status results.")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text,"<b>ELEFAN:</b>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li><b>Figure 1</b> shows the length-frequency distributions per sampling time (x axis). ",
-                   "Panel A shows the raw data, while panel B shows the restructured data. This means after subtracting ",
-                   "the moving average (MA) of the count in each length class. The combination of bin size and MA critically ",
-                   "affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth ",
-                   "parameters by ELEFAN. A good bin size value reduces noise in the data by aggregation. A good MA value leads ",
-                   "to visually distinct peaks in particular among small length classes.",
+    text <- paste0(text, "<li><b>Figure 2</b> shows the same length frequency distributions as Figure 1 with overlaid growth curves estimated by ELEFAN. This plot allows the visual inspection how well estimated curves connect the peaks (i.e. potential cohorts) in the raw (A) and restructured (B) data set.",
                    "</li>")
     text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Figure 2</b> shows the same length frequency distributions as Figure 1 with overlaid growth curves estimated ",
-                   "by ELEFAN. This plot allows the visual inspection how well estimated curves connect the peaks (i.e. potential cohorts) ",
-                   "in the raw (A) and restructured (B) data set.",
-                   "</li>")
+    text <- paste0(text, "<li><b>Table 1</b> includes estimated von Bertlanffy growth parameters (",
+                  withMathJax("\\(L_\\infty, K, t_a\\)"),"), the growth performance coefficient phi', and the best score value (Rn). The growth performance index is calculated based on the formula ",withMathJax("\\(phi' = \\log_{10} K + 2 \\log_{10} L_\\infty\\)"), "and provides a metric that accounts for the correlation of ",withMathJax("\\(L_\\infty\\)")," and ",withMathJax("\\(K\\)")," to compare growth parameters among analyses or species. The Rn value is the sum of all values associated with the the bins after restructuring which intersect with the growth curves. The value can be used to compare the fit of estimated growth parameters to the data set for different MA values, growth paramater search spaces, or ELEFAN optimisation parameters (e.g. population size). However, it cannot be used to compare the fit for different data sets or different bin sizes as this affects the maximum overall possible Rn value.",
+               "</li>")
     text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Figure 3 </b> shows the improvement of the ELEFAN fit in terms of the average and best ",
-                   "score value (fitness value) of the genetic algorithm ",
-                   "used in ELEFAN_GA over the number of iterations (generations). Ideally, the number of iterations (or generations) ",
-                   "is large enough, so that there are no large jumps visible during the last iterations of the best and average score value.",
+    text <- paste0(text, "<li><b>Figure 3 </b> shows the improvement of the ELEFAN fit in terms of the average and best score value (fitness value) of the genetic algorithm used in ELEFAN_GA over the number of iterations (generations). Ideally, the number of iterations (or generations) is large enough, so that there are no large jumps visible during the last iterations of the best and average score value.",
                    "</li>")
+    text <- paste0(text, "</ul>")
     text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text,"<b>Stock status:</b>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<ul>")
     text <- paste0(text, "<li><b>Figure 4</b> shows the logarithm of the catch per length interval against the relative age (x axis). ",
                    "Highlighted characters were used in the regression analysis of the catch curve for the estimation of the total ",
                    "mortality rate (Z), which ",
@@ -160,6 +166,21 @@ getResultConsiderationTextForElefan <- function() {
     text <- paste0(text, "<li><b>Figure 5</b> shows the probability of capture as a measure of the selectivity used in the assessment.",
                    "The curve is either based on provided selectivity parameters (L50 and L75 or selection width) or was estimated ",
                    "by the catch curve. Displayed selection ogive is used for the yield per recruit analysis (YPR).",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Table 2</b> lists estimated mortality rates (Z, F, M), exploitation ",
+                   "rate (E), and estimated/provided selectivity parameters (L50, L75).",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Table 3</b> includes estimated reference points (Fmax, F0.1, F0.5), ",
+                   "and SPR-based reference points (F30, F35, F40) if maturity parameters (Lm50 and ",
+                   "Lm75) are provided.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Table 4</b> presents estimated stock status in terms of current ",
+                   "fishing mortality (F) to reference points (Fmax, F0.1, F0.5). If maturity ",
+                   "parameters (Lm50 and Lm75) are provided, additional reference points (F30, F35, ",
+                   "F40) and current Spawning Potential Ratio (SPR) are included as well.",
                    "</li>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<li><b>Figure 6</b> shows the results of the yield per recruit model as yield and biomass per recruit ",
@@ -178,35 +199,6 @@ getResultConsiderationTextForElefan <- function() {
                    "the various combinations of F and L50 values. The black dot indicates current yield and biomass.",
                    "</li>")
     text <- paste0(text, "</ul>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<b>Tables of length-based stock assessment routine:</b>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li><b>Table 1</b> includes estimated von Bertlanffy growth parameters ",
-                   "(Linf, K, ta), the growth performance coefficient phi', and the best score value ",
-                   "(Rn).",
-                   "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Table 2</b> lists estimated mortality rates (Z, F, M), exploitation ",
-                   "rate (E), and estimated/provided selectivity parameters (L50, L75).",
-                   "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Table 3</b> includes estimated reference points (Fmax, F0.1, F0.5), ",
-                   "and SPR-based reference points (F30, F35, F40) if maturity parameters (Lm50 and ",
-                   "Lm75) are provided.",
-                   "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Table 4</b> presents estimated stock status in terms of current ",
-                   "fishing mortality (F) to reference points (Fmax, F0.1, F0.5). If maturity ",
-                   "parameters (Lm50 and Lm75) are provided, additional reference points (F30, F35, ",
-                   "F40) and current Spawning Potential Ratio (SPR) are included as well.",
-                   "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "</ul>")
-    text <- paste0(text, "<br>")
     return (text)
 }
 

@@ -813,7 +813,7 @@ tabElefanGa <- function(id) {
                                                   style="font-size: 12px"),
                                            class="topLevelInformationButton")),
                     width = NULL,
-                    height = "2200px",
+                    height = "2600px",
                     collapsible = FALSE,
                     solidHeader = TRUE,
                     class = "collapsed-box",
