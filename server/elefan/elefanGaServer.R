@@ -604,7 +604,7 @@ elefanGaModule <- function(input, output, session) {
     })
     output$title_explo1 <- renderText({
         req(inputElefanGaData$data, input$ELEFAN_years_selected)
-        txt <- "<p class=\"pheader_elefan\">Figure 1: Uploaded raw (A) and restructured (B) length-frequency data. Blue and red colours corrspond to positive and negative values in the length classes, respectively.</p>"
+        txt <- "<p class=\"pheader_elefan\">Figure 1: Uploaded length-frequency distributions per sampling time (x axis). Panel A shows the raw data, while panel B shows the restructured data. This means after subtracting the moving average (MA) of the count in each length class. The combination of bin size and MA critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. Blue shading indicates a high count per length bin (panel A) and a high positive value (panel B). Red shading indicates a negative value (only pane B). A good bin size value reduces noise in the data by aggregation. A good MA value leads to visually distinct peaks in particular among small length classes.</p>"
         txt
     })
 
@@ -630,7 +630,7 @@ elefanGaModule <- function(input, output, session) {
     })
     output$title_growthCurves <- renderText({
         req(elefan_ga$results)
-        txt <- "<p class=\"pheader_elefan\">Figure 2: Uploaded raw (A) and restructured (B) length-frequency data with overlaid von Bertalanffy growth (VBG) curves fitted by ELEFAN with genetic algorithm.</p>"
+        txt <- "<p class=\"pheader_elefan\">Figure 2: Uploaded raw (A) and restructured (B) length-frequency data with overlaid von Bertalanffy growth (VBG) curves fitted by ELEFAN with genetic algorithm. Ideally, the growth curves overlay with length bins with a high count or high positive value (blue shading) for raw (A) and restructured (B) data, respectively.</p>"
         txt
     })
 
@@ -676,7 +676,7 @@ elefanGaModule <- function(input, output, session) {
     })
     output$title_elefanFit <- renderText({
         req(elefan_ga$results)
-        txt <- "<p class=\"pheader_elefan\">Figure 3: Score graph of ELEFAN with genetic algorithm. Fitness value (y axis) corresponds here to the score value of ELEFAN (Rn) and in the lingo of genetic algorithm 'Generation' (x axis) refers to the iteration.</p>"
+        txt <- "<p class=\"pheader_elefan\">Figure 3: Score graph of ELEFAN with genetic algorithm. Fitness value (y axis) corresponds here to the score value of ELEFAN (Rn) and in the lingo of genetic algorithm 'Generation' (x axis) refers to the iteration.  Ideally, the number of iterations (or generations) is large enough, so that there are no large jumps visible during the last iterations of the best and average score value.</p>"
         txt
     })
 
@@ -697,9 +697,10 @@ elefanGaModule <- function(input, output, session) {
     })
     output$title_catchCurve <- renderText({
         req(elefan_ga$results)
-        txt <- "<p class=\"pheader_elefan\">Figure 4: Catch against relative age. Blue points correspond to points used in the regression analysis (blue line) of the catch curve for the estimation of total mortality (Z).</p>"
+        txt <- "<p class=\"pheader_elefan\">Figure 4: Logarithm of catch per length interval against relative age. Blue points correspond to points used in the regression analysis (blue line) of the catch curve for the estimation of total mortality (Z), which corresponds to the slop of the displayed regression line. The selection of points is automatic and based on a list of expert recommendations.</p>"
         txt
     })
+
 
     ## Selectivity plot
     ## --------------------------
@@ -729,9 +730,9 @@ elefanGaModule <- function(input, output, session) {
     output$title_select <- renderText({
         req(elefan_ga$results)
         if(input$select == "Estimate" || (input$l50_user == 0 && input$l75_user == 0) || (input$l50_user == 0 && input$wqs_user == 0)){
-            txt <- "<p class=\"pheader_elefan\">Figure 5: Estimated logistic gear selectivity as the probability of capture (y axis) at length (x axis).</p>"
+            txt <- "<p class=\"pheader_elefan\">Figure 5: Estimated logistic gear selectivity as the probability of capture (y axis) at length (x axis). Displayed selection ogive is used for the yield per recruit analysis (YPR).</p>"
         }else{
-            txt <- "<p class=\"pheader_elefan\">Figure 5: Provided logistic gear selectivity as the probability of capture (y axis) at length (x axis).</p>"
+            txt <- "<p class=\"pheader_elefan\">Figure 5: Provided logistic gear selectivity as the probability of capture (y axis) at length (x axis). Displayed selection ogive is used for the yield per recruit analysis (YPR).</p>"
         }
         txt
     })
@@ -868,9 +869,9 @@ elefanGaModule <- function(input, output, session) {
     output$title_ypr <- renderText({
         req(elefan_ga$results)
         if(is.null(elefan_ga$results$Lm50) || is.null(elefan_ga$results$Lm75)){
-            txt <- "<p class=\"pheader_elefan\">Figure 6: Yield per recruit (A) and biomass per recruit (B) for a range of fishing mortality rates (x axis). Grey segements indicate various reference points.</p>"
+            txt <- "<p class=\"pheader_elefan\">Figure 6: Yield per recruit (A) and biomass per recruit (B) for a range of fishing mortality rates (x axis). Grey segements indicate various reference points: Fmax is defined as the fishing mortality (F) leading to the maximum yield per recruit. F0.1 corresponds to F where the slope of the yield per recruit curve is equal to 10% of the slope in the origin and poses a more conservative reference point than Fmax. F0.5 corresponds to F where the biomass per recruit is equal to 50% of the biomass per recruit without fishing. </p>"
         }else{
-            txt <- "<p class=\"pheader_elefan\">Figure 6: Yield per recruit (A) and biomass per recruit (B), as well as spawning potential ratio (C) for a range of fishing mortality rates (x axis). Grey segements indicate various reference points.</p>"
+            txt <- "<p class=\"pheader_elefan\">Figure 6: Yield per recruit (A) and biomass per recruit (B), as well as spawning potential ratio (C) for a range of fishing mortality rates (x axis). Grey segements indicate various reference points: Fmax is defined as the fishing mortality (F) leading to the maximum yield per recruit. F0.1 corresponds to F where the slope of the yield per recruit curve is equal to 10% of the slope in the origin and poses a more conservative reference point than Fmax. F0.5 corresponds to F where the biomass per recruit is equal to 50% of the biomass per recruit without fishing. F30, F35, and F40 correspond to F that leads to a SPR of 30%, 35%, and 40% respectively.</p>"
         }
         txt
     })
@@ -953,7 +954,7 @@ elefanGaModule <- function(input, output, session) {
             tmp <- elefan_ga$results$resYPR1$df_Es[1:3]
             names(tmp) <- c("Fmax","F0.1","F0.5")
             showNotification(
-                "If you want to estimate SPR and SPR-based reference points, please provide maturity parameters.",
+                "Note that SPR and SPR-based reference points are only estimated if maturity parameters are provided.",
                 type = "message",
                 duration = 30,
                 closeButton = TRUE

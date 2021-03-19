@@ -64,7 +64,7 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_yearsel", "Selected years", ns("infoYearSel"),
                         size = "large",
-                        HTML("<p>Select all or a range of years in the uploaded data set to be included in the analysis. <br><br> In theory, the longer the period covered by the data set, the better. However, data sets covering a long period with monthly aggregated data, might lead to a long run time and make the assumption that the growth parameters did not change over this period. Choosing only the most recent years should be considered.</p>")),
+                        HTML("<p>Select all or a range of years in the uploaded data set to be included in the analysis. <br><br> In theory, the longer the period covered by the data set, the better. However, data sets covering a long period with monthly aggregated data, might lead to a long run time and make the assumption that the growth parameters did not change over this period. In this case, you could consider to choose only the most recent years.</p>")),
 
                 bsModal("info_agg", "Data aggregation", ns("infoAGG"),
                         size = "large",
@@ -72,11 +72,11 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_binsize", "Bin size", ns("infoBS"),
                         size = "large",
-                        HTML("<p>Bin size corresponds to the length interval over which the length frequency data are aggregated, for example 2cm. <br><br> The combination of bin size and MA critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. A good bin size value reduces noise in the data by aggregation. </p>")),
+                        HTML("<p>Bin size corresponds to the length interval over which the length frequency data are aggregated, for example 2cm. <br><br> The combination of bin size and moving average (MA) critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. The bin size should be defined before defining the MA value. Ideally, the bin size is as small as possible, but large enough so that adjacent bins with high and low counts correspond to potential cohorts rather than noise.</p>")),
 
                 bsModal("info_ma", "Moving average (MA)", ns("infoMA"),
                         size = "large",
-                        HTML(paste0("<p>Number indicating over how many length classes the moving average should be performed  (", withMathJax("\\(MA\\)"), ") (must be an odd number). <br><br>The combination of bin size and MA critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. A good MA value leads to visually distinct peaks in particular among small length classes and might correspond to the number of length classes (bins) potentially corrsponding to the youngest cohort.</p>"))),
+                        HTML(paste0("<p>Number indicating over how many adjacent length classes the moving average should be performed  (", withMathJax("\\(MA\\)"), ") (must be a positive odd number, e.g. 5 or 7). <br><br>The combination of bin size and MA critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. Ideally, the MA value is defined after defining the optimal bin size and leads to visually distinct peaks in particular among small length classes. One option for the MA value is setting it equal to the number of length classes (bins) potentially corrsponding to the youngest cohort.</p>"))),
 
                 bsModal("info_pg", "Plus group", ns("infoPG"),
                         size = "large",
@@ -92,7 +92,7 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_linf", withMathJax("\\(L_\\infty\\)"), ns("infolinf"),
                         size = "large",
-                        p(withMathJax("\\(L_\\infty\\)")," defines the asymptotic length of the von Bertalanffy growth (VBG) function. The default range is dependent on uploaded dataset and defined as +/- 20% around the guesstimate of ",withMathJax("\\(L_\\infty = L_\\max/0.95\\)"),".")),
+                        p(withMathJax("\\(L_\\infty\\)")," defines the asymptotic length of the von Bertalanffy growth (VBG) function. The default range is dependent on uploaded dataset and defined as +/- 20% around the guesstimate of ",withMathJax("\\(L_\\infty = L_\\max/0.95\\)"),". Note that the maximum possible range is limited to +/- 50% of this estimate.")),
 
                 bsModal("info_k", withMathJax("\\(K\\)"), ns("infok"),
                         size = "large",
@@ -242,7 +242,7 @@ tabElefanGa <- function(id) {
                     tabBox(
                         title = "",
                         width = NULL,
-                        height = "710px",
+                        height = "730px",
                         side="left",
                         selected = "1. Data",
                         id = "settings",
