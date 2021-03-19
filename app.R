@@ -6,6 +6,11 @@
 # Author: Enrico Anello <enrico.anello@fao.org> <enrico.anello@gmail.com>
 #
 
+## Note that rfishbase v3.0.1 has to be installed for R<4.0.0:
+## remotes::install_github("ropensci/rfishbase", ref = "3.0.1")
+## Additional packages needed but no dependencies:
+## install.packages(c("pracma","googleVis","lubridate","XML"))
+
 library(shiny)
 library(shinyBS)
 library(shinyjs)
@@ -48,6 +53,8 @@ source("server/support/SeasonalVonBertalannfyServer.R")
 source("server/support/NaturalMortalityServer.R")
 source("assets/tropFishR/elefan_common.R")
 source("assets/tropFishR/algorithms/run_elefan_ga.R")
+source("assets/tropFishR/algorithms/temp_elefan_ga.R")  ## temporarily needed until TropFishR updated
+source("assets/tropFishR/algorithms/temp_predict_mod.R")  ## temporarily needed until TropFishR updated
 # source("assets/tropFishR/algorithms/run_elefan_sa.R")
 # source("assets/tropFishR/algorithms/run_elefan.R")
 source("assets/cmsy/CmsyFunction.R")
@@ -80,7 +87,7 @@ token <- NULL
 sidebar <- dashboardSidebar(uiOutput("sidebar"))
 
 ui <- tagList(
-  use_waiter(include_js = FALSE),
+  use_waiter(),
   waiter_show_on_load(app_load_spinner("Initializing R session. This process may take a while...")),
   dashboardPage(
   dashboardHeader(title = 'Stock Monitoring Tool'),
@@ -94,10 +101,10 @@ ui <- tagList(
       tags$div(
         tags$img(src = 'loading-circle.gif', height="20px"),
         class="loadingCustomInner"
-      ),
+        ),
       class="loadingCustom"),
     useShinyjs(),
-    extendShinyjs(text = jscode, functions =  c("showBox", "removeBox", "disableAllButtons", "enableAllButtons", "showComputing", "hideComputing", "showBox2", "removeBox2")),
+    extendShinyjs(text = jscode, functions =  c("showBox", "removeBox","showBox2", "removeBox2", "disableAllButtons", "enableAllButtons", "showComputing", "hideComputing", "expandBox","collapseBox")),
     tags$head(
       tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
     ),
