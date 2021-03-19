@@ -49,9 +49,9 @@ elefanGaModule <- function(input, output, session) {
                 }else{
                     "There was an unexpected error when reading in your data set. Please double-check your data set and refer to the info button for more help. "
                 },
-easyClose = TRUE,
-footer = NULL
-))
+                easyClose = TRUE,
+                footer = NULL
+            ))
             return (NULL)
         } else {
             shinyjs::enable("go_ga")
@@ -95,7 +95,7 @@ footer = NULL
         lfq <- lfqModify(dat,
                          bin_size = input$ELEFAN_GA_binSize,
                          years = years,
-##                         plus_group = input$ELEFAN_GA_PLUS_GROUP,
+                         ##                         plus_group = input$ELEFAN_GA_PLUS_GROUP,
                          aggregate = agg)
         return(lfq)
     })
@@ -117,7 +117,7 @@ footer = NULL
         shinyjs::reset("ELEFAN_agg")
         shinyjs::reset("ELEFAN_GA_binSize")
         shinyjs::reset("ELEFAN_GA_MA")
-##        shinyjs::reset("ELEFAN_GA_PLUS_GROUP")
+        ##        shinyjs::reset("ELEFAN_GA_PLUS_GROUP")
         shinyjs::reset("ELEFAN_GA_addl.sqrt")
         shinyjs::reset("ELEFAN_GA_Linf")
         shinyjs::reset("ELEFAN_GA_K")
@@ -287,7 +287,7 @@ footer = NULL
     ## Action buttons
     ## ----------------------------
 
-        observeEvent(input$check_ga, {
+    observeEvent(input$check_ga, {
 
         js$showComputing()
         js$disableAllButtons()
@@ -325,7 +325,7 @@ footer = NULL
                                  elitism = input$ELEFAN_GA_elitism,
                                  MA = input$ELEFAN_GA_MA,
                                  addl.sqrt = input$ELEFAN_GA_addlsqrt,
-##                                 plus_group = input$ELEFAN_GA_PLUS_GROUP,
+                                 ##                                 plus_group = input$ELEFAN_GA_PLUS_GROUP,
                                  years = input$ELEFAN_years_selected,
                                  agg = input$ELEFAN_agg,
                                  binSizeCC = input$ELEFAN_GA_binSize,
@@ -364,15 +364,41 @@ footer = NULL
                     title = "Error",
                     if(!is.null(res$error)){
                         if (length(grep("MA must be an odd integer",res$error)) != 0) {
-                            HTML(sprintf("Incorrect moving average (MA) value! Please provide an odd integer (e.g. 3, 5, 7) and run again.<hr/> <b>%s</b>",
-                                         res$error))
+                            HTML("Incorrect moving average (MA) value! Please provide an odd integer (e.g. 3, 5, 7) and run again.<hr/>")
                         }else if (length(grep("specified bin_size is smaller than",res$error)) != 0) {
-                            HTML(sprintf(paste0("The specified bin size is smaller than the resolution in uploaded data! Please set bin size equal to ",min(diff(inputElefanGaData$data$midLengths))," or higher and run again.<hr/> <b>%s</b>"),
-                                         res$error))
+                            HTML(paste0("The specified bin size is smaller than the resolution in uploaded data! Please set bin size equal to ",min(diff(inputElefanGaData$data$midLengths))," or higher and run again.<hr/>"))
                         }else if(length(grep("POSIXlt",res$error)) != 0) {
-                            HTML(sprintf("The date could not be recognized! Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>", res$error))
+                            HTML("The date could not be recognized! Please check that the chosen date format matches the date format in your data file.<hr/>")
                         }else if(length(grep("elitism cannot be larger that population",res$error)) != 0) {
-                            HTML(sprintf("Elitism cannot be larger than population size. Please adjust and run again.<hr/> <b>%s</b>", res$error))
+                            HTML("Elitism cannot be larger than population size. Please adjust and run again.<hr/>")
+                        }else if(length(grep("cannot be negative!",res$error)) != 0) {
+                            par_assoc <- NULL
+                            if(length(grep("binSize|MA",res$error)) != 0){
+                                par_assoc <- c(par_assoc,"restructuring of the data")
+                            }
+                            if(length(grep("popSize|maxiter|run|pmutation|pcrossover|elitism",
+                                           res$error)) != 0){
+                                par_assoc <- c(par_assoc,"genetic algorithm of ELEFAN")
+                            }
+                            if(length(grep("LWa|LWb",res$error)) != 0){
+                                par_assoc <- c(par_assoc,"length-weight relationship")
+                            }
+                            if(length(grep("tmax|temp",res$error)) != 0){
+                                par_assoc <- c(par_assoc,"natural mortality")
+                            }
+                            if(length(grep("Lm50|Lm75",res$error)) != 0){
+                                par_assoc <- c(par_assoc,"maturity")
+                            }
+                            if(length(grep("l50_user|l75_user|wq_user",res$error)) != 0){
+                                par_assoc <- c(par_assoc,"selectivity")
+                            }
+                            if(length(grep("fRangeSteps|fRangeMin|fRangeMax|lcRangeSteps|lcRangeMin|lcRangeMax",
+                                           res$error)) != 0){
+                                par_assoc <- c(par_assoc,"prediction range for the YPR model")
+                            }
+                            HTML(paste0("Parameters defining the ",
+                                        paste(par_assoc, collapse=" & "),
+                                        " are negative. This is not possible, please revise your assessment settings.<hr/>"))
                         }else{
                             res$error
                         }},
@@ -401,7 +427,7 @@ footer = NULL
             js$hideComputing()
             js$enableAllButtons()
         })
-        })
+    })
 
 
     observeEvent(input$go_ga, {
@@ -441,7 +467,7 @@ footer = NULL
                                  elitism = input$ELEFAN_GA_elitism,
                                  MA = input$ELEFAN_GA_MA,
                                  addl.sqrt = input$ELEFAN_GA_addlsqrt,
-##                                 plus_group = input$ELEFAN_GA_PLUS_GROUP,
+                                 ##                                 plus_group = input$ELEFAN_GA_PLUS_GROUP,
                                  years = input$ELEFAN_years_selected,
                                  agg = input$ELEFAN_agg,
                                  binSizeCC = input$ELEFAN_GA_binSize,
@@ -475,15 +501,42 @@ footer = NULL
                     title = "Error",
                     if(!is.null(res$error)){
                         if (length(grep("MA must be an odd integer",res$error)) != 0) {
-                            HTML(sprintf("Incorrect moving average (MA) value! Please provide an odd integer (e.g. 3,5,7) and run again.<hr/> <b>%s</b>",
-                                         res$error))
+                            HTML("Incorrect moving average (MA) value! Please provide an odd integer (e.g. 3, 5, 7) and run again.<hr/>")
                         }else if (length(grep("specified bin_size is smaller than",res$error)) != 0) {
-                            HTML(sprintf(paste0("The specified bin size is smaller than the resolution in uploaded data! Please set bin size equal to ",min(diff(inputElefanGaData$data$midLengths))," or higher and run again.<hr/> <b>%s</b>"),
-                                         res$error))
+                            HTML(paste0("The specified bin size is smaller than the resolution in uploaded data! Please set bin size equal to ",min(diff(inputElefanGaData$data$midLengths))," or higher and run again.<hr/>"))
                         }else if(length(grep("POSIXlt",res$error)) != 0) {
-                            HTML(sprintf("The date could not be recognized! Please check that the chosen date format matches the date format in your data file.<hr/> <b>%s</b>", res$error))
+                            HTML("The date could not be recognized! Please check that the chosen date format matches the date format in your data file.<hr/>")
                         }else if(length(grep("elitism cannot be larger that population",res$error)) != 0) {
-                            HTML(sprintf("Elitism cannot be larger than population size. Please adjust and run again.<hr/> <b>%s</b>", res$error))
+                            HTML("Elitism cannot be larger than population size. Please adjust and run again.<hr/>")
+                        }else if(length(grep("cannot be negative!",res$error)) != 0) {
+                            par_assoc <- NULL
+                            browser()
+                            if(length(grep("binSize|MA",res$error)) != 0){
+                                par_assoc <- c(par_assoc,"restructuring of the data")
+                            }
+                            if(length(grep("popSize|maxiter|run|pmutation|pcrossover|elitism",
+                                           res$error)) != 0){
+                                par_assoc <- c(par_assoc,"genetic algorithm of ELEFAN")
+                            }
+                            if(length(grep("LWa|LWb",res$error)) != 0){
+                                par_assoc <- c(par_assoc,"length-weight relationship")
+                            }
+                            if(length(grep("tmax|temp",res$error)) != 0){
+                                par_assoc <- c(par_assoc,"natural mortality")
+                            }
+                            if(length(grep("Lm50|Lm75",res$error)) != 0){
+                                par_assoc <- c(par_assoc,"maturity")
+                            }
+                            if(length(grep("l50_user|l75_user|wq_user",res$error)) != 0){
+                                par_assoc <- c(par_assoc,"selectivity")
+                            }
+                            if(length(grep("fRangeSteps|fRangeMin|fRangeMax|lcRangeSteps|lcRangeMin|lcRangeMax",
+                                           res$error)) != 0){
+                                par_assoc <- c(par_assoc,"prediction range for the YPR model")
+                            }
+                            HTML(paste0("Parameters defining the ",
+                                        paste(par_assoc, collapse=" & "),
+                                        " are negative. This is not possible, please revise your assessment settings.<hr/>"))
                         }else{
                             res$error
                         }},
@@ -828,15 +881,15 @@ footer = NULL
         req(elefan_ga$results)
         par(mfrow = c(2,1), mar = c(4,4,0,1), oma = c(2,0,1,0))
         plot_predict_mod(elefan_ga$results$resYPR2,
-                                     type = "Isopleth", xaxis1 = "FM",
-                                     mark = TRUE, contour = 6, xlab="",
+                         type = "Isopleth", xaxis1 = "FM",
+                         mark = TRUE, contour = 6, xlab="",
                          ylab1 = "")
         mtext(expression(L[50]),2,2.5)
         legend("topleft",legend=as.expression(bquote(bold("A"))),
                x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg = "white")
         plot_predict_mod(elefan_ga$results$resYPR2, type = "Isopleth",
-                                     xaxis1 = "FM", yaxis1 = "B_R", mark = TRUE,
-                                     contour = 6, xlab = "Fishing mortality",
+                         xaxis1 = "FM", yaxis1 = "B_R", mark = TRUE,
+                         contour = 6, xlab = "Fishing mortality",
                          ylab1 = "")
         mtext(expression(L[50]),2,2.5)
         legend("topleft",legend=as.expression(bquote(bold("B"))),
@@ -877,8 +930,8 @@ footer = NULL
         FM <- Z - M
         E <- FM / Z
         tmp <- as.data.frame(t(as.matrix(c(Z, M, FM, E,
-                 elefan_ga$results$L50,
-                 elefan_ga$results$L75))))
+                                           elefan_ga$results$L50,
+                                           elefan_ga$results$L75))))
         names(tmp) <- c("Z","M","F","E","L50","L75")
         tmp
     })
@@ -904,7 +957,7 @@ footer = NULL
                 type = "message",
                 duration = 30,
                 closeButton = TRUE
-                             )
+            )
         }else{
             tmp <- elefan_ga$results$resYPR1$df_Es
             names(tmp) <- c("Fmax","F0.1","F0.5","F30","F35","F40")
@@ -960,11 +1013,11 @@ footer = NULL
     output$ElefanGaVREUpload <- renderText({
         text <- ""
         req(elefan_ga$results)
-            if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode() == "GCUBE") {
-                if (isTRUE(elefanGaUploadVreResult$res)) {
-                    text <- paste0(text, VREUploadText)
-                }
+        if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode() == "GCUBE") {
+            if (isTRUE(elefanGaUploadVreResult$res)) {
+                text <- paste0(text, VREUploadText)
             }
+        }
         text
     })
 

@@ -12,6 +12,15 @@ shinyMonitor2 <- function(amount, max, digits = getOption("digits")){
                        detail = paste0("Iteration: ", amount,"/",max))
 }
 
+check.neg <- function(pars){
+    res <- rep(FALSE, length(pars))
+    for(i in 1:length(pars)){
+        tmp <- try(get(pars[i], envir = parent.frame()), silent=TRUE)
+        res[i] <- ifelse(!is.null(tmp) && tmp < 0, TRUE, FALSE)
+    }
+    return(res)
+}
+
 run_elefan_ga <- function(
                           x,
                           binSize = NULL,
@@ -91,6 +100,16 @@ run_elefan_ga <- function(
         if(fRangeMin == fRangeMax){
             stop("Then minimum and maximum of the F range are identical. That is not possible!")
         }
+
+        ## Don't allow negative input parameters
+        check_pars <- c("binSize", "MA", "popSize", "maxiter", "run", "pmutation",
+                    "pcrossover", "elitism",
+                    "LWa", "LWb", "tmax", "temp", "Lm50", "Lm75",
+                    "l50_user", "l75_user", "wqs_user",
+                    "fRangeSteps", "fRangeMin", "fRangeMax",
+                    "lcRangeSteps", "lcRangeMin", "lcRangeMax")
+        checks <- check.neg(check_pars)
+        if(any(checks)) stop(paste0(paste(check_pars[which(checks)], collapse=","), " cannot be negative!"))
 
 
         ##--------------------
