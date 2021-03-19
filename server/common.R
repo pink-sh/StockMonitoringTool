@@ -22,7 +22,7 @@ getDataConsiderationTextForElefan <- function() {
     text <- paste0(text, "<ul>")
     text <- paste0(text,
                    "<li>A column indicating the length classes of measured individuals (first column of dataset).</li>")
-    text <- paste0(text, "<li>A row indicating the dates when individuals were measured (first row of dataset).</li>")
+    text <- paste0(text, "<li>A row indicating the dates when individuals were measured (first row of dataset excl. first column).</li>")
     text <- paste0(text,
                    "<li>The number of individuals caught per length class (rows) and per sampling date (columns).</li>")
     text <- paste0(text, "</ul>")
@@ -36,6 +36,9 @@ getDataConsiderationTextForElefan <- function() {
     text <- paste0(text, "<li>", "Use a '.' to separate decimals in the data. Default might differ dependent on the language settings of your spreadsheet manipulation programm (e.g. Excel).", "</li>")
     text <- paste0(text, "<li>", "The first column of the data set should include the mid lengths of the length classes.", "</li>")
     text <- paste0(text, "<li>Select the date format used in your data file under <b>'Choose CSV date format'</b>, e.g. DD/MM/YYYY format to select 'Day Month Year'.</li>")
+    text <- paste0(text, "<li>The date must include a specification of the day. If the data is aggregated or no information about the day is available, you could consider to set the day to the midpoint of the month, e.g. 15/01/2021.</li>")
+    text <- paste0(text, "<li>At least, your data set should be representative of a whole year. This is in particular important if seasonally varying growth is estimated.</li>")
+
 
     ## text <- paste0(text, "<li>Ensure that your dates are given in chronological order.</li>")
     ## text <- paste0(text, "<li>", "Ensure that the 'midLength' column name is identical to the sample dataset.", "</li>")
