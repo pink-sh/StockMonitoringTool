@@ -76,7 +76,7 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_ma", "Moving average (MA)", ns("infoMA"),
                         size = "large",
-                        HTML(paste0("<p>Number indicating over how many adjacent length classes the moving average should be performed  (", withMathJax("\\(MA\\)"), ") (must be a positive odd number, e.g. 5 or 7). <br><br>The combination of bin size and MA critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. Ideally, the MA value is defined after defining the optimal bin size and leads to visually distinct peaks in particular among small length classes. One option for the MA value is setting it equal to the number of length classes (bins) potentially corrsponding to the youngest cohort.</p>"))),
+                        HTML(paste0("<p>Number indicating over how many adjacent length classes the moving average should be performed  (", withMathJax("\\(MA\\)"), ") (must be a positive odd number, e.g. 5 or 7). <br><br>The combination of bin size and MA critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. Ideally, the MA value is defined after defining the optimal bin size and leads to visually distinct peaks in particular among small length classes. One option for the MA value is setting it equal to the number of length classes (bins) potentially corresponding to the youngest cohort.</p>"))),
 
                 bsModal("info_pg", "Plus group", ns("infoPG"),
                         size = "large",
@@ -165,7 +165,7 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_adjdata", "Adjust data (stock status)", ns("infoAdjData"),
                         size = "large",
-                        HTML(paste0("<p> Select the year(s) for the estimation of the stock status. The mortality rates and reference points estimated by the catch curve and yield per recruit model, respectively, corrspond to the year selected. If several years of the data set are selected, the values corrspond to the average values over all years selected. </p>"))),
+                        HTML(paste0("<p> Select the year(s) for the estimation of the stock status. The mortality rates estimated by the catch curve correspond to all years selected. If several years are selected, the samples for selected years are combined and the estimated rates correspond to the average values over all years selected. </p>"))),
 
                 bsModal("info_mat", "Maturity (optional)", ns("infoMat"),
                         size = "large",
