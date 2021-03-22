@@ -130,7 +130,7 @@ output$elefanIntroOut <- renderText({
                    ", and compiled into the R package ",
                    '<a href="https://cran.r-project.org/web/packages/TropFishR"> TropFishR </a>',
                    " by ", '<a href="https://doi.org/10.1111/2041-210X.12791"> Mildenberger et al. (2017).</a>',
-                   "The assessment rountine consist of 4 subsequent steps and methods:</p>")
+                   "The assessment rountine consist of 4 consecutive steps and methods:</p>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<h4><b>1. ELEFAN</b>: <b>E</b>lectronic <b>LE</b>ngth <b>F</b>requency <b>AN</b>alysis for the estimation of the growth parameters of the von Bertlanffy growth (VBG) function.</h4>")
     text <- paste0(text, "<p>")

@@ -52,7 +52,7 @@ getDataConsiderationTextForElefan <- function() {
 
 
 getMethodConsiderationTextForElefan <- function() {
-    text <- "<b>Subsequent steps of the length-based stock assessment routine:</b>"
+    text <- "<b>Consecutive steps of the length-based stock assessment routine workflow:</b>"
     text <- paste0(text, "<br>")
     text <- paste0(text, "<ol>")
     text <- paste0(text, "<li> ELEFAN: Estimation of growth parameters of the von Bertlanffy growth (VBG) function.</li>")
