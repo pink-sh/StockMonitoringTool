@@ -106,7 +106,7 @@ tabElefanGa <- function(id) {
                         size = "large",
                         p("Should the seasonal model be used? The seasonal model (or seasonalised von Bertalanffy growth curve) allows to calculate the seasonal growth parameters, ",
                           withMathJax("\\(C\\)"), " and ",
-                          withMathJax("\\(t_{s}\\)"))),
+                          withMathJax("\\(t_{s}\\)"),". Please see the Seasonal Von Bertalanffy page in the Supporting Tools menu for more information.")),
 
                 bsModal("info_C", withMathJax("\\(C\\)"), ns("infoC"),
                         size = "large",
@@ -179,7 +179,7 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_natm", "Natural mortality", ns("infoNatM"),
                         size = "large",
-                        HTML("<p>The natural mortality rate (M) is required to estimate the fishing mortality (F) from the total mortality (Z) estimated by the catch curve (F = Z - M). The natural mortality is estimated by an empirical formula based on estimated growth parameters. The options are: <br> - Then's growth formula (Then et al. 2015), <br> - Pauly's growth and temperature formula (Pauly et al. 1980), and <br> - Then's maximum age formula (Then et al. 2015); <br> While the first option does not require any additional information, the second requires the average annual sea surface temperature (SST) in grad Celsius and allows to correct for schooling fish (multiplication with 0.8) and third option requires an estimate of the maximum age of the fish. </p>")
+                        HTML("<p>The natural mortality rate (M) is required to estimate the fishing mortality (F) from the total mortality (Z) estimated by the catch curve (F = Z - M). The natural mortality is estimated by an empirical formula based on estimated growth parameters. The options are: <br> - Then's growth formula (Then et al. 2015), <br> - Pauly's growth and temperature formula (Pauly et al. 1980), and <br> - Then's maximum age formula (Then et al. 2015); <br> While the first option does not require any additional information, the second requires the average annual sea surface temperature (SST) in grad Celsius and allows to correct for schooling fish (multiplication with 0.8) and third option requires an estimate of the maximum age of the fish.<br>Please see the Natural Mortality estimator page in the Supporting Tools menu for more information. </p>")
                         ),
 
                 bsModal("info_assessment", "Check & Assessment & Reset & Report", ns("infoAssessment"),
