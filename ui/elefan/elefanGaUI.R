@@ -157,7 +157,7 @@ tabElefanGa <- function(id) {
                         size = "large",
                         HTML(paste0("<p>The estimation of the yield and biomass per recruit requires information about the average weight per length class, which can be estimated with the length-weight relationship. A common assumption is the allometric relationship ",withMathJax("\\(W = a L^{b}\\)"),", with the constant a in ",
                                     withMathJax("\\( g/cm^{b}\\)"), " and the unitless exponent ",
-                                    withMathJax("\\( b\\)"),". <br>Ideally, the parameters are estimated based on length and weight measurements of the stock under study. Alternatively, information about the length-weight relationship of the species under study can be found on FishBase. By default the parameters are set to ",
+                                    withMathJax("\\( b\\)"),". <br>Ideally, the parameters are estimated based on length and weight measurements of the stock under study. Alternatively, information about the length-weight relationship of the species under study can be found on <a href='http://www.fishbase.org/search.php'> FishBase</a>. By default the parameters are set to ",
                                     withMathJax("\\(a = 0.01 g/cm^{3}\\)")," and ",
                                     withMathJax("\\(b = 3\\)"),".",
                                     "</p>"))
@@ -169,7 +169,7 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_mat", "Maturity (optional)", ns("infoMat"),
                         size = "large",
-                        HTML("<p>If available, maturity information about your species in terms of the length at 50% and 75% maturity can be provided and allows to estimate current Spawning Potential Ratio (SPR) and SPR-related reference points. The parameterisation with Lm50 and Lm75 assumes a logistic maturity ogive. <br><br> Ideally, maturity information is collected directly from the stock under study e.g. by determining the maturation states of the gonades. <br>Alternatively, you might find maturity information about your species on FishBase.</p>")
+                        HTML("<p>If available, maturity information about your species in terms of the length at 50% and 75% maturity can be provided and allows to estimate current Spawning Potential Ratio (SPR) and SPR-related reference points. The parameterisation with Lm50 and Lm75 assumes a logistic maturity ogive. <br><br> Ideally, maturity information is collected directly from the stock under study e.g. by determining the maturation states of the gonades. <br>Alternatively, you might find maturity information about your species on <a href='http://www.fishbase.org/search.php'> FishBase</a>.</p>")
                         ),
 
                 bsModal("info_select", "Gear selectivity", ns("infoSelect"),
