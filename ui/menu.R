@@ -11,12 +11,12 @@ menuElefan <- menuItem("Length-based methods",
          # menuSubItem("Elefan", tabName = "ElefanWidget"),
          menuSubItem("Sample Datasets", tabName = "ElefanSampleDataset")
 )
-menuFishMethods <- menuItem("Fish Methods",
-         menuSubItem("Introduction", tabName = "FishMethodsIntro"),
-         menuSubItem("SBPR", tabName = "SBPRWidget"),
-         menuSubItem("YPR", tabName = "YPRWidget"),
-         menuSubItem("Fishmethods Sample Dataset", tabName = "FishMethodsSampleDataset")
-)
+# menuFishMethods <- menuItem("Fish Methods",
+#          menuSubItem("Introduction", tabName = "FishMethodsIntro"),
+#          menuSubItem("SBPR", tabName = "SBPRWidget"),
+#          menuSubItem("YPR", tabName = "YPRWidget"),
+#          menuSubItem("Fishmethods Sample Dataset", tabName = "FishMethodsSampleDataset")
+# )
 menuSupportingTools <- menuItem("Supporting Tools",
          menuSubItem("Schaefer logistic growth", tabName = "BasicSchaefer"),
          menuSubItem("Von Bertalanffy growth function", tabName = "BasicVonBertalannfy"),

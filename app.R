@@ -34,9 +34,9 @@ source("ui/elefan/commonUI.R")
 source("ui/elefan/elefanGaUI.R")
 # source("ui/elefan/elefanSaUI.R")
 # source("ui/elefan/elefanUI.R")
-source("ui/fishMethods/commonUI.R")
-source("ui/fishMethods/sbprUI.R")
-source("ui/fishMethods/yprUI.R")
+# source("ui/fishMethods/commonUI.R")
+# source("ui/fishMethods/sbprUI.R")
+# source("ui/fishMethods/yprUI.R")
 source("ui/support/BasicSchaeferUI.R")
 source("ui/support/BasicVonBertalannfyUI.R")
 source("ui/support/NaturalMortalityUI.R")
@@ -46,8 +46,8 @@ source("server/cmsy/cmsyServer.R")
 source("server/elefan/elefanGaServer.R")
 # source("server/elefan/elefanSaServer.R")
 # source("server/elefan/elefanServer.R")
-source("server/fishMethods/sbprServer.R")
-source("server/fishMethods/yprServer.R")
+# source("server/fishMethods/sbprServer.R")
+# source("server/fishMethods/yprServer.R")
 source("server/support/BasicSchaeferServer.R")
 source("server/support/BasicVonBertalannfyServer.R")
 source("server/support/SeasonalVonBertalannfyServer.R")
@@ -59,7 +59,7 @@ source("assets/tropFishR/algorithms/temp_predict_mod.R")  ## temporarily needed 
 # source("assets/tropFishR/algorithms/run_elefan_sa.R")
 # source("assets/tropFishR/algorithms/run_elefan.R")
 source("assets/cmsy/CmsyFunction.R")
-source("assets/fishmethods/methods.R")
+# source("assets/fishmethods/methods.R")
 source("assets/support/shaefer.R")
 source("assets/support/vonBertalannfly.R")
 source("assets/support/seasonalVonBertalannfly.R")
@@ -119,14 +119,14 @@ ui <- tagList(
       tabCmsySampleDataset,
       tabElefanIntro,
       tabElefanSampleDataset,
-      tabFishMethodsIntro,
-      tabFishMethodsSampleDataset,
+      # tabFishMethodsIntro,
+      # tabFishMethodsSampleDataset,
       tabCmsy("cmsyModule"),
       tabElefanGa("elefanGaModule"),
       # tabElefanSa("elefanSaModule"),
       # tabElefan("elefanModule"),
-      tabSbpr("sbprModule"),
-      tabYpr("yprModule"),
+      # tabSbpr("sbprModule"),
+      # tabYpr("yprModule"),
       tabBasicSchaefer("basicShaeferModule"),
       tabBasicVonBertalannfy("vonBertalannfyModule"),
       tabSeasonalVonBertalannfy("seasonalVonBertalannfyModule"),
@@ -154,7 +154,7 @@ server <- function(input, output, session) {
         menuItem("Home", tabName="homeTab"),
         menuCmsy,
         menuElefan,
-        menuFishMethods,
+        # menuFishMethods,
         menuSupportingTools
       )
     )
@@ -184,10 +184,10 @@ server <- function(input, output, session) {
              # 'elefan-sa' = {isolate({updateTabItems(session, "smt-tabs", "ElefanSaWidget")})},
              # 'elefan' = {isolate({updateTabItems(session, "smt-tabs", "ElefanWidget")})},
              'elefan-sample' = {isolate({updateTabItems(session, "smt-tabs", "ElefanSampleDataset")})},
-             'fishmethods-intro' = {isolate({updateTabItems(session, "smt-tabs", "FishMethodsIntro")})},
-             'sbpr' = {isolate({updateTabItems(session, "smt-tabs", "SBPRWidget")})},
-             'ypr' = {isolate({updateTabItems(session, "smt-tabs", "YPRWidget")})},
-             'fishmethods-sample' = {isolate({updateTabItems(session, "smt-tabs", "FishMethodsSampleDataset")})},
+             # 'fishmethods-intro' = {isolate({updateTabItems(session, "smt-tabs", "FishMethodsIntro")})},
+             # 'sbpr' = {isolate({updateTabItems(session, "smt-tabs", "SBPRWidget")})},
+             # 'ypr' = {isolate({updateTabItems(session, "smt-tabs", "YPRWidget")})},
+             # 'fishmethods-sample' = {isolate({updateTabItems(session, "smt-tabs", "FishMethodsSampleDataset")})},
              'basic-shaefer' = {isolate({updateTabItems(session, "smt-tabs", "BasicSchaefer")})},
              'basic-von-bertalannfy' = {isolate({updateTabItems(session, "smt-tabs", "BasicVonBertalannfy")})},
              'seasonal-von-bertalannfy' = {isolate({updateTabItems(session, "smt-tabs", "SeasonalVonBertalannfy")})},
@@ -268,8 +268,8 @@ server <- function(input, output, session) {
   callModule(elefanGaModule, "elefanGaModule")
   # callModule(elefanSaModule, "elefanSaModule")
   # callModule(elefanModule, "elefanModule")
-  callModule(sbprModule, "sbprModule")
-  callModule(yprModule, "yprModule")
+  # callModule(sbprModule, "sbprModule")
+  # callModule(yprModule, "yprModule")
   callModule(basicShaeferModule, "basicShaeferModule")
   callModule(vonBertalannfyModule, "vonBertalannfyModule")
   callModule(seasonalVonBertalannfyModule, "seasonalVonBertalannfyModule")
