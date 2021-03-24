@@ -608,12 +608,14 @@ tabElefanGa <- function(id) {
                                                     numericInput(ns("Lm50"),
                                                                  label=p(withMathJax("\\(L_{m50}\\)")),
                                                                  value = 0,
+                                                                 min = 0,
                                                                  step = 1,
                                                                  width = "60%")),
                                              column(6,
                                                     numericInput(ns("Lm75"),
                                                                  label=p(withMathJax("\\(L_{m75}\\)")),
                                                                  value = 0,
+                                                                 min = 0,
                                                                  step = 1,
                                                                  width = "60%"))
                                          )
