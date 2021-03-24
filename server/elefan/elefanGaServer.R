@@ -1027,7 +1027,7 @@ elefanGaModule <- function(input, output, session) {
     output$createElefanGAReport <- downloadHandler(
         filename = paste("ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
         content = function(file) {
-            createElefanGaPDFReport(file, elefan_ga, input)
+            createElefanGaPDFReport(file, elefan_ga, input, output)
         }
     )
 

@@ -121,11 +121,11 @@ createCmsyPDFReport <- function(file, cmsy, input) {
   rmarkdown::render(tempReport, output_file = file, params = params)
 }
 
-createElefanGaPDFReport <- function(file, elefan_ga, input) {
+createElefanGaPDFReport <- function(file, elefan_ga, input, output) {
   print(paste0("Input file", input$fileGa))
   tempReport <- file.path(tempdir(), "elefan_ga.Rmd")
   file.copy("assets/tropFishR/markdown/elefan_ga.Rmd", tempReport, overwrite = TRUE)
-  params <- list(elefan = elefan_ga, inputParams = input)
+  params <- list(elefan = elefan_ga, inputParams = input, outputParams = output)
   return (rmarkdown::render(tempReport, output_file = file, params = params))
 }
 

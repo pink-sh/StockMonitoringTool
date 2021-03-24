@@ -25,6 +25,7 @@ library(rfishbase)
 library(waiter)
 library(futile.logger)
 library(R.utils)
+library(knitr)
 
 ##### Dependencies
 source("ui/menu.R")
