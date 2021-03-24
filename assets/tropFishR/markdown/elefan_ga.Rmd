@@ -3,7 +3,15 @@ title: "Length-based stock assessment with TropFishR"
 output: pdf_document
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
-
+```{r echo=FALSE}
+par(mfrow = c(2,1), mar = c(1,4,0,1), oma = c(3,1,1,0))
+        plot(elefan_ga$dataExplo$lfq, Fname = "catch", date.axis = "")
+        legend("topleft",legend=as.expression(bquote(bold("A"))),
+               x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg = "white")
+        plot(elefan_ga$dataExplo$lfqbin, Fname = "rcounts", date.axis = "modern")
+        legend("topleft",legend=as.expression(bquote(bold("B"))),
+               x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg = "white")
+```
 
 ```{r echo=FALSE,results='asis'}
         cat("<p> **Figure 1**: Uploaded length-frequency distributions per sampling time (x axis). Panel A shows the raw data, while panel B shows the restructured data. This means after subtracting the moving average (MA) of the count in each length class. The combination of bin size and MA critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. Blue shading indicates a high count per length bin (panel A) and a high positive value (panel B). Red shading indicates a negative value (only panel B). A good bin size value reduces noise in the data by aggregation. A good MA value leads to visually distinct peaks in particular among small length classes.</P>")
@@ -391,21 +399,21 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 
   **Moving Average (MA)** : `r input$ELEFAN_GA_MA` 
 
-  **Additional squareroot transformation ?** : `r if(!is.null(input$ELEFAN_GA_addl.sqrt)){if(input$ELEFAN_GA_addl.sqrt){"Yes"}else{"No"}}else{"No"}`
+  **Additional squareroot transformation ?** : `r if(!is.null(input$ELEFAN_GA_addlsqrt)){if(input$ELEFAN_GA_addlsqrt){"Yes"}else{"No"}}else{"No"}`
 
 ## Search space for growth parameters
 
-  **Asymptotic length(Linf)** : `r min(input$ELEFAN_GA_Linf)` to `r max(input$ELEFAN_GA_Linf)`
+  `r paste0("**Asymptotic length(\\(L_\\infty\\))** : ",min(input$ELEFAN_GA_Linf), " to ", max(input$ELEFAN_GA_Linf))`
 
-  **Growth rate (K)** : `r min(input$ELEFAN_GA_K)` to `r max(input$ELEFAN_GA_K)` 
+  `r paste0("**Growth rate (\\(K\\))** : ", min(input$ELEFAN_GA_K)," to ",max(input$ELEFAN_GA_K))` 
 
-  **Time anchor(ta)** : `r min(input$ELEFAN_GA_t_anchor)` to `r max(input$ELEFAN_GA_t_anchor)`
+ `r paste0("**Time anchor(\\(t_{a}\\))** : ",min(input$ELEFAN_GA_t_anchor)," to ", max(input$ELEFAN_GA_t_anchor))`
 
   **Seasonal model?** : `r if(!is.null(input$ELEFAN_GA_seasonalised)){if(input$ELEFAN_GA_seasonalised){"Yes"}else{"No"}}else{"No"}`
 
-  `r if(!is.null(input$ELEFAN_GA_seasonalised)){if(input$ELEFAN_GA_seasonalised){paste0("**Amplitude (C)** : ", min(input$ELEFAN_GA_C)," to ",max(input$ELEFAN_GA_C))}else{}}else{}`
+  `r if(!is.null(input$ELEFAN_GA_seasonalised)){if(input$ELEFAN_GA_seasonalised){paste0("**Amplitude (\\(C\\))** : ", min(input$ELEFAN_GA_C)," to ",max(input$ELEFAN_GA_C))}else{}}else{}`
 
-  `r if(!is.null(input$ELEFAN_GA_seasonalised)){if(input$ELEFAN_GA_seasonalised){paste0("**Summer point (ts)** : ",min(input$ELEFAN_GA_ts)," to ",max(input$ELEFAN_GA_ts))}else{}}else{}`
+  `r if(!is.null(input$ELEFAN_GA_seasonalised)){if(input$ELEFAN_GA_seasonalised){paste0("**Summer point (\\(t_{s}\\))** : ",min(input$ELEFAN_GA_ts)," to ",max(input$ELEFAN_GA_ts))}else{}}else{}`
 
 ## ELEFAN's genetic algorithm
 
@@ -429,36 +437,36 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
  
  **Natural Mortality**  
  
-    Method : `r input$natM`
+  Method : `r input$natM`
     
-    `r if(input$natM =="Pauly's growth & temp. formula"){paste0("Average ambient sea surface temperature : ",input$temp)}`
+  `r if(input$natM =="Pauly's growth & temp. formula"){paste0("Average ambient sea surface temperature : ",input$temp)}`
     
-    `r if(input$natM =="Pauly's growth & temp. formula"){paste0("Correction for schooling? : ",if(!is.null(input$schooling)){if(input$schooling){"Yes"}else{"No"}}else{"No"})}`
+  `r if(input$natM =="Pauly's growth & temp. formula"){paste0("Correction for schooling? : ",if(!is.null(input$schooling)){if(input$schooling){"Yes"}else{"No"}}else{"No"})}`
     
-    `r if(input$natM =="Pauly's growth & temp. formula"){paste0("Maximum age : ",input$tmax)}`
+  `r if(input$natM =="Pauly's growth & temp. formula"){paste0("Maximum age : ",input$tmax)}`
     
     
  **Maturity** 
  
-    Lm50 : `r input$Lm50` 
+ `r paste0("\\(L_{m50}\\) : ",input$Lm50)`
     
-    Lm75 : `r input$Lm75` 
+ `r paste0("\\(L_{m75}\\) : ",input$Lm75)` 
  
  **Selectivity** 
  
-    Selectivity : `r input$select`
+  Selectivity : `r input$select`
     
-    `r if(input$select =="Define L50 & L75"){paste0("L50 (user defined) : ",input$l50_user)}`
+  `r if(input$select =="Define L50 & L75"){paste0("\\(L_{50}\\) (user defined) : ",input$l50_user)}`
     
-    `r if(input$select =="Define L50 & L75"){paste0("L75 (user defined) : ",input$l75_user)}`
+  `r if(input$select =="Define L50 & L75"){paste0("\\(L_{75}\\) (user defined) : ",input$l75_user)}`
     
-    `r if(input$select =="Define L50 & (L75-L25)"){paste0("width (L75 - L25; user defined) : ",input$wqs_user)}`
+  `r if(input$select =="Define L50 & (L75-L25)"){paste0("width (\\(L_{75}-L_{25}\\); user defined) : ",input$wqs_user)}`
     
   **Prediction range**
   
-    Fishing mortality :`r paste0("Steps:",input$fRangeSteps,", min:" ,input$fRangeMin,', max:', input$fRangeMax)`
+  Fishing mortality :`r paste0("Steps:",input$fRangeSteps,", min:" ,input$fRangeMin,', max:', input$fRangeMax)`
     
-    Length at 50% selectivity (L50) : `r paste0("Steps:",input$lcRangeSteps,if(input$select!="Estimate"){paste0(", min:" ,input$lcRangeMin,', max:', input$lcRangeMax)}else{""})`
+  `r paste0("Length at 50% selectivity (\\(L_{50}\\)) : ","Steps:",input$lcRangeSteps,if(input$select!="Estimate"){paste0(", min:" ,input$lcRangeMin,', max:', input$lcRangeMax)}else{""})`
     
     
 ******

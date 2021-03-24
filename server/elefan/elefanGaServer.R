@@ -604,7 +604,7 @@ elefanGaModule <- function(input, output, session) {
     })
     output$title_explo1 <- renderText({
         req(inputElefanGaData$data, input$ELEFAN_years_selected)
-        txt <- "<p class=\"pheader_elefan\">Figure 1: Uploaded length-frequency distributions per sampling time (x axis). Panel A shows the raw data, while panel B shows the restructured data. This means after subtracting the moving average (MA) of the count in each length class. The combination of bin size and MA critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. Blue shading indicates a high count per length bin (panel A) and a high positive value (panel B). Red shading indicates a negative value (only pane B). A good bin size value reduces noise in the data by aggregation. A good MA value leads to visually distinct peaks in particular among small length classes.</p>"
+        txt <- "<p class=\"pheader_elefan\">Figure 1: Uploaded length-frequency distributions per sampling time (x axis). Panel A shows the raw data, while panel B shows the restructured data. This means after subtracting the moving average (MA) of the count in each length class. The combination of bin size and MA critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. Blue shading indicates a high count per length bin (panel A) and a high positive value (panel B). Red shading indicates a negative value (only panel B). A good bin size value reduces noise in the data by aggregation. A good MA value leads to visually distinct peaks in particular among small length classes.</p>"
         txt
     })
 
