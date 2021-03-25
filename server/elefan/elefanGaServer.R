@@ -1032,6 +1032,11 @@ elefanGaModule <- function(input, output, session) {
     )
 
 
+    output$elefanGAWorkflowConsiderationsText <- renderText({
+        text <- getWorkflowConsiderationTextForElefan()
+        text
+    }) 
+    
     output$elefanGADataConsiderationsText <- renderText({
         text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getDataConsiderationTextForElefan())
         text

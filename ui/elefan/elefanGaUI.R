@@ -11,6 +11,10 @@ tabElefanGa <- function(id) {
                     "More information about "
                     ),
                 div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                    actionButton(ns("elefanGAWorkflowConsiderations"), "Workflow",
+                                 class="topLevelInformationButton")
+                ),
+                div(style = "display: inline-block; vertical-align:center; margin-left: 5px;",
                     actionButton(ns("elefanGADataConsiderations"), "Data",
                                  class="topLevelInformationButton")
                     ),
@@ -32,11 +36,16 @@ tabElefanGa <- function(id) {
 
                 ## Information tabs
                 ## -------------------------------
+                bsModal("modalWorkflow", "Workflow Considerations - TropFishR",
+                        ns("elefanGAWorkflowConsiderations"),
+                        size = "large",
+                        htmlOutput(ns("elefanGAWorkflowConsiderationsText"))),
+
                 bsModal("modalExampleGA", "Data Loading and Formatting Considerations - TropFishR",
                         ns("elefanGADataConsiderations"),
                         size = "large",
                         htmlOutput(ns("elefanGADataConsiderationsText"))),
-
+                
                 bsModal("modalExampleGA2", "Data Considerations - TropFishR",
                         ns("dataConsiderations2"),
                         size = "large",

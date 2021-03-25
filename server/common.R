@@ -50,6 +50,30 @@ getDataConsiderationTextForElefan <- function() {
     return (text)
 }
 
+getWorkflowConsiderationTextForElefan <- function() {
+    text <- "<h4> To set up this length-based workflow in the Stock Monitoring Tool :</h4>"
+    text <- paste0(text, "<ol>")
+    text <- paste0(text, "<li> Upload a size frequency data set (see Data Considerations or the Elefan Sample dataset)</li>")
+    text <- paste0(text, "<li> Adjust the Assessment Settings")
+    text <- paste0(text, "<ol type='a'>")
+    text <- paste0(text, "<li> Data Settings - adjust the aggregation, bin size and moving average (MA) of the dataset to optimise cohort recognition by the Elefan algorithm </li>")
+    text <- paste0(text, "<li> Elefan - set the search space of the Elefan algorithm to estimate growth parameters </li>")
+    text <- paste0(text, "<li> Stock status - set the parameters required to estimate mortality and perform YPR (and SPR; optional) </li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "</li>")
+    text <- paste0(text, "<li> Check and Run the Assessment")
+    text <- paste0(text, "<ol type='a'>")
+    text <- paste0(text, "<li> Run a check on the parameterisations prior to running the full assessment </li>")
+    text <- paste0(text, "<li> Run the assessment. Watch for the progress bar in the lower right corner to help </li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "</li>")
+    text <- paste0(text, "<li> Download the report as a pdf </li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "Further information can be found in the popup information buttons at each field, and in the Data, Methods, and Results Considerations tabs. Note that error messages may display in the center of the page and in place of any figures where an error has occurred.")
+    text <- paste0(text, "</p>")    
+    return (text)
+}
+
 
 getMethodConsiderationTextForElefan <- function() {
     text <- "<b>Consecutive steps of the length-based stock assessment routine workflow:</b>"
