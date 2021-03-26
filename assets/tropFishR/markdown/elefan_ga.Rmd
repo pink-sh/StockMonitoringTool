@@ -3,6 +3,94 @@ title: "Length-based stock assessment with TropFishR"
 output: pdf_document
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
+
+# Summary of Input Parameters 
+
+## Data settings
+
+  **Input File** : `r input$fileGa$name`
+
+  **Selected year(s) for analysis** : `r input$ELEFAN_years_selected`
+
+  **Aggregation method** : `r input$ELEFAN_agg` 
+
+  **Bin Size** : `r input$ELEFAN_GA_binSize` 
+
+  **Moving Average (MA)** : `r input$ELEFAN_GA_MA` 
+
+  **Additional squareroot transformation ?** : `r if(!is.null(input$ELEFAN_GA_addlsqrt)){if(input$ELEFAN_GA_addlsqrt){"Yes"}else{"No"}}else{"No"}`
+
+## Search space for growth parameters
+
+  `r paste0("**Asymptotic length(\\(L_\\infty\\))** : ",min(input$ELEFAN_GA_Linf), " to ", max(input$ELEFAN_GA_Linf))`
+
+  `r paste0("**Growth rate (\\(K\\))** : ", min(input$ELEFAN_GA_K)," to ",max(input$ELEFAN_GA_K))` 
+
+ `r paste0("**Time anchor(\\(t_{a}\\))** : ",min(input$ELEFAN_GA_t_anchor)," to ", max(input$ELEFAN_GA_t_anchor))`
+
+  **Seasonal model?** : `r if(!is.null(input$ELEFAN_GA_seasonalised)){if(input$ELEFAN_GA_seasonalised){"Yes"}else{"No"}}else{"No"}`
+
+  `r if(!is.null(input$ELEFAN_GA_seasonalised)){if(input$ELEFAN_GA_seasonalised){paste0("**Amplitude (\\(C\\))** : ", min(input$ELEFAN_GA_C)," to ",max(input$ELEFAN_GA_C))}else{}}else{}`
+
+  `r if(!is.null(input$ELEFAN_GA_seasonalised)){if(input$ELEFAN_GA_seasonalised){paste0("**Summer point (\\(t_{s}\\))** : ",min(input$ELEFAN_GA_ts)," to ",max(input$ELEFAN_GA_ts))}else{}}else{}`
+
+## ELEFAN's genetic algorithm
+
+  **Population size**: `r input$ELEFAN_GA_popSize`
+
+  **Maximum number of generations** : `r input$ELEFAN_GA_maxiter`
+
+  **Number of generations without improvement** : `r input$ELEFAN_GA_run`
+
+  **Probability of mutation** : `r input$ELEFAN_GA_pmutation`
+
+  **Probability of crossover** : `r input$ELEFAN_GA_pcrossover`
+
+  **Degree of elitism** : `r input$ELEFAN_GA_elitism`
+  
+## Stock status
+
+ **Selected years** : `r input$ELEFAN_years_selected_cc`
+ 
+ **Length-weight relationship** : `r paste0("\\(W = a \ L^{b}\\)"," with a=",input$LWa," and b=",input$LWb)`
+ 
+ **Natural Mortality**  
+ 
+  Method : `r input$natM`
+    
+  `r if(input$natM =="Pauly's growth & temp. formula"){paste0("Average ambient sea surface temperature : ",input$temp)}`
+    
+  `r if(input$natM =="Pauly's growth & temp. formula"){paste0("Correction for schooling? : ",if(!is.null(input$schooling)){if(input$schooling){"Yes"}else{"No"}}else{"No"})}`
+    
+  `r if(input$natM =="Pauly's growth & temp. formula"){paste0("Maximum age : ",input$tmax)}`
+    
+    
+ **Maturity** 
+ 
+ `r paste0("\\(L_{m50}\\) : ",input$Lm50)`
+    
+ `r paste0("\\(L_{m75}\\) : ",input$Lm75)` 
+ 
+ **Selectivity** 
+ 
+  Selectivity : `r input$select`
+    
+  `r if(input$select =="Define L50 & L75"){paste0("\\(L_{50}\\) (user defined) : ",input$l50_user)}`
+    
+  `r if(input$select =="Define L50 & L75"){paste0("\\(L_{75}\\) (user defined) : ",input$l75_user)}`
+    
+  `r if(input$select =="Define L50 & (L75-L25)"){paste0("width (\\(L_{75}-L_{25}\\); user defined) : ",input$wqs_user)}`
+    
+  **Prediction range**
+  
+  Fishing mortality :`r paste0("Steps:",input$fRangeSteps,", min:" ,input$fRangeMin,', max:', input$fRangeMax)`
+    
+  `r paste0("Length at 50% selectivity (\\(L_{50}\\)) : ","Steps:",input$lcRangeSteps,if(input$select!="Estimate"){paste0(", min:" ,input$lcRangeMin,', max:', input$lcRangeMax)}else{""})`
+
+# Results
+
+## Data exploration plot
+
 ```{r echo=FALSE}
 par(mfrow = c(2,1), mar = c(1,4,0,1), oma = c(3,1,1,0))
         plot(elefan_ga$dataExplo$lfq, Fname = "catch", date.axis = "")
@@ -38,6 +126,22 @@ par(mfrow = c(2,1), mar = c(1,4,0,1), oma = c(3,1,1,0))
 
 ```{r echo=FALSE,results='asis'}
         cat("<p> **Figure 2**: Uploaded raw (A) and restructured (B) length-frequency data with overlaid von Bertalanffy growth (VBG) curves fitted by ELEFAN with genetic algorithm. Ideally, the growth curves overlay with length bins with a high count or high positive value (blue shading) for raw (A) and restructured (B) data, respectively.</p>")
+```
+
+## Growth parameter table
+
+```{r echo=FALSE}
+        tmp <- as.data.frame(c(elefan_ga$results$resGA$par,
+                               list(Rn_max = elefan_ga$results$resGA$Rn_max)))
+        names(tmp) <- replace(names(tmp), names(tmp)=="t_anchor", "ta")
+        names(tmp) <- replace(names(tmp), names(tmp)=="Rn_max", "Rn")
+        names(tmp) <- replace(names(tmp), names(tmp)=="phiL", "phi'")
+        kable(tmp)
+```
+
+
+```{r echo=FALSE,results='asis'}
+        cat(paste0("<p> **Table 1**: Estimated von Bertlanffy growth parameters (","\\(L_\\infty, K, t_a\\)","), the growth performance coefficient ","\\(phi' = \\log_{10} K + 2 \\log_{10} L_\\infty\\)",", and the best score value (","\\(Rn\\)","). Phi' provides a metric that accounts for the correlation of ","\\(L_\\infty\\)"," and ","\\(K\\)"," to compare growth parameters among analyses or species. The Rn value allows comparison of the fit of estimated growth parameters to the data set for different MA values, growth paramater search spaces, or ELEFAN optimisation parameters (e.g. population size), but not for different data sets or bin sizes.</p>"))
 ```
 
 ## ELEFAN fit plot
@@ -133,6 +237,77 @@ par(mfrow = c(2,1), mar = c(1,4,0,1), oma = c(3,1,1,0))
             cat("<p> **Figure 5**: Estimated logistic gear selectivity as the probability of capture (y axis) at length (x axis). Displayed selection ogive is used for the yield per recruit analysis (YPR).</p>")
         }else{
             cat("<p> **Figure 5:** Provided logistic gear selectivity as the probability of capture (y axis) at length (x axis). Displayed selection ogive is used for the yield per recruit analysis (YPR).</p>")
+        }
+```
+
+## Mortality rates
+
+```{r echo=FALSE}
+
+        Z <- elefan_ga$results$resCC$Z
+        M <- elefan_ga$results$resM
+        FM <- Z - M
+        E <- FM / Z
+        tmp <- as.data.frame(t(as.matrix(c(Z, M, FM, E,
+                                           elefan_ga$results$L50,
+                                           elefan_ga$results$L75))))
+        names(tmp) <- c("Z","M","F","E","L50","L75")
+        kable(tmp)
+```
+        
+```{r echo=FALSE,results='asis'}
+        if(input$select == "Estimate" || (input$l50_user == 0 && input$l75_user == 0) || (input$l50_user == 0 && input$wqs_user == 0)){
+            cat("<p> **Table 2**: Estimated mortality rates (Z, F, M), exploitation rate (E), and estimated selectivity parameters (L50, L75).</p>")
+        }else{
+            cat("<p> **Table 2**: Estimated mortality rates (Z, F, M), exploitation rate (E), and provided selectivity parameters (L50, L75).</p>")
+        }
+```
+        
+## Reference points
+
+```{r echo=FALSE}
+        if(is.null(elefan_ga$results$Lm50) || is.null(elefan_ga$results$Lm75)){
+            tmp <- elefan_ga$results$resYPR1$df_Es[1:3]
+            names(tmp) <- c("Fmax","F0.1","F0.5")
+            kable(tmp)
+        }else{
+            tmp <- elefan_ga$results$resYPR1$df_Es
+            names(tmp) <- c("Fmax","F0.1","F0.5","F30","F35","F40")
+            kable(tmp)
+        }
+```
+
+```{r echo=FALSE,results='asis'}
+        if(is.null(elefan_ga$results$Lm50) || is.null(elefan_ga$results$Lm75)){
+            cat("<p> **Table 3**: Estimated reference points (Fmax, F0.1, F0.5).</p>")
+        }else{
+            cat("<p> **Table 3**: Estimated reference points (Fmax, F0.1, F0.5) and SPR-based reference points (F30, F35, F40).</p>")
+        }
+```
+
+
+## Stock status table
+```{r echo=FALSE}
+        Z <- elefan_ga$results$resCC$Z
+        M <- elefan_ga$results$resM
+        FM <- Z - M
+        if(is.null(elefan_ga$results$Lm50) || is.null(elefan_ga$results$Lm75)){
+            tmp <- cbind(FM/elefan_ga$results$resYPR1$df_Es[1:3])
+            names(tmp) <- c("F/Fmax","F/F0.1","F/F0.5")
+            kable(tmp)
+        }else{
+            tmp <- cbind(FM/elefan_ga$results$resYPR1$df_Es,
+                         elefan_ga$results$resYPR1$currents$curr.SPR)
+            names(tmp) <- c("F/Fmax","F/F0.1","F/F0.5","F/F30","F/F35","F/F40","SPR")
+            kable(tmp)
+        }
+```
+    
+```{r echo=FALSE,results='asis'}
+        if(is.null(elefan_ga$results$Lm50) || is.null(elefan_ga$results$Lm75)){
+            cat("<p> **Table 4**: Estimated stock status in terms of current fishing mortality (F) to reference points (Fmax, F0.1, F0.5).</p>")
+        }else{
+            cat("<p> **Table 4**: Estimated stock status in terms of current fishing mortality (F) to reference points (Fmax, F0.1, F0.5, F30, F35, F40) and current Spawning Potential Ratio (SPR).</p>")
         }
 ```
 
@@ -297,176 +472,3 @@ par(mfrow = c(2,1), mar = c(1,4,0,1), oma = c(3,1,1,0))
 ```{r echo=FALSE,results='asis'}
         cat("<p> **Figure 7**: Yield (A) and biomass (B) per reruit for a range of fishing mortality rates and gear selectivity combinations. Colors indicate high (red) to low (blue) yield and biomass. Gear selectivity is defined by the length at 50% selectivity (L50). The black dot indicates current yield and biomass per recruit.</p>")
 ```
-
-
-## Growth parameter table
-
-```{r echo=FALSE}
-        tmp <- as.data.frame(c(elefan_ga$results$resGA$par,
-                               list(Rn_max = elefan_ga$results$resGA$Rn_max)))
-        names(tmp) <- replace(names(tmp), names(tmp)=="t_anchor", "ta")
-        names(tmp) <- replace(names(tmp), names(tmp)=="Rn_max", "Rn")
-        names(tmp) <- replace(names(tmp), names(tmp)=="phiL", "phi'")
-        kable(tmp)
-```
-
-
-```{r echo=FALSE,results='asis'}
-        cat(paste0("<p> **Table 1**: Estimated von Bertlanffy growth parameters (","\\(L_\\infty, K, t_a\\)","), the growth performance coefficient ","\\(phi' = \\log_{10} K + 2 \\log_{10} L_\\infty\\)",", and the best score value (","\\(Rn\\)","). Phi' provides a metric that accounts for the correlation of ","\\(L_\\infty\\)"," and ","\\(K\\)"," to compare growth parameters among analyses or species. The Rn value allows comparison of the fit of estimated growth parameters to the data set for different MA values, growth paramater search spaces, or ELEFAN optimisation parameters (e.g. population size), but not for different data sets or bin sizes.</p>"))
-```
-
-## Mortality rates
-
-```{r echo=FALSE}
-
-        Z <- elefan_ga$results$resCC$Z
-        M <- elefan_ga$results$resM
-        FM <- Z - M
-        E <- FM / Z
-        tmp <- as.data.frame(t(as.matrix(c(Z, M, FM, E,
-                                           elefan_ga$results$L50,
-                                           elefan_ga$results$L75))))
-        names(tmp) <- c("Z","M","F","E","L50","L75")
-        kable(tmp)
-```
-        
-```{r echo=FALSE,results='asis'}
-        if(input$select == "Estimate" || (input$l50_user == 0 && input$l75_user == 0) || (input$l50_user == 0 && input$wqs_user == 0)){
-            cat("<p> **Table 2**: Estimated mortality rates (Z, F, M), exploitation rate (E), and estimated selectivity parameters (L50, L75).</p>")
-        }else{
-            cat("<p> **Table 2**: Estimated mortality rates (Z, F, M), exploitation rate (E), and provided selectivity parameters (L50, L75).</p>")
-        }
-```
-        
-## Reference points
-
-```{r echo=FALSE}
-        if(is.null(elefan_ga$results$Lm50) || is.null(elefan_ga$results$Lm75)){
-            tmp <- elefan_ga$results$resYPR1$df_Es[1:3]
-            names(tmp) <- c("Fmax","F0.1","F0.5")
-            kable(tmp)
-        }else{
-            tmp <- elefan_ga$results$resYPR1$df_Es
-            names(tmp) <- c("Fmax","F0.1","F0.5","F30","F35","F40")
-            kable(tmp)
-        }
-```
-
-```{r echo=FALSE,results='asis'}
-        if(is.null(elefan_ga$results$Lm50) || is.null(elefan_ga$results$Lm75)){
-            cat("<p> **Table 3**: Estimated reference points (Fmax, F0.1, F0.5).</p>")
-        }else{
-            cat("<p> **Table 3**: Estimated reference points (Fmax, F0.1, F0.5) and SPR-based reference points (F30, F35, F40).</p>")
-        }
-```
-
-
-## Stock status table
-```{r echo=FALSE}
-        Z <- elefan_ga$results$resCC$Z
-        M <- elefan_ga$results$resM
-        FM <- Z - M
-        if(is.null(elefan_ga$results$Lm50) || is.null(elefan_ga$results$Lm75)){
-            tmp <- cbind(FM/elefan_ga$results$resYPR1$df_Es[1:3])
-            names(tmp) <- c("F/Fmax","F/F0.1","F/F0.5")
-            kable(tmp)
-        }else{
-            tmp <- cbind(FM/elefan_ga$results$resYPR1$df_Es,
-                         elefan_ga$results$resYPR1$currents$curr.SPR)
-            names(tmp) <- c("F/Fmax","F/F0.1","F/F0.5","F/F30","F/F35","F/F40","SPR")
-            kable(tmp)
-        }
-```
-    
-```{r echo=FALSE,results='asis'}
-        if(is.null(elefan_ga$results$Lm50) || is.null(elefan_ga$results$Lm75)){
-            cat("<p> **Table 4**: Estimated stock status in terms of current fishing mortality (F) to reference points (Fmax, F0.1, F0.5).</p>")
-        }else{
-            cat("<p> **Table 4**: Estimated stock status in terms of current fishing mortality (F) to reference points (Fmax, F0.1, F0.5, F30, F35, F40) and current Spawning Potential Ratio (SPR).</p>")
-        }
-```
-
-******
-## Data settings
-
-  **Input File** : `r input$fileGa$name`
-
-  **Selected year(s) for analysis** : `r input$ELEFAN_years_selected`
-
-  **Aggregation method** : `r input$ELEFAN_agg` 
-
-  **Bin Size** : `r input$ELEFAN_GA_binSize` 
-
-  **Moving Average (MA)** : `r input$ELEFAN_GA_MA` 
-
-  **Additional squareroot transformation ?** : `r if(!is.null(input$ELEFAN_GA_addlsqrt)){if(input$ELEFAN_GA_addlsqrt){"Yes"}else{"No"}}else{"No"}`
-
-## Search space for growth parameters
-
-  `r paste0("**Asymptotic length(\\(L_\\infty\\))** : ",min(input$ELEFAN_GA_Linf), " to ", max(input$ELEFAN_GA_Linf))`
-
-  `r paste0("**Growth rate (\\(K\\))** : ", min(input$ELEFAN_GA_K)," to ",max(input$ELEFAN_GA_K))` 
-
- `r paste0("**Time anchor(\\(t_{a}\\))** : ",min(input$ELEFAN_GA_t_anchor)," to ", max(input$ELEFAN_GA_t_anchor))`
-
-  **Seasonal model?** : `r if(!is.null(input$ELEFAN_GA_seasonalised)){if(input$ELEFAN_GA_seasonalised){"Yes"}else{"No"}}else{"No"}`
-
-  `r if(!is.null(input$ELEFAN_GA_seasonalised)){if(input$ELEFAN_GA_seasonalised){paste0("**Amplitude (\\(C\\))** : ", min(input$ELEFAN_GA_C)," to ",max(input$ELEFAN_GA_C))}else{}}else{}`
-
-  `r if(!is.null(input$ELEFAN_GA_seasonalised)){if(input$ELEFAN_GA_seasonalised){paste0("**Summer point (\\(t_{s}\\))** : ",min(input$ELEFAN_GA_ts)," to ",max(input$ELEFAN_GA_ts))}else{}}else{}`
-
-## ELEFAN's genetic algorithm
-
-  **Population size**: `r input$ELEFAN_GA_popSize`
-
-  **Maximum number of generations** : `r input$ELEFAN_GA_maxiter`
-
-  **Number of generations without improvement** : `r input$ELEFAN_GA_run`
-
-  **Probability of mutation** : `r input$ELEFAN_GA_pmutation`
-
-  **Probability of crossover** : `r input$ELEFAN_GA_pcrossover`
-
-  **Degree of elitism** : `r input$ELEFAN_GA_elitism`
-  
-## Stock status
-
- **Selected years** : `r input$ELEFAN_years_selected_cc`
- 
- **Length-weight relationship** : `r paste0("\\(W = a \ L^{b}\\)"," with a=",input$LWa," and b=",input$LWb)`
- 
- **Natural Mortality**  
- 
-  Method : `r input$natM`
-    
-  `r if(input$natM =="Pauly's growth & temp. formula"){paste0("Average ambient sea surface temperature : ",input$temp)}`
-    
-  `r if(input$natM =="Pauly's growth & temp. formula"){paste0("Correction for schooling? : ",if(!is.null(input$schooling)){if(input$schooling){"Yes"}else{"No"}}else{"No"})}`
-    
-  `r if(input$natM =="Pauly's growth & temp. formula"){paste0("Maximum age : ",input$tmax)}`
-    
-    
- **Maturity** 
- 
- `r paste0("\\(L_{m50}\\) : ",input$Lm50)`
-    
- `r paste0("\\(L_{m75}\\) : ",input$Lm75)` 
- 
- **Selectivity** 
- 
-  Selectivity : `r input$select`
-    
-  `r if(input$select =="Define L50 & L75"){paste0("\\(L_{50}\\) (user defined) : ",input$l50_user)}`
-    
-  `r if(input$select =="Define L50 & L75"){paste0("\\(L_{75}\\) (user defined) : ",input$l75_user)}`
-    
-  `r if(input$select =="Define L50 & (L75-L25)"){paste0("width (\\(L_{75}-L_{25}\\); user defined) : ",input$wqs_user)}`
-    
-  **Prediction range**
-  
-  Fishing mortality :`r paste0("Steps:",input$fRangeSteps,", min:" ,input$fRangeMin,', max:', input$fRangeMax)`
-    
-  `r paste0("Length at 50% selectivity (\\(L_{50}\\)) : ","Steps:",input$lcRangeSteps,if(input$select!="Estimate"){paste0(", min:" ,input$lcRangeMin,', max:', input$lcRangeMax)}else{""})`
-    
-    
-******
