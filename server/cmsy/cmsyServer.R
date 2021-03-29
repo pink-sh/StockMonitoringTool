@@ -1,5 +1,8 @@
 cmsyModule <- function(input, output, session) {
   
+  
+  ns <- session$ns
+  
   cmsy <- reactiveValues()
   cmsyUploadVreResult <- reactiveValues()
   
@@ -16,6 +19,8 @@ cmsyModule <- function(input, output, session) {
     } else if ((max(as.numeric(a$yr))-min(as.numeric(a$yr)))<15) {return("under 15")
     } else {return(a)}
   }
+  
+  
   cmsyFileData <- reactive({
     inFileCmsy <- input$fileCmsy
     if (is.null(inFileCmsy)) {
@@ -72,6 +77,10 @@ cmsyModule <- function(input, output, session) {
     }
   })
   
+ 
+    # output$resilience_out <- renderUI(str(input$resiliance))
+  
+  
   calculateAndUpdateYear<-function(contents,stock) {
     
     if (is.null(contents)) {
@@ -102,8 +111,10 @@ cmsyModule <- function(input, output, session) {
     print(maxYear)
     updateTextInput(session, "minOfYear", value=as.integer(minYear))
     updateTextInput(session, "maxOfYear", value=as.integer(maxYear))
-    updateTextInput(session, "startYear", value=as.integer(minYear))
-    updateTextInput(session, "endYear", value=as.integer(maxYear)-1)
+    # updateTextInput(session, "startYear", value=as.integer(minYear))
+    # updateTextInput(session, "endYear", value=as.integer(maxYear))
+    updateSliderInput(session, "rangeYear", value=c(as.integer(minYear),as.integer(maxYear)))
+    updateSearchInput(session, "qrangeYear", value=c(as.integer(minYear),as.integer(maxYear)))
     
     if (minYear < 1960) {
       updateSliderInput(session,"stb",value=c(0.5,0.9))
@@ -116,6 +127,74 @@ cmsyModule <- function(input, output, session) {
     print("calculate")
     calculateAndUpdateYear(fileContents$data,input$stock)
   })
+  
+  output$r_out <-renderUI({
+    # contents<-cmsyFileData()
+    if(is.null(contents)){
+      minr=0.2
+      maxr=0.8
+    }else{
+      minr=0.2
+      maxr=0.8
+      # minY <- try(round(min(contents$yr)),silent=TRUE)
+      # maxY <- try(round(max(contents$yr)),silent=TRUE)
+    }
+  })
+  
+  output$CMSY_years_selected_out <- renderUI({
+    contents <- cmsyFileData()
+    if(is.null(contents)){
+      maxY <- 2030
+      minY <- 1990
+    }else{
+      minY <- try(round(min(contents$yr)),silent=TRUE)
+      maxY <- try(round(max(contents$yr)),silent=TRUE)
+      
+      if(inherits(maxY,"try-error")){
+        maxY <- 2030
+        minY <- 1990
+      }
+    }
+    sliderInput(ns("CMSY_years_selected"),"", value=c(minY,maxY), min = minY, max = maxY, step=1,sep='')
+    
+    } )
+  
+  output$CMSY_years_q_out <- renderUI({
+    contents <- cmsyFileData()
+    if(is.null(contents)){
+      maxY <- 2030
+      minY <- 1990
+    }else{
+      minY <- try(round(min(contents$yr)),silent=TRUE)
+      maxY <- try(round(max(contents$yr)),silent=TRUE)
+      
+      if(inherits(maxY,"try-error")){
+        maxY <- 2030
+        minY <- 1990
+      }
+    }
+    sliderInput(ns("CMSY_years_q"),"", value=c(minY,maxY), min = minY, max = maxY, step=1,sep='')
+    
+  } )
+  
+  observe({
+    if(!input$cmsy_checkbox_intb){
+      js$removeBox2("box_cmsy_intb")
+    }else{
+      js$showBox2("box_cmsy_intb")
+    }
+  })
+  
+  observe({
+    if(!input$cmsy_checkbox_comparison){
+      js$removeBox2("fish_mort_ref_pts")
+      js$removeBox2("biomass_ref_points")
+    }else{
+      js$showBox2("fish_mort_ref_pts")
+      js$showBox2("biomass_ref_points")
+    }
+  })
+  
   
   observeEvent(input$go_cmsy, {
 
@@ -175,8 +254,18 @@ cmsyModule <- function(input, output, session) {
         cmsy$fast <- list()
         js$disableAllButtons()
         flog.info("Starting CMSY computation")
-      # ret <- runCmsy(region_,toString(sub_region_),input$stock,toString(group_),toString(name_),toString(en_name_),toString(scientific_name_),"-",input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,input$stb.low,input$stb.hi,input$int.yr,input$intb.low,input$intb.hi,input$endb.low,input$endb.hi,input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, filePath$datapath, templateFileDlmTools)
-        ret <- runCmsy(region_,toString(sub_region_),input$stock,toString(group_),toString(name_),toString(en_name_),toString(scientific_name_),"-",input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,min(input$stb),max(input$stb),input$int.yr,input$intb.low,input$intb.hi,min(input$endb),max(input$endb),input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, filePath$datapath, templateFileDlmTools)
+      # ret <- runCmsy(region_,toString(sub_region_),input$stock,toString(group_),toString(name_),toString(en_name_),toString(scientific_name_),"-",
+        # input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,
+        # input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,input$stb.low,input$stb.hi,input$int.yr,
+        # input$intb.low,input$intb.hi,input$endb.low,input$endb.hi,input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, 
+        # filePath$datapath, templateFileDlmTools)
+        ret <- runCmsy(region_,toString(sub_region_),input$stock,toString(group_),toString(name_),toString(en_name_),toString(scientific_name_),"-",
+                       input$minOfYear,input$maxOfYear,min(input$rangeYear),
+                       max(input$rangeYear),input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,
+                       input$m,input$fofl,input$last_f,input$resiliance,min(input$r),max(input$r),min(input$stb),max(input$stb),input$int.yr,min(input$intb),
+                       max(input$intb),min(input$endb),max(input$endb),input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments,
+                       vreToken, filePath$datapath, templateFileDlmTools)
+        
         js$enableAllButtons()
         js$hideComputing()
         js$showBox("box_cmsy_results")
@@ -366,4 +455,46 @@ cmsyModule <- function(input, output, session) {
     } else {  "" }
   })
   output$cmsyDataConsiderationsText <- renderText(getDataConsiderationTextForCmsy())
+  output$cmsyDataConsiderationsText2 <- renderText(getDataConsiderationTextForCmsy())
+  output$cmsyMethodConsiderationsText <- renderText({ getMethodConsiderationTextForCmsy()
+    # text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getMethodConsiderationTextForElefan())
+    # text
+  })
+  output$cmsyMethodConsiderationsText2 <- renderText({getMethodConsiderationTextForCmsy()
+    # text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getMethodConsiderationTextForElefan())
+    # text
+  })
+  
+  # output$cmsyResultConsiderationsText <- renderText({
+  #   text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getResultConsiderationTextForElefan())
+  #   text
+  # })
+  # output$cmsyResultConsiderationsText2 <- renderText({
+  #   text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getResultConsiderationTextForElefan())
+  #   text
+  # })
+  
+  # output$elefanGADataConsiderationsText <- renderText({
+  #   text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getDataConsiderationTextForElefan())
+  #   text
+  # })
+  
+  
+  ## Data exploration catch plots
+  ## --------------------------
+  
+  
+  output$plot_cmsy_explo1 <- renderPlot({
+    contents <- cmsyFileData()
+    par(mar = c(1,4,0,1), oma = c(3,1,1,0))
+    plot(contents$yr,contents$ct,type='l',xlab='Years',ylab='Catch in tonnes') ## PLOT ONLY THE STOCK SELECTED, RESOLVE ERROR 
+    
+  })
+  output$title_cmsy_explo1 <- renderText({
+    # req(contents,input$CMSY_years_selected)
+    contents <- cmsyFileData()
+    txt <- "<p class=\"pheader_elefan\">Figure 1:  The catch time series of the selected stock.</p>"
+    txt
+  })
+  
 }
