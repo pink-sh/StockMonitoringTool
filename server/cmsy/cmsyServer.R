@@ -77,10 +77,7 @@ cmsyModule <- function(input, output, session) {
     }
   })
   
- 
-    # output$resilience_out <- renderUI(str(input$resiliance))
-  
-  
+   
   calculateAndUpdateYear<-function(contents,stock) {
     
     if (is.null(contents)) {
@@ -127,19 +124,7 @@ cmsyModule <- function(input, output, session) {
     print("calculate")
     calculateAndUpdateYear(fileContents$data,input$stock)
   })
-  
-  output$r_out <-renderUI({
-    # contents<-cmsyFileData()
-    if(is.null(contents)){
-      minr=0.2
-      maxr=0.8
-    }else{
-      minr=0.2
-      maxr=0.8
-      # minY <- try(round(min(contents$yr)),silent=TRUE)
-      # maxY <- try(round(max(contents$yr)),silent=TRUE)
-    }
-  })
+
   
   output$CMSY_years_selected_out <- renderUI({
     contents <- cmsyFileData()
@@ -454,31 +439,21 @@ cmsyModule <- function(input, output, session) {
       } else {  "" }
     } else {  "" }
   })
+  
+  output$cmsyWorkflowConsiderationsText <- renderText({
+    text <- getWorkflowConsiderationTextForCMSY()
+    text
+  }) 
   output$cmsyDataConsiderationsText <- renderText(getDataConsiderationTextForCmsy())
   output$cmsyDataConsiderationsText2 <- renderText(getDataConsiderationTextForCmsy())
-  output$cmsyMethodConsiderationsText <- renderText({ getMethodConsiderationTextForCmsy()
-    # text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getMethodConsiderationTextForElefan())
-    # text
-  })
-  output$cmsyMethodConsiderationsText2 <- renderText({getMethodConsiderationTextForCmsy()
-    # text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getMethodConsiderationTextForElefan())
-    # text
-  })
+                
+  output$cmsyMethodConsiderationsText <- renderText({ getMethodConsiderationTextForCmsy()  })
+  output$cmsyMethodConsiderationsText2 <- renderText({getMethodConsiderationTextForCmsy()  })
   
-  # output$cmsyResultConsiderationsText <- renderText({
-  #   text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getResultConsiderationTextForElefan())
-  #   text
-  # })
-  # output$cmsyResultConsiderationsText2 <- renderText({
-  #   text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getResultConsiderationTextForElefan())
-  #   text
-  # })
+  output$cmsyResultConsiderationsText <- renderText({getResultConsiderationTextForCmsy()  })
+  output$cmsyResultConsiderationsText2 <- renderText({getResultConsiderationTextForCmsy()  })
   
-  # output$elefanGADataConsiderationsText <- renderText({
-  #   text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getDataConsiderationTextForElefan())
-  #   text
-  # })
-  
+ 
   
   ## Data exploration catch plots
   ## --------------------------
@@ -491,7 +466,6 @@ cmsyModule <- function(input, output, session) {
     
   })
   output$title_cmsy_explo1 <- renderText({
-    # req(contents,input$CMSY_years_selected)
     contents <- cmsyFileData()
     txt <- "<p class=\"pheader_elefan\">Figure 1:  The catch time series of the selected stock.</p>"
     txt
