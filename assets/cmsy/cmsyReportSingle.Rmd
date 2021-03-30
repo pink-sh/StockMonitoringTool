@@ -36,7 +36,7 @@ knitr::include_graphics( if(Sys.info()[["sysname"]] == "Windows") {paste(gsub("\
 
 **Select year range of analysis** : `r min(input$CMSY_years_selected)` to `r max(input$CMSY_years_selected)`
 
-**Years over which to calculate catchability** : `r max(input$CMSY_years_q)` to `r max(input$CMSY_years_q)`
+**Years over which to calculate catchability** : `r min(input$CMSY_years_q)` to `r max(input$CMSY_years_q)`
 
 ### Resiliance
 

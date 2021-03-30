@@ -109,8 +109,8 @@ cmsyModule <- function(input, output, session) {
     }
     print(minYear)
     print(maxYear)
-    updateTextInput(session, "minOfYear", value=as.integer(minYear))
-    updateTextInput(session, "maxOfYear", value=as.integer(maxYear))
+    #updateTextInput(session, "minOfYear", value=as.integer(minYear))
+    #updateTextInput(session, "maxOfYear", value=as.integer(maxYear))
     updateNumericInput(session,"int.yr", value=maxYear-5, min = minYear, max = maxYear, step=1)
     # updateTextInput(session, "startYear", value=as.integer(minYear))
     # updateTextInput(session, "endYear", value=as.integer(maxYear))
