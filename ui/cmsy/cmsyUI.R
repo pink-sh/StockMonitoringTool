@@ -198,6 +198,7 @@ the last year with high biomass and indicate a respective range, e.g. as 0.4 –
                 solidHeader = TRUE,
                 class = "collapsed-box",
                 
+                fluidRow(
                 box(title = "Data selection",
                     width=6,
                 
@@ -277,32 +278,23 @@ the last year with high biomass and indicate a respective range, e.g. as 0.4 –
                       ##     ),
                       style = "margin-left: 10%;"
                     )
-                ),
+                )),
                 
+                fluidRow(          
                 box(title = p("Resilience",
-                              actionButton(ns("infor"),
-                                           tags$i(class = "fas fa-info",
-                                                  style="font-size: 12px"),
-                                           class="topLevelInformationButton")),
+                               actionButton(ns("infor"),
+                                            tags$i(class = "fas fa-info",
+                                                   style="font-size: 12px"),
+                                            class="topLevelInformationButton")),
                     width = 6,
-                    fluidPage(
-                      # div(style = "display: inline-block; vertical-align:right; margin-right: 1px;",
-                      #     HTML("<b>Resilience, intrinsic growth rate (r)</b>")
-                      # ),
-                      # div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
-                      #     actionButton(ns("infor"),
-                      #                  tags$i(class = "fas fa-info",
-                      #                         style="font-size: 12px"),
-                      #                  class="topLevelInformationButton")
-                      # ),
+
                     sliderInput(ns("resiliance"),
                                 label = div(style='width:400px;',style = "margin-top:-3px",
                                             div(style='float:left;', 'Very Low'),
                                             div(style='float:right;', 'High'),style='font-size: 10px'),
                                 min = 0.015, max = 1.5, value = c(0.2,0.8), step=0.001, width = '400px')
                                 
-                    )
-                ),
+                    )),
                     # br(),
                 box(
                     title = p("Depletion",
@@ -431,14 +423,14 @@ the last year with high biomass and indicate a respective range, e.g. as 0.4 –
                   textInput(ns("flim"), p("Fishing mortality biological limit (", withMathJax("\\(F_{lim}\\)"), ")"), "NA"),
                   textInput(ns("fpa"), p("Fishing mortality precautionary value (", withMathJax("\\(F_{pa}\\)"), ")"), "NA"),
                   textInput(ns("fofl"), p("Fishing mortality at overfishing level (", withMathJax("\\(F_{ofl}\\)"),")"), "NA"),
-                  textInput(ns("last_f"), "Last known exploitation rate", "NA")
+                  textInput(ns("last_f"), "Last known exploitation rate", "NA"),
                  
-                  # textInput(ns("m"), p("**Natural mortality (", withMathJax("\\(M\\)"), ")"), "NA"),
+                   textInput(ns("m"), p("Natural mortality (", withMathJax("\\(M\\)"), ")"), "NA")
                   # p("**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M here."),
                   ##KK: it's not clear to me what the user input would be here if not "None". Suggest deleting (also for Comments.
                   #textInput("btype", "btype indicates if the catch file contains biomass, CPUE or no information associated with the catch time series", "None"),
                   #textInput("comments", "Comments on data and computation", "landings"),
-                  # checkboxInput(ns("force.cmsy"), "Check this if CMSY results are to be preferred over the Bayesian State Model results (only when biomass or CPUE is available)", FALSE)
+                  #checkboxInput(ns("force.cmsy"), "Check this if CMSY results are to be preferred over the Bayesian State Model results (only when biomass or CPUE is available)", FALSE)
                 )
             )
             ),
