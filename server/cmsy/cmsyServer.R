@@ -77,7 +77,7 @@ cmsyModule <- function(input, output, session) {
     }
   })
   
-   
+
   calculateAndUpdateYear<-function(contents,stock) {
     
     if (is.null(contents)) {
@@ -124,8 +124,8 @@ cmsyModule <- function(input, output, session) {
     print("calculate")
     calculateAndUpdateYear(fileContents$data,input$stock)
   })
-
   
+
   output$CMSY_years_selected_out <- renderUI({
     contents <- cmsyFileData()
     if(is.null(contents)){
@@ -440,18 +440,16 @@ cmsyModule <- function(input, output, session) {
     } else {  "" }
   })
   
-  output$cmsyWorkflowConsiderationsText <- renderText({
-    text <- getWorkflowConsiderationTextForCMSY()
-    text
-  }) 
+  output$cmsyWorkflowConsiderationsText <- renderText(getWorkflowConsiderationTextForCMSY()) 
+  
   output$cmsyDataConsiderationsText <- renderText(getDataConsiderationTextForCmsy())
   output$cmsyDataConsiderationsText2 <- renderText(getDataConsiderationTextForCmsy())
-                
-  output$cmsyMethodConsiderationsText <- renderText({ getMethodConsiderationTextForCmsy()  })
-  output$cmsyMethodConsiderationsText2 <- renderText({getMethodConsiderationTextForCmsy()  })
   
-  output$cmsyResultConsiderationsText <- renderText({getResultConsiderationTextForCmsy()  })
-  output$cmsyResultConsiderationsText2 <- renderText({getResultConsiderationTextForCmsy()  })
+  output$cmsyMethodConsiderationsText <- renderText(getMethodConsiderationTextForCmsy()  )
+  output$cmsyMethodConsiderationsText2 <- renderText(getMethodConsiderationTextForCmsy() )
+  
+  output$cmsyResultConsiderationsText <- renderText(getResultConsiderationTextForCmsy() )
+  output$cmsyResultConsiderationsText2 <- renderText(getResultConsiderationTextForCmsy())
   
  
   
@@ -465,6 +463,7 @@ cmsyModule <- function(input, output, session) {
     plot(contents$yr,contents$ct,type='l',xlab='Years',ylab='Catch in tonnes') ## PLOT ONLY THE STOCK SELECTED, RESOLVE ERROR 
     
   })
+  
   output$title_cmsy_explo1 <- renderText({
     contents <- cmsyFileData()
     txt <- "<p class=\"pheader_elefan\">Figure 1:  The catch time series of the selected stock.</p>"
