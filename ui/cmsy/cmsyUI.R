@@ -193,8 +193,8 @@ prior to the last year with high biomass.</p>")),
                 title = p("Data Upload",
                           actionButton(ns("cmsyDataConsiderations2"),
                                        tags$i(class = "fas fa-info",
-                                              style="font-size: 12px"),
-                                       class="topLevelInformationButton")),
+                                              style="font-size: 8px"),
+                                       class="infoBubbleButton")),
                 width = NULL,
                 collapsible = FALSE,
                 solidHeader = TRUE,
@@ -223,8 +223,8 @@ prior to the last year with high biomass.</p>")),
                 title = p("Assessment Settings",
                           actionButton(ns("cmsyMethodConsiderations2"),
                                        tags$i(class = "fas fa-info",
-                                              style="font-size: 12px"),
-                                       class="topLevelInformationButton")),
+                                              style="font-size: 8px"),
+                                       class="infoBubbleButton")),
                 width = NULL,
                 collapsible = FALSE, ## careful: if made collapsible the renderUi does not update! see: https://github.com/rstudio/shinydashboard/issues/234
                 solidHeader = TRUE,
@@ -241,8 +241,8 @@ prior to the last year with high biomass.</p>")),
                       div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
                           actionButton(ns("infoYearSel"),
                                        tags$i(class = "fas fa-info",
-                                              style="font-size: 12px"),
-                                       class="topLevelInformationButton")
+                                              style="font-size: 8px"),
+                                       class="infoBubbleButton")
                       ),
                       div(style = "margin-top:-3px",
                           uiOutput(ns("CMSY_years_selected_out"))
@@ -260,8 +260,8 @@ prior to the last year with high biomass.</p>")),
                       div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
                           actionButton(ns("infoq"),
                                        tags$i(class = "fas fa-info",
-                                              style="font-size: 12px"),
-                                       class="topLevelInformationButton")
+                                              style="font-size: 8px"),
+                                       class="infoBubbleButton")
                       ),
                       div(style = "margin-top:-3px",
                           uiOutput(ns("CMSY_years_q_out"))
@@ -287,8 +287,8 @@ prior to the last year with high biomass.</p>")),
                 box(title = p("Resilience",
                                actionButton(ns("infor"),
                                             tags$i(class = "fas fa-info",
-                                                   style="font-size: 12px"),
-                                            class="topLevelInformationButton")),
+                                                   style="font-size: 8px"),
+                                            class="infoBubbleButton")),
                     width = 6,
 
                     fluidPage(
@@ -307,8 +307,8 @@ prior to the last year with high biomass.</p>")),
                   title = p("Depletion",
                             actionButton(ns("infodepletion"),
                                          tags$i(class = "fas fa-info",
-                                                style="font-size: 12px"),
-                                         class="topLevelInformationButton")),
+                                                style="font-size: 8px"),
+                                         class="infoBubbleButton")),
                   width=12,
                   
                   
@@ -320,8 +320,8 @@ prior to the last year with high biomass.</p>")),
                         div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
                             actionButton(ns("infostb"),
                                          tags$i(class = "fas fa-info",
-                                                style="font-size: 12px"),
-                                         class="topLevelInformationButton")
+                                                style="font-size: 8px"),
+                                         class="infoBubbleButton")
                         ),
                         sliderInput(ns("stb"),label="",min = 0.01, max = 1,step=0.001,value = c(0.01,0.4))
                       )),
@@ -332,8 +332,8 @@ prior to the last year with high biomass.</p>")),
                                     p("Does the catch time series have an intermediate year where biomass is particularly high or low?",
                                       actionButton(ns("infointb"),
                                                    tags$i(class = "fas fa-info",
-                                                          style="font-size: 12px"),
-                                                   class="topLevelInformationButton")),
+                                                          style="font-size: 8px"),
+                                                   class="infoBubbleButton")),
                                     FALSE),
                   
                       
@@ -347,16 +347,16 @@ prior to the last year with high biomass.</p>")),
                                          p(HTML(paste0("Intermediate year")),
                                            actionButton(ns("infointyr"),
                                                         tags$i(class = "fas fa-info",
-                                                               style="font-size: 12px"),
-                                                        class="topLevelInformationButton")),
+                                                               style="font-size: 8px"),
+                                                        class="infoBubbleButton")),
                                          value=c(NA), min = 1990, max=2030, step=1), ## MAKE THE MIN/MAX RELATE TO THE MIN/MAX OF THE TIME SERIES. SET DEFAULT TO MAX OF RANGE MINUS 5
                             br(),
                             sliderInput(ns("intb"),
                                         p(HTML(paste0("Intermediate depletion range (B/k)",
                                                       actionButton(ns("infointbval"),
                                                                    tags$i(class = "fas fa-info",
-                                                                          style="font-size: 12px"),
-                                                                   class="topLevelInformationButton")))),
+                                                                          style="font-size: 8px"),
+                                                                   class="infoBubbleButton")))),
                                         value=c(0.01,0.4), min = 0.01, max = 1, step=0.001)
                           )
                       )
@@ -372,8 +372,8 @@ prior to the last year with high biomass.</p>")),
                         div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
                             actionButton(ns("infoendb"),
                                          tags$i(class = "fas fa-info",
-                                                style="font-size: 12px"),
-                                         class="topLevelInformationButton")
+                                                style="font-size: 8px"),
+                                         class="infoBubbleButton")
                         ),
                         sliderInput(ns("endb"),label="",min = 0.01, max = 1,step=0.001,value = c(0.01,0.4))
                       ))
@@ -387,8 +387,8 @@ prior to the last year with high biomass.</p>")),
                                   p("Do you have data from a previous assessment to compare? (optional)",
                                     actionButton(ns("infocomp"),
                                                  tags$i(class = "fas fa-info",
-                                                        style="font-size: 12px"),
-                                                 class="topLevelInformationButton")),
+                                                        style="font-size: 8px"),
+                                                 class="infoBubbleButton")),
                                   FALSE),
                     
                     br(),
@@ -411,11 +411,11 @@ prior to the last year with high biomass.</p>")),
                         width=6,
                         title='Fishing mortality values',
                          textInput(ns("fmsy"),
-                                  p(HTML(paste0('Fishing mortality at Maximum Sustainable Yield (',withMathJax('\\(F_{MSY}\\'),')',
+                                  p(HTML(paste0('Fishing mortality at Maximum Sustainable Yield (',withMathJax('\\(F_{MSY}\\)'),')',
                                                 actionButton(ns("infofmsy"),
                                                              tags$i(class = "fas fa-info",
-                                                                    style="font-size: 12px"),
-                                                             class="topLevelInformationButton")))),"NA"),
+                                                                    style="font-size: 8px"),
+                                                             class="infoBubbleButton")))),"NA"),
                         textInput(ns("flim"), p("Fishing mortality biological limit (", withMathJax("\\(F_{lim}\\)"), ")"), "NA"),
                         textInput(ns("fpa"), p("Fishing mortality precautionary value (", withMathJax("\\(F_{pa}\\)"), ")"), "NA"),
                         textInput(ns("fofl"), p("Fishing mortality at overfishing level (", withMathJax("\\(F_{ofl}\\)"),")"), "NA"),
@@ -424,8 +424,8 @@ prior to the last year with high biomass.</p>")),
                                   p(HTML(paste0("Natural mortality",
                                                 actionButton(ns("infom"),
                                                              tags$i(class = "fas fa-info",
-                                                                    style="font-size: 12px"),
-                                                             class="topLevelInformationButton")))),"NA")
+                                                                    style="font-size: 8px"),
+                                                             class="infoBubbleButton")))),"NA")
   
                         #textInput("btype", "btype indicates if the catch file contains biomass, CPUE or no information associated with the catch time series", "None"),
                         #textInput("comments", "Comments on data and computation", "landings"),
@@ -445,8 +445,8 @@ prior to the last year with high biomass.</p>")),
                  title = p("Results of CMSY Method",
                            actionButton(ns("cmsyResultConsiderations2"),
                                         tags$i(class = "fas fa-info",
-                                               style="font-size: 12px"),
-                                        class="topLevelInformationButton")),
+                                               style="font-size: 8px"),
+                                        class="infoBubbleButton")),
                  tags$style(type="text/css",
                             ".recalculating {opacity: 1.0;}"
                  ),
@@ -478,7 +478,7 @@ prior to the last year with high biomass.</p>")),
                  )
             )
           )
-  )
+  
 }
 
 resetCmsyInputValues <- function() {
