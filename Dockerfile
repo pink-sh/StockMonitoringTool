@@ -45,6 +45,7 @@ RUN R -e "devtools::install_version('rmarkdown', version='2.3', repos = 'http://
 RUN R -e "devtools::install_version('shinyjs', version='1.1', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('shinythemes', version='1.1.2', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('shinydashboard', version='0.7.1', repos = 'http://cran.r-project.org')"
+RUN R -e "devtools::install_version('shinyWidgets', version='0.5.3', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('RCurl', version='1.98.1.2', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('ggplot2', version='3.3.2', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('rfishbase', version='3.0.4', repos = 'http://cran.r-project.org')"
