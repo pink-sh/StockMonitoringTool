@@ -54,36 +54,31 @@ knitr::include_graphics( if(Sys.info()[["sysname"]] == "Windows") {paste(gsub("\
 
 `r if(!is.null(input$cmsy_checkbox_intb)){if(input$cmsy_checkbox_intb){paste0("**Relative biomass at an intermediate year** : ",min(input$intb)," to ",min(input$intb))}else{}}else{}`
 
-`r if(!is.null(input$cmsy_checkbox_comparison)){paste0(
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("### Advanced use")}else{}`
 
-"### Advanced use","<br/>","<br/>",
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Biomass biological limit (Blim)** : ",input$blim)}else{}`
 
-"#### Biomass reference points and MSY","<br/>",
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Biomass precautionary value (Bpa)** : ",input$bpa)}else{}`
 
-"**Biomass biological limit (Blim)** : ",input$blim,"<br/>",
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Biomass maximum sustainable yield (BMSY)** : ",input$bmsy)}else{}`
 
-"**Biomass precautionary value (Bpa)** : ",input$bpa,"<br/>",
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Biomass at 40% over the unfished level ( B40% )** : ",input$b40)}else{}`
 
-"**Biomass maximum sustainable yield (BMSY)** : ",input$bmsy,"<br/>",
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Maximum Sustainable Yield ( MSY )** : ",input$msy)}else{}`
 
-"**Biomass at 40% over the unfished level ( B40% )** : ",input$b40,"<br/>",
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Spawning Stock Biomass at MSY ( SSBMSY )** : ",input$msyBTrigger)}else{}`
 
-"**Maximum Sustainable Yield ( MSY )** : ",input$msy,"<br/>",
 
-"**Spawning Stock Biomass at MSY ( SSBMSY )** : ",input$msyBTrigger,"<br/>","<br/>",
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Fishing mortality at Maximum Sustainable Yield ( FMSY )** : ",input$fmsy)}else{}`
 
-"#### Fishing mortality values","<br/>",
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Fishing mortality biological limit ( Flim )** : ",input$flim)}else{}`
 
-"**Fishing mortality at Maximum Sustainable Yield ( FMSY )** : ",input$fmsy,"<br/>",
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Fishing mortality precautionary value ( Fpa )** : ",input$fpa)}else{}`
 
-"**Fishing mortality biological limit ( Flim )** : ",input$flim,"<br/>",
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Fishing mortality at overfishing level ( Fofl )** : ",input$fofl)}else{}`
 
-"**Fishing mortality precautionary value ( Fpa )** : ",input$fpa,"<br/>",
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Last known exploitation rate** : ",input$last_f)}else{}`
 
-"**Fishing mortality at overfishing level ( Fofl )** : ",input$fofl,"<br/>",
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Natural mortality ( M )** : ",input$m)}else{}`
 
-"**Last known exploitation rate** : ",input$last_fs,"<br/>",
-
-"**Natural mortality ( M )** : ",input$m)
-}else{}`
 
