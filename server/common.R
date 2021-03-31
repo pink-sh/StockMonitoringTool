@@ -1,21 +1,137 @@
 getDataConsiderationTextForCmsy <- function() {
-    text <- "<strong>Use the sample dataset as a template to prepare your data.</strong><br/>"
-    text <- paste0(text, "Mandatory fields to run CMSY are")
-    text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li>Stock (fish stock name)</li>")
-    text <- paste0(text, "<li>yr (year of the catch)</li>")
-    text <- paste0(text, "<li>ct (catch)</li>")
-    text <- paste0(text, "<li>bt (biomass estimates, if available; otherwise input “NA”)</li>")
-    text <- paste0(text, "</ul>")
-    text <- paste0(text, "<br/>")
-    text <- paste0(text, "<p>Other columns are identifiers that you may choose to include, but they are not necessary to run the model.</p>")
-    text <- paste0(text, "<br/>")
-    text <- paste0(text, "<p>Ensure your data are in .csv format and use a “.” to separate decimals in the data.</p>")
-    text <- paste0(text, "<br/>")
-    text <- paste0(text, "<h5><p><b>Please ensure your time-series at least 15 years in length from starting year to ending year.<br> (Note that years with missing data should be filled with an 'NA' value.</b></p></h5>")
-    text <- paste0(text, "<i>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of natural mortality (M) for the Optional Parameters section.", "</i>")
-    text
+  text <- "<strong>Dataset must include:</strong><br/>"
+  text <- paste0(text, "<ul>")
+  text <- paste0(text, "<li><strong>Stock:</strong> a unique fish stock name or identifier (e.g. “cod-2532”), repeated for each year.</li>")
+  text <- paste0(text, "<li><strong>yr:</strong> the reporting year of the catch (e.g. 2004). One row for each year. Years have to be consecutive from the first to the last year without any missing years.</li>")
+  text <- paste0(text, "<li><strong>ct:</strong> catch value, in tonnes (e.g. 12345). One row for each year. Gaps with no entries are not accepted and must be filled by interpolating missing or incorrect values, e.g., do not accept zero as entry if data are missing, instead use mean of adjacent values to replace zero or fill any gaps.</li>")
+  text <- paste0(text, "<li><strong>bt:</strong> the value of the biomass (in tonnes, e.g. 34567), or the value of the CPUE or stock size index (e.g. 0.123), or NA if there is no information. Gaps filled with NA are acceptable for bt, i.e., abundance data can be fewer than catch data.</li>")
+  text <- paste0(text, "</ul>")
+  text <- paste0(text, "<br/>")
+  text <- paste0(text, "<p>Other columns are identifiers that you may choose to include, but they are not necessary to run the model.</p>")
+  text <- paste0(text, "<br/>")
+  text <- paste0(text, "<p>Use the ",
+                 '<a href="https://data.d4science.net/qhX2"> sample dataset </a>',
+                 " as a template to prepare your data.</p>")
+  text <- paste0(text, "<br/>")
+  text <- paste0(text, "<strong>Specific considerations regarding your own dataset:</strong><br/>")
+  text <- paste0(text, "<li>Save your dataset in 'csv' format.</li>")
+  text <- paste0(text, "<li>The separator for the .csv file should be a comma ‘,’. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).</li>")
+  text <- paste0(text, "<li>Note that years with missing data should be filled with an 'NA' value.</li>")
+  text <- paste0(text, "<li>Note that the column names of your dataset should exactly match those of the sample dataset.</li>")
+  text <- paste0(text, "<li><strong>Please ensure your time-series at least 15 years in length from starting year to ending year.</strong></li>")
+  
 }
+
+getWorkflowConsiderationTextForCMSY <- function() {
+  text <- "<h4> To run the CMSY method in the Stock Monitoring Tool :</h4>"
+  text <- paste0(text, "<ol>")
+  text <- paste0(text, "<li>Upload a csv file data set of catch time series for one or multiple stocks (see Data Considerations or the <a href='https://data.d4science.net/qhX2'>CMSY Sample dataset</a>).</li>")
+  text <- paste0(text, "<ol type='a'>")
+  text <- paste0(text, "<li> Select the stock upon which to perform the analysis </li>")
+  text <- paste0(text, "</ol>")
+  text <- paste0(text, "<li> Adjust the Assessment Settings")
+  text <- paste0(text, "<ol type='a'>")
+  text <- paste0(text, "<li> Data Selection - select the years of data to include in the analysis,and over which to calculate the catchability. </li>")
+  text <- paste0(text, "<li> Assessment settings - set the search space of the CMSY algorithm to estimate probalble r-K pairs (set resilience and depletion). </li>")
+  text <- paste0(text, "<li> Optional information - if you have reference point values from previous assessments, you can choose to enter and compare them to the results of the present analysis.</li>")
+  text <- paste0(text, "</ol>")
+  text <- paste0(text, "</li>")
+  text <- paste0(text, "<li> Check and Run the Assessment:")
+  text <- paste0(text, "<ol type='a'>")
+  text <- paste0(text, "<li> Run a check on the parameterisations prior to running the full assessment (Run Check button)</li>")
+  text <- paste0(text, "<li> Run the assessment (Run Assessment button). This may take some time. For example, the sample dataset takes about 1 min.</li>")
+  text <- paste0(text, "</ol>")
+  text <- paste0(text, "</li>")
+  text <- paste0(text, "<li> Download the report as a pdf (Download Report button)</li>")
+  text <- paste0(text, "<li> The Reset button removes the uploaded data and resets the settings to default</li>")
+  text <- paste0(text, "</ol>")
+  text <- paste0(text, "Further information can be found in the popup information buttons at each field, and in the Data, Methods, and Results Considerations tabs. Note that error messages may display in the center of the page and in place of any figures where an error has occurred.")
+  text <- paste0(text, "</p>")    
+  return (text)
+}
+
+getMethodConsiderationTextForCmsy <- function() {
+  text <- "<b> </b>"
+  # text <- paste0(text, "<br>")
+  # text <- paste0(text, "<ol>")
+  text <- paste0(text, "The Schaefer production model parameters are r and k. Different combinations of these parameters will produce different time series of 
+                 biomass. CMSY is a Monte Carlo method where the Schaefer model is run many times to calculate annual biomasses for r-k pairs randomly drawn from prior distributions.
+                 The model determines which r-k pairs are valid: e.g., those pairs that result in a biomass time series that do not <br><br>
+                <ol>(1) result in a stock collapse, or </ol>
+                <ol>(2) allow the stock to exceed carrying capacity.</ol> <br>
+                 Those r-k pairs that result in a final relative biomass estimate between the values specified in the inputs (the final depletion range) are accepted 
+                 and used to calculate MSY (rk/4) and biomass over time. The geometric means of the resulting density distributions of r, k and MSY are taken as the most 
+                 probable values. CMSY estimates fisheries reference points (MSY, F_msy, B_msy), relative stock size (B/B_msy), and fishing mortality or exploitation (F/F_msy). 
+                 These are estimated from catch data, a prior value for the resilience, productivity, or intrinsic growth rate (r), and broad
+                 priors ranges for the ratio of biomass to unfished biomass (B/k) at the beginning and the end of the time series and an intermediate year.")
+  # text <- paste0(text, "</ol>")
+  text <- paste0(text, "<br><br>")
+  text <- paste0(text,
+                 "<p>The CMSY method for data-limited stock assessment is described in ",
+                 '<a href="https://www.researchgate.net/publication/309283306_Estimating_fisheries_reference_points_from_catch_and_resilience"> Froese et al. (2017) Estimating fisheries reference points from catch and resilience. Fish and Fisheries. 18. 506-526. 10.1111/faf.12190.</a>',
+                 ", <br>and compiled into an R algorithm available on Github : ",
+                 '<a href="https://github.com/SISTA16/cmsy"> CMSY 2019 v9f </a>',
+                 ". <br>A complete user guide with best practice advice by the authors is available : ", '<a href="https://github.com/SISTA16/cmsy/blob/master/CMSY_2019_9f_UserGuide.pdf"> CMSY_2019_9f_UserGuide</a>',
+                 ". <br><br>The CMSY+ version available in the Stock Monitoring Tool ( CMSY_2019_9f .R) is a further development of the one used in Froese et al.
+(2017). The main differences are faster execution because of parallel processing and more emphasis on the graphical presentation of the outputs, e.g. by the addition 
+of a Kobe stock status plot and several analytical plots. Also, estimation of default B/k priors has been improved and some labels in the input files have changed, 
+as indicated below. A major improvement for CMSY+ is the introduction of multivariate normal priors for r and k in log space, replacing the previous uniform prior distributions. 
+This have allowed also for a simplified determination of the ‘best’ r-k pair in CMSY+, and faster run times. <br><br>
+
+<strong>The CMSY+ version hosted on the Stock Monitoring Tool does not currently allow for abundance data to be included in the analyses, thus the Bayesian state-space implementation of 
+the Schaefer surplus production model (BSM) is not activated.</strong> </p>")
+  return (text)
+}
+
+
+
+
+getResultConsiderationTextForCmsy <- function() {
+  text <- "<b>CMSY method outputs </b><br>When running CMSY+ it will first do a Monte-Carlo analysis of catch and priors for r and B/k. If CMSY+ does not find any viable points, 
+ review all your priors to verify that these are indeed plausible. Increase the final prior biomass range if it is very narrow (e.g. change 0.01-0.1 to 0.01 – 0.3)."
+  text <- paste0(text, "<br>")
+  text <- paste0(text, "<br>")
+  text <- paste0(text, "<ul>")
+  text <- paste0(text, "
+<li> <b>Catch time series : Figure 1</b> 
+<br>Directly after the successful upload of your data set,  shows the catch time series for the selected stock (x-axis = year, y-axis = catch in tonnes). 
+                 The time series should be at least 15 years long. The longer the time series the more confidence in the results. Use the catch time series to 
+<br> identify the range of years over which to perform the cmsy analysis. The start year should correspond to the first year when data are considered reliable.
+<br> determine over what range to calculate the catchability (q), ideally corresponding to at least 5 recent years where catches are were stable or had similar trends, and 
+<br> identify if there is a  year with particularly high or low biomass in the time series, e.g. exploitation changed from light to full, or where an extraordinarily large year class entered the fishery. This can be 
+                 used as an intermediate year to inform the intermediate depletion range prior.</li>")
+  text <- paste0(text, "</ul>")
+  text <- paste0(text, "<br>")
+  text <- paste0(text, "After successfully running the cmsy method (click 'Run Method'), two figures with sub-figures summarise the results of the CMSY method. ")
+  text <- paste0(text, "<br>")
+  text <- paste0(text, "<br>")
+  text <- paste0(text, "<ul>")
+  text <- paste0(text, "<li> <b>CMSY : Figure 2 </b> 
+                 <br>The upper left panel shows catches relative to the estimate of MSY, with indication of 95% confidence limits in grey. 
+                 <br>The upper right panel shows the development of relative total biomass (B/Bmsy), with the grey area indicating uncertainty. 
+                 <br>The lower left graph shows relative exploitation (F/Fmsy), with Fmsy corrected for reduced recruitment below 0.5 Bmsy. 
+                 <br>The lower-right panel shows the trajectory of relative stock size (B/Bmsy) over relative exploitation (F/Fmsy).",
+                 "</li>")
+  text <- paste0(text, "<br>")
+  text <- paste0(text, "<li><b>CMSY : Figure 3 </b> 
+                 <br>Panel A shows in black the time series of catches and in blue the three-years moving average with indication of highest and lowest catch, as used in the estimation of prior biomass by the default rules. 
+                 <br>Panel B shows the explored r-k log space and in dark grey the r-k pairs which were found by the CMSY model to be compatible with the catches and the prior information. 
+                 <br>Panel C shows the most probable r-k pair and its approximate 95% confidence limits in blue. 
+                 <br>Panel D shows in blue the biomass trajectory estimated by CMSY. Dotted lines indicate the 2.5th and 97.5th percentiles. Vertical blue lines indicate the prior biomass ranges. 
+                 <br>Panel E shows in blue the harvest rate from CMSY. 
+                 <br>Panel F shows the Schaefer equilibrium curve of catch/MSY relative to B/k, here indented at B/k < 0.25 to account for reduced recruitment at low stock sizes. The blue dots are scaled by CMSY estimates.",
+                 "</li>")
+  text <- paste0(text, "</ul>")
+  text <- paste0(text, "<br>")
+  text <- paste0(text, "<br>")
+  return (text)
+}
+
+
+
+
+
+
 
 getDataConsiderationTextForElefan <- function() {
     text <- "<b>Dataset must include:</b>"
@@ -237,9 +353,9 @@ getResultConsiderationTextForElefan <- function() {
 
 getErrorMessage <- function(forWhat) {
     if(forWhat=="CMSY"){
-        return (paste0("Ops! Unfortunately the ",forWhat, " method experienced a problem with the server.<br/>Don't give up and try again in a few minutes or refresh your Stock Monitoring Tool instance.<hr/> <b>%s</b>"))
+        return (paste0("Oops! Unfortunately the ",forWhat, " method experienced a problem with the server.<br/>Don't give up and try again in a few minutes or refresh your Stock Monitoring Tool instance.<hr/> <b>%s</b>"))
     }else{
-        return (paste0("Ops! unfortunately something went wrong running the ",forWhat," method<br/>Don't give up and try again in a few minutes.<hr/> <b>%s</b>"))
+        return (paste0("Oops! unfortunately something went wrong running the ",forWhat," method<br/>Don't give up and try again in a few minutes.<hr/> <b>%s</b>"))
     }
 }
 
