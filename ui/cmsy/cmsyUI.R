@@ -230,7 +230,7 @@ prior to the last year with high biomass.</p>")),
                 solidHeader = TRUE,
                 class = "collapsed-box",
                 
-                
+
                 box(title = "Data selection",
                     width=6,
                     
@@ -281,15 +281,16 @@ prior to the last year with high biomass.</p>")),
                       ),
                       style = "margin-left: 10%;"
                     )
-                ),
+                )),
                 
-                
+
                 box(title = p("Resilience",
-                              actionButton(ns("infor"),
-                                           tags$i(class = "fas fa-info",
-                                                  style="font-size: 12px"),
-                                           class="topLevelInformationButton")),
+                               actionButton(ns("infor"),
+                                            tags$i(class = "fas fa-info",
+                                                   style="font-size: 12px"),
+                                            class="topLevelInformationButton")),
                     width = 6,
+
                     fluidPage(
                       sliderInput(ns("resiliance"),
                                   label = div(style='width:400px;',style = "margin-top:-3px",
@@ -301,6 +302,7 @@ prior to the last year with high biomass.</p>")),
                 ),
 
                 
+
                 box(
                   title = p("Depletion",
                             actionButton(ns("infodepletion"),
@@ -429,6 +431,7 @@ prior to the last year with high biomass.</p>")),
                         #textInput("comments", "Comments on data and computation", "landings"),
                         #checkboxInput(ns("force.cmsy"), "Check this if CMSY results are to be preferred over the Bayesian State Model results (only when biomass or CPUE is available)", FALSE)
                     )
+
                 )
             ),
             
