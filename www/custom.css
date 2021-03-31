@@ -105,17 +105,6 @@ footer{
   background-color:#222D32;
   color: #DBDBDB !important;
 }
-
-.infoBubbleButton {
-  background-color:#A9A9A9;
-  color: #DBDBDB !important;
-  border-radius: 50%;
-  padding: 0 5px;
-  text-align: center;
-  vertical-align: super;
-  font-size: 10px !important;
-}
-
 .topLevelInformationButton:hover {
   background-color:#222D32;
   color: #FFFFFF !important;

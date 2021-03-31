@@ -26,7 +26,6 @@ library(waiter)
 library(futile.logger)
 library(R.utils)
 library(knitr)
-library(shinyWidgets)
 
 ##### Dependencies
 source("ui/menu.R")
