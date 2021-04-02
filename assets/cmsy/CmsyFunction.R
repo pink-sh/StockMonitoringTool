@@ -129,11 +129,12 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   filexml<-gsub("#Q.START#", q.start, filexml)
   filexml<-gsub("#Q.END#", q.end, filexml)
   filexml<-gsub("#BTYPE#", "None", filexml)
-  if (force.cmsy) {
-    filexml<-gsub("#FORCE.CMSY#", "true", filexml)
-  } else {
-    filexml<-gsub("#FORCE.CMSY#", "false", filexml)
-  }
+  filexml<-gsub("#FORCE.CMSY#", "false", filexml)
+  # if (force.cmsy) {
+  #   filexml<-gsub("#FORCE.CMSY#", "true", filexml)
+  # } else {
+  #   filexml<-gsub("#FORCE.CMSY#", "false", filexml)
+  # }
   filexml<-gsub("#COMMENT#", "comments", filexml)
   
   filetime = format(Sys.time(), "%Y-%m-%dT%H_%M_%S")

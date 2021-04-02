@@ -2558,3 +2558,706 @@ INFO [2020-06-09 13:45:37] Starting Elegan GA computation
 ERROR [2020-06-09 13:45:45] Error in Elefan GA: arguments must have same length 
 ERROR [2020-06-09 13:45:49] Error in Elefan GA: arguments must have same length 
 INFO [2020-06-09 13:45:55] Starting Elegan GA computation
+INFO [2021-02-01 11:14:02] Current Page: NA
+INFO [2021-02-01 11:14:02] Session token is: NULL
+INFO [2021-02-01 11:14:02] Session mode is: NULL
+INFO [2021-02-01 11:14:02] Session username is: NULL
+INFO [2021-02-01 11:14:03] Current Page: home
+INFO [2021-02-01 11:14:21] Current Page: elefan
+INFO [2021-02-01 11:14:23] Current Page: elefan-ga
+INFO [2021-02-01 11:14:34] Current Page: elefan-sample
+INFO [2021-02-01 11:15:37] Current Page: fishmethods-sample
+WARN [2021-02-01 11:16:10] Lost connection to R server
+INFO [2021-02-01 11:16:12] Current Page: NA
+INFO [2021-02-01 11:16:12] Session token is: NULL
+INFO [2021-02-01 11:16:12] Session mode is: NULL
+INFO [2021-02-01 11:16:12] Session username is: NULL
+INFO [2021-02-01 11:16:12] Current Page: elefan
+WARN [2021-02-01 11:20:44] Lost connection to R server
+INFO [2021-02-01 11:20:50] Current Page: NA
+INFO [2021-02-01 11:20:50] Session token is: NULL
+INFO [2021-02-01 11:20:50] Session mode is: NULL
+INFO [2021-02-01 11:20:50] Session username is: NULL
+INFO [2021-02-01 11:20:51] Current Page: home
+INFO [2021-02-01 11:20:54] Current Page: elefan
+WARN [2021-02-01 11:22:53] Lost connection to R server
+INFO [2021-02-01 11:23:00] Current Page: NA
+INFO [2021-02-01 11:23:00] Session token is: NULL
+INFO [2021-02-01 11:23:00] Session mode is: NULL
+INFO [2021-02-01 11:23:00] Session username is: NULL
+INFO [2021-02-01 11:23:00] Current Page: elefan
+WARN [2021-02-01 11:23:00] Lost connection to R server
+INFO [2021-02-01 11:23:01] Current Page: NA
+INFO [2021-02-01 11:23:01] Session token is: NULL
+INFO [2021-02-01 11:23:01] Session mode is: NULL
+INFO [2021-02-01 11:23:01] Session username is: NULL
+INFO [2021-02-01 11:23:01] Current Page: home
+INFO [2021-02-01 11:23:06] Current Page: elefan
+INFO [2021-02-01 11:23:28] Starting Elegan computation
+WARN [2021-02-01 14:34:28] Lost connection to R server
+INFO [2021-02-01 14:37:03] Current Page: NA
+INFO [2021-02-01 14:37:03] Session token is: NULL
+INFO [2021-02-01 14:37:03] Session mode is: NULL
+INFO [2021-02-01 14:37:03] Session username is: NULL
+INFO [2021-02-01 14:37:03] Current Page: home
+INFO [2021-02-01 14:37:08] Current Page: elefan-ga
+INFO [2021-02-01 14:37:10] Current Page: NA
+INFO [2021-02-01 14:37:10] Session token is: NULL
+INFO [2021-02-01 14:37:10] Session mode is: NULL
+INFO [2021-02-01 14:37:10] Session username is: NULL
+INFO [2021-02-01 14:37:10] Starting Elegan computation
+INFO [2021-02-01 14:37:10] Current Page: elefan
+WARN [2021-02-01 14:41:12] Lost connection to R server
+WARN [2021-02-01 14:41:12] Lost connection to R server
+INFO [2021-02-01 14:54:12] Current Page: NA
+INFO [2021-02-01 14:54:12] Session token is: NULL
+INFO [2021-02-01 14:54:12] Session mode is: NULL
+INFO [2021-02-01 14:54:12] Session username is: NULL
+INFO [2021-02-01 14:54:12] Current Page: NA
+INFO [2021-02-01 14:54:12] Session token is: NULL
+INFO [2021-02-01 14:54:12] Session mode is: NULL
+INFO [2021-02-01 14:54:12] Session username is: NULL
+INFO [2021-02-01 14:54:12] Starting Elegan computation
+INFO [2021-02-01 14:54:13] Current Page: elefan
+INFO [2021-02-01 14:54:13] Current Page: home
+INFO [2021-02-01 14:54:17] Current Page: elefan-ga
+INFO [2021-02-01 14:54:18] Current Page: NA
+INFO [2021-02-01 14:54:18] Session token is: NULL
+INFO [2021-02-01 14:54:18] Session mode is: NULL
+INFO [2021-02-01 14:54:18] Session username is: NULL
+INFO [2021-02-01 14:54:18] Current Page: elefan-ga
+WARN [2021-02-01 14:57:08] Lost connection to R server
+WARN [2021-02-01 14:57:08] Lost connection to R server
+WARN [2021-02-01 14:57:08] Lost connection to R server
+INFO [2021-02-01 14:57:48] Current Page: NA
+INFO [2021-02-01 14:57:48] Session token is: NULL
+INFO [2021-02-01 14:57:49] Session mode is: NULL
+INFO [2021-02-01 14:57:49] Session username is: NULL
+INFO [2021-02-01 14:57:49] Current Page: elefan-ga
+INFO [2021-02-01 14:57:49] Current Page: NA
+INFO [2021-02-01 14:57:49] Session token is: NULL
+INFO [2021-02-01 14:57:49] Session mode is: NULL
+INFO [2021-02-01 14:57:49] Session username is: NULL
+INFO [2021-02-01 14:57:50] Current Page: NA
+INFO [2021-02-01 14:57:50] Session token is: NULL
+INFO [2021-02-01 14:57:50] Session mode is: NULL
+INFO [2021-02-01 14:57:50] Session username is: NULL
+INFO [2021-02-01 14:57:50] Starting Elegan computation
+INFO [2021-02-01 14:57:50] Current Page: elefan
+INFO [2021-02-01 14:57:50] Current Page: home
+INFO [2021-02-01 14:57:55] Current Page: elefan-ga
+WARN [2021-02-01 14:58:32] Lost connection to R server
+WARN [2021-02-01 14:58:32] Lost connection to R server
+WARN [2021-02-01 14:58:32] Lost connection to R server
+INFO [2021-02-01 15:06:30] Current Page: NA
+INFO [2021-02-01 15:06:30] Session token is: NULL
+INFO [2021-02-01 15:06:30] Session mode is: NULL
+INFO [2021-02-01 15:06:30] Session username is: NULL
+INFO [2021-02-01 15:06:31] Current Page: NA
+INFO [2021-02-01 15:06:31] Session token is: NULL
+INFO [2021-02-01 15:06:31] Session mode is: NULL
+INFO [2021-02-01 15:06:31] Session username is: NULL
+INFO [2021-02-01 15:06:31] Current Page: elefan-ga
+INFO [2021-02-01 15:06:31] Current Page: home
+INFO [2021-02-01 15:06:33] Current Page: NA
+INFO [2021-02-01 15:06:33] Session token is: NULL
+INFO [2021-02-01 15:06:33] Session mode is: NULL
+INFO [2021-02-01 15:06:33] Session username is: NULL
+INFO [2021-02-01 15:06:33] Starting Elegan computation
+INFO [2021-02-01 15:06:33] Current Page: elefan
+INFO [2021-02-01 15:06:34] Current Page: NA
+INFO [2021-02-01 15:06:34] Session token is: NULL
+INFO [2021-02-01 15:06:34] Session mode is: NULL
+INFO [2021-02-01 15:06:34] Session username is: NULL
+INFO [2021-02-01 15:06:34] Current Page: elefan-ga
+INFO [2021-02-01 15:06:35] Current Page: elefan-ga
+WARN [2021-02-01 15:07:48] Lost connection to R server
+WARN [2021-02-01 15:07:48] Lost connection to R server
+WARN [2021-02-01 15:07:48] Lost connection to R server
+WARN [2021-02-01 15:07:48] Lost connection to R server
+INFO [2021-02-01 15:08:39] Current Page: NA
+INFO [2021-02-01 15:08:39] Session token is: NULL
+INFO [2021-02-01 15:08:39] Session mode is: NULL
+INFO [2021-02-01 15:08:39] Session username is: NULL
+INFO [2021-02-01 15:08:39] Current Page: elefan-ga
+INFO [2021-02-01 15:08:41] Current Page: NA
+INFO [2021-02-01 15:08:41] Session token is: NULL
+INFO [2021-02-01 15:08:41] Session mode is: NULL
+INFO [2021-02-01 15:08:41] Session username is: NULL
+INFO [2021-02-01 15:08:41] Current Page: home
+INFO [2021-02-01 15:08:43] Current Page: NA
+INFO [2021-02-01 15:08:43] Session token is: NULL
+INFO [2021-02-01 15:08:43] Session mode is: NULL
+INFO [2021-02-01 15:08:43] Session username is: NULL
+INFO [2021-02-01 15:08:43] Current Page: elefan-ga
+INFO [2021-02-01 15:08:45] Current Page: NA
+INFO [2021-02-01 15:08:45] Session token is: NULL
+INFO [2021-02-01 15:08:45] Session mode is: NULL
+INFO [2021-02-01 15:08:45] Session username is: NULL
+INFO [2021-02-01 15:08:45] Starting Elegan computation
+INFO [2021-02-01 15:08:45] Current Page: elefan
+INFO [2021-02-01 15:08:47] Current Page: NA
+INFO [2021-02-01 15:08:47] Session token is: NULL
+INFO [2021-02-01 15:08:47] Session mode is: NULL
+INFO [2021-02-01 15:08:47] Session username is: NULL
+INFO [2021-02-01 15:08:47] Current Page: elefan-ga
+INFO [2021-02-01 15:08:51] Current Page: elefan-ga
+WARN [2021-02-01 15:14:20] Lost connection to R server
+WARN [2021-02-01 15:14:20] Lost connection to R server
+WARN [2021-02-01 15:14:20] Lost connection to R server
+WARN [2021-02-01 15:14:20] Lost connection to R server
+WARN [2021-02-01 15:14:20] Lost connection to R server
+INFO [2021-02-01 15:14:43] Current Page: NA
+INFO [2021-02-01 15:14:43] Session token is: NULL
+INFO [2021-02-01 15:14:43] Session mode is: NULL
+INFO [2021-02-01 15:14:43] Session username is: NULL
+INFO [2021-02-01 15:14:43] Starting Elegan computation
+INFO [2021-02-01 15:14:43] Current Page: elefan
+INFO [2021-02-01 15:14:44] Current Page: NA
+INFO [2021-02-01 15:14:44] Session token is: NULL
+INFO [2021-02-01 15:14:44] Session mode is: NULL
+INFO [2021-02-01 15:14:44] Session username is: NULL
+INFO [2021-02-01 15:14:44] Current Page: elefan-ga
+INFO [2021-02-01 15:14:44] Current Page: NA
+INFO [2021-02-01 15:14:44] Session token is: NULL
+INFO [2021-02-01 15:14:44] Session mode is: NULL
+INFO [2021-02-01 15:14:44] Session username is: NULL
+INFO [2021-02-01 15:14:45] Current Page: elefan-ga
+INFO [2021-02-01 15:14:45] Current Page: NA
+INFO [2021-02-01 15:14:45] Session token is: NULL
+INFO [2021-02-01 15:14:45] Session mode is: NULL
+INFO [2021-02-01 15:14:45] Session username is: NULL
+INFO [2021-02-01 15:14:45] Current Page: elefan-ga
+INFO [2021-02-01 15:14:46] Current Page: NA
+INFO [2021-02-01 15:14:46] Session token is: NULL
+INFO [2021-02-01 15:14:46] Session mode is: NULL
+INFO [2021-02-01 15:14:46] Session username is: NULL
+INFO [2021-02-01 15:14:47] Current Page: NA
+INFO [2021-02-01 15:14:47] Session token is: NULL
+INFO [2021-02-01 15:14:47] Session mode is: NULL
+INFO [2021-02-01 15:14:47] Session username is: NULL
+INFO [2021-02-01 15:14:47] Current Page: elefan-ga
+INFO [2021-02-01 15:14:47] Current Page: home
+INFO [2021-02-01 15:14:50] Current Page: elefan-ga
+WARN [2021-02-01 15:15:47] Lost connection to R server
+WARN [2021-02-01 15:15:47] Lost connection to R server
+WARN [2021-02-01 15:15:47] Lost connection to R server
+WARN [2021-02-01 15:15:47] Lost connection to R server
+WARN [2021-02-01 15:15:47] Lost connection to R server
+WARN [2021-02-01 15:15:47] Lost connection to R server
+INFO [2021-02-01 15:21:49] Current Page: NA
+INFO [2021-02-01 15:21:49] Session token is: NULL
+INFO [2021-02-01 15:21:49] Session mode is: NULL
+INFO [2021-02-01 15:21:49] Session username is: NULL
+INFO [2021-02-01 15:21:49] Current Page: elefan-ga
+INFO [2021-02-01 15:21:49] Current Page: NA
+INFO [2021-02-01 15:21:49] Session token is: NULL
+INFO [2021-02-01 15:21:49] Session mode is: NULL
+INFO [2021-02-01 15:21:49] Session username is: NULL
+INFO [2021-02-01 15:21:49] Current Page: elefan-ga
+INFO [2021-02-01 15:21:50] Current Page: NA
+INFO [2021-02-01 15:21:50] Session token is: NULL
+INFO [2021-02-01 15:21:50] Session mode is: NULL
+INFO [2021-02-01 15:21:50] Session username is: NULL
+INFO [2021-02-01 15:21:50] Current Page: elefan-ga
+INFO [2021-02-01 15:21:51] Current Page: NA
+INFO [2021-02-01 15:21:51] Session token is: NULL
+INFO [2021-02-01 15:21:51] Session mode is: NULL
+INFO [2021-02-01 15:21:51] Session username is: NULL
+INFO [2021-02-01 15:21:51] Current Page: NA
+INFO [2021-02-01 15:21:51] Session token is: NULL
+INFO [2021-02-01 15:21:51] Session mode is: NULL
+INFO [2021-02-01 15:21:51] Session username is: NULL
+INFO [2021-02-01 15:21:51] Current Page: elefan-ga
+INFO [2021-02-01 15:21:51] Current Page: home
+INFO [2021-02-01 15:21:54] Current Page: NA
+INFO [2021-02-01 15:21:54] Session token is: NULL
+INFO [2021-02-01 15:21:54] Session mode is: NULL
+INFO [2021-02-01 15:21:54] Session username is: NULL
+INFO [2021-02-01 15:21:54] Current Page: elefan-ga
+INFO [2021-02-01 15:21:55] Current Page: elefan-ga
+INFO [2021-02-01 15:21:56] Current Page: NA
+INFO [2021-02-01 15:21:56] Session token is: NULL
+INFO [2021-02-01 15:21:56] Session mode is: NULL
+INFO [2021-02-01 15:21:56] Session username is: NULL
+INFO [2021-02-01 15:21:56] Starting Elegan computation
+INFO [2021-02-01 15:21:57] Current Page: elefan
+ERROR [2021-02-01 15:22:11] Error in Elefan GA: The specified bin_size is smaller than the bin size 
+in your data. This is not possible! 
+INFO [2021-02-01 15:22:33] Starting Elegan GA computation
+INFO [2021-02-01 15:23:11] Starting Elegan GA computation
+WARN [2021-02-01 15:23:21] Lost connection to R server
+WARN [2021-02-01 15:23:21] Lost connection to R server
+WARN [2021-02-01 15:23:21] Lost connection to R server
+WARN [2021-02-01 15:23:21] Lost connection to R server
+WARN [2021-02-01 15:23:21] Lost connection to R server
+WARN [2021-02-01 15:23:21] Lost connection to R server
+WARN [2021-02-01 15:23:21] Lost connection to R server
+INFO [2021-02-01 15:23:52] Current Page: NA
+INFO [2021-02-01 15:23:52] Session token is: NULL
+INFO [2021-02-01 15:23:52] Session mode is: NULL
+INFO [2021-02-01 15:23:52] Session username is: NULL
+INFO [2021-02-01 15:23:52] Current Page: elefan-ga
+INFO [2021-02-01 15:23:53] Current Page: NA
+INFO [2021-02-01 15:23:53] Session token is: NULL
+INFO [2021-02-01 15:23:53] Session mode is: NULL
+INFO [2021-02-01 15:23:53] Session username is: NULL
+ERROR [2021-02-01 15:23:53] Error in Elefan GA: $ operator is invalid for atomic vectors 
+INFO [2021-02-01 15:23:53] Current Page: elefan-ga
+INFO [2021-02-01 15:23:54] Current Page: NA
+INFO [2021-02-01 15:23:54] Session token is: NULL
+INFO [2021-02-01 15:23:54] Session mode is: NULL
+INFO [2021-02-01 15:23:54] Session username is: NULL
+INFO [2021-02-01 15:23:54] Starting Elegan computation
+INFO [2021-02-01 15:23:54] Current Page: elefan
+INFO [2021-02-01 15:23:55] Current Page: NA
+INFO [2021-02-01 15:23:55] Session token is: NULL
+INFO [2021-02-01 15:23:55] Session mode is: NULL
+INFO [2021-02-01 15:23:55] Session username is: NULL
+INFO [2021-02-01 15:23:55] Current Page: elefan-ga
+INFO [2021-02-01 15:23:55] Current Page: NA
+INFO [2021-02-01 15:23:55] Session token is: NULL
+INFO [2021-02-01 15:23:55] Session mode is: NULL
+INFO [2021-02-01 15:23:55] Session username is: NULL
+INFO [2021-02-01 15:23:56] Current Page: elefan-ga
+INFO [2021-02-01 15:23:56] Current Page: NA
+INFO [2021-02-01 15:23:56] Session token is: NULL
+INFO [2021-02-01 15:23:56] Session mode is: NULL
+INFO [2021-02-01 15:23:56] Session username is: NULL
+INFO [2021-02-01 15:23:56] Current Page: elefan-ga
+INFO [2021-02-01 15:23:57] Current Page: NA
+INFO [2021-02-01 15:23:57] Session token is: NULL
+INFO [2021-02-01 15:23:57] Session mode is: NULL
+INFO [2021-02-01 15:23:57] Session username is: NULL
+INFO [2021-02-01 15:23:57] Current Page: elefan-ga
+INFO [2021-02-01 15:23:58] Current Page: NA
+INFO [2021-02-01 15:23:58] Session token is: NULL
+INFO [2021-02-01 15:23:58] Session mode is: NULL
+INFO [2021-02-01 15:23:58] Session username is: NULL
+INFO [2021-02-01 15:23:58] Current Page: home
+INFO [2021-02-01 15:24:01] Current Page: elefan-ga
+ERROR [2021-02-01 15:24:10] Error in Elefan GA: The specified bin_size is smaller than the bin size 
+in your data. This is not possible! 
+INFO [2021-02-01 15:24:31] Starting Elegan GA computation
+INFO [2021-02-01 15:24:35] Starting Elegan GA computation
+INFO [2021-02-01 15:24:44] Starting Elegan GA computation
+WARN [2021-02-01 15:26:15] Lost connection to R server
+WARN [2021-02-01 15:26:16] Lost connection to R server
+WARN [2021-02-01 15:26:16] Lost connection to R server
+WARN [2021-02-01 15:26:16] Lost connection to R server
+WARN [2021-02-01 15:26:16] Lost connection to R server
+WARN [2021-02-01 15:26:16] Lost connection to R server
+WARN [2021-02-01 15:26:16] Lost connection to R server
+WARN [2021-02-01 15:26:16] Lost connection to R server
+INFO [2021-02-01 15:26:26] Current Page: NA
+INFO [2021-02-01 15:26:26] Session token is: NULL
+INFO [2021-02-01 15:26:26] Session mode is: NULL
+INFO [2021-02-01 15:26:26] Session username is: NULL
+INFO [2021-02-01 15:26:27] Current Page: elefan-ga
+INFO [2021-02-01 15:26:27] Current Page: NA
+INFO [2021-02-01 15:26:27] Session token is: NULL
+INFO [2021-02-01 15:26:27] Session mode is: NULL
+INFO [2021-02-01 15:26:27] Session username is: NULL
+INFO [2021-02-01 15:26:27] Current Page: elefan-ga
+INFO [2021-02-01 15:26:28] Current Page: NA
+INFO [2021-02-01 15:26:28] Session token is: NULL
+INFO [2021-02-01 15:26:28] Session mode is: NULL
+INFO [2021-02-01 15:26:28] Session username is: NULL
+ERROR [2021-02-01 15:26:28] Error in Elefan GA: $ operator is invalid for atomic vectors 
+INFO [2021-02-01 15:26:28] Current Page: elefan-ga
+INFO [2021-02-01 15:26:29] Current Page: NA
+INFO [2021-02-01 15:26:29] Session token is: NULL
+INFO [2021-02-01 15:26:29] Session mode is: NULL
+INFO [2021-02-01 15:26:29] Session username is: NULL
+INFO [2021-02-01 15:26:29] Current Page: elefan-ga
+INFO [2021-02-01 15:26:30] Current Page: NA
+INFO [2021-02-01 15:26:30] Session token is: NULL
+INFO [2021-02-01 15:26:30] Session mode is: NULL
+INFO [2021-02-01 15:26:30] Session username is: NULL
+INFO [2021-02-01 15:26:30] Current Page: elefan-ga
+INFO [2021-02-01 15:26:30] Current Page: NA
+INFO [2021-02-01 15:26:30] Session token is: NULL
+INFO [2021-02-01 15:26:30] Session mode is: NULL
+INFO [2021-02-01 15:26:30] Session username is: NULL
+ERROR [2021-02-01 15:26:30] Error in Elefan GA: $ operator is invalid for atomic vectors 
+INFO [2021-02-01 15:26:31] Current Page: elefan-ga
+INFO [2021-02-01 15:26:32] Current Page: NA
+INFO [2021-02-01 15:26:32] Session token is: NULL
+INFO [2021-02-01 15:26:32] Session mode is: NULL
+INFO [2021-02-01 15:26:32] Session username is: NULL
+INFO [2021-02-01 15:26:32] Starting Elegan computation
+INFO [2021-02-01 15:26:32] Current Page: elefan
+INFO [2021-02-01 15:26:33] Current Page: NA
+INFO [2021-02-01 15:26:33] Session token is: NULL
+INFO [2021-02-01 15:26:33] Session mode is: NULL
+INFO [2021-02-01 15:26:33] Session username is: NULL
+INFO [2021-02-01 15:26:33] Current Page: elefan-ga
+INFO [2021-02-01 15:26:33] Current Page: NA
+INFO [2021-02-01 15:26:33] Session token is: NULL
+INFO [2021-02-01 15:26:33] Session mode is: NULL
+INFO [2021-02-01 15:26:33] Session username is: NULL
+INFO [2021-02-01 15:26:34] Current Page: home
+INFO [2021-02-01 15:26:38] Current Page: elefan-ga
+ERROR [2021-02-01 15:26:48] Error in Elefan GA: The specified bin_size is smaller than the bin size 
+in your data. This is not possible! 
+INFO [2021-02-01 15:27:02] Starting Elegan GA computation
+WARN [2021-02-01 15:28:26] Lost connection to R server
+WARN [2021-02-01 15:28:26] Lost connection to R server
+WARN [2021-02-01 15:28:26] Lost connection to R server
+WARN [2021-02-01 15:28:26] Lost connection to R server
+WARN [2021-02-01 15:28:26] Lost connection to R server
+WARN [2021-02-01 15:28:26] Lost connection to R server
+WARN [2021-02-01 15:28:26] Lost connection to R server
+WARN [2021-02-01 15:28:26] Lost connection to R server
+WARN [2021-02-01 15:28:26] Lost connection to R server
+INFO [2021-02-01 15:28:31] Current Page: NA
+INFO [2021-02-01 15:28:31] Session token is: NULL
+INFO [2021-02-01 15:28:31] Session mode is: NULL
+INFO [2021-02-01 15:28:31] Session username is: NULL
+INFO [2021-02-01 15:28:31] Current Page: elefan-ga
+INFO [2021-02-01 15:28:32] Current Page: NA
+INFO [2021-02-01 15:28:32] Session token is: NULL
+INFO [2021-02-01 15:28:32] Session mode is: NULL
+INFO [2021-02-01 15:28:32] Session username is: NULL
+ERROR [2021-02-01 15:28:32] Error in Elefan GA: $ operator is invalid for atomic vectors 
+INFO [2021-02-01 15:28:32] Current Page: elefan-ga
+INFO [2021-02-01 15:28:33] Current Page: NA
+INFO [2021-02-01 15:28:33] Session token is: NULL
+INFO [2021-02-01 15:28:33] Session mode is: NULL
+INFO [2021-02-01 15:28:33] Session username is: NULL
+INFO [2021-02-01 15:28:33] Starting Elegan computation
+INFO [2021-02-01 15:28:33] Current Page: elefan
+INFO [2021-02-01 15:28:34] Current Page: NA
+INFO [2021-02-01 15:28:34] Session token is: NULL
+INFO [2021-02-01 15:28:34] Session mode is: NULL
+INFO [2021-02-01 15:28:34] Session username is: NULL
+ERROR [2021-02-01 15:28:34] Error in Elefan GA: $ operator is invalid for atomic vectors 
+INFO [2021-02-01 15:28:34] Current Page: elefan-ga
+INFO [2021-02-01 15:28:34] Current Page: NA
+INFO [2021-02-01 15:28:34] Session token is: NULL
+INFO [2021-02-01 15:28:34] Session mode is: NULL
+INFO [2021-02-01 15:28:34] Session username is: NULL
+INFO [2021-02-01 15:28:35] Current Page: elefan-ga
+INFO [2021-02-01 15:28:35] Current Page: NA
+INFO [2021-02-01 15:28:35] Session token is: NULL
+INFO [2021-02-01 15:28:35] Session mode is: NULL
+INFO [2021-02-01 15:28:35] Session username is: NULL
+INFO [2021-02-01 15:28:35] Current Page: elefan-ga
+INFO [2021-02-01 15:28:36] Current Page: NA
+INFO [2021-02-01 15:28:36] Session token is: NULL
+INFO [2021-02-01 15:28:36] Session mode is: NULL
+INFO [2021-02-01 15:28:36] Session username is: NULL
+INFO [2021-02-01 15:28:36] Current Page: elefan-ga
+INFO [2021-02-01 15:28:36] Current Page: NA
+INFO [2021-02-01 15:28:36] Session token is: NULL
+INFO [2021-02-01 15:28:36] Session mode is: NULL
+INFO [2021-02-01 15:28:36] Session username is: NULL
+INFO [2021-02-01 15:28:37] Current Page: elefan-ga
+INFO [2021-02-01 15:28:37] Current Page: NA
+INFO [2021-02-01 15:28:37] Session token is: NULL
+INFO [2021-02-01 15:28:37] Session mode is: NULL
+INFO [2021-02-01 15:28:37] Session username is: NULL
+ERROR [2021-02-01 15:28:37] Error in Elefan GA: $ operator is invalid for atomic vectors 
+INFO [2021-02-01 15:28:37] Current Page: elefan-ga
+INFO [2021-02-01 15:28:38] Current Page: NA
+INFO [2021-02-01 15:28:38] Session token is: NULL
+INFO [2021-02-01 15:28:38] Session mode is: NULL
+INFO [2021-02-01 15:28:38] Session username is: NULL
+INFO [2021-02-01 15:28:38] Current Page: home
+INFO [2021-02-01 15:28:46] Current Page: elefan-ga
+ERROR [2021-02-01 15:28:55] Error in Elefan GA: The specified bin_size is smaller than the bin size 
+in your data. This is not possible! 
+INFO [2021-02-01 15:29:08] Starting Elegan GA computation
+INFO [2021-02-01 15:29:35] Starting Elegan GA computation
+INFO [2021-02-01 15:29:58] Starting Elegan GA computation
+WARN [2021-02-01 15:30:41] Lost connection to R server
+WARN [2021-02-01 15:30:41] Lost connection to R server
+WARN [2021-02-01 15:30:41] Lost connection to R server
+WARN [2021-02-01 15:30:41] Lost connection to R server
+WARN [2021-02-01 15:30:41] Lost connection to R server
+WARN [2021-02-01 15:30:41] Lost connection to R server
+WARN [2021-02-01 15:30:41] Lost connection to R server
+WARN [2021-02-01 15:30:41] Lost connection to R server
+WARN [2021-02-01 15:30:41] Lost connection to R server
+WARN [2021-02-01 15:30:42] Lost connection to R server
+INFO [2021-02-01 15:33:47] Current Page: NA
+INFO [2021-02-01 15:33:47] Session token is: NULL
+INFO [2021-02-01 15:33:47] Session mode is: NULL
+INFO [2021-02-01 15:33:47] Session username is: NULL
+INFO [2021-02-01 15:33:47] Current Page: elefan-ga
+INFO [2021-02-01 15:33:48] Current Page: NA
+INFO [2021-02-01 15:33:48] Session token is: NULL
+INFO [2021-02-01 15:33:48] Session mode is: NULL
+INFO [2021-02-01 15:33:48] Session username is: NULL
+INFO [2021-02-01 15:33:48] Current Page: NA
+INFO [2021-02-01 15:33:48] Session token is: NULL
+INFO [2021-02-01 15:33:48] Session mode is: NULL
+INFO [2021-02-01 15:33:48] Session username is: NULL
+INFO [2021-02-01 15:33:48] Starting Elegan computation
+INFO [2021-02-01 15:33:49] Current Page: elefan
+INFO [2021-02-01 15:33:49] Current Page: home
+INFO [2021-02-01 15:33:52] Current Page: elefan-ga
+ERROR [2021-02-01 15:34:11] Error in Elefan GA: The specified bin_size is smaller than the bin size 
+in your data. This is not possible! 
+INFO [2021-02-01 15:34:17] Starting Elegan GA computation
+INFO [2021-02-01 15:34:35] Starting Elegan GA computation
+WARN [2021-02-01 15:36:21] Lost connection to R server
+WARN [2021-02-01 15:36:21] Lost connection to R server
+WARN [2021-02-01 15:36:21] Lost connection to R server
+INFO [2021-02-01 15:45:07] Current Page: NA
+INFO [2021-02-01 15:45:07] Session token is: NULL
+INFO [2021-02-01 15:45:07] Session mode is: NULL
+INFO [2021-02-01 15:45:07] Session username is: NULL
+INFO [2021-02-01 15:45:07] Starting Elegan computation
+INFO [2021-02-01 15:45:07] Current Page: elefan
+INFO [2021-02-01 15:45:08] Current Page: NA
+INFO [2021-02-01 15:45:08] Session token is: NULL
+INFO [2021-02-01 15:45:08] Session mode is: NULL
+INFO [2021-02-01 15:45:08] Session username is: NULL
+INFO [2021-02-01 15:45:08] Current Page: home
+INFO [2021-02-01 15:45:09] Current Page: NA
+INFO [2021-02-01 15:45:09] Session token is: NULL
+INFO [2021-02-01 15:45:09] Session mode is: NULL
+INFO [2021-02-01 15:45:09] Session username is: NULL
+INFO [2021-02-01 15:45:09] Current Page: elefan-ga
+INFO [2021-02-01 15:45:12] Current Page: NA
+INFO [2021-02-01 15:45:12] Session token is: NULL
+INFO [2021-02-01 15:45:12] Session mode is: NULL
+INFO [2021-02-01 15:45:12] Session username is: NULL
+ERROR [2021-02-01 15:45:12] Error in Elefan GA: $ operator is invalid for atomic vectors 
+INFO [2021-02-01 15:45:13] Current Page: elefan-ga
+INFO [2021-02-01 15:45:13] Current Page: elefan-ga
+INFO [2021-02-01 15:45:34] Starting Elegan GA computation
+WARN [2021-02-01 15:46:42] Lost connection to R server
+WARN [2021-02-01 15:46:42] Lost connection to R server
+WARN [2021-02-01 15:46:42] Lost connection to R server
+WARN [2021-02-01 15:46:42] Lost connection to R server
+INFO [2021-02-02 16:09:10] Current Page: NA
+INFO [2021-02-02 16:09:10] Session token is: NULL
+INFO [2021-02-02 16:09:10] Session mode is: NULL
+INFO [2021-02-02 16:09:10] Session username is: NULL
+INFO [2021-02-02 16:09:10] Current Page: home
+INFO [2021-02-02 16:09:14] Current Page: elefan-ga
+WARN [2021-02-02 16:13:38] Lost connection to R server
+INFO [2021-02-02 16:13:42] Current Page: NA
+INFO [2021-02-02 16:13:42] Session token is: NULL
+INFO [2021-02-02 16:13:42] Session mode is: NULL
+INFO [2021-02-02 16:13:42] Session username is: NULL
+INFO [2021-02-02 16:13:42] Current Page: elefan-ga
+INFO [2021-02-02 16:13:43] Current Page: NA
+INFO [2021-02-02 16:13:43] Session token is: NULL
+INFO [2021-02-02 16:13:43] Session mode is: NULL
+INFO [2021-02-02 16:13:43] Session username is: NULL
+INFO [2021-02-02 16:13:43] Current Page: home
+INFO [2021-02-02 16:13:46] Current Page: elefan-ga
+WARN [2021-02-02 16:16:43] Lost connection to R server
+WARN [2021-02-02 16:16:43] Lost connection to R server
+INFO [2021-02-02 16:16:48] Current Page: NA
+INFO [2021-02-02 16:16:48] Session token is: NULL
+INFO [2021-02-02 16:16:48] Session mode is: NULL
+INFO [2021-02-02 16:16:48] Session username is: NULL
+INFO [2021-02-02 16:16:49] Current Page: elefan-ga
+INFO [2021-02-02 16:16:49] Current Page: NA
+INFO [2021-02-02 16:16:49] Session token is: NULL
+INFO [2021-02-02 16:16:49] Session mode is: NULL
+INFO [2021-02-02 16:16:49] Session username is: NULL
+INFO [2021-02-02 16:16:50] Current Page: elefan-ga
+INFO [2021-02-02 16:16:50] Current Page: NA
+INFO [2021-02-02 16:16:50] Session token is: NULL
+INFO [2021-02-02 16:16:50] Session mode is: NULL
+INFO [2021-02-02 16:16:50] Session username is: NULL
+INFO [2021-02-02 16:16:50] Current Page: home
+INFO [2021-02-02 16:16:54] Current Page: elefan-ga
+WARN [2021-02-02 16:18:37] Lost connection to R server
+WARN [2021-02-02 16:18:37] Lost connection to R server
+WARN [2021-02-02 16:18:37] Lost connection to R server
+INFO [2021-02-02 16:18:43] Current Page: NA
+INFO [2021-02-02 16:18:43] Session token is: NULL
+INFO [2021-02-02 16:18:43] Session mode is: NULL
+INFO [2021-02-02 16:18:43] Session username is: NULL
+INFO [2021-02-02 16:18:43] Current Page: elefan-ga
+INFO [2021-02-02 16:18:44] Current Page: NA
+INFO [2021-02-02 16:18:44] Session token is: NULL
+INFO [2021-02-02 16:18:44] Session mode is: NULL
+INFO [2021-02-02 16:18:44] Session username is: NULL
+INFO [2021-02-02 16:18:44] Current Page: elefan-ga
+INFO [2021-02-02 16:18:44] Current Page: NA
+INFO [2021-02-02 16:18:44] Session token is: NULL
+INFO [2021-02-02 16:18:44] Session mode is: NULL
+INFO [2021-02-02 16:18:44] Session username is: NULL
+INFO [2021-02-02 16:18:45] Current Page: NA
+INFO [2021-02-02 16:18:45] Session token is: NULL
+INFO [2021-02-02 16:18:46] Session mode is: NULL
+INFO [2021-02-02 16:18:46] Session username is: NULL
+INFO [2021-02-02 16:18:46] Current Page: elefan-ga
+INFO [2021-02-02 16:18:46] Current Page: home
+INFO [2021-02-02 16:18:48] Current Page: elefan-ga
+INFO [2021-02-02 16:19:35] Starting Elegan GA computation
+INFO [2021-02-02 16:19:54] Starting Elegan GA computation
+WARN [2021-02-02 16:22:56] Lost connection to R server
+WARN [2021-02-02 16:22:56] Lost connection to R server
+WARN [2021-02-02 16:22:57] Lost connection to R server
+WARN [2021-02-02 16:35:54] Lost connection to R server
+INFO [2021-02-02 16:35:59] Current Page: NA
+INFO [2021-02-02 16:35:59] Session token is: NULL
+INFO [2021-02-02 16:35:59] Session mode is: NULL
+INFO [2021-02-02 16:35:59] Session username is: NULL
+ERROR [2021-02-02 16:35:59] Error in Elefan GA: $ operator is invalid for atomic vectors 
+INFO [2021-02-02 16:36:00] Current Page: elefan-ga
+INFO [2021-02-02 16:36:00] Current Page: NA
+INFO [2021-02-02 16:36:00] Session token is: NULL
+INFO [2021-02-02 16:36:00] Session mode is: NULL
+INFO [2021-02-02 16:36:00] Session username is: NULL
+INFO [2021-02-02 16:36:00] Current Page: home
+INFO [2021-02-02 16:36:05] Current Page: elefan-ga
+ERROR [2021-02-02 16:37:32] Error in Elefan GA: The specified bin_size is smaller than the bin size 
+in your data. This is not possible! 
+INFO [2021-02-02 16:37:46] Starting Elegan GA computation
+WARN [2021-02-02 16:38:02] Lost connection to R server
+WARN [2021-02-02 16:38:02] Lost connection to R server
+INFO [2021-02-02 16:42:57] Current Page: NA
+INFO [2021-02-02 16:42:57] Session token is: NULL
+INFO [2021-02-02 16:42:57] Session mode is: NULL
+INFO [2021-02-02 16:42:57] Session username is: NULL
+ERROR [2021-02-02 16:42:57] Error in Elefan GA: $ operator is invalid for atomic vectors 
+INFO [2021-02-02 16:42:57] Current Page: elefan-ga
+INFO [2021-02-02 16:42:58] Current Page: NA
+INFO [2021-02-02 16:42:58] Session token is: NULL
+INFO [2021-02-02 16:42:58] Session mode is: NULL
+INFO [2021-02-02 16:42:58] Session username is: NULL
+INFO [2021-02-02 16:42:58] Current Page: home
+INFO [2021-02-02 16:43:02] Current Page: elefan-ga
+WARN [2021-02-02 16:48:39] Lost connection to R server
+WARN [2021-02-02 16:48:39] Lost connection to R server
+INFO [2021-02-02 16:48:48] Current Page: NA
+INFO [2021-02-02 16:48:48] Session token is: NULL
+INFO [2021-02-02 16:48:48] Session mode is: NULL
+INFO [2021-02-02 16:48:48] Session username is: NULL
+INFO [2021-02-02 16:48:49] Current Page: elefan-ga
+INFO [2021-02-02 16:48:49] Current Page: NA
+INFO [2021-02-02 16:48:49] Session token is: NULL
+INFO [2021-02-02 16:48:49] Session mode is: NULL
+INFO [2021-02-02 16:48:49] Session username is: NULL
+ERROR [2021-02-02 16:48:49] Error in Elefan GA: $ operator is invalid for atomic vectors 
+INFO [2021-02-02 16:48:49] Current Page: elefan-ga
+INFO [2021-02-02 16:48:50] Current Page: NA
+INFO [2021-02-02 16:48:50] Session token is: NULL
+INFO [2021-02-02 16:48:50] Session mode is: NULL
+INFO [2021-02-02 16:48:50] Session username is: NULL
+INFO [2021-02-02 16:48:50] Current Page: home
+INFO [2021-02-02 16:48:54] Current Page: elefan-ga
+ERROR [2021-02-02 16:49:23] Error in Elefan GA: The specified bin_size is smaller than the bin size 
+in your data. This is not possible! 
+INFO [2021-02-02 16:49:36] Starting Elegan GA computation
+INFO [2021-02-02 16:49:51] Starting Elegan GA computation
+WARN [2021-02-02 16:50:28] Lost connection to R server
+WARN [2021-02-02 16:50:28] Lost connection to R server
+WARN [2021-02-02 16:50:28] Lost connection to R server
+INFO [2021-02-02 16:51:50] Current Page: NA
+INFO [2021-02-02 16:51:50] Session token is: NULL
+INFO [2021-02-02 16:51:50] Session mode is: NULL
+INFO [2021-02-02 16:51:50] Session username is: NULL
+INFO [2021-02-02 16:51:50] Current Page: elefan-ga
+INFO [2021-02-02 16:51:51] Current Page: NA
+INFO [2021-02-02 16:51:51] Session token is: NULL
+INFO [2021-02-02 16:51:51] Session mode is: NULL
+INFO [2021-02-02 16:51:51] Session username is: NULL
+INFO [2021-02-02 16:51:51] Current Page: home
+INFO [2021-02-02 16:51:54] Current Page: NA
+INFO [2021-02-02 16:51:54] Session token is: NULL
+INFO [2021-02-02 16:51:54] Session mode is: NULL
+INFO [2021-02-02 16:51:54] Session username is: NULL
+ERROR [2021-02-02 16:51:54] Error in Elefan GA: $ operator is invalid for atomic vectors 
+INFO [2021-02-02 16:51:54] Current Page: elefan-ga
+INFO [2021-02-02 16:51:58] Current Page: NA
+INFO [2021-02-02 16:51:58] Session token is: NULL
+INFO [2021-02-02 16:51:58] Session mode is: NULL
+INFO [2021-02-02 16:51:58] Session username is: NULL
+ERROR [2021-02-02 16:51:58] Error in Elefan GA: $ operator is invalid for atomic vectors 
+INFO [2021-02-02 16:51:58] Current Page: elefan-ga
+WARN [2021-02-02 16:52:53] Lost connection to R server
+WARN [2021-02-02 16:52:53] Lost connection to R server
+WARN [2021-02-02 16:52:53] Lost connection to R server
+WARN [2021-02-02 16:52:53] Lost connection to R server
+INFO [2021-02-02 16:52:58] Current Page: NA
+INFO [2021-02-02 16:52:58] Session token is: NULL
+INFO [2021-02-02 16:52:58] Session mode is: NULL
+INFO [2021-02-02 16:52:58] Session username is: NULL
+INFO [2021-02-02 16:52:58] Current Page: home
+INFO [2021-02-02 16:52:59] Current Page: NA
+INFO [2021-02-02 16:52:59] Session token is: NULL
+INFO [2021-02-02 16:52:59] Session mode is: NULL
+INFO [2021-02-02 16:52:59] Session username is: NULL
+ERROR [2021-02-02 16:52:59] Error in Elefan GA: $ operator is invalid for atomic vectors 
+INFO [2021-02-02 16:52:59] Current Page: elefan-ga
+INFO [2021-02-02 16:53:00] Current Page: NA
+INFO [2021-02-02 16:53:00] Session token is: NULL
+INFO [2021-02-02 16:53:00] Session mode is: NULL
+INFO [2021-02-02 16:53:00] Session username is: NULL
+INFO [2021-02-02 16:53:00] Current Page: elefan-ga
+INFO [2021-02-02 16:53:00] Current Page: NA
+INFO [2021-02-02 16:53:00] Session token is: NULL
+INFO [2021-02-02 16:53:00] Session mode is: NULL
+INFO [2021-02-02 16:53:00] Session username is: NULL
+ERROR [2021-02-02 16:53:00] Error in Elefan GA: $ operator is invalid for atomic vectors 
+INFO [2021-02-02 16:53:01] Current Page: elefan-ga
+INFO [2021-02-02 16:53:01] Current Page: NA
+INFO [2021-02-02 16:53:01] Session token is: NULL
+INFO [2021-02-02 16:53:01] Session mode is: NULL
+INFO [2021-02-02 16:53:01] Session username is: NULL
+WARN [2021-02-02 16:53:01] Lost connection to R server
+INFO [2021-02-02 16:53:01] Current Page: home
+WARN [2021-02-02 16:53:01] Lost connection to R server
+WARN [2021-02-02 16:53:02] Lost connection to R server
+INFO [2021-02-02 16:53:05] Current Page: elefan-ga
+ERROR [2021-02-02 16:53:36] Error in Elefan GA: The specified bin_size is smaller than the bin size 
+in your data. This is not possible! 
+INFO [2021-02-02 16:53:47] Starting Elegan GA computation
+INFO [2021-02-02 16:54:02] Starting Elegan GA computation
+WARN [2021-02-02 16:54:11] Lost connection to R server
+WARN [2021-02-02 16:54:11] Lost connection to R server
+INFO [2021-02-02 17:00:35] Current Page: NA
+INFO [2021-02-02 17:00:35] Session token is: NULL
+INFO [2021-02-02 17:00:35] Session mode is: NULL
+INFO [2021-02-02 17:00:35] Session username is: NULL
+INFO [2021-02-02 17:00:35] Current Page: NA
+INFO [2021-02-02 17:00:35] Session token is: NULL
+INFO [2021-02-02 17:00:35] Session mode is: NULL
+INFO [2021-02-02 17:00:35] Session username is: NULL
+ERROR [2021-02-02 17:00:35] Error in Elefan GA: $ operator is invalid for atomic vectors 
+INFO [2021-02-02 17:00:36] Current Page: elefan-ga
+INFO [2021-02-02 17:00:36] Current Page: home
+INFO [2021-02-02 17:00:36] Current Page: NA
+INFO [2021-02-02 17:00:36] Session token is: NULL
+INFO [2021-02-02 17:00:36] Session mode is: NULL
+INFO [2021-02-02 17:00:36] Session username is: NULL
+ERROR [2021-02-02 17:00:36] Error in Elefan GA: $ operator is invalid for atomic vectors 
+INFO [2021-02-02 17:00:36] Current Page: elefan-ga
+INFO [2021-02-02 17:00:38] Current Page: elefan-ga
+INFO [2021-02-02 17:01:00] Starting Elegan GA computation
+WARN [2021-02-02 17:03:06] Lost connection to R server
+WARN [2021-02-02 17:03:06] Lost connection to R server
+WARN [2021-02-02 17:03:06] Lost connection to R server
+INFO [2021-02-03 10:57:46] Current Page: NA
+INFO [2021-02-03 10:57:46] Session token is: NULL
+INFO [2021-02-03 10:57:46] Session mode is: NULL
+INFO [2021-02-03 10:57:46] Session username is: NULL
+INFO [2021-02-03 10:57:46] Current Page: home
+INFO [2021-02-03 11:37:00] Current Page: cmsy-sample
+INFO [2021-02-03 11:39:52] Current Page: basic-shaefer
+INFO [2021-02-03 11:39:54] Current Page: basic-von-bertalannfy
+INFO [2021-02-03 11:41:48] Current Page: elefan-ga
+WARN [2021-02-03 11:43:49] Lost connection to R server
+INFO [2021-02-03 11:43:54] Current Page: NA
+INFO [2021-02-03 11:43:54] Session token is: NULL
+INFO [2021-02-03 11:43:54] Session mode is: NULL
+INFO [2021-02-03 11:43:54] Session username is: NULL
+INFO [2021-02-03 11:43:54] Current Page: basic-von-bertalannfy
+INFO [2021-02-03 11:43:55] Current Page: NA
+INFO [2021-02-03 11:43:55] Session token is: NULL
+INFO [2021-02-03 11:43:55] Session mode is: NULL
+INFO [2021-02-03 11:43:55] Session username is: NULL
+INFO [2021-02-03 11:43:55] Current Page: home
+INFO [2021-02-03 11:44:00] Current Page: basic-von-bertalannfy
+WARN [2021-02-03 12:22:49] Lost connection to R server
+WARN [2021-02-03 12:22:50] Lost connection to R server
