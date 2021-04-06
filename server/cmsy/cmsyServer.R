@@ -40,6 +40,8 @@ cmsyModule <- function(input, output, session) {
   
   observeEvent(input$fileCmsy, {
     filePath$datapath <- input$fileCmsy$datapath
+    print(filePath$datapath)
+    #filePath$datapath<-"C:/Users/alexa/AppData/Local/Temp\RtmpUXcua9/e450dbaf69a18c50a78db75e/0.csv"
     contents <- cmsyFileData()
     if (!is.data.frame(contents)) {
       shinyjs::disable("go_cmsy")
@@ -396,7 +398,8 @@ cmsyModule <- function(input, output, session) {
         list(src = cmsy$method$managementChart,
              contentType = 'image/jpg',
              width = "100%",
-             height = "100%")
+             height = "100%",
+             deleteFile=FALSE)
       } else {
         list(src = "NULL")
       }
@@ -413,7 +416,8 @@ cmsyModule <- function(input, output, session) {
         list(src = cmsy$method$analisysChart,
              contentType = 'image/jpg',
              width = "100%",
-             height = "100%")
+             height = "100%",
+             deleteFile=FALSE)
       } else {
         list(src = "NULL")
       }
