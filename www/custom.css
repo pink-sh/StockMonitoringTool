@@ -106,6 +106,7 @@ footer{
   color: #DBDBDB !important;
 }
 
+
 .infoBubbleButton {
   background-color:#A9A9A9;
   color: #DBDBDB !important;
@@ -115,6 +116,7 @@ footer{
   vertical-align: middle;
   font-size: 10px !important;
 }
+
 
 .topLevelInformationButton:hover {
   background-color:#222D32;

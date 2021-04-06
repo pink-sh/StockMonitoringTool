@@ -1,37 +1,13 @@
 tabCmsyIntro <- tabItem("cmsyIntro",htmlOutput("cmsyIntroOut"))
-
 tabCmsySampleDataset <- tabItem("cmsySampleDataset",htmlOutput("cmsySampleDataset"))
 
 tabCmsy <- function(id) {
-  
   ns <- NS(id)
-  
   tabItem("cmsyWidget",
           htmlOutput(ns("cmsyMethodTitle")),
-          # actionButton("cmsyDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
+          actionButton("cmsyDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
           fluidRow(
-            div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                "More information about "
-            ),
-            div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                actionButton(ns("cmsyWorkflowConsiderations"), "Workflow",
-                             class="topLevelInformationButton")
-            ),
-            div(style = "display: inline-block; vertical-align:center; margin-left: 5px;",
-                actionButton(ns("cmsyDataConsiderations"), "Data",
-                             class="topLevelInformationButton")
-            ),
-            div(style = "display: inline-block; vertical-align:center; margin-left: 5px;",
-                actionButton(ns("cmsyMethodConsiderations"), "Methods",
-                             class="topLevelInformationButton")
-            ),
-            div(style = "display: inline-block; vertical-align:center; margin-left: 5px;",
-                actionButton(ns("cmsyResultConsiderations"), "Results",
-                             class="topLevelInformationButton")
-            )
-          ),
-          
-          fluidRow(
+
             ## Information tabs
             ## -------------------------------
             bsModal("modalWorkflowCmsy", "Workflow Considerations - CMSY",
@@ -195,13 +171,12 @@ prior to the last year with high biomass.</p>")),
                                        tags$i(class = "fas fa-info",
                                               style="font-size: 8px"),
                                        class="infoBubbleButton")),
+
                 width = NULL,
-                collapsible = FALSE,
-                solidHeader = TRUE,
+                collapsible = T, 
                 class = "collapsed-box",
-                
                 box(
-                  fileInput(ns("fileCmsy"), "Choose Input CSV File",
+                  fileInput(ns("fileCmsy"), "Choose Stock CSV File",
                             accept = c(
                               "text/csv",
                               "text/comma-separated-values,text/plain",
@@ -212,6 +187,7 @@ prior to the last year with high biomass.</p>")),
                   tags$div(id="stockSelectorContainer")
                 )
             ),
+
             #################
             
             
@@ -225,10 +201,11 @@ prior to the last year with high biomass.</p>")),
                                        tags$i(class = "fas fa-info",
                                               style="font-size: 8px"),
                                        class="infoBubbleButton")),
+
                 width = NULL,
-                collapsible = FALSE, ## careful: if made collapsible the renderUi does not update! see: https://github.com/rstudio/shinydashboard/issues/234
-                solidHeader = TRUE,
+                collapsible = T, 
                 class = "collapsed-box",
+
                 
                 
                 box(title = "Data selection",
@@ -498,23 +475,34 @@ prior to the last year with high biomass.</p>")),
                      imageOutput(ns("renderCmsyManagementChart")),
                      htmlOutput(ns("titleCmsyAnalisysChart")),
                      imageOutput(ns("renderCmsyAnalysisChart"))
+
                  )
                )
           )
   )
-  
+
 }
 
 resetCmsyInputValues <- function() {
   shinyjs::reset("fileCmsy")
-  shinyjs::reset("rangeYear")
+  shinyjs::reset("minOfYear")
+  shinyjs::reset("maxOfYear")
   shinyjs::reset("resiliance")
+  shinyjs::reset("r.low")
+  shinyjs::reset("r.hi")
+#shinyjs::reset("stb.low")
+#shinyjs::reset("stb.hi")
   shinyjs::reset("stb")
   shinyjs::reset("int.yr")
-  shinyjs::reset("intb")
+  shinyjs::reset("intb.low")
+  shinyjs::reset("intb.hi")
+ #shinyjs::reset("endb.low")
+ #shinyjs::reset("endb.hi")
   shinyjs::reset("endb")
-  shinyjs::reset("CMSY_years_q")
-  shinyjs::reset("CMSY_years_selected")
+  shinyjs::reset("q.start")
+  shinyjs::reset("q.end")
+  shinyjs::reset("startYear")
+  shinyjs::reset("endYear")
   shinyjs::reset("blim")
   shinyjs::reset("bpa")
   shinyjs::reset("bmsy")
@@ -527,6 +515,7 @@ resetCmsyInputValues <- function() {
   shinyjs::reset("msy")
   shinyjs::reset("msyBTrigger")
   shinyjs::reset("m")
+  shinyjs::reset("force.cmsy")
   #careful removeUI conflict with event
   removeUI(selector="#stockSelectorContainerInner")
   shinyjs::disable("go_cmsy")
