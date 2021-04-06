@@ -40,8 +40,6 @@ cmsyModule <- function(input, output, session) {
   
   observeEvent(input$fileCmsy, {
     filePath$datapath <- input$fileCmsy$datapath
-    print(filePath$datapath)
-    #filePath$datapath<-"C:/Users/alexa/AppData/Local/Temp\RtmpUXcua9/e450dbaf69a18c50a78db75e/0.csv"
     contents <- cmsyFileData()
     if (!is.data.frame(contents)) {
       shinyjs::disable("go_cmsy")
@@ -254,29 +252,33 @@ cmsyModule <- function(input, output, session) {
                        minOfYear=unique(min(cmsyFileData()$yr)),
                        maxOfYear=unique(max(cmsyFileData()$yr)),
                        startYear=min(input$CMSY_years_selected),
-                       endYear=min(input$CMSY_years_selected),
-                       flim=if(!is.null(input$flim)){input$flim}else{"NA"},
-                       fpa=if(!is.null(input$fpa)){input$fpa}else{"NA"},
-                       blim=if(!is.null(input$blim)){input$blim}else{"NA"},
-                       bpa=if(!is.null(input$bpa)){input$bpa}else{"NA"},
-                       bmsy=if(!is.null(input$bmsy)){input$bmsy}else{"NA"},
-                       fmsy=if(!is.null(input$fmsy)){input$fmsy}else{"NA"},
-                       msy=if(!is.null(input$msy)){input$msy}else{"NA"},
-                       msyBTrigger=if(!is.null(input$msyBTrigger)){input$msyBTrigger}else{"NA"},
-                       b40=if(!is.null(input$b40)){input$b40}else{"NA"},
-                       m=if(!is.null(input$m)){input$m}else{"NA"},
-                       fofl=if(!is.null(input$fofl)){input$fofl}else{"NA"},
-                       last_f=if(!is.null(input$last_f)){input$last_f}else{"NA"},
+                       endYear=max(input$CMSY_years_selected)-1,
+                       flim=if(input$cmsy_checkbox_comparison){input$flim}else{"NA"},
+                       fpa=if(input$cmsy_checkbox_comparison){input$fpa}else{"NA"},
+                       blim=if(input$cmsy_checkbox_comparison){input$blim}else{"NA"},
+                       bpa=if(input$cmsy_checkbox_comparison){input$bpa}else{"NA"},
+                       bmsy=if(input$cmsy_checkbox_comparison){input$bmsy}else{"NA"},
+                       fmsy=if(input$cmsy_checkbox_comparison){input$fmsy}else{"NA"},
+                       msy=if(input$cmsy_checkbox_comparison){input$msy}else{"NA"},
+                       msyBTrigger=if(input$cmsy_checkbox_comparison){input$msyBTrigger}else{"NA"},
+                       b40=if(input$cmsy_checkbox_comparison){input$b40}else{"NA"},
+                       m=if(input$cmsy_checkbox_comparison){input$m}else{"NA"},
+                       fofl=if(input$cmsy_checkbox_comparison){input$fofl}else{"NA"},
+                       last_f=if(input$cmsy_checkbox_comparison){input$last_f}else{"NA"},
                        resiliance="Medium",
+                       #r.low="NA",
+                       #r.hi="NA",
                        r.low=min(input$resiliance),
                        r.hi=max(input$resiliance),
                        stb.low=min(input$stb),
                        stb.hi=max(input$stb),
-                       int.yr=if(!is.null(input$int.yr)){input$int.yr}else{"NA"},
-                       intb.low=if(!is.null(input$intb)){min(input$intb)}else{"NA"},
-                       intb.hi=if(!is.null(input$intb)){max(input$intb)}else{"NA"},
+                       int.yr=if(input$cmsy_checkbox_intb){input$int.yr}else{"NA"},
+                       intb.low=if(input$cmsy_checkbox_intb){min(input$intb)}else{"NA"},
+                       intb.hi=if(input$cmsy_checkbox_intb){max(input$intb)}else{"NA"},
                        endb.low=min(input$endb),
                        endb.hi=max(input$endb),
+                       #q.start="NA",
+                       #q.end="NA",
                        q.start=min(input$CMSY_years_q),
                        q.end=max(input$CMSY_years_q),
                        btype=input$btype,
@@ -398,8 +400,7 @@ cmsyModule <- function(input, output, session) {
         list(src = cmsy$method$managementChart,
              contentType = 'image/jpg',
              width = "100%",
-             height = "100%",
-             deleteFile=FALSE)
+             height = "100%")
       } else {
         list(src = "NULL")
       }
@@ -416,8 +417,7 @@ cmsyModule <- function(input, output, session) {
         list(src = cmsy$method$analisysChart,
              contentType = 'image/jpg',
              width = "100%",
-             height = "100%",
-             deleteFile=FALSE)
+             height = "100%")
       } else {
         list(src = "NULL")
       }
