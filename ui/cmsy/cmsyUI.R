@@ -1,13 +1,38 @@
+
 tabCmsyIntro <- tabItem("cmsyIntro",htmlOutput("cmsyIntroOut"))
+
 tabCmsySampleDataset <- tabItem("cmsySampleDataset",htmlOutput("cmsySampleDataset"))
 
 tabCmsy <- function(id) {
+  
   ns <- NS(id)
+  
   tabItem("cmsyWidget",
           htmlOutput(ns("cmsyMethodTitle")),
-          actionButton("cmsyDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
+          # actionButton("cmsyDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
           fluidRow(
-
+            div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                "More information about "
+            ),
+            div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                actionButton(ns("cmsyWorkflowConsiderations"), "Workflow",
+                             class="topLevelInformationButton")
+            ),
+            div(style = "display: inline-block; vertical-align:center; margin-left: 5px;",
+                actionButton(ns("cmsyDataConsiderations"), "Data",
+                             class="topLevelInformationButton")
+            ),
+            div(style = "display: inline-block; vertical-align:center; margin-left: 5px;",
+                actionButton(ns("cmsyMethodConsiderations"), "Methods",
+                             class="topLevelInformationButton")
+            ),
+            div(style = "display: inline-block; vertical-align:center; margin-left: 5px;",
+                actionButton(ns("cmsyResultConsiderations"), "Results",
+                             class="topLevelInformationButton")
+            )
+          ),
+          
+          fluidRow(
             ## Information tabs
             ## -------------------------------
             bsModal("modalWorkflowCmsy", "Workflow Considerations - CMSY",
@@ -76,7 +101,6 @@ in which case ranges of 0.01-0.3 or 0.01 – 0.2 are appropriate. If the stock w
 for the relative start biomass. Setting a range of 0.01 to 1 is also possible, and would indicate no information at all about
 stock status, which is, however, unlikely. If a stock is fished it must be smaller than 1. If it is delivering decent catches, it
 must be larger than 0.01. <br><br>
-
 <table><tr>    <th><strong> Prior relative biomass (B/k) ranges for CMSY+&nbsp;</strong></th>    <th><strong> </strong></th> </tr><tr>    <td>Nearly unexploited</td>    <td>0.75 – 1.0</td> </tr><tr>    <td>Low depletion </td>    <td>0.4 – 0.8 </td> </tr><tr>    <td>Medium depletion</td>    <td>0.2 – 0.6</td> </tr><tr>  <td>Strong depletion</td>
     <td>0.01 – 0.4</td> </tr><tr>    <td>Very strong depletion </td>    <td>0.01 – 0.2 </td> </tr></table> <br><br>
 **The user should take care when setting the prior estimates for depletion at the beginning and end of the time series. 
@@ -123,7 +147,6 @@ prior to the last year with high biomass.</p>")),
                           relative range, e.g. as 0.01 – 0.3. Similarly, a longer period of low catches from the start to some intermediate may indicate a period of 
                           large biomass if followed by a substantial increase in catches thereafter. In this case, it is advisable to set the intermediate B/k prior to 
                           the last year with high biomass and indicate a respective range, e.g. as 0.4 – 0.8. <br><br>
-
 <table><tr>    <th><strong> Prior relative biomass (B/k) ranges for CMSY+&nbsp;</strong></th>    <th><strong> </strong></th> </tr><tr>    <td>Nearly unexploited</td>    <td>0.75 – 1.0</td> </tr><tr>    <td>Low depletion </td>    <td>0.4 – 0.8 </td> </tr><tr>    <td>Medium depletion</td>    <td>0.2 – 0.6</td> </tr><tr>  <td>Strong depletion</td>
     <td>0.01 – 0.4</td> </tr><tr>    <td>Very strong depletion </td>    <td>0.01 – 0.2 </td> </tr></table> <br><br></p>")),
             
@@ -171,12 +194,13 @@ prior to the last year with high biomass.</p>")),
                                        tags$i(class = "fas fa-info",
                                               style="font-size: 8px"),
                                        class="infoBubbleButton")),
-
                 width = NULL,
-                collapsible = T, 
+                collapsible = FALSE,
+                solidHeader = TRUE,
                 class = "collapsed-box",
+                
                 box(
-                  fileInput(ns("fileCmsy"), "Choose Stock CSV File",
+                  fileInput(ns("fileCmsy"), "Choose Input CSV File",
                             accept = c(
                               "text/csv",
                               "text/comma-separated-values,text/plain",
@@ -187,7 +211,6 @@ prior to the last year with high biomass.</p>")),
                   tags$div(id="stockSelectorContainer")
                 )
             ),
-
             #################
             
             
@@ -201,11 +224,10 @@ prior to the last year with high biomass.</p>")),
                                        tags$i(class = "fas fa-info",
                                               style="font-size: 8px"),
                                        class="infoBubbleButton")),
-
                 width = NULL,
-                collapsible = T, 
+                collapsible = FALSE, ## careful: if made collapsible the renderUi does not update! see: https://github.com/rstudio/shinydashboard/issues/234
+                solidHeader = TRUE,
                 class = "collapsed-box",
-
                 
                 
                 box(title = "Data selection",
@@ -475,34 +497,23 @@ prior to the last year with high biomass.</p>")),
                      imageOutput(ns("renderCmsyManagementChart")),
                      htmlOutput(ns("titleCmsyAnalisysChart")),
                      imageOutput(ns("renderCmsyAnalysisChart"))
-
                  )
                )
           )
   )
-
+  
 }
 
 resetCmsyInputValues <- function() {
   shinyjs::reset("fileCmsy")
-  shinyjs::reset("minOfYear")
-  shinyjs::reset("maxOfYear")
+  shinyjs::reset("rangeYear")
   shinyjs::reset("resiliance")
-  shinyjs::reset("r.low")
-  shinyjs::reset("r.hi")
-#shinyjs::reset("stb.low")
-#shinyjs::reset("stb.hi")
   shinyjs::reset("stb")
   shinyjs::reset("int.yr")
-  shinyjs::reset("intb.low")
-  shinyjs::reset("intb.hi")
- #shinyjs::reset("endb.low")
- #shinyjs::reset("endb.hi")
+  shinyjs::reset("intb")
   shinyjs::reset("endb")
-  shinyjs::reset("q.start")
-  shinyjs::reset("q.end")
-  shinyjs::reset("startYear")
-  shinyjs::reset("endYear")
+  shinyjs::reset("CMSY_years_q")
+  shinyjs::reset("CMSY_years_selected")
   shinyjs::reset("blim")
   shinyjs::reset("bpa")
   shinyjs::reset("bmsy")
@@ -515,7 +526,6 @@ resetCmsyInputValues <- function() {
   shinyjs::reset("msy")
   shinyjs::reset("msyBTrigger")
   shinyjs::reset("m")
-  shinyjs::reset("force.cmsy")
   #careful removeUI conflict with event
   removeUI(selector="#stockSelectorContainerInner")
   shinyjs::disable("go_cmsy")
