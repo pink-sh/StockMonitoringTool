@@ -28,36 +28,57 @@ knitr::include_graphics( if(Sys.info()[["sysname"]] == "Windows") {paste(gsub("\
 
 ******
 ## Input parameters  
-Input File: `r input$fileCmsy$name`  
-  
-Stock: `r input$stock`  
-Min of year: `r input$minOfYear`  
-Max of year: `r input$maxOfYear`  
-Start year: `r input$startYear`  
-End year: `r input$endYear`  
-FLim: `r input$flim`  
-FPA: `r input$fpa`  
-BLIM: `r input$blim`  
-BPA: `r input$bpa`  
-BMSY: `r input$bmsy`  
-FMSY: `r input$fmsy`  
-MSY: `r input$msy`  
-MSY B trigger: `r input$msyBTrigger`  
-B40: `r input$b40`  
-M: `r input$m`  
-FOFL: `r input$fofl`  
-Last F: `r input$last_f`  
-Resiliance: `r input$resiliance`  
-r low: `r input$r.low`  
-r hi: `r input$r.hi`  
-stb low: `r min(input$stb)`  
-stb hi: `r max(input$stb)`  
-int year: `r input$int.yr`  
-intb low: `r input$intb.low`  
-intb hi: `r input$intb.hi`  
-endb low: `r min(input$endb)`  
-endb hi: `r max(input$endb)`  
-q start: `r input$q.start`  
-q end:: `r input$q.end`  
-btype: `r input$btype`  
+### Data selection
+
+**Input File** : `r input$fileCmsy$name`
+
+**Stock selected** : `r input$stock`
+
+**Select year range of analysis** : `r min(input$CMSY_years_selected)` to `r max(input$CMSY_years_selected)`
+
+**Years over which to calculate catchability** : `r min(input$CMSY_years_q)` to `r max(input$CMSY_years_q)`
+
+### Resiliance
+
+**Resiliance rate** : `r min(input$resiliance)` to `r max(input$resiliance)`
+
+### Deplation
+
+**Starting depletion range (B/k)** : `r min(input$stb)` to `r max(input$stb)`
+
+**Ending deplation range (B/k)** : `r min(input$endb)` to `r max(input$endb)`
+
+**Does the catch time series have an intermediate year where biomass is particulary high or low?** : `r if(!is.null(input$cmsy_checkbox_intb)){if(input$cmsy_checkbox_intb){"Yes"}else{"No"}}else{"No"}`
+
+`r if(!is.null(input$cmsy_checkbox_intb)){if(input$cmsy_checkbox_intb){paste0("**Intermediate year** : ", input$int.yr)}else{}}else{}`
+
+`r if(!is.null(input$cmsy_checkbox_intb)){if(input$cmsy_checkbox_intb){paste0("**Relative biomass at an intermediate year** : ",min(input$intb)," to ",min(input$intb))}else{}}else{}`
+
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("### Advanced use")}else{}`
+
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Biomass biological limit (Blim)** : ",input$blim)}else{}`
+
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Biomass precautionary value (Bpa)** : ",input$bpa)}else{}`
+
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Biomass maximum sustainable yield (BMSY)** : ",input$bmsy)}else{}`
+
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Biomass at 40% over the unfished level ( B40% )** : ",input$b40)}else{}`
+
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Maximum Sustainable Yield ( MSY )** : ",input$msy)}else{}`
+
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Spawning Stock Biomass at MSY ( SSBMSY )** : ",input$msyBTrigger)}else{}`
+
+
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Fishing mortality at Maximum Sustainable Yield ( FMSY )** : ",input$fmsy)}else{}`
+
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Fishing mortality biological limit ( Flim )** : ",input$flim)}else{}`
+
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Fishing mortality precautionary value ( Fpa )** : ",input$fpa)}else{}`
+
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Fishing mortality at overfishing level ( Fofl )** : ",input$fofl)}else{}`
+
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Last known exploitation rate** : ",input$last_f)}else{}`
+
+`r if(!is.null(input$cmsy_checkbox_comparison)){paste0("**Natural mortality ( M )** : ",input$m)}else{}`
+
 

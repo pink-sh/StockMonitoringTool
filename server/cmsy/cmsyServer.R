@@ -33,7 +33,7 @@ cmsyModule <- function(input, output, session) {
       return (NULL)
     }else{print("First calculate")
       calculateAndUpdateYear(contents,sort(unique(contents$Stock))[1])
-    }
+      }
     return (contents)
   })
   
@@ -47,19 +47,19 @@ cmsyModule <- function(input, output, session) {
       showModal(modalDialog(
         title = "Error",
         if(is.null(contents)){"Input file seems invalid"
-        }else if(contents=="delimiter error"){"Please ensure that your .csv file delimiter is a comma ','" 
-        }else if(contents=="not point"){"Please ensure your separate decimals using points ‘.’ or you don't have non numeric value"
-        }else if(contents=="colname error"){
-          text<-"Please ensure your columns names exactly match the guidelines, i.e."
-          text<-paste0(text, "<ul>")
-          text <- paste0(text, "<li>Stock</li>")
-          text <- paste0(text, "<li>yr</li>")
-          text <- paste0(text, "<li>ct</li>")
-          text <- paste0(text, "<li>bt</li>")
-          text <- paste0(text, "</ul>")
-          HTML(text)
-        }else if(contents=="under 15"){"Catch time series must be at least 15 years"
-        } else{"Input file seems invalid"},
+          }else if(contents=="delimiter error"){"Please ensure that your .csv file delimiter is a comma ','" 
+          }else if(contents=="not point"){"Please ensure your separate decimals using points ‘.’ or you don't have non numeric value"
+          }else if(contents=="colname error"){
+            text<-"Please ensure your columns names exactly match the guidelines, i.e."
+            text<-paste0(text, "<ul>")
+            text <- paste0(text, "<li>Stock</li>")
+            text <- paste0(text, "<li>yr</li>")
+            text <- paste0(text, "<li>ct</li>")
+            text <- paste0(text, "<li>bt</li>")
+            text <- paste0(text, "</ul>")
+            HTML(text)
+          }else if(contents=="under 15"){"Catch time series must be at least 15 years"
+          } else{"Input file seems invalid"},
         easyClose = TRUE,
         footer = NULL
       ))
@@ -77,7 +77,7 @@ cmsyModule <- function(input, output, session) {
     }
   })
   
-  
+
   calculateAndUpdateYear<-function(contents,stock) {
     
     if (is.null(contents)) {
@@ -126,7 +126,7 @@ cmsyModule <- function(input, output, session) {
     calculateAndUpdateYear(fileContents$data,input$stock)
   })
   
-  
+
   output$CMSY_years_selected_out <- renderUI({
     contents <- cmsyFileData()
     if(is.null(contents)){
@@ -143,7 +143,7 @@ cmsyModule <- function(input, output, session) {
     }
     sliderInput(ns("CMSY_years_selected"),"", value=c(minY,maxY), min = minY, max = maxY, step=1,sep='')
     
-  } )
+    } )
   
   output$CMSY_years_q_out <- renderUI({
     contents <- cmsyFileData()
@@ -183,7 +183,7 @@ cmsyModule <- function(input, output, session) {
   
   
   observeEvent(input$go_cmsy, {
-    
+
     query <- parseQueryString(session$clientData$url_search)
     
     if (is.null(fileContents$data)) {
@@ -240,7 +240,7 @@ cmsyModule <- function(input, output, session) {
         cmsy$fast <- list()
         js$disableAllButtons()
         flog.info("Starting CMSY computation")
-        
+
         ret <- runCmsy(region=region_,
                        subregion=toString(sub_region_),
                        stock=input$stock,
@@ -488,7 +488,7 @@ cmsyModule <- function(input, output, session) {
   output$cmsyResultConsiderationsText <- renderText(getResultConsiderationTextForCmsy() )
   output$cmsyResultConsiderationsText2 <- renderText(getResultConsiderationTextForCmsy())
   
-  
+ 
   
   ## Data exploration catch plots
   ## --------------------------
@@ -497,17 +497,17 @@ cmsyModule <- function(input, output, session) {
   output$plot_cmsy_explo1 <- renderPlot({
     contents <- cmsyFileData()
     if(!is.null(contents)){
-      data_exp<-subset(contents,Stock==input$stock & yr %in% seq(input$CMSY_years_selected[1],input$CMSY_years_selected[2],by=1))
-      par(mar = c(1,4,0,1), oma = c(3,1,1,0))
-      plot(data_exp$yr,data_exp$ct,type='l',xlab='Years',ylab='Catch in tonnes') ## PLOT ONLY THE STOCK SELECTED, RESOLVE ERROR 
+    data_exp<-subset(contents,Stock==input$stock & yr %in% seq(input$CMSY_years_selected[1],input$CMSY_years_selected[2],by=1))
+    par(mar = c(1,4,0,1), oma = c(3,1,1,0))
+    plot(data_exp$yr,data_exp$ct,type='l',xlab='Years',ylab='Catch in tonnes') ## PLOT ONLY THE STOCK SELECTED, RESOLVE ERROR 
     }else{NULL}
   })
   
   output$title_cmsy_explo1 <- renderText({
     contents <- cmsyFileData()
     if(!is.null(contents)){
-      txt <- "<p class=\"pheader_elefan\">Figure 1:  The catch time series of the selected stock.</p>"
-      txt
+    txt <- "<p class=\"pheader_elefan\">Figure 1:  The catch time series of the selected stock.</p>"
+    txt
     }else{NULL}
   })
   

@@ -3261,3 +3261,11 @@ INFO [2021-02-03 11:43:55] Current Page: home
 INFO [2021-02-03 11:44:00] Current Page: basic-von-bertalannfy
 WARN [2021-02-03 12:22:49] Lost connection to R server
 WARN [2021-02-03 12:22:50] Lost connection to R server
+INFO [2021-04-06 17:47:40] Current Page: NA
+INFO [2021-04-06 17:47:40] Session token is: NULL
+INFO [2021-04-06 17:47:40] Session mode is: NULL
+INFO [2021-04-06 17:47:40] Session username is: NULL
+INFO [2021-04-06 17:47:40] Current Page: home
+INFO [2021-04-06 17:47:43] Current Page: cmsy
+INFO [2021-04-06 17:47:51] Current Page: elefan-ga
+WARN [2021-04-06 17:48:32] Lost connection to R server

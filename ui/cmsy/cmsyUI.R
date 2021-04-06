@@ -1,4 +1,3 @@
-
 tabCmsyIntro <- tabItem("cmsyIntro",htmlOutput("cmsyIntroOut"))
 
 tabCmsySampleDataset <- tabItem("cmsySampleDataset",htmlOutput("cmsySampleDataset"))
@@ -101,6 +100,7 @@ in which case ranges of 0.01-0.3 or 0.01 – 0.2 are appropriate. If the stock w
 for the relative start biomass. Setting a range of 0.01 to 1 is also possible, and would indicate no information at all about
 stock status, which is, however, unlikely. If a stock is fished it must be smaller than 1. If it is delivering decent catches, it
 must be larger than 0.01. <br><br>
+
 <table><tr>    <th><strong> Prior relative biomass (B/k) ranges for CMSY+&nbsp;</strong></th>    <th><strong> </strong></th> </tr><tr>    <td>Nearly unexploited</td>    <td>0.75 – 1.0</td> </tr><tr>    <td>Low depletion </td>    <td>0.4 – 0.8 </td> </tr><tr>    <td>Medium depletion</td>    <td>0.2 – 0.6</td> </tr><tr>  <td>Strong depletion</td>
     <td>0.01 – 0.4</td> </tr><tr>    <td>Very strong depletion </td>    <td>0.01 – 0.2 </td> </tr></table> <br><br>
 **The user should take care when setting the prior estimates for depletion at the beginning and end of the time series. 
@@ -147,6 +147,7 @@ prior to the last year with high biomass.</p>")),
                           relative range, e.g. as 0.01 – 0.3. Similarly, a longer period of low catches from the start to some intermediate may indicate a period of 
                           large biomass if followed by a substantial increase in catches thereafter. In this case, it is advisable to set the intermediate B/k prior to 
                           the last year with high biomass and indicate a respective range, e.g. as 0.4 – 0.8. <br><br>
+
 <table><tr>    <th><strong> Prior relative biomass (B/k) ranges for CMSY+&nbsp;</strong></th>    <th><strong> </strong></th> </tr><tr>    <td>Nearly unexploited</td>    <td>0.75 – 1.0</td> </tr><tr>    <td>Low depletion </td>    <td>0.4 – 0.8 </td> </tr><tr>    <td>Medium depletion</td>    <td>0.2 – 0.6</td> </tr><tr>  <td>Strong depletion</td>
     <td>0.01 – 0.4</td> </tr><tr>    <td>Very strong depletion </td>    <td>0.01 – 0.2 </td> </tr></table> <br><br></p>")),
             
