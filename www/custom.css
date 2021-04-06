@@ -112,7 +112,7 @@ footer{
   border-radius: 50%;
   padding: 0 5px;
   text-align: center;
-  vertical-align: super;
+  vertical-align: middle;
   font-size: 10px !important;
 }
 
