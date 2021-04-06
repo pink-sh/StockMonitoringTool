@@ -205,7 +205,7 @@ prior to the last year with high biomass.</p>")),
                             accept = c(
                               "text/csv",
                               "text/comma-separated-values,text/plain",
-                              ".csv")
+                              ".csv", id="fileCmsy")
                   )
                 ),
                 box(
@@ -435,10 +435,42 @@ prior to the last year with high biomass.</p>")),
                 )
             ),
             
-            
-            tags$div(disabled(actionButton(ns("go_cmsy"), "Run CMSY Method", class="topLevelInformationButton")),
-                     actionButton(ns("reset_cmsy"), "Reset", class="topLevelInformationButton"), style="margin-left: 15px;")
-            ,
+          ## Action buttons
+          ## -------------------------------
+          box(title = p("Run Assessment & Download Report",
+                        actionButton(ns("infoAssessment"),
+                                     tags$i(class = "fas fa-info",
+                                            style="font-size: 8px"),
+                                     class="infoBubbleButton")),
+              width = NULL,
+              collapsible = FALSE,
+              solidHeader = TRUE,
+              class = "collapsed-box",
+              collapsed = FALSe,
+              
+          fluidRow(
+            div(style = "display: inline-block; vertical-align:center; margin-left: 50px;",
+                disabled(actionButton(ns("go_cmsy"),
+                                      "Run CMSY Method", 
+                                      class="topLevelInformationButton"))
+            ),
+            div(style = "display: inline-block; vertical-align:center; margin-left: 20px;",
+                actionButton(ns("reset_cmsy"), 
+                                      "Reset", 
+                                      class="topLevelInformationButton"), 
+            ),
+            div(style = "display: inline-block; vertical-align:center; margin-left: 20px;",
+                uiOutput(ns("downloadCmsyReportButton"))
+            ),
+            div(style = "display: inline-block; vertical-align:center; margin-left: 20px;",
+                uiOutput(ns("CmsyVREUpload"))
+            ),
+          ),
+          br(),br()
+  ),
+  
+  br(),
+           
             htmlOutput("cmsyWarning"),
             hr(),
             box( width= 100, id = "box_cmsy_results",
@@ -451,15 +483,7 @@ prior to the last year with high biomass.</p>")),
                             ".recalculating {opacity: 1.0;}"
                  ),
                  
-                 
-                 fluidRow(
-                   box(
-                     uiOutput(ns("downloadCmsyReportButton")),
-                     uiOutput(ns("CmsyVREUpload"))
-                   )
-                 ),
-                 
-                 
+  
                  fluidRow(
                    box(
                      "The upper left panel shows catches relative to the estimate of MSY, with indication of 95% confidence limits in grey. The upper right panel shows the development of relative total biomass (B/Bmsy), with the grey area indicating uncertainty. The lower left graph shows relative exploitation (F/Fmsy), with Fmsy corrected for reduced recruitment below 0.5 Bmsy. The lower-right panel shows the trajectory of relative stock size (B/Bmsy) over relative exploitation (F/Fmsy).",
